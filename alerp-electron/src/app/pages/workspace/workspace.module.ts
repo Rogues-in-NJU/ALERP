@@ -1,20 +1,40 @@
-import { NgModule, OnInit } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { CoreModule } from "../../core/core.module";
 import { SharedModule } from "../../shared/shared.module";
 import { WorkspaceComponent } from "./workspace.component";
-import { Router, RouterModule, Routes } from "@angular/router";
+import { RouteReuseStrategy, RouterModule, Routes } from "@angular/router";
+import { SimpleReuseStrategy } from "../../core/strategy/simple-reuse.strategy";
+import { TabComponent } from "./tab/tab.component";
+import { NzTabsModule } from "ng-zorro-antd";
 import { AuthorizationGuard } from "../../guards/authorization.guard";
-import { AuthService, UserService } from "../../core/services/user/user.service";
-import { LocalStorageService } from "../../core/services/local-storage/local-storage.service";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule', canActivate: [ AuthorizationGuard ] }
+  {
+    path: 'dashboard',
+    loadChildren: './dashboard/dashboard.module#DashboardModule',
+    canActivate: [ AuthorizationGuard ],
+    data: {
+      title:' 页面1',
+      isRemove: true
+    }
+  }, {
+    path: 'page1',
+    loadChildren: './page1/page1.module#Page1Module',
+    canActivate: [ AuthorizationGuard ],
+    data: {
+      title:' 页面2',
+      isRemove: true
+    }
+  }
 ];
 
 @NgModule({
-  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes) ],
-  declarations: [ WorkspaceComponent ],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }
+  ],
+  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes), NzTabsModule ],
+  declarations: [ WorkspaceComponent, TabComponent ],
   exports: [ WorkspaceComponent, RouterModule ]
 })
 export class WorkspaceModule {

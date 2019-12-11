@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class WorkspaceComponent implements OnInit {
 
   isCollapsed: boolean = false;
+  isOpen: boolean = false;
 
   constructor(
     private storage: LocalStorageService,
@@ -25,7 +26,10 @@ export class WorkspaceComponent implements OnInit {
 
   logout(): void {
     this.storage.remove('user');
-    this.route.navigate(['/passport']);
+    this.isOpen = false;
+    setTimeout(() => {
+      this.route.navigate([ '/passport/login' ]);
+    }, 1000);
   }
 
 }
