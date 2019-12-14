@@ -1,5 +1,9 @@
 import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from "@angular/router";
 
+/**
+ * 路由复用策略，为了方便客户在不同的tab标签之间切换，避免需要通过刷新整个页面来进入另一个操作页面，
+ * 避免工作流的中断。
+ * */
 export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   public static handlers: { [ key: string ]: DetachedRouteHandle } = {};
