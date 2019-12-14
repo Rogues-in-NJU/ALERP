@@ -15,24 +15,16 @@ const routes: Routes = [
     loadChildren: './dashboard/dashboard.module#DashboardModule',
     canActivate: [ AuthorizationGuard ],
     data: {
-      converter: (): MenuConfig => {
-        return {
-          title: '页面1',
-          removable: true
-        }
-      }
+      title: '页面1',
+      removable: true
     }
   }, {
     path: 'page1',
     loadChildren: './page1/page1.module#Page1Module',
     canActivate: [ AuthorizationGuard ],
     data: {
-      converter: (): MenuConfig => {
-        return {
-          title: '页面2',
-          removable: true
-        }
-      }
+      title: '页面2',
+      removable: true
     }
   }, {
     path: 'purchase-order',

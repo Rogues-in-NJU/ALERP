@@ -3,7 +3,6 @@ import { RouterModule, Routes } from "@angular/router";
 import { PurchaseOrderListComponent } from "./purchase-order-list/purchase-order-list.component";
 import { AuthorizationGuard } from "../../../guards/authorization.guard";
 import { PurchaseOrderAddComponent } from "./purchase-order-add/purchase-order-add.component";
-import { MenuConfig } from "../tab/tab.component";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'list' },
@@ -13,12 +12,8 @@ const routes: Routes = [
     component: PurchaseOrderListComponent,
     canActivate: [ AuthorizationGuard ],
     data: {
-      converter: (): MenuConfig => {
-        return {
-          title: '采购单列表',
-          removable: true
-        }
-      }
+      title: '采购单列表',
+      removable: true
     }
   }, {
     path: 'add',
@@ -26,12 +21,8 @@ const routes: Routes = [
     component: PurchaseOrderAddComponent,
     canActivate: [ AuthorizationGuard ],
     data: {
-      converter: (): MenuConfig => {
-        return {
-          title: '新增采购单',
-          removable: true
-        }
-      }
+      title: '新增采购单',
+      removable: true
     }
   }
 ];

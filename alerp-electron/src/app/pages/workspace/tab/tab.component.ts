@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { SimpleReuseStrategy } from "../../../core/strategy/simple-reuse.strategy";
-import { ActivatedRoute, Data, NavigationEnd, Router } from "@angular/router";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
-import { filter, map, mergeMap } from "rxjs/operators";
-import { Observable, UnaryFunction } from "rxjs";
+import { filter, map } from "rxjs/operators";
 import { CloseTabEvent, CloseTabService } from "../../../core/services/event/close-tab.service";
 
 /**
@@ -41,11 +40,15 @@ export class TabComponent {
       filter(route => route.outlet === 'primary')
     ).subscribe(
       (route: ActivatedRoute) => {
-        const c: MenuConfigConverter = { ...route.snapshot.data };
         // 路由data的标题
         console.log(route);
-        const menu: MenuConfig = {...c.converter(route)};
+        const menu: MenuConfig = {...route.snapshot.data};
         menu.url = this.router.url;
+        if (menu.replaceTag) {
+          for (const s of menu.replaceTag) {
+            menu.title = menu.title.replace(s, route.snapshot.params[ `${s}` ])
+          }
+        }
         const url = menu.url;
         this.titleService.setTitle(menu.title); // 设置网页标题
         const exitMenu = this.menuList.find(info => info.url === url);
@@ -97,18 +100,11 @@ export class TabComponent {
 
 }
 
-export class MenuConfig {
+export interface MenuConfig {
 
   url?: string;
   title?: string;
   removable?: boolean;
-
-}
-
-export class MenuConfigConverter {
-
-  converter?: UnaryFunction<ActivatedRoute, MenuConfig> = (route?: ActivatedRoute): MenuConfig => {
-    return {};
-  }
+  replaceTag?: string[] | null;
 
 }
