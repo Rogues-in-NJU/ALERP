@@ -14,21 +14,47 @@
       主菜单
     </div>
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-menu-item  nzMatchRouter routerLink="dashboard">
+      <li nz-menu-item routerLink="dashboard" nzMatchRouter>
         <i nz-icon nzType="dashboard"></i>
         <span>控制面板</span>
       </li>
-      <li nz-menu-item  nzMatchRouter routerLink="page1">
-        <i nz-icon nzType="dashboard"></i>
-        <span>控制面板2</span>
-      </li>
-      <li nz-submenu nzOpen nzTitle="采购单管理" nzIcon="dashboard">
+      <li nz-submenu nzTitle="采购单管理" nzIcon="shopping-cart">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="purchase-order/list">采购单列表</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="purchase-order/add">新增采购单</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="加工单管理" nzIcon="rocket">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>加工单列表</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a>新增加工单</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="出货单管理" nzIcon="upload">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>出货单列表</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a>新增出货单</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="欠款明细" nzIcon="account-book">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>欠款明细记录</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a>逾期未还记录</a>
           </li>
         </ul>
       </li>
@@ -47,8 +73,8 @@
           <ul nz-menu nzMode="horizontal">
             <li nz-submenu nzTitle="用户中心" nzIcon="user" [nzOpen]="isOpen">
               <ul>
-                  <li nz-menu-item>用户角色</li>
-                  <li nz-menu-item>修改密码</li>
+                  <li nz-menu-item routerLink="user-center/user">用户信息</li>
+                  <li nz-menu-item routerLink="user-center/user">修改密码</li>
                   <li nz-menu-item (click)="logout()">登出</li>
               </ul>
             </li>

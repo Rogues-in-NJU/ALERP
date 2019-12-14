@@ -42,11 +42,11 @@ export class TabComponent {
       (route: ActivatedRoute) => {
         // 路由data的标题
         console.log(route);
-        const menu: MenuConfig = {...route.snapshot.data};
+        const menu: MenuConfig = { ...route.snapshot.data };
         menu.url = this.router.url;
-        if (menu.replaceTag) {
-          for (const s of menu.replaceTag) {
-            menu.title = menu.title.replace(s, route.snapshot.params[ `${s}` ])
+        if (menu.replaceParams) {
+          for (const s of menu.replaceParams) {
+            menu.title = menu.title.replace('{}', route.snapshot.params[ s ])
           }
         }
         const url = menu.url;
@@ -60,24 +60,38 @@ export class TabComponent {
     );
 
     this.closeTabService.event.subscribe((event: CloseTabEvent) => {
-      this.closeUrl(event.url);
+      this.closeUrl(event.url, event.goToUrl);
     });
   }
 
   // 关闭选项标签
-  closeUrl(url: string): void {
+  closeUrl(url: string, goToUrl?: string): void {
     // 当前关闭的是第几个路由
     const index = this.menuList.findIndex(p => p.url === url);
-    // 如果只有一个不可以关闭
-    if (this.menuList.length === 1) {
-      return;
-    }
     this.menuList.splice(index, 1);
     // 删除复用
-    // delete SimpleReuseStrategy.handlers[module];
     SimpleReuseStrategy.deleteRouteSnapshot(url);
+
+    // 如果menu空了跳转路由（默认路由/给定路由）
+    if (this.menuList.length == 0) {
+      if (goToUrl) {
+        this.router.navigate([ goToUrl ]);
+      } else {
+        this.router.navigate([ '/workspace' ]);
+      }
+      return;
+    }
+
     // 如果当前删除的对象是当前选中的，那么需要跳转
     if (this.currentIndex === index) {
+      // 如果给定了到达路由，从列表中搜索并展现
+      if (goToUrl) {
+        const goToIndex: number = this.menuList.findIndex(p => p.url === goToUrl);
+        if (goToIndex !== -1) {
+          this.router.navigate([ this.menuList[ goToIndex ].url ]);
+          return;
+        }
+      }
       // 显示上一个选中
       let menu = this.menuList[ index - 1 ];
       if (!menu) {// 如果上一个没有下一个选中
@@ -105,6 +119,12 @@ export interface MenuConfig {
   url?: string;
   title?: string;
   removable?: boolean;
-  replaceTag?: string[] | null;
+  replaceParams?: string[] | null;
+
+}
+
+export declare interface ClosableTab {
+
+  closeTab(): void;
 
 }

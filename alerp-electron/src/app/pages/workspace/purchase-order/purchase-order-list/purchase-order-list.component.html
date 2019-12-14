@@ -1,2 +1,72 @@
-<p>purchase order list works!</p>
-<!--<button nz-button nzType="primary" (click)="test()">Test close</button>-->
+<nz-page-header>
+  <nz-page-header-title>采购单列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="/workspace/purchase-order/add">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增采购单
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>采购单编号</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="orderId"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>状态</nz-form-label>
+      <nz-form-control>
+        <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
+          <nz-option nzLabel="已完成" nzValue="1"></nz-option>
+          <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>采购时间</nz-form-label>
+      <nz-form-control>
+        <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                         nzFormat="yyyy-MM-dd HH:mm"
+                         [nzPlaceHolder]="['开始时间', '结束时间']"
+                         [(ngModel)]="timeRange">
+
+        </nz-range-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="table-wrapper">
+      <nz-table #purchaseOrderTable
+                [nzData]="orderList"
+                nzShowSizeChanger>
+        <thead>
+        <tr>
+          <th>编号</th>
+          <th>描述</th>
+          <th>金额</th>
+          <th>业务员</th>
+          <th>采购日期</th>
+          <th>状态</th>
+          <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of purchaseOrderTable.data">
+          <td>{{ data.id }}</td>
+          <td>{{ data.description }}</td>
+          <td>&yen;{{ data.cash | number: '1.2-2' }}</td>
+          <td>{{ data.salesman }}</td>
+          <td>{{ data.purchaseTime }}</td>
+          <td>{{ data.status }}</td>
+          <td></td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

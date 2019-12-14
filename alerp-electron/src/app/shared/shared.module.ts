@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PageNotFoundComponent } from './components/';
 import { WebviewDirective } from './directives/';
 import { FormsModule } from '@angular/forms';
-import { NgZorroAntdModule, NzIconModule, NzMessageModule } from "ng-zorro-antd";
+import { NgZorroAntdModule, NzFormModule, NzMessageModule } from "ng-zorro-antd";
 import { HttpClientModule } from "@angular/common/http";
 import { IconsProviderModule } from "../icons-provider.module";
 
@@ -17,7 +17,8 @@ const MODULES = [
 const THIRD_MODULES = [
   NgZorroAntdModule,
   IconsProviderModule,
-  NzMessageModule
+  NzMessageModule,
+  NzFormModule
 ];
 
 @NgModule({
