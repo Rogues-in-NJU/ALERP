@@ -42,10 +42,18 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
    * 当路由离开时会触发。按path作为key存储路由快照&组件当前实例对象
    * */
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void {
+    if (SimpleReuseStrategy.waitDelete && SimpleReuseStrategy.waitDelete === this.getRouteUrl(route)) {
+      // 如果待删除是当前路由则不存储快照
+      SimpleReuseStrategy.waitDelete = null;
+      return;
+    }
+    SimpleReuseStrategy.handlers[this.getRouteUrl(route)] = handle;
   }
 
   private getRouteUrl(route: ActivatedRouteSnapshot): string {
-    return route[ '_routerState' ].url.replace(/\//g, '_');
+    // return route[ '_routerState' ].url.replace(/\//g, '_');
+    return route['_routerState'].url.replace(/\//g, '_')
+      + '_' + (route.routeConfig.loadChildren || route.routeConfig.component.toString().split('(')[0].split(' ')[1] );
   }
 
   public static deleteRouteSnapshot(url: string): void {

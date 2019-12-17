@@ -55,7 +55,7 @@ try {
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
+  // Some APIs can only be used after this closeEvent occurs.
   app.on('ready', createWindow);
 
   // Quit when all windows are closed.

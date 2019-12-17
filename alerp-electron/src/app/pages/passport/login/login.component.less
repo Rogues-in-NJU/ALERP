@@ -1,9 +1,11 @@
 .login-header {
   padding-bottom: 20px;
 }
+
 .login-title {
   position: relative;
 }
+
 .login-title:after {
   content: '';
   position: absolute;
@@ -14,26 +16,32 @@
   bottom: -2px;
   z-index: 1;
 }
+
 .login-form-button {
   width: 100%;
   //font-size: 1.2em;
   //height: 2.6em;
 }
+
 .login-form-forgot {
   float: right;
 }
-::ng-deep .ant-input {
+
+:host ::ng-deep .ant-input {
   //font-size: 1.2em;
   padding-top: 0.3em;
   padding-bottom: 0.3em;
   //height: 2.6em;
 }
-::ng-deep .ant-form label {
+
+:host ::ng-deep .ant-form label {
   //font-size: 1.2em;
 }
-::ng-deep .ant-btn-primary {
+
+:host ::ng-deep .ant-btn-primary {
   background-color: rgb(6, 71, 166);
 }
-::ng-deep .ant-form-item {
+
+:host ::ng-deep .ant-form-item {
   margin-bottom: 2px;
 }

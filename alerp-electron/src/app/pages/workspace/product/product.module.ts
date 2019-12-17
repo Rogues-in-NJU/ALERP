@@ -1,5 +1,5 @@
-import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { NgModule } from "@angular/core";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'list' }
@@ -10,5 +10,6 @@ const routes: Routes = [
   declarations: [],
   exports: [ RouterModule ]
 })
-export class ProcessingOrderModule {
+export class ProductModule {
+
 }

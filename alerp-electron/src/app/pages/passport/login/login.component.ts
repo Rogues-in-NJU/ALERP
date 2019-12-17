@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { AuthService, UserService } from "../../../core/services/user/user.service";
+import { AuthService, UserService } from "../../../core/services/user.service";
 import { NzMessageService } from "ng-zorro-antd";
 
 @Component({

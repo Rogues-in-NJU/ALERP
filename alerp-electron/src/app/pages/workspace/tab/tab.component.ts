@@ -3,7 +3,8 @@ import { SimpleReuseStrategy } from "../../../core/strategy/simple-reuse.strateg
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
 import { filter, map } from "rxjs/operators";
-import { CloseTabEvent, CloseTabService } from "../../../core/services/event/close-tab.service";
+import { CloseTabEvent, TabService } from "../../../core/services/tab.service";
+import { Objects } from "../../../core/services/util.service";
 
 /**
  * Tab页面组件，注册到workspace module中，提供路由切换时切换tab页面的功能
@@ -24,7 +25,7 @@ export class TabComponent {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
-    private closeTabService: CloseTabService
+    private tab: TabService
   ) {
 
     // 路由事件
@@ -41,7 +42,6 @@ export class TabComponent {
     ).subscribe(
       (route: ActivatedRoute) => {
         // 路由data的标题
-        console.log(route);
         const menu: MenuConfig = { ...route.snapshot.data };
         menu.url = this.router.url;
         if (menu.replaceParams) {
@@ -59,13 +59,16 @@ export class TabComponent {
       }
     );
 
-    this.closeTabService.event.subscribe((event: CloseTabEvent) => {
-      this.closeUrl(event.url, event.goToUrl);
+    this.tab.closeEvent.subscribe((event: CloseTabEvent) => {
+      this.closeUrl(event);
     });
   }
 
   // 关闭选项标签
-  closeUrl(url: string, goToUrl?: string): void {
+  closeUrl(event: CloseTabEvent): void {
+    const url: string = event.url;
+    const goToUrl: string = event.goToUrl;
+    const refreshUrl: string = event.refreshUrl;
     // 当前关闭的是第几个路由
     const index = this.menuList.findIndex(p => p.url === url);
     this.menuList.splice(index, 1);
@@ -74,10 +77,15 @@ export class TabComponent {
 
     // 如果menu空了跳转路由（默认路由/给定路由）
     if (this.menuList.length == 0) {
-      if (goToUrl) {
+      if (Objects.valid(goToUrl)) {
         this.router.navigate([ goToUrl ]);
       } else {
         this.router.navigate([ '/workspace' ]);
+      }
+      if (Objects.valid(refreshUrl)) {
+        this.tab.refreshEvent.emit({
+          url: refreshUrl
+        });
       }
       return;
     }
@@ -85,7 +93,7 @@ export class TabComponent {
     // 如果当前删除的对象是当前选中的，那么需要跳转
     if (this.currentIndex === index) {
       // 如果给定了到达路由，从列表中搜索并展现
-      if (goToUrl) {
+      if (Objects.valid(goToUrl)) {
         const goToIndex: number = this.menuList.findIndex(p => p.url === goToUrl);
         if (goToIndex !== -1) {
           this.router.navigate([ this.menuList[ goToIndex ].url ]);
@@ -99,6 +107,11 @@ export class TabComponent {
       }
       // 跳转路由
       this.router.navigate([ menu.url ]);
+    }
+    if (Objects.valid(refreshUrl)) {
+      this.tab.refreshEvent.emit({
+        url: refreshUrl
+      });
     }
   }
 
@@ -125,6 +138,12 @@ export interface MenuConfig {
 
 export declare interface ClosableTab {
 
-  closeTab(): void;
+  tabClose(): void;
+
+}
+
+export declare interface RefreshableTab {
+
+  refresh(): void;
 
 }
