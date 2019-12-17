@@ -3,6 +3,10 @@ package edu.nju.alerp.entity;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 /**
  * @Description: 出货单实体类
  * @Author: qianen.yin
@@ -11,6 +15,8 @@ import lombok.Data;
 @Data
 @Builder
 public class ShippingOrder {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String code;
     private int customer_id;

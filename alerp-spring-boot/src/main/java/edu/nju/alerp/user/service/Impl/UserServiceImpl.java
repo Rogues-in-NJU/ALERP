@@ -2,8 +2,10 @@ package edu.nju.alerp.user.service.Impl;
 
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
+import edu.nju.alerp.user.dao.UserRepository;
 import edu.nju.alerp.user.dto.UserDTO;
 import edu.nju.alerp.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -16,9 +18,11 @@ import java.util.List;
  * @CreateDate: 2019-12-17 17:41
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
+    @Autowired
+    UserRepository userRepository;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override
     public boolean addUser(UserDTO userDTO) {
@@ -29,8 +33,7 @@ public class UserServiceImpl implements UserService {
                 .created_at(sdf.format(new Date()))
                 .status(UserStatus.ONJOB.getCode())
                 .build();
-
-        //todo dao层add user
+        userRepository.save(user);
         return false;
     }
 
@@ -44,14 +47,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(userDTO.getPassword());
         user.setPhone_number(userDTO.getPhone_number());
         user.setUpdated_at(sdf.format(new Date()));
-
-        //todo dao层update user
+        userRepository.save(user);
         return true;
     }
 
     @Override
     public User getUser(int id) {
-        return null;
+        return userRepository.getOne(id);
     }
 
     @Override
@@ -62,13 +64,12 @@ public class UserServiceImpl implements UserService {
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
         user.setDeleted_at(sdf.format(new Date()));
-
-        //todo dao层update user
+        userRepository.save(user);
         return true;
     }
 
     @Override
     public List<User> getUserList() {
-        return null;
+        return userRepository.findAll();
     }
 }
