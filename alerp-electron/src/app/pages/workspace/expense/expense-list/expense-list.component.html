@@ -1,0 +1,52 @@
+<nz-page-header>
+  <nz-page-header-title>公司支出列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="/workspace/expense/add">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增公司支出
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <div class="table-wrapper">
+      <nz-table #userManagementTable
+                nzShowSizeChanger
+                [nzData]="expenseList"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                [nzTotal]="totalPages"
+                [nzLoading]="isLoading"
+                [nzScroll]="{ x: '100%'}">
+        <thead>
+        <tr>
+          <th nzLeft="0px" nzWidth="150px">标题</th>
+          <th nzWidth="150px">描述</th>
+          <th>金额</th>
+          <th>支出日期</th>
+          <th nzRight="0px" nzWidth="150px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of userManagementTable.data">
+          <td nzLeft="0px">{{ data.title }}</td>
+          <td>{{ data.description}}</td>
+          <td>{{ data.cash}}</td>
+          <td>{{ data.doneAt}}</td>
+          <td nzRight="0px">
+            <a style="margin-left: 5px"
+               class="abandon"
+               [class.disabled]="false"
+               nz-popconfirm
+               nzPopconfirmTitle="确认删除?"
+               nzPopconfirmPlacement="top"
+               (nzOnConfirm)="confirmAbandon(data.id)">
+              删除
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

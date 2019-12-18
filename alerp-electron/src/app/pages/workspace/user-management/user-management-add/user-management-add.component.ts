@@ -56,13 +56,13 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       return;
     }
     let formData: any = this.userManagementForm.getRawValue();
-    let purchaseOrderAdd: UserManagementInfoVO = {
+    let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
       phone_number: formData.phone_number
     };
 
     this.isSaving = true;
-    this.userManagement.save(purchaseOrderAdd)
+    this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
