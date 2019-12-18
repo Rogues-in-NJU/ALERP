@@ -3,9 +3,19 @@ import { DashboardComponent } from "./dashboard.component";
 import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
 import { RouterModule, Routes } from "@angular/router";
+import { AuthorizationGuard } from "../../../guards/authorization.guard";
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', component: DashboardComponent }
+  {
+    path: '',
+    pathMatch: 'full',
+    component: DashboardComponent,
+    canActivate: [ AuthorizationGuard ],
+    data: {
+      title: '控制台',
+      removable: true
+    }
+  }
 ];
 
 @NgModule({

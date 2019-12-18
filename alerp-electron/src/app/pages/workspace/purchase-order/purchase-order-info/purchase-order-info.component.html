@@ -1,2 +1,47 @@
-<p>purchase order info works</p>
-<button nz-button nzType="primary" (click)="test()">Test close</button>
+<nz-page-header>
+  <nz-page-header-title>采购单详情</nz-page-header-title>
+</nz-page-header>
+<div class="content" *ngIf="isLoading">
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+</div>
+<div class="content" *ngIf="!isLoading">
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="采购单编号">{{ purchaseOrderId }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="采购公司" [nzSpan]="2">{{ purchaseOrderData.purchasingCompany }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="描述" [nzSpan]="3">{{ purchaseOrderData.description }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-3' }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
+      <nz-badge nzStatus="success" nzText="已完成" *ngIf="purchaseOrderData.status === 1"></nz-badge>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="采购时间" [nzSpan]="2">{{ purchaseOrderData.doneAt }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ purchaseOrderData.salesman }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ purchaseOrderData.createdAt }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="录入员" [nzSpan]="2">{{ purchaseOrderData.createdByName }}</nz-descriptions-item>
+  </nz-descriptions>
+  <br/>
+  <h3>采购商品列表</h3>
+  <nz-table #purchaseOrderProductsTable
+            [nzData]="purchaseOrderData.products">
+    <thead>
+    <tr>
+      <th>商品编号</th>
+      <th>商品名称</th>
+      <th>数量</th>
+      <th>重量(kg)</th>
+      <th>单价</th>
+      <th>总价</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of purchaseOrderProductsTable.data">
+      <td>{{ data.id }}</td>
+      <td>{{ data.name }}</td>
+      <td>{{ data.quantity }}</td>
+      <td>{{ data.weight }}</td>
+      <td>{{ data.price }}</td>
+      <td>&yen;{{ data.cash | number: '1.2-3' }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

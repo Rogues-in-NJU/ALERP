@@ -6,8 +6,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [],
+  imports: [ RouterModule.forChild(routes) ],
   declarations: [],
-  exports: [RouterModule]
+  exports: [ RouterModule ]
 })
-export class ProcessingOrderModule {}
+export class ProcessingOrderModule {
+}

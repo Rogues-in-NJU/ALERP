@@ -1,79 +1,77 @@
-import { Component } from "@angular/core";
-import { CloseTabService } from "../../../../core/services/event/close-tab.service";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { ClosableTab } from "../../tab/tab.component";
+import { RefreshableTab } from "../../tab/tab.component";
+import { PurchaseOrderInfoVO } from "../../../../core/model/purchase-order";
+import { AuthService } from "../../../../core/services/user.service";
+import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NzMessageService } from "ng-zorro-antd";
+import { TabService } from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'purchase-order-list',
   templateUrl: './purchase-order-list.component.html',
   styleUrls: [ './purchase-order-list.component.less' ]
 })
-export class PurchaseOrderListComponent implements ClosableTab {
+export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
+
+  isLoading: boolean = false;
+  totalPages: number = 1;
+  pageIndex: number = 1;
+  pageSize: number = 10;
 
   orderId: string;
   selectedStatus: number;
   timeRange: Date[];
 
-  listOfData = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }
-  ];
-
-  orderList: PurchaseOrderListVO[] = [{
-    id: '0001000',
-    description: '',
-    cash: 20,
-    salesman: '',
-    purchaseTime: '2019-10-10 12:00',
-    status: '已完成'
-  }];
+  orderList: PurchaseOrderInfoVO[] = [];
 
   constructor(
-    private closeTabService: CloseTabService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService,
+    private purchaseOrder: PurchaseOrderService,
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
 
-  closeTab(): void {
-    console.log(this.router.url);
-    this.closeTabService.event.emit({
-      url: this.router.url,
-      goToUrl: ''
-    });
+  ngOnInit(): void {
+    this.search();
   }
 
   search(): void {
-    console.log(this.orderId);
-    console.log(this.selectedStatus);
-    console.log(this.timeRange);
+    // console.log(this.orderId);
+    // console.log(this.selectedStatus);
+    // console.log(this.timeRange);
+    const queryParams: TableQueryParams = {
+      pageIndex: this.pageIndex,
+      pageSize: this.pageSize
+    };
+    this.purchaseOrder.findAll(queryParams)
+      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderInfoVO>>) => {
+        if (!res) {
+          return;
+        }
+        if (res.code !== 200) {
+          return;
+        }
+        const tableResult: TableResultVO<PurchaseOrderInfoVO> = res.data;
+        this.totalPages = tableResult.totalPages;
+        this.pageIndex = tableResult.pageIndex;
+        this.pageSize = tableResult.pageSize;
+        this.orderList = tableResult.result;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
   }
 
-}
+  confirmAbandon(id: string): void {
+    console.log('confirm abandon: ' + id);
+  }
 
-export interface PurchaseOrderListVO {
-
-  id: string;
-  description: string;
-  cash: number;
-  salesman: string;
-  purchaseTime: string;
-  status: string
+  refresh(): void {
+  }
 
 }
