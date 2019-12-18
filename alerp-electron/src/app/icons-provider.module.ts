@@ -4,7 +4,7 @@ import { NZ_ICONS } from 'ng-zorro-antd';
 import { DashboardOutline, FormOutline, MenuFoldOutline, MenuUnfoldOutline,
   UserOutline, LockOutline, SettingOutline, MailOutline, AppstoreOutline,
   AccountBookOutline, RocketOutline, ShoppingCartOutline, UploadOutline,
-  PlusOutline, SaveOutline, LoadingOutline } from '@ant-design/icons-angular/icons';
+  PlusOutline, SaveOutline, LoadingOutline, ContactsOutline, EditOutline } from '@ant-design/icons-angular/icons';
 
 const icons = [
   MenuFoldOutline,
@@ -22,7 +22,9 @@ const icons = [
   UploadOutline,
   PlusOutline,
   SaveOutline,
-  LoadingOutline
+  LoadingOutline,
+  ContactsOutline,
+  EditOutline
 ];
 
 @NgModule({

@@ -66,6 +66,7 @@ export class PurchaseOrderService {
 
         products: [{
           id: 1,
+          productId: 1,
           name: '铝棒',
           quantity: 2,
           weight: 2,

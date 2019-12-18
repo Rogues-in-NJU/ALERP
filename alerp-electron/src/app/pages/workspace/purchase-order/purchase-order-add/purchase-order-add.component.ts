@@ -57,6 +57,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     for (let i = 0; i <= 3; i++) {
       let item: PurchaseOrderProductInfoVO = {
         id: i,
+        productId: 1,
         name: `Edrward ${i}`,
         quantity: 0,
         weight: 0,
@@ -79,7 +80,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       salesman: [ null ],
       doneAt: [ null, Validators.required ]
     });
-    const getProducts = (name: string) => {
+    const getProducts: any = (name: string) => {
       return this.product
         .findAll({})
         .pipe(
@@ -130,7 +131,8 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     }
     let item: PurchaseOrderProductInfoVO = {
       id: 1,
-      name: 'test',
+      productId: 1,
+      name: '',
       quantity: 0,
       weight: 0,
       price: 0,
@@ -151,7 +153,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   }
 
   onChangeSelected(event: TempProductVO): void {
-    this.editCache.data.id = event.id;
+    this.editCache.data.productId = event.id;
     this.editCache.data.name = event.name;
   }
 
@@ -210,8 +212,8 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
 
 interface TempProductVO {
 
-  id: number,
-  name: string
+  id: number;
+  name: string;
   [key: string]: any;
 
 }
@@ -219,6 +221,7 @@ interface TempProductVO {
 interface TempPurchaseOrderProductInfoVO {
 
   id?: number;
+  productId?: number,
   name?: string;
   quantity?: number;
   weight?: number;

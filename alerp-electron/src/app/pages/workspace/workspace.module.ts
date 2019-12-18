@@ -12,6 +12,9 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: './dashboard/dashboard.module#DashboardModule'
   }, {
+    path: 'customer',
+    loadChildren: './customer/customer.module#CustomerModule'
+  }, {
     path: 'purchase-order',
     loadChildren: './purchase-order/purchase-order.module#PurchaseOrderModule'
   }, {

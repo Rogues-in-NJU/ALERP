@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from "@angular/core";
+import { Route } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export interface CloseTabEvent {
   readonly url: string;
   readonly refreshUrl?: string | null;
   readonly goToUrl?: string | null;
+  readonly routeConfig?: Route;
 
 }
 

@@ -7,7 +7,7 @@
     <ng-template #nzTabHeading>
       <div>
         {{menu.title}}
-        <i *ngIf="menu.removable" (click)="closeUrl(menu.url)" nz-icon nzType="close-circle" class="tabs-tab-close"></i>
+        <i *ngIf="menu.removable" (click)="closeUrl({ url: menu.url, routeConfig: menu.routeConfig })" nz-icon nzType="close-circle" class="tabs-tab-close"></i>
       </div>
     </ng-template>
   </nz-tab>

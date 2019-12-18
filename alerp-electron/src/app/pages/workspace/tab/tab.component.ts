@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SimpleReuseStrategy } from "../../../core/strategy/simple-reuse.strategy";
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { ActivatedRoute, NavigationEnd, Route, Router } from "@angular/router";
 import { Title } from "@angular/platform-browser";
 import { filter, map } from "rxjs/operators";
 import { CloseTabEvent, TabService } from "../../../core/services/tab.service";
@@ -44,6 +44,7 @@ export class TabComponent {
         // 路由data的标题
         const menu: MenuConfig = { ...route.snapshot.data };
         menu.url = this.router.url;
+        menu.routeConfig = route.routeConfig;
         if (menu.replaceParams) {
           for (const s of menu.replaceParams) {
             menu.title = menu.title.replace('{}', route.snapshot.params[ s ])
@@ -73,7 +74,7 @@ export class TabComponent {
     const index = this.menuList.findIndex(p => p.url === url);
     this.menuList.splice(index, 1);
     // 删除复用
-    SimpleReuseStrategy.deleteRouteSnapshot(url);
+    SimpleReuseStrategy.deleteRouteSnapshot(url, event.routeConfig);
 
     // 如果menu空了跳转路由（默认路由/给定路由）
     if (this.menuList.length == 0) {
@@ -133,6 +134,7 @@ export interface MenuConfig {
   title?: string;
   removable?: boolean;
   replaceParams?: string[] | null;
+  routeConfig?: Route;
 
 }
 
