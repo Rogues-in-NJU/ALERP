@@ -1,0 +1,39 @@
+<nz-page-header>
+  <nz-page-header-title>新增用户</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary"
+            (click)="saveUser()"
+            [disabled]="!userManagementForm.valid || isSaving">
+      <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
+      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>
+      保存
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <form nz-form nzLayout="inline" [formGroup]="userManagementForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">姓名</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <input nz-input formControlName="name" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">电话号码</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <input nz-input formControlName="phone_number" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+  <br/>
+  <div class="operate">
+
+  </div>
+
+</div>
