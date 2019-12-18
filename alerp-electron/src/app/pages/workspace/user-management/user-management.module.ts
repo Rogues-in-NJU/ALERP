@@ -8,6 +8,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {UserManagementInfoComponent} from "./user-management-info/user-management-info.component";
 import {UserManagementAddComponent} from "./user-management-add/user-management-add.component";
 import {UserManagementStatusPipe, UserManagementStatusColorPipe} from "./user-management.pipe";
+import {UserManagementOperationComponent} from "./user-management-operation/user-management-operation.component";
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'list'},
@@ -27,6 +28,15 @@ const routes: Routes = [
     canActivate: [AuthorizationGuard],
     data: {
       title: '新增用户',
+      removable: true
+    }
+  },{
+    path: 'operation',
+    pathMatch: 'full',
+    component: UserManagementOperationComponent,
+    canActivate: [AuthorizationGuard],
+    data: {
+      title: '操作日志',
       removable: true
     }
   }, {
@@ -52,6 +62,7 @@ const routes: Routes = [
     UserManagementListComponent,
     UserManagementAddComponent,
     UserManagementInfoComponent,
+    UserManagementOperationComponent,
     UserManagementStatusPipe,
     UserManagementStatusColorPipe
   ],
