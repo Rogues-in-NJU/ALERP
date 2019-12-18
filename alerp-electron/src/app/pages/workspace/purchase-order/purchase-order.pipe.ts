@@ -27,3 +27,17 @@ export class PurchaseOrderStatusColorPipe implements PipeTransform {
   }
 
 }
+
+@Pipe({
+  name: 'purchase_order_price_type'
+})
+export class PurchaseOrderPriceTypePipe implements PipeTransform {
+
+  transform(value: number, ...args: any[]): any {
+    switch (value) {
+      case 1: return '元/千克';
+      default: return '元/件';
+    }
+  }
+
+}

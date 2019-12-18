@@ -6,7 +6,11 @@ import { PurchaseOrderAddComponent } from "./purchase-order-add/purchase-order-a
 import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
 import { PurchaseOrderInfoComponent } from "./purchase-order-info/purchase-order-info.component";
-import { PurchaseOrderStatusColorPipe, PurchaseOrderStatusPipe } from "./purchase-order.pipe";
+import {
+  PurchaseOrderPriceTypePipe,
+  PurchaseOrderStatusColorPipe,
+  PurchaseOrderStatusPipe
+} from "./purchase-order.pipe";
 import { ReactiveFormsModule } from "@angular/forms";
 
 const routes: Routes = [
@@ -53,7 +57,8 @@ const routes: Routes = [
     PurchaseOrderAddComponent,
     PurchaseOrderInfoComponent,
     PurchaseOrderStatusPipe,
-    PurchaseOrderStatusColorPipe
+    PurchaseOrderStatusColorPipe,
+    PurchaseOrderPriceTypePipe
   ],
   exports: [ RouterModule ]
 })

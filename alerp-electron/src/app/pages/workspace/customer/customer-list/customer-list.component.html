@@ -1,0 +1,122 @@
+<nz-page-header>
+  <nz-page-header-title>客户列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" (click)="showAddModal()">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增客户
+    </button>
+    <nz-modal [(nzVisible)]="customerAddVisible"
+              nzTitle="新增客户"
+              (nzOnCancel)="cancelAdd()"
+              (nzOnOk)="confirmAdd()"
+              [nzOkLoading]="customerAddOkLoading">
+      <form nz-form nzLayout="inline" [formGroup]="customerAddForm">
+        <div nz-row nzGutter="24">
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzRequired nzSpan="6">客户名称</nz-form-label>
+              <nz-form-control nzHasFeedback nzSpan="14">
+                <input nz-input formControlName="name" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzSpan="6">速记编号</nz-form-label>
+              <nz-form-control nzSpan="14">
+                <input nz-input formControlName="shorthand" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzSpan="6">描述</nz-form-label>
+              <nz-form-control nzSpan="14">
+                <input nz-input formControlName="description" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzRequired nzSpan="6">账期</nz-form-label>
+              <nz-form-control nzHasFeedback nzSpan="14">
+                <nz-input-number [nzFormatter]="periodFormatter" nzMin="1" nzStep="1" formControlName="period"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzRequired nzSpan="6">结算日期</nz-form-label>
+              <nz-form-control nzHasFeedback nzSpan="14">
+                <nz-input-number [nzFormatter]="payDateFormatter" nzMin="1" nzMax="31" nzStep="1" formControlName="payDate"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-modal>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>客户名称/速记编号</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="customerName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div class="table-wrapper">
+    <nz-table #customerTable
+              nzShowSizeChanger
+              [nzData]="customerList"
+              [(nzPageIndex)]="pageIndex"
+              [(nzPageSize)]="pageSize"
+              (nzPageIndexChange)="search()"
+              (nzPageSizeChange)="search()"
+              [nzTotal]="totalPages"
+              [nzLoading]="isLoading"
+              [nzScroll]="{ x: '100%'}">
+      <thead>
+      <tr>
+        <th nzLeft="0px" nzWidth="150px">ID</th>
+        <th nzWidth="150px">客户名称</th>
+        <th>速记编号</th>
+        <th>客户类型</th>
+        <th>账期</th>
+        <th nzRight="0px" nzWidth="150px">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of customerTable.data">
+        <td nzLeft="0px">
+          <a routerLink="/workspace/customer/info/{{ data.id }}">{{ data.id }}</a>
+        </td>
+        <td>
+          <a routerLink="/workspace/customer/info/{{ data.id }}">{{ data.name }}</a>
+        </td>
+        <td>{{ data.shorthand }}</td>
+        <td>{{ data.type | customer_type_pipe }}</td>
+        <td>{{ data.period }}个月</td>
+        <td nzRight="0px">
+          <a routerLink="/workspace/customer/info/{{ data.id }}">查看</a>
+          <a style="max-resolution: 5px;"
+             class="delete"
+             [class.disabled]="false"
+             nz-popconfirm
+             nzPopconfirmTitle="确认删除?"
+             nzPopconfirmPlacement="top"
+             (nzOnConfirm)="confirmDelete(data.id)">
+            删除
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

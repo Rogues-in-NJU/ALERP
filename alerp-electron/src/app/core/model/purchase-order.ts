@@ -18,10 +18,12 @@ export interface PurchaseOrderInfoVO extends BaseInfo {
 export interface PurchaseOrderProductInfoVO {
 
   id?: number;
+  productId: number,
   name?: string;
   quantity?: number;
   weight?: number;
   price: number;
+  priceType: number,
   cash: number;
 
 }

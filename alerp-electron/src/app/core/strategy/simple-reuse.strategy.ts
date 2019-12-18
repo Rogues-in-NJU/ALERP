@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, DetachedRouteHandle, RouteReuseStrategy } from "@angular/router";
+import { ActivatedRouteSnapshot, DetachedRouteHandle, Route, RouteReuseStrategy } from "@angular/router";
 
 /**
  * 路由复用策略，为了方便客户在不同的tab标签之间切换，避免需要通过刷新整个页面来进入另一个操作页面，
@@ -56,8 +56,10 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
       + '_' + (route.routeConfig.loadChildren || route.routeConfig.component.toString().split('(')[0].split(' ')[1] );
   }
 
-  public static deleteRouteSnapshot(url: string): void {
-    const key = url.replace(/\//g, '_');
+  public static deleteRouteSnapshot(url: string, routeConfig: Route): void {
+    // const key = url.replace(/\//g, '_');
+    const key = url.replace(/\//g, '_')
+      + '_' + (routeConfig.loadChildren || routeConfig.component.toString().split('(')[0].split(' ')[1] );
     if (SimpleReuseStrategy.handlers[ key ]) {
       delete SimpleReuseStrategy.handlers[ key ];
     } else {

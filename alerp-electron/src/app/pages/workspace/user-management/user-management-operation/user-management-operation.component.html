@@ -1,0 +1,43 @@
+<nz-page-header>
+  <nz-page-header-title>操作日志</nz-page-header-title>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>姓名</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="userName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="table-wrapper">
+      <nz-table #userManagementTable
+                nzShowSizeChanger
+                [nzData]="operationList"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                [nzTotal]="totalPages"
+                [nzLoading]="isLoading"
+                [nzScroll]="{ x: '100%'}">
+        <thead>
+        <tr>
+          <th nzLeft="0px" nzWidth="150px">姓名</th>
+          <th nzWidth="150px">描述</th>
+          <th>操作时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of userManagementTable.data">
+          <td nzLeft="0px">{{ data.user_name }}</td>
+          <td>{{ data.description}}</td>
+          <td>{{ data.created_at}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

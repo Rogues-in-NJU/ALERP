@@ -8,6 +8,7 @@ import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/mode
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
 import { TabService } from "../../../../core/services/tab.service";
+import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'purchase-order-list',
@@ -51,7 +52,7 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
     };
     this.purchaseOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<PurchaseOrderInfoVO>>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
           return;
         }
         if (res.code !== 200) {

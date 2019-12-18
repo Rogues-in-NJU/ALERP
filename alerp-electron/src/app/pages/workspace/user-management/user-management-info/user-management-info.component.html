@@ -1,0 +1,41 @@
+<nz-page-header>
+  <nz-page-header-title>用户详情</nz-page-header-title>
+</nz-page-header>
+<div class="content" *ngIf="isLoading">
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+</div>
+<div class="content" *ngIf="!isLoading">
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="姓名" [nzSpan]="2">{{ userManagementData.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="电话号码" [nzSpan]="3">{{ userManagementData.phone_number }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
+      <nz-badge nzStatus="success" nzText="在职" *ngIf="userManagementData.status === 1"></nz-badge>
+    </nz-descriptions-item>
+  </nz-descriptions>
+  <br/>
+  <h3>权限列表</h3>
+  <!--<nz-table #purchaseOrderProductsTable-->
+  <!--[nzData]="purchaseOrderData.products">-->
+  <!--<thead>-->
+  <!--<tr>-->
+  <!--<th>商品编号</th>-->
+  <!--<th>商品名称</th>-->
+  <!--<th>数量</th>-->
+  <!--<th>重量(kg)</th>-->
+  <!--<th>单价</th>-->
+  <!--<th>总价</th>-->
+  <!--</tr>-->
+  <!--</thead>-->
+  <!--<tbody>-->
+  <!--<tr *ngFor="let data of purchaseOrderProductsTable.data">-->
+  <!--<td>{{ data.id }}</td>-->
+  <!--<td>{{ data.name }}</td>-->
+  <!--<td>{{ data.quantity }}</td>-->
+  <!--<td>{{ data.weight }}</td>-->
+  <!--<td>{{ data.price }}</td>-->
+  <!--<td>&yen;{{ data.cash | number: '1.2-3' }}</td>-->
+  <!--</tr>-->
+  <!--</tbody>-->
+  <!--</nz-table>-->
+</div>

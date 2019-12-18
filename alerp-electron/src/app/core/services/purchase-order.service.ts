@@ -66,10 +66,12 @@ export class PurchaseOrderService {
 
         products: [{
           id: 1,
+          productId: 1,
           name: '铝棒',
           quantity: 2,
           weight: 2,
           price: 200,
+          priceType: 1,
           cash: 2000
         }]
       }

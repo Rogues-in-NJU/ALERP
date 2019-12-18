@@ -7,6 +7,7 @@ import { PurchaseOrderService } from "../../../../core/services/purchase-order.s
 import { ResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
+import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'purchase-order-info',
@@ -33,7 +34,7 @@ export class PurchaseOrderInfoComponent implements ClosableTab, OnInit {
     this.purchaseOrderId = this.route.snapshot.params['id'];
     this.purchaseOrder.find(this.purchaseOrderId)
       .subscribe((res: ResultVO<PurchaseOrderInfoVO>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
           return;
         }
         this.isLoading = false;
@@ -46,7 +47,8 @@ export class PurchaseOrderInfoComponent implements ClosableTab, OnInit {
   tabClose(): void {
     this.closeTabService.closeEvent.emit({
       url: this.router.url,
-      refreshUrl: null
+      refreshUrl: null,
+      routeConfig: this.route.snapshot.routeConfig
     });
   }
 

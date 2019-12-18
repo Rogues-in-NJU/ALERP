@@ -18,6 +18,10 @@
         <i nz-icon nzType="dashboard"></i>
         <span>控制面板</span>
       </li>
+      <li nz-menu-item routerLink="customer/list" nzMatchRouter>
+        <i nz-icon nzType="contacts" nzTheme="outline"></i>
+        <span>客户管理</span>
+      </li>
       <li nz-submenu nzTitle="采购单管理" nzIcon="shopping-cart">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -61,6 +65,29 @@
       <li nz-menu-item routerLink="product" nzMatchRouter>
         <i nz-icon nzType="dashboard"></i>
         <span>商品管理</span>
+      </li>
+      <li nz-submenu nzTitle="公司支出" nzIcon="transaction">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="expense/list">公司支出列表</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="expense/add">新增公司支出</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="用户管理" nzIcon="user">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="user-management/list">用户列表</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="user-management/add">新增用户</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="user-management/operation">操作日志</a>
+          </li>
+        </ul>
       </li>
     </ul>
   </nz-sider>
