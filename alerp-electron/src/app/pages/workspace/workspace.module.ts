@@ -17,6 +17,9 @@ const routes: Routes = [
   }, {
     path: 'user-center',
     loadChildren: './user-center/user-center.module#UserCenterModule'
+  }, {
+    path: 'product',
+    loadChildren: './product/product.module#ProductModule'
   }
 ];
 

@@ -1,0 +1,170 @@
+<nz-page-header>
+  <nz-page-header-title>商品列表</nz-page-header-title>
+</nz-page-header>
+<div class="content">
+  <form nz-form nzLayout="inline" [formGroup]="purchaseOrderForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">客户</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <input nz-input formControlName="purchasingCompany" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">总金额</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <nz-input-number [nzFormatter]="cashFormatter" formControlName="cash" nzMin="0" nzStep="0.01" class="info-input"></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">采购日期</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <nz-date-picker nzShowTime
+                            class="info-input"
+                            formControlName="doneAt"
+                            [nzDisabledDate]="disabledDate"
+                            nzFormat="yyyy-MM-dd HH:mm"
+                            nzPlaceHolder="选择时间">
+
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzSpan="6">业务员</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <input nz-input formControlName="salesman" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzSpan="6">备注</nz-form-label>
+          <nz-form-control nzSpan="14">
+            <input nz-input formControlName="description" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+  <br/>
+  <div class="operate">
+    <button nz-button nzType="primary" (click)="addRow()">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增商品
+    </button>
+  </div>
+  <nz-table #purchaseOrderAddProductsTable
+            nzBordered
+            nzShowPagination="false"
+            nzSize="middle"
+            [nzScroll]="{ y: '400px' }"
+            [nzData]="products">
+    <thead>
+    <tr>
+      <th nzWidth="100px">商品编号</th>
+      <th nzWidth="200px">商品</th>
+      <th nzWidth="120px">数量</th>
+      <th nzWidth="120px">重量</th>
+      <th nzWidth="120px">单价</th>
+      <th nzWidth="120px">总价</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of purchaseOrderAddProductsTable.data">
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.id }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          {{ editCache.data.id }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else nameSelectTpl">
+          {{ data.name }}
+        </ng-container>
+        <ng-template #nameSelectTpl>
+          <nz-select [(ngModel)]="editCache.product"
+                     nzShowSearch
+                     nzServerSearch
+                     (nzOnSearch)="onSearch($event)"
+                     (ngModelChange)="onChangeSelected($event)"
+                     style="width: 100px">
+            <ng-container *ngFor="let p of searchProducts">
+              <nz-option *ngIf="!isLoading" nzLabel="{{ data.name }}" [nzValue]="data" nzHide></nz-option>
+              <nz-option *ngIf="!isLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+            </ng-container>
+            <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+              <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+            </nz-option>
+          </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.quantity }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-input-number [(ngModel)]="editCache.data.quantity" nzMin="1" nzStep="1" class="table-number-input"></nz-input-number>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.weight }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-input-number [(ngModel)]="editCache.data.weight" nzMin="0" nzStep="0.001" class="table-number-input"></nz-input-number>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.price | number: '1.2-3' }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.cash | number: '1.2-3' }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-input-number [(ngModel)]="editCache.data.cash" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id === null">
+          <a (click)="startEdit(data._id)">编辑</a>
+          <a nz-popconfirm
+             style="margin-left: 5px;"
+             class="delete"
+             nzTitle="确认删除?"
+             (nzOnConfirm)="confirmDelete(data._id)">
+            删除
+          </a>
+        </ng-container>
+        <ng-container *ngIf="editCache._id !== data['_id']; else saveTpl">
+
+        </ng-container>
+        <ng-template #saveTpl>
+          <a (click)="saveEdit(data._id)">保存</a>
+          <a nz-popconfirm
+             nzTitle="确定取消?"
+             (nzOnConfirm)="cancelEdit(data._id)"
+             style="margin-left: 5px">
+            取消
+          </a>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
