@@ -63,7 +63,7 @@
   </form>
   <br/>
   <div class="operate">
-    <button nz-button nzType="primary" (click)="addRow()">
+    <button nz-button nzType="primary" (click)="addRow()" [disabled]="editCache._id !== null">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增商品
     </button>
@@ -78,9 +78,10 @@
     <tr>
       <th nzWidth="100px">商品编号</th>
       <th nzWidth="200px">商品</th>
-      <th nzWidth="120px">数量</th>
-      <th nzWidth="120px">重量</th>
-      <th nzWidth="120px">单价</th>
+      <th nzWidth="100px">数量(件)</th>
+      <th nzWidth="100px">重量(千克)</th>
+      <th nzWidth="100px">单价</th>
+      <th nzWidth="120px">单位</th>
       <th nzWidth="120px">总价</th>
       <th>操作</th>
     </tr>
@@ -107,7 +108,7 @@
                      (ngModelChange)="onChangeSelected($event)"
                      style="width: 100px">
             <ng-container *ngFor="let p of searchProducts; let i = index;">
-              <nz-option *ngIf="!isLoading && i == 0" nzLabel="{{ data.name }}" [nzValue]="data" nzHide></nz-option>
+              <nz-option *ngIf="!isLoading && i == 0" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
               <nz-option *ngIf="!isLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
             </ng-container>
             <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
@@ -142,7 +143,18 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']">
-          {{ data.cash | number: '1.2-3' }}
+          {{ data.priceType | purchase_order_price_type }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-select [(ngModel)]="editCache.data.priceType">
+            <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+          </nz-select>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          &yen; {{ data.cash | number: '1.2-3' }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-input-number [(ngModel)]="editCache.data.cash" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>

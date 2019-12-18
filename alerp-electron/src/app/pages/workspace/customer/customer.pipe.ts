@@ -13,3 +13,17 @@ export class CustomerTypePipe implements PipeTransform {
   }
 
 }
+
+@Pipe({
+  name: 'customer_price_type_pipe'
+})
+export class CustomerPriceTypePipe implements PipeTransform {
+
+  transform(value: number, ...args: any[]): any {
+    switch (value) {
+      case 1: return '元/千克';
+      default: return '元/件';
+    }
+  }
+
+}

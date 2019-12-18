@@ -20,6 +20,6 @@ export interface CustomerSpecialPriceVO extends BaseInfo {
   productId: number;
   productName: string;
   price: number;
-  unit: number;
+  priceType: number;
 
 }

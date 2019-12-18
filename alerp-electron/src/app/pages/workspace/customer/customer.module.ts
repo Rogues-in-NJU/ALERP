@@ -4,7 +4,7 @@ import { CustomerListComponent } from "./customer-list/customer-list.component";
 import { AuthorizationGuard } from "../../../guards/authorization.guard";
 import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
-import { CustomerTypePipe } from "./customer.pipe";
+import { CustomerPriceTypePipe, CustomerTypePipe } from "./customer.pipe";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CustomerInfoComponent } from "./customer-info/customer-info.component";
 
@@ -33,7 +33,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [ CoreModule, SharedModule, RouterModule.forChild(routes), ReactiveFormsModule ],
-  declarations: [ CustomerListComponent, CustomerInfoComponent, CustomerTypePipe ],
+  declarations: [ CustomerListComponent, CustomerInfoComponent, CustomerTypePipe, CustomerPriceTypePipe ],
   exports: [ RouterModule ]
 })
 export class CustomerModule {

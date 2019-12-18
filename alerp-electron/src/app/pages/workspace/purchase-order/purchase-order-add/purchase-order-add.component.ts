@@ -23,7 +23,20 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
 
   purchaseOrderForm: FormGroup;
   products: PurchaseOrderProductInfoVO[] = [];
-  editCache: { _id?: number, data?: TempPurchaseOrderProductInfoVO, product?: TempProductVO, isAdd?: boolean } = {};
+  editCache: {
+    _id?: number,
+    data?: TempPurchaseOrderProductInfoVO,
+    product?: TempProductVO,
+    currentProduct?: TempProductVO,
+    isAdd?: boolean
+  } = {};
+  defaultEditCache: any = {
+    _id: null,
+    data: null,
+    product: null,
+    currentProduct: null,
+    isAdd: false
+  };
   productCountIndex: number = 0;
   searchProducts: ProductVO[];
   searchChange$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -62,17 +75,14 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
         quantity: 0,
         weight: 0,
         price: 0,
+        priceType: 1,
         cash: 0
       };
       item['_id'] = this.productCountIndex ++;
 
       this.products.push(item);
     }
-    Object.assign(this.editCache, {
-      _id: null,
-      data: null,
-      product: null,
-    });
+    Object.assign(this.editCache, this.defaultEditCache);
     this.purchaseOrderForm = this.fb.group({
       purchasingCompany: [ null, Validators.required ],
       description: [ null ],
@@ -130,12 +140,13 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       return;
     }
     let item: PurchaseOrderProductInfoVO = {
-      id: 1,
-      productId: 1,
+      id: 0,
+      productId: 0,
       name: '',
       quantity: 0,
       weight: 0,
       price: 0,
+      priceType: 1,
       cash: 0
     };
     item['_id'] = this.productCountIndex ++;
@@ -163,11 +174,20 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       return;
     }
     const index = this.products.findIndex(item => item['_id'] === _id);
+    if (index === -1) {
+      this.message.error('没有该商品条目!');
+      return;
+    }
+    Object.assign(this.editCache, this.defaultEditCache);
     this.editCache._id = _id;
     // 一层深拷贝
     this.editCache.data = {};
     Object.assign(this.editCache.data, this.products[index]);
-    this.editCache.product = <TempProductVO> this.products[index];
+    this.editCache.currentProduct = {
+      id: this.products[index].productId,
+      name: this.products[index].name
+    };
+    this.editCache.product = this.editCache.currentProduct;
     if (Objects.valid(isAdd) && isAdd) {
       this.editCache.isAdd = isAdd;
     } else {
@@ -179,12 +199,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     if (Objects.valid(this.editCache.isAdd) && this.editCache.isAdd) {
       this.products = this.products.filter(item => item['_id'] !== _id);
     }
-    Object.assign(this.editCache, {
-      _id: null,
-      data: null,
-      product: null,
-      isAdd: false
-    });
+    Object.assign(this.editCache, this.defaultEditCache);
   }
 
   saveEdit(_id: number): void {
@@ -193,12 +208,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     }
     const index = this.products.findIndex(item => item['_id'] === _id);
     Object.assign(this.products[index], this.editCache.data);
-    Object.assign(this.editCache, {
-      _id: null,
-      data: null,
-      product: null,
-      isAdd: false
-    });
+    Object.assign(this.editCache, this.defaultEditCache);
   }
 
   confirmDelete(_id: number): void {
@@ -226,6 +236,7 @@ interface TempPurchaseOrderProductInfoVO {
   quantity?: number;
   weight?: number;
   price?: number;
+  priceType?: number;
   cash?: number;
 
 }

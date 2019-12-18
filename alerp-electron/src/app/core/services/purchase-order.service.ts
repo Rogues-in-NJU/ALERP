@@ -71,6 +71,7 @@ export class PurchaseOrderService {
           quantity: 2,
           weight: 2,
           price: 200,
+          priceType: 1,
           cash: 2000
         }]
       }

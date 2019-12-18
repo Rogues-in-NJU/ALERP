@@ -32,8 +32,8 @@
         {{ customerData.name }}
       </ng-container>
       <ng-template #nameEditTpl>
-        <nz-form-control>
-          <input nz-input [(ngModel)]="customerDataCache.name"/>
+        <nz-form-control [nzValidateStatus]="customerDataValidate.name">
+          <input nz-input [(ngModel)]="customerDataCache.name" (ngModelChange)="onInputValueChange($event, 'name')"/>
         </nz-form-control>
       </ng-template>
     </nz-descriptions-item>
@@ -52,10 +52,12 @@
         {{ customerData.type | customer_type_pipe }}
       </ng-container>
       <ng-template #typeEditTpl>
-        <nz-select [(ngModel)]="customerDataCache.type" style="width: 100px">
-          <nz-option nzLabel="现金客户" [nzValue]="1"></nz-option>
-          <nz-option nzLabel="月结客户" [nzValue]="2"></nz-option>
-        </nz-select>
+        <nz-form-control>
+          <nz-select [(ngModel)]="customerDataCache.type" style="width: 100px">
+            <nz-option nzLabel="现金客户" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="月结客户" [nzValue]="2"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </ng-template>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="账期">
@@ -63,7 +65,11 @@
         {{ customerData.period }}个月
       </ng-container>
       <ng-template #periodEditTpl>
-        <nz-input-number [(ngModel)]="customerDataCache.period" [nzFormatter]="periodFormatter" nzMin="1" nzStep="1"></nz-input-number>
+        <nz-form-control [nzValidateStatus]="customerDataValidate.period">
+          <nz-input-number [(ngModel)]="customerDataCache.period"
+                           (ngModelChange)="onInputValueChange($event, 'period')"
+                           [nzFormatter]="periodFormatter" nzMin="1" nzStep="1"></nz-input-number>
+        </nz-form-control>
       </ng-template>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="结算日期">
@@ -71,7 +77,11 @@
         {{ customerData.payDate }}日
       </ng-container>
       <ng-template #payDateEditTpl>
-        <nz-input-number [(ngModel)]="customerDataCache.payDate" [nzFormatter]="payDateFormatter" nzMin="1" nzMax="31" nzStep="1"></nz-input-number>
+        <nz-form-control [nzValidateStatus]="customerDataValidate.payDate">
+          <nz-input-number [(ngModel)]="customerDataCache.payDate"
+                           (ngModelChange)="onInputValueChange($event, 'payDate')"
+                           [nzFormatter]="payDateFormatter" nzMin="1" nzMax="31" nzStep="1"></nz-input-number>
+        </nz-form-control>
       </ng-template>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="描述" [nzSpan]="3">
@@ -79,16 +89,24 @@
         {{ customerData.description }}
       </ng-container>
       <ng-template #descriptionEditTpl>
-        <input nz-input [(ngModel)]="customerDataCache.description"/>
+        <textarea nz-input
+                  [(ngModel)]="customerDataCache.description"
+                  [nzAutosize]="{ minRows: 2, maxRows: 6 }">
+        </textarea>
       </ng-template>
     </nz-descriptions-item>
   </nz-descriptions>
   <br/>
   <div nz-row class="table-header">
     <h3 style="display: inline-block">商品特价列表</h3>
-    <button nz-button nzType="primary" style="display: inline-block; margin-left: 20px">
+    <button nz-button
+            nzType="primary"
+            style="display: inline-block; margin-left: 20px"
+            (click)="addSpecialPriceRow()"
+            nzSize="small"
+            [disabled]="editCache._id !== null">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
-      新增特价商品
+      新增
     </button>
   </div>
   <nz-table #specialPricesTable
@@ -128,9 +146,12 @@
                      (ngModelChange)="onChangeSelectedProduct($event)"
                      style="width: 100px">
             <ng-container *ngFor="let p of searchProducts; let i = index;">
-              <nz-option *ngIf="!isProductsLoading && i == 0" nzLabel="{{ data.name }}" [nzValue]="data" nzHide></nz-option>
-              <nz-option *ngIf="!isLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              <nz-option *ngIf="!isProductsLoading && i == 0" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
             </ng-container>
+            <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+              <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+            </nz-option>
           </nz-select>
         </ng-template>
       </td>
@@ -143,9 +164,39 @@
         </ng-template>
       </td>
       <td>
-        <ng-container>
-          {{ data.unit }}
+        <ng-container *ngIf="editCache._id !== data['_id']; else priceTypeEditTpl">
+          {{ data.priceType | customer_price_type_pipe }}
         </ng-container>
+        <ng-template #priceTypeEditTpl>
+          <nz-select [(ngModel)]="editCache.data.priceType">
+            <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+          </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id === null">
+          <a (click)="startEditSpecialPrice(data._id)">编辑</a>
+          <a nz-popconfirm
+             style="margin-left: 5px"
+             class="delete"
+             nzTitle="确认删除?"
+             (nzOnConfirm)="confirmSpecialPriceDelete(data._id)">
+            删除
+          </a>
+        </ng-container>
+        <ng-container *ngIf="editCache._id !== data['_id']; else saveTpl">
+
+        </ng-container>
+        <ng-template #saveTpl>
+          <a (click)="saveSpecialPriceEdit(data._id)">保存</a>
+          <a nz-popconfirm
+             nzTitle="确定取消?"
+             (nzOnConfirm)="cancelSpecialPriceEdit(data._id)"
+             style="margin-left: 5px">
+            取消
+          </a>
+        </ng-template>
       </td>
     </tr>
     </tbody>

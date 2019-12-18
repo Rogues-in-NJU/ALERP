@@ -23,6 +23,7 @@ export interface PurchaseOrderProductInfoVO {
   quantity?: number;
   weight?: number;
   price: number;
+  priceType: number,
   cash: number;
 
 }

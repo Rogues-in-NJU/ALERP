@@ -33,13 +33,13 @@ export class CustomerService {
           productId: 0,
           productName: '铝棒',
           price: 1000,
-          unit: 1
+          priceType: 1
         }, {
           id: 2,
           productId: 2,
           productName: '铝条',
           price: 2000,
-          unit: 2
+          priceType: 2
         }]
       }
     });
