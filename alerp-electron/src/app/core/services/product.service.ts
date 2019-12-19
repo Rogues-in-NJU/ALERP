@@ -68,4 +68,18 @@ export class ProductService {
       })
   }
 
+  updateOrAddProduct(queryParams: ProductVO): ResultVO<any>{
+    return {
+      code: 200,
+      message: 'success',
+    }
+  }
+
+  deleteProduct(productId: string): ResultVO<any>{
+    return {
+      code: 400,
+      message: '网络错误',
+    }
+  }
+
 }
