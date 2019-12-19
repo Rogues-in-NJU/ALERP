@@ -8,7 +8,6 @@ import edu.nju.alerp.customer.dto.SpecialPricesDTO;
 import edu.nju.alerp.customer.service.CustomerService;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrices;
-import edu.nju.alerp.enums.CustomerType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,12 +39,12 @@ public class CustomerServiceImpl implements CustomerService {
         BeanUtils.copyProperties(customerDTO, customer);
         //前台需要传操作人信息，记录创建者是谁
         List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
-        for (SpecialPricesDTO SpecialPricesDTO : specialPricesList) {
+        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
             SpecialPrices specialPrices = SpecialPrices.builder()
                     .createdAt(sdf.format(new Date()))
 //                    .createdById() //待获取用户id
                     .build();
-            BeanUtils.copyProperties(SpecialPricesDTO, specialPrices);
+            BeanUtils.copyProperties(specialPricesDTO, specialPrices);
             specialPricesRepository.save(specialPrices);
         }
         customerRepository.save(customer);
@@ -58,7 +57,22 @@ public class CustomerServiceImpl implements CustomerService {
                 .updated_at(sdf.format(new Date()))
                 .build();
         BeanUtils.copyProperties(customerDTO, customer);
-        //todo 特殊价格的生成
+        List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
+            SpecialPrices specialPrices = specialPricesRepository.getOne(specialPricesDTO.getId());
+            if(specialPrices == null){
+                specialPrices = SpecialPrices.builder()
+                        .createdAt(sdf.format(new Date()))
+//                    .createdById() //待获取用户id
+                        .build();
+                BeanUtils.copyProperties(specialPricesDTO, specialPrices);
+            }
+            else{
+                specialPrices.setUpdateAt(sdf.format(new Date()));
+//                specialPrices.setUpdateById();//待获取用户id
+            }
+            specialPricesRepository.save(specialPrices);
+        }
         customerRepository.save(customer);
 
         return false;
@@ -72,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerInfo getCustomerInfo(int id) {
         Customer customer = getCustomer(id);
-        //todo 特惠价格
+        //todo 特惠价格 待关神商品模块更新
         CustomerInfo customerInfo = CustomerInfo.builder()
                 .specialPricesDTOList(null)
                 .build();
@@ -89,7 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customer.setDeleted_at(sdf.format(new Date()));
         customerRepository.save(customer);
-        //todo 是否需要把对应优惠价格删除
+        //考虑到客户为懒删除，建议暂存特惠价格数据
         return false;
     }
 
