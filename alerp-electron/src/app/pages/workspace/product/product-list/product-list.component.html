@@ -54,10 +54,15 @@
 
         <td>
           <ng-container *ngIf="editCache._id !== data['_id']">
-            {{ data.type }}
+            {{ data.type | product_type}}
           </ng-container>
           <ng-container *ngIf="editCache._id === data['_id']">
-            <input type="text" nz-input [(ngModel)]="editCache.data.type">
+            <nz-select [(ngModel)]="editCache.data.type">
+              <nz-option nzLabel="板材" [nzValue]="0"></nz-option>
+              <nz-option nzLabel="型材" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="铝棒" [nzValue]="2"></nz-option>
+              <nz-option nzLabel="损耗" [nzValue]="3"></nz-option>
+            </nz-select>
           </ng-container>
         </td>
 

@@ -208,7 +208,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 interface TempProductInfoVO{
   id?: number;
   name?: string;
-  shortHand?: string;
+  shorthand?: string;
   type?: number;
   density?: number;
   specification?: string;

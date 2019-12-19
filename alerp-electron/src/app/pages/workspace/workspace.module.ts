@@ -20,7 +20,7 @@ const routes: Routes = [
   }, {
     path: 'expense',
     loadChildren: './expense/expense.module#ExpenseModule'
-  },{
+  }, {
     path: 'user-management',
     loadChildren: './user-management/user-management.module#UserManagementModule'
   }, {
@@ -29,6 +29,9 @@ const routes: Routes = [
   }, {
     path: 'product',
     loadChildren: './product/product.module#ProductModule'
+  }, {
+    path: 'shipping-order',
+    loadChildren: './shipping-order/shipping-order.module#ShippingOrderModule'
   }
 ];
 

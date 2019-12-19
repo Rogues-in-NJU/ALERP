@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import {ProductListComponent} from "./product-list/product-list.component";
 import {AuthorizationGuard} from "../../../guards/authorization.guard";
 import {SharedModule} from "../../../shared/shared.module";
+import {ProductTypePipe} from "./product.pipe";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'list' },
@@ -19,7 +20,8 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes), SharedModule],
-  declarations: [ProductListComponent],
+  declarations: [ProductListComponent,
+    ProductTypePipe],
   exports: [ RouterModule ]
 })
 export class ProductModule {
