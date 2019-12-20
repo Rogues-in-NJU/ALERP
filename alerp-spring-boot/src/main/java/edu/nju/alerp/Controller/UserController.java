@@ -1,9 +1,9 @@
-package edu.nju.alerp.user.controller;
+package edu.nju.alerp.Controller;
 
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.entity.User;
-import edu.nju.alerp.user.dto.UserDTO;
-import edu.nju.alerp.user.service.UserService;
+import edu.nju.alerp.Dto.UserDTO;
+import edu.nju.alerp.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 用户Controller层
@@ -49,8 +47,11 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResponseResult<List<User>> list() {
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public ResponseResult<List<User>> list(@RequestParam(value = "pageIndex") int pageIndex,
+                                           @RequestParam(value = "pageSize") int pageSize,
+                                           @RequestParam(value = "name") String name,
+                                           @RequestParam(value = "status") int status) {
         List<User> userList = userService.getUserList();
         return ResponseResult.ok(userList);
     }

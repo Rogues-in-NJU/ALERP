@@ -1,6 +1,5 @@
-package edu.nju.alerp.shippingOrder.service.Impl;
+package edu.nju.alerp.Service;
 
-import edu.nju.alerp.shippingOrder.service.ShippingOrderService;
 
 /**
  * @Description: 出货单服务层接口实现

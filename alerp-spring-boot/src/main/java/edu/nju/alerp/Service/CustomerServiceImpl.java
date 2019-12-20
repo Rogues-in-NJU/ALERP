@@ -1,13 +1,13 @@
-package edu.nju.alerp.customer.service.Impl;
+package edu.nju.alerp.Service;
 
-import edu.nju.alerp.customer.dao.CustomerRepository;
-import edu.nju.alerp.customer.dao.SpecialPricesRepository;
-import edu.nju.alerp.customer.dto.CustomerDTO;
-import edu.nju.alerp.customer.dto.CustomerInfo;
-import edu.nju.alerp.customer.dto.SpecialPricesDTO;
-import edu.nju.alerp.customer.service.CustomerService;
+import edu.nju.alerp.Dto.CustomerDTO;
+import edu.nju.alerp.Dto.SpecialPricesDTO;
+import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.Repo.CustomerRepository;
+import edu.nju.alerp.Repo.SpecialPricesRepository;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrices;
+import edu.nju.alerp.util.ListResponseUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 客户服务层接口实现
@@ -30,6 +31,8 @@ public class CustomerServiceImpl implements CustomerService {
     private SpecialPricesRepository specialPricesRepository;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private ListResponseUtils listResponseUtils = new ListResponseUtils();
 
     @Override
     public boolean addCustomer(CustomerDTO customerDTO) {
@@ -84,15 +87,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerInfo getCustomerInfo(int id) {
-        Customer customer = getCustomer(id);
-        //todo 特惠价格 待关神商品模块更新
-        CustomerInfo customerInfo = CustomerInfo.builder()
-                .specialPricesDTOList(null)
-                .build();
-        BeanUtils.copyProperties(customer, customerInfo);
-
-        return customerInfo;
+    public List<SpecialPrices> getSpecialPricesListByCustomerId(int id) {
+        return specialPricesRepository.findByCustomerId(id);
     }
 
     @Override
@@ -110,5 +106,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getCustomerList() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public ListResponse getCustomerListByName(int pageIndex, int pageSize, String name) {
+        List<Customer> customerList = getCustomerList().stream().filter(c -> c.getName().contains(name) || c.getShorthand().contains(name)).collect(Collectors.toList());
+        return listResponseUtils.getListResponse(customerList, pageIndex, pageSize);
     }
 }

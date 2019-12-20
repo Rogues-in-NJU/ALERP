@@ -1,4 +1,4 @@
-package edu.nju.alerp.customer.dao;
+package edu.nju.alerp.Repo;
 
 import edu.nju.alerp.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;

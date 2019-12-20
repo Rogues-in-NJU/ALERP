@@ -1,4 +1,4 @@
-package edu.nju.alerp.user.dto;
+package edu.nju.alerp.Dto;
 
 import edu.nju.alerp.entity.Auth;
 import lombok.Builder;

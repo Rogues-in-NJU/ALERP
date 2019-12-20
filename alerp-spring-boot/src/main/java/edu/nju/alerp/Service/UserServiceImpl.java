@@ -1,16 +1,18 @@
-package edu.nju.alerp.user.service.Impl;
+package edu.nju.alerp.Service;
 
+import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
-import edu.nju.alerp.user.dao.UserRepository;
-import edu.nju.alerp.user.dto.UserDTO;
-import edu.nju.alerp.user.service.UserService;
+import edu.nju.alerp.Repo.UserRepository;
+import edu.nju.alerp.Dto.UserDTO;
+import edu.nju.alerp.util.ListResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 用户服务层实现
@@ -23,6 +25,8 @@ public class UserServiceImpl implements UserService{
     UserRepository userRepository;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private ListResponseUtils listResponseUtils = new ListResponseUtils();
 
     @Override
     public boolean addUser(UserDTO userDTO) {
@@ -66,6 +70,13 @@ public class UserServiceImpl implements UserService{
         user.setDeleted_at(sdf.format(new Date()));
         userRepository.save(user);
         return true;
+    }
+
+    @Override
+    public ListResponse getUserList(int pageIndex, int pageSize, String name, int status) {
+        List<User> userList = getUserList().stream().filter(u -> u.getStatus() == status && (u.getName().contains(name) || u.getPhone_number().contains(name)))
+                .collect(Collectors.toList());
+        return listResponseUtils.getListResponse(userList, pageIndex, pageSize);
     }
 
     @Override

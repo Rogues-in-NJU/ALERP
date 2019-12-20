@@ -1,4 +1,4 @@
-package edu.nju.alerp.shippingOrder.service;
+package edu.nju.alerp.Service;
 
 /**
  * @Description: 出货单服务层接口

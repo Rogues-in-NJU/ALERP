@@ -1,9 +1,9 @@
-package edu.nju.alerp.customer.service;
+package edu.nju.alerp.Service;
 
-import edu.nju.alerp.customer.dto.CustomerDTO;
-import edu.nju.alerp.customer.dto.CustomerInfo;
+import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.Customer;
-
+import edu.nju.alerp.entity.SpecialPrices;
+import edu.nju.alerp.Dto.CustomerDTO;
 import java.util.List;
 
 /**
@@ -19,9 +19,11 @@ public interface CustomerService {
 
     Customer getCustomer(int id);
 
-    CustomerInfo getCustomerInfo(int id);
+    List<SpecialPrices> getSpecialPricesListByCustomerId(int id);
 
     boolean deleteCustomer(int id);
 
     List<Customer> getCustomerList();
+
+    ListResponse getCustomerListByName(int pageIndex, int pageSize, String name);
 }

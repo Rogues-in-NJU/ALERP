@@ -22,8 +22,8 @@ public class SpecialPrices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private int customerId;
     private int productId;
-    private String productName;
     private double price;
     private String createdAt;
     private int createdById;

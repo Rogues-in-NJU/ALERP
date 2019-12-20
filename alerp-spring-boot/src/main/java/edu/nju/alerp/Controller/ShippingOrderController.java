@@ -1,4 +1,4 @@
-package edu.nju.alerp.shippingOrder.controller;
+package edu.nju.alerp.Controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
