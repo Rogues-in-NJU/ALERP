@@ -42,15 +42,9 @@
           </li>
         </ul>
       </li>
-      <li nz-submenu nzTitle="出货单管理" nzIcon="upload">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="shipping-order/list">出货单列表</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="shipping-order/add">新增出货单</a>
-          </li>
-        </ul>
+      <li nz-menu-item routerLink="shipping-order/list" nzMatchRouter>
+        <i nz-icon nzType="upload"></i>
+        <span>出货单管理</span>
       </li>
       <li nz-submenu nzTitle="欠款明细" nzIcon="account-book">
         <ul>

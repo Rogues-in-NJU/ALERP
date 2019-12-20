@@ -4,7 +4,7 @@ import {ShippingOrderListComponent} from "./shipping-order-list/shipping-order-l
 import {ShippingOrderInfoComponent} from "./shipping-order-info/shipping-order-info.component";
 import {ShippingOrderAddComponent} from "./shipping-order-add/shipping-order-add.component";
 import {AuthorizationGuard} from "../../../guards/authorization.guard";
-import {ShippingOrderStatusPipe} from "./shipping-order.pipe";
+import {ShippingOrderPriceTypePipe, ShippingOrderStatusColorPipe, ShippingOrderStatusPipe} from "./shipping-order.pipe";
 import {CoreModule} from "../../../core/core.module";
 import {SharedModule} from "../../../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
@@ -29,13 +29,13 @@ const routes: Routes = [
       removable: true
     }
   },
-  { path: 'info/:id',
+  { path: 'info/:code',
     component: ShippingOrderInfoComponent,
     canActivate: [AuthorizationGuard],
     data: {
       title: '出货单{}',
       removable: true,
-      replaceParams: ['id']
+      replaceParams: ['code']
     }
   }
 ];
@@ -50,7 +50,9 @@ const routes: Routes = [
   declarations: [ShippingOrderListComponent,
     ShippingOrderInfoComponent,
     ShippingOrderAddComponent,
-    ShippingOrderStatusPipe],
+    ShippingOrderStatusPipe,
+    ShippingOrderStatusColorPipe,
+    ShippingOrderPriceTypePipe],
   exports: [ RouterModule ]
 })
 export class ShippingOrderModule {}
