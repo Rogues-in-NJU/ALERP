@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CloseTabEvent, TabService } from "../../../../core/services/tab.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { PurchaseOrderInfoVO } from "../../../../core/model/purchase-order";
+import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
 import { ClosableTab } from "../../tab/tab.component";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
 import { ResultVO } from "../../../../core/model/result-vm";
@@ -17,11 +17,11 @@ import { Objects } from "../../../../core/services/util.service";
 export class PurchaseOrderInfoComponent implements ClosableTab, OnInit {
 
   isLoading: boolean = true;
-  purchaseOrderId: string;
-  purchaseOrderData: PurchaseOrderInfoVO;
+  purchaseOrderId: number;
+  purchaseOrderData: PurchaseOrderVO;
 
   constructor(
-    private closeTabService: TabService,
+    private tab: TabService,
     private route: ActivatedRoute,
     private router: Router,
     private purchaseOrder: PurchaseOrderService,
@@ -31,9 +31,9 @@ export class PurchaseOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.purchaseOrderId = this.route.snapshot.params['id'];
+    this.purchaseOrderId = this.route.snapshot.params[ 'id' ];
     this.purchaseOrder.find(this.purchaseOrderId)
-      .subscribe((res: ResultVO<PurchaseOrderInfoVO>) => {
+      .subscribe((res: ResultVO<PurchaseOrderVO>) => {
         if (!Objects.valid(res)) {
           return;
         }
@@ -45,11 +45,11 @@ export class PurchaseOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   tabClose(): void {
-    this.closeTabService.closeEvent.emit({
-      url: this.router.url,
-      refreshUrl: null,
-      routeConfig: this.route.snapshot.routeConfig
-    });
+    // this.tab.closeEvent.emit({
+    //   url: this.router.url,
+    //   refreshUrl: null,
+    //   routeConfig: this.route.snapshot.routeConfig
+    // });
   }
 
 }

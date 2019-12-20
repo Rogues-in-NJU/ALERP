@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { ResultVO, TableQueryParams } from "../model/result-vm";
+import { QueryParams, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { Observable, of } from "rxjs";
 import { ProductVO } from "../model/product";
 
@@ -15,7 +15,10 @@ export class ProductService {
 
   }
 
-  findAll(queryParams: object): Observable<ResultVO<ProductVO[]>> {
+  findAll(
+    queryParams: QueryParams | TableQueryParams
+  ): Observable<ResultVO<ProductVO[]>>
+    | Observable<ResultVO<TableResultVO<ProductVO>>> {
     return of({
       code: 200,
       message: '',
@@ -27,14 +30,6 @@ export class ProductService {
         density: 1,
         specification: '2*2*2'
       }]
-    })
-  }
-
-  findAllByPage(queryParams: TableQueryParams): Observable<ResultVO<ProductVO>> {
-    return of({
-      code: 200,
-      message: '',
-      data: null
     });
   }
 

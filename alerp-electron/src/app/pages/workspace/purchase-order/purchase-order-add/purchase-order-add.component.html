@@ -107,8 +107,8 @@
                      (nzOnSearch)="onSearch($event)"
                      (ngModelChange)="onChangeSelected($event)"
                      style="width: 100px">
-            <ng-container *ngFor="let p of searchProducts; let i = index;">
-              <nz-option *ngIf="!isLoading && i == 0" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+            <nz-option *ngIf="!isLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+            <ng-container *ngFor="let p of searchProducts">
               <nz-option *ngIf="!isLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
             </ng-container>
             <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>

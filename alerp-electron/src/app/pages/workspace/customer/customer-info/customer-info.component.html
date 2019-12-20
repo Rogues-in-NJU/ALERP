@@ -23,7 +23,7 @@
   <nz-skeleton [nzActive]="true"></nz-skeleton>
 </div>
 <div class="content" *ngIf="!isLoading">
-  <nz-descriptions nzBordered>
+  <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="客户ID">
       {{ customerData.id }}
     </nz-descriptions-item>
@@ -145,8 +145,8 @@
                      (nzOnSearch)="onProductSearch($event)"
                      (ngModelChange)="onChangeSelectedProduct($event)"
                      style="width: 100px">
-            <ng-container *ngFor="let p of searchProducts; let i = index;">
-              <nz-option *ngIf="!isProductsLoading && i == 0" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+            <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+            <ng-container *ngFor="let p of searchProducts">
               <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
             </ng-container>
             <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>

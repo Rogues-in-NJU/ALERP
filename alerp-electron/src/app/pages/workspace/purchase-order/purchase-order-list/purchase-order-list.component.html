@@ -12,7 +12,7 @@
     <nz-form-item>
       <nz-form-label>采购单编号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="orderId"/>
+        <input nz-input type="text" [(ngModel)]="orderCode"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -68,10 +68,14 @@
             <a routerLink="/workspace/purchase-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
           <td nzBreakWord>{{ data.description }}</td>
-          <td>&yen;{{ data.cash | number: '1.2-2' }}</td>
+          <td>&yen;{{ data.cash | number: '1.2-3' }}</td>
           <td>{{ data.salesman }}</td>
           <td>{{ data.doneAt }}</td>
-          <td><nz-tag nzColor="{{ data.status | purchase_order_status_color }}">{{ data.status | purchase_order_status }}</nz-tag></td>
+          <td>
+            <nz-tag nzColor="{{ data.status | purchase_order_status_color }}">
+              {{ data.status | purchase_order_status }}
+            </nz-tag>
+          </td>
           <td nzRight="0px">
             <a routerLink="/workspace/purchase-order/info/{{ data.id }}">查看</a>
             <a style="margin-left: 5px"

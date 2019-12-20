@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { RefreshableTab } from "../../tab/tab.component";
-import { PurchaseOrderInfoVO } from "../../../../core/model/purchase-order";
+import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
 import { AuthService } from "../../../../core/services/user.service";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
 import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
@@ -22,11 +22,11 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   pageIndex: number = 1;
   pageSize: number = 10;
 
-  orderId: string;
+  orderCode: string;
   selectedStatus: number;
   timeRange: Date[];
 
-  orderList: PurchaseOrderInfoVO[] = [];
+  orderList: PurchaseOrderVO[] = [];
 
   constructor(
     private router: Router,
@@ -39,32 +39,35 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    this.refresh();
   }
 
   search(): void {
-    // console.log(this.orderId);
+    // console.log(this.orderCode);
     // console.log(this.selectedStatus);
     // console.log(this.timeRange);
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     };
+    this.isLoading = true;
     this.purchaseOrder.findAll(queryParams)
-      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderInfoVO>>) => {
+      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderVO>>) => {
         if (!Objects.valid(res)) {
           return;
         }
         if (res.code !== 200) {
           return;
         }
-        const tableResult: TableResultVO<PurchaseOrderInfoVO> = res.data;
+        const tableResult: TableResultVO<PurchaseOrderVO> = res.data;
         this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.orderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+      }, () => {
+        this.isLoading = false;
       });
   }
 
@@ -73,6 +76,7 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   refresh(): void {
+    this.search();
   }
 
 }
