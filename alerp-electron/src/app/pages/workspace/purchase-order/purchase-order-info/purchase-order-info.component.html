@@ -6,8 +6,8 @@
   <nz-skeleton [nzActive]="true"></nz-skeleton>
 </div>
 <div class="content" *ngIf="!isLoading">
-  <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="采购单编号">{{ purchaseOrderId }}</nz-descriptions-item>
+  <nz-descriptions nzBordered nzSize="small">
+    <nz-descriptions-item nzTitle="采购单编号">{{ purchaseOrderData.code }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购公司" [nzSpan]="2">{{ purchaseOrderData.purchasingCompany }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="描述" [nzSpan]="3">{{ purchaseOrderData.description }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-3' }}</nz-descriptions-item>
@@ -17,7 +17,7 @@
     <nz-descriptions-item nzTitle="采购时间" [nzSpan]="2">{{ purchaseOrderData.doneAt }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ purchaseOrderData.salesman }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ purchaseOrderData.createdAt }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="录入员" [nzSpan]="2">{{ purchaseOrderData.createdByName }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="创建者" [nzSpan]="2">{{ purchaseOrderData.createdByName }}</nz-descriptions-item>
   </nz-descriptions>
   <br/>
   <h3>采购商品列表</h3>

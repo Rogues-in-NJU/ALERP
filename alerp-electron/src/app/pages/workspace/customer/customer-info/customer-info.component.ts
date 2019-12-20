@@ -14,7 +14,7 @@ import { debounceTime, map, switchMap } from "rxjs/operators";
 @Component({
   selector: 'customer-info',
   templateUrl: './customer-info.component.html',
-  styleUrls: ['./customer-info.component.less']
+  styleUrls: [ './customer-info.component.less' ]
 })
 export class CustomerInfoComponent implements OnInit {
 
@@ -39,7 +39,7 @@ export class CustomerInfoComponent implements OnInit {
     currentProduct?: TempProductVO,
     isAdd?: boolean
   } = {};
-  defaultEditCache: {
+  defaultEditCache: any = {
     _id: null,
     data: null,
     product: null,
@@ -84,15 +84,14 @@ export class CustomerInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.customerId = this.route.snapshot.params['id'];
+    this.customerId = this.route.snapshot.params[ 'id' ];
     this.reload();
 
     const getProducts: any = (name: string) => {
-      return this.product
-        .findAll({})
-        .pipe(
-          map((res: ResultVO<ProductVO[]>) => res.data)
-        );
+      const t: Observable<ResultVO<ProductVO[]>>
+        = <Observable<ResultVO<ProductVO[]>>>this.product
+        .findAll({});
+      return t.pipe(map(res => res.data));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChange$
       .asObservable()
@@ -101,13 +100,14 @@ export class CustomerInfoComponent implements OnInit {
     optionList$.subscribe((data: ProductVO[]) => {
       this.searchProducts = data;
       this.isProductsLoading = false;
-    })
+    });
+    console.log(this.editCache);
   }
 
   startInfoEdit(): void {
     this.isInfoEditing = true;
     for (const k in this.customerDataValidate) {
-      this.customerDataValidate[k] = null;
+      this.customerDataValidate[ k ] = null;
     }
     this.customerDataCache = {
       name: '',
@@ -121,9 +121,9 @@ export class CustomerInfoComponent implements OnInit {
 
   onInputValueChange(value: any, name: string): void {
     if (!Objects.valid(value) || StringUtils.isEmpty(value + '')) {
-      this.customerDataValidate[name] = 'error';
+      this.customerDataValidate[ name ] = 'error';
     } else {
-      this.customerDataValidate[name] = null;
+      this.customerDataValidate[ name ] = null;
     }
   }
 
@@ -166,7 +166,7 @@ export class CustomerInfoComponent implements OnInit {
     this.customerDataCache = null;
     this.isInfoEditing = false;
     for (const k in this.customerDataValidate) {
-      this.customerDataValidate[k] = null;
+      this.customerDataValidate[ k ] = null;
     }
   }
 
@@ -182,12 +182,12 @@ export class CustomerInfoComponent implements OnInit {
       price: 0,
       priceType: 1
     };
-    item['_id'] = this.customerSpecialPriceCountIndex ++;
+    item[ '_id' ] = this.customerSpecialPriceCountIndex++;
     this.customerData.specialPrices = [
       item,
       ...this.customerData.specialPrices
     ];
-    this.startEditSpecialPrice(item['_id'], true);
+    this.startEditSpecialPrice(item[ '_id' ], true);
   }
 
   onProductSearch(value: string): void {
@@ -205,14 +205,14 @@ export class CustomerInfoComponent implements OnInit {
       this.message.warning('请先保存特价列表的更改!');
       return;
     }
-    const index = this.customerData.specialPrices.findIndex(item => item['_id'] === _id);
+    const index = this.customerData.specialPrices.findIndex(item => item[ '_id' ] === _id);
     if (index === -1) {
       this.message.error('没有该特价条目!');
       return;
     }
     this.editCache._id = _id;
     this.editCache.data = {};
-    const t: CustomerSpecialPriceVO = this.customerData.specialPrices[index];
+    const t: CustomerSpecialPriceVO = this.customerData.specialPrices[ index ];
     Object.assign(this.editCache.data, t);
     this.editCache.currentProduct = {
       id: t.productId,
@@ -227,12 +227,12 @@ export class CustomerInfoComponent implements OnInit {
   }
 
   confirmSpecialPriceDelete(_id: number): void {
-    this.customerData.specialPrices = this.customerData.specialPrices.filter(item => item['_id'] !== _id);
+    this.customerData.specialPrices = this.customerData.specialPrices.filter(item => item[ '_id' ] !== _id);
   }
 
   cancelSpecialPriceEdit(_id: number): void {
     if (Objects.valid(this.editCache.isAdd) && this.editCache.isAdd) {
-      this.customerData.specialPrices = this.customerData.specialPrices.filter(item => item['_id'] !== _id);
+      this.customerData.specialPrices = this.customerData.specialPrices.filter(item => item[ '_id' ] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
   }
@@ -241,8 +241,8 @@ export class CustomerInfoComponent implements OnInit {
     if (_id !== this.editCache._id) {
       return;
     }
-    const index = this.customerData.specialPrices.findIndex(item => item['_id'] === _id);
-    Object.assign(this.customerData.specialPrices[index], this.editCache.data);
+    const index = this.customerData.specialPrices.findIndex(item => item[ '_id' ] === _id);
+    Object.assign(this.customerData.specialPrices[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
     // TODO: 提交远程
   }
@@ -259,10 +259,11 @@ export class CustomerInfoComponent implements OnInit {
         this.customerData = res.data;
         if (Objects.valid(this.customerData.specialPrices)) {
           this.customerData.specialPrices.forEach(item => {
-            item['_id'] = this.customerSpecialPriceCountIndex ++;
+            item[ '_id' ] = this.customerSpecialPriceCountIndex++;
           });
         }
-        console.log(this.customerData);
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
       });
   }
 
@@ -272,7 +273,8 @@ interface TempProductVO {
 
   id: number;
   name: string;
-  [key: string]: any;
+
+  [ key: string ]: any;
 
 }
 

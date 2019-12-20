@@ -1,6 +1,6 @@
 import { BaseInfo } from "./base-info";
 
-export interface PurchaseOrderInfoVO extends BaseInfo {
+export interface PurchaseOrderVO extends BaseInfo {
 
   id?: number;
   code?: string;
@@ -11,11 +11,11 @@ export interface PurchaseOrderInfoVO extends BaseInfo {
   doneAt: string;
   status?: number;
 
-  products?: PurchaseOrderProductInfoVO[];
+  products?: PurchaseOrderProductVO[];
 
 }
 
-export interface PurchaseOrderProductInfoVO {
+export interface PurchaseOrderProductVO {
 
   id?: number;
   productId: number,

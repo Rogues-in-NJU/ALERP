@@ -4,7 +4,7 @@ import { TabService } from "../../../../core/services/tab.service";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
 import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { PurchaseOrderInfoVO, PurchaseOrderProductInfoVO } from "../../../../core/model/purchase-order";
+import { PurchaseOrderVO, PurchaseOrderProductVO } from "../../../../core/model/purchase-order";
 import { ProductService } from "../../../../core/services/product.service";
 import { ProductVO } from "../../../../core/model/product";
 import { ResultVO } from "../../../../core/model/result-vm";
@@ -22,7 +22,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
 
   purchaseOrderForm: FormGroup;
-  products: PurchaseOrderProductInfoVO[] = [];
+  products: PurchaseOrderProductVO[] = [];
   editCache: {
     _id?: number,
     data?: TempPurchaseOrderProductInfoVO,
@@ -68,7 +68,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
 
   ngOnInit(): void {
     for (let i = 0; i <= 3; i++) {
-      let item: PurchaseOrderProductInfoVO = {
+      let item: PurchaseOrderProductVO = {
         id: i,
         productId: 1,
         name: `Edrward ${i}`,
@@ -91,11 +91,10 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       doneAt: [ null, Validators.required ]
     });
     const getProducts: any = (name: string) => {
-      return this.product
-        .findAll({})
-        .pipe(
-          map((res: ResultVO<ProductVO[]>) => res.data)
-        )
+      const t: Observable<ResultVO<ProductVO[]>>
+        = <Observable<ResultVO<ProductVO[]>>>this.product
+        .findAll({});
+      return t.pipe(map(res => res.data));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChange$
       .asObservable()
@@ -112,7 +111,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       return;
     }
     let formData: any = this.purchaseOrderForm.getRawValue();
-    let purchaseOrderAdd: PurchaseOrderInfoVO = {
+    let purchaseOrderAdd: PurchaseOrderVO = {
       purchasingCompany: formData.purchasingCompany,
       description: formData.description,
       cash: formData.cash,
@@ -139,7 +138,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       this.message.warning('请先保存商品列表的更改!');
       return;
     }
-    let item: PurchaseOrderProductInfoVO = {
+    let item: PurchaseOrderProductVO = {
       id: 0,
       productId: 0,
       name: '',

@@ -45,3 +45,54 @@ export class DateUtils {
   }
 
 }
+
+export class SpecificationUtils {
+
+  static NUM_PATT = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/i;
+  static FAI_U = 'Φ';
+  static FAI_L = 'φ';
+
+  public static convert(str: string): number[] {
+    if (StringUtils.isEmpty(str)) {
+      return null;
+    }
+    str = str.replace(/ /g, '');
+    const splits: string[] = str.split('*');
+    if (splits.length < 2 || splits.length > 3) {
+      return null;
+    }
+    if (splits.length === 2) {
+      let diameterStr: string;
+      let heightStr: string;
+      if (splits[0].startsWith(SpecificationUtils.FAI_U) || splits[0].startsWith(SpecificationUtils.FAI_L)) {
+        diameterStr = splits[0].substring(1);
+        heightStr = splits[1];
+      } else {
+        return null;
+      }
+      if (diameterStr.search(SpecificationUtils.NUM_PATT) === -1) {
+        return null;
+      }
+      if (heightStr.search(SpecificationUtils.NUM_PATT) === -1) {
+        return null;
+      }
+      return [parseFloat(diameterStr), parseFloat(heightStr)];
+    }
+    if (splits.length === 3) {
+      for (const s in splits) {
+        if (s.search(SpecificationUtils.NUM_PATT) === -1) {
+          return null;
+        }
+      }
+      return splits.map(s => {
+        return parseFloat(s);
+      });
+    }
+    return null;
+  }
+
+  public static valid(str: string): boolean {
+    return SpecificationUtils.convert(str) !== null;
+  }
+
+}

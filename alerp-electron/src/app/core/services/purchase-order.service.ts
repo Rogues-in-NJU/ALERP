@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
-import { PurchaseOrderInfoVO } from "../model/purchase-order";
+import { PurchaseOrderVO } from "../model/purchase-order";
 import { StringUtils } from "./util.service";
 
 @Injectable({
@@ -16,9 +16,9 @@ export class PurchaseOrderService {
 
   }
 
-  public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<PurchaseOrderInfoVO>>> {
+  public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<PurchaseOrderVO>>> {
     // // prod
-    // return this.http.post<ResultVO<TableResultVO<PurchaseOrderInfoVO>>>(
+    // return this.http.post<ResultVO<TableResultVO<PurchaseOrderVO>>>(
     //   `${AppConfig.BASE_URL}/api/purchase-order/list`,
     //   queryParams
     // );
@@ -44,12 +44,9 @@ export class PurchaseOrderService {
     });
   }
 
-  public find(id: string): Observable<ResultVO<PurchaseOrderInfoVO>> {
-    if (StringUtils.isEmpty(id)) {
-      return of(null);
-    }
+  public find(id: number): Observable<ResultVO<PurchaseOrderVO>> {
     // // prod
-    // return this.http.get<ResultVO<PurchaseOrderInfoVO>>(`${AppConfig.BASE_URL}/api/purchase-order/${_id}`);
+    // return this.http.get<ResultVO<PurchaseOrderVO>>(`${AppConfig.BASE_URL}/api/purchase-order/${_id}`);
     // test
     return of({
       code: 200,
@@ -78,7 +75,7 @@ export class PurchaseOrderService {
     });
   }
 
-  public save(info: PurchaseOrderInfoVO): Observable<ResultVO<any>> {
+  public save(info: PurchaseOrderVO): Observable<ResultVO<any>> {
     return of({
       code: 200,
       message: '',

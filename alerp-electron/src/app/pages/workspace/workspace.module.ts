@@ -18,6 +18,9 @@ const routes: Routes = [
     path: 'purchase-order',
     loadChildren: './purchase-order/purchase-order.module#PurchaseOrderModule'
   }, {
+    path: 'processing-order',
+    loadChildren: './processing-order/processing-order.module#ProcessingOrderModule'
+  }, {
     path: 'expense',
     loadChildren: './expense/expense.module#ExpenseModule'
   }, {
