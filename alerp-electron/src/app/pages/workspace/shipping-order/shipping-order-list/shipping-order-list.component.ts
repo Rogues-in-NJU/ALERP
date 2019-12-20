@@ -7,7 +7,6 @@ import {NzMessageService} from "ng-zorro-antd";
 import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
 import {TabService} from "../../../../core/services/tab.service";
 import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {PurchaseOrderInfoVO} from "../../../../core/model/purchase-order";
 import {Objects} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
 
@@ -52,14 +51,14 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
       pageSize: this.pageSize
     };
     this.shippingOrder.findAll(queryParams)
-      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderInfoVO>>) => {
+      .subscribe((res: ResultVO<TableResultVO<ShippingOrderInfoVO>>) => {
         if (!Objects.valid(res)) {
           return;
         }
         if (res.code !== 200) {
           return;
         }
-        const tableResult: TableResultVO<PurchaseOrderInfoVO> = res.data;
+        const tableResult: TableResultVO<ShippingOrderInfoVO> = res.data;
         this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
