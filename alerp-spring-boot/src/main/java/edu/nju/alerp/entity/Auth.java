@@ -3,6 +3,11 @@ package edu.nju.alerp.entity;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 /**
  * @Description: 权限
  * @Author: qianen.yin
@@ -10,7 +15,10 @@ import lombok.Data;
  */
 @Data
 @Builder
+@Entity
 public class Auth {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private int action;
 }
