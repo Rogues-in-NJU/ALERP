@@ -1,15 +1,15 @@
-import {Component, OnInit} from "@angular/core";
-import {RefreshableTab} from "../../tab/tab.component";
-import {ShippingOrderInfoVO} from "../../../../core/model/shipping-order";
-import {Router} from "@angular/router";
-import {AuthService} from "../../../../core/services/user.service";
-import {NzMessageService} from "ng-zorro-antd";
-import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
-import {TabService} from "../../../../core/services/tab.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {PurchaseOrderInfoVO} from "../../../../core/model/purchase-order";
-import {Objects} from "../../../../core/services/util.service";
-import {HttpErrorResponse} from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ShippingOrderInfoVO } from "../../../../core/model/shipping-order";
+import { Router } from "@angular/router";
+import { AuthService } from "../../../../core/services/user.service";
+import { NzMessageService } from "ng-zorro-antd";
+import { ShippingOrderService } from "../../../../core/services/shipping-order.service";
+import { TabService } from "../../../../core/services/tab.service";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
+import { Objects } from "../../../../core/services/util.service";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: 'shipping-order-list',
@@ -52,14 +52,14 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
       pageSize: this.pageSize
     };
     this.shippingOrder.findAll(queryParams)
-      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderInfoVO>>) => {
+      .subscribe((res: ResultVO<TableResultVO<PurchaseOrderVO>>) => {
         if (!Objects.valid(res)) {
           return;
         }
         if (res.code !== 200) {
           return;
         }
-        const tableResult: TableResultVO<PurchaseOrderInfoVO> = res.data;
+        const tableResult: TableResultVO<PurchaseOrderVO> = res.data;
         this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
