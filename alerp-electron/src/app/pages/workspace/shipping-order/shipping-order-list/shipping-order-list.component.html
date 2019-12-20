@@ -1,10 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<p>??????/</p>
-</body>
-</html>
+<nz-page-header>
+  <nz-page-header-title>出货单列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" routerLink="/workspace/shipping-order/add">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增出货单
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>出货单编号</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="orderCode"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>客户</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="customerName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>状态</nz-form-label>
+      <nz-form-control>
+        <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
+          <nz-option nzLabel="已完成" nzValue="1"></nz-option>
+          <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>出货时间</nz-form-label>
+      <nz-form-control>
+        <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                         nzFormat="yyyy-MM-dd HH:mm"
+                         [nzPlaceHolder]="['开始时间', '结束时间']"
+                         [(ngModel)]="timeRange">
+
+        </nz-range-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <div class="table-wrapper">
+      <nz-table #shippingOrderTable
+                nzShowSizeChanger
+                [nzData]="orderList"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages"
+                [nzLoading]="isLoading"
+                [nzScroll]="{ x: '100%'}">
+        <thead>
+        <tr>
+<!--          code 客户 状态 应收金额 创建时间-->
+          <th nzLeft="0px" nzWidth="150px">编号</th>
+          <th>客户</th>
+          <th>金额</th>
+          <th>创建日期</th>
+          <th>状态</th>
+          <th nzRight="0px" nzWidth="150px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of shippingOrderTable.data">
+          <td nzLeft="0px">
+            <a routerLink="/workspace/shipping-order/info/{{ data.code }}">{{ data.code }}</a>
+          </td>
+          <td>{{ data.customerName }}</td>
+          <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
+          <td>{{ data.createdAt }}</td>
+          <td><nz-tag nzColor="{{ data.status | shipping_order_status_color }}">{{ data.status | shipping_order_status }}</nz-tag></td>
+          <td nzRight="0px">
+            <a routerLink="/workspace/shipping-order/info/{{ data.id }}">查看</a>
+            <a style="margin-left: 5px"
+               class="abandon"
+               [class.disabled]="false"
+               nz-popconfirm
+               nzPopconfirmTitle="确认废弃?"
+               nzPopconfirmPlacement="top"
+               (nzOnConfirm)="confirmAbandon(data.id)">
+              废弃
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
