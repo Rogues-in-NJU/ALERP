@@ -29,16 +29,14 @@ export class ProductService {
         type: 1,
         density: 1,
         specification: '2*2*2'
-      },
-        {
-          id: 2,
-          name: 'YY商品',
-          shorthand: 'XX',
-          type: 1,
-          density: 1,
-          specification: '2*2*2'
-        }
-        ]
+      }, {
+        id: 2,
+        name: 'YY商品',
+        shorthand: 'XX',
+        type: 1,
+        density: 1,
+        specification: '2*2*2'
+      }]
     })
   }
 
