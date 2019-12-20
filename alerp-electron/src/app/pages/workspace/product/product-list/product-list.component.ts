@@ -1,18 +1,16 @@
 /**
  * Created by Administrator on 2019/12/18.
  */
-import {Component, OnInit} from "@angular/core";
-import {RefreshableTab} from "../../tab/tab.component";
-import {TableQueryParams, ResultVO, TableResultVO} from "../../../../core/model/result-vm";
-import {ProductService} from "../../../../core/services/product.service";
-import {ProductVO} from "../../../../core/model/product";
-import {HttpErrorResponse} from "@angular/common/http";
-import {NzMessageService} from "ng-zorro-antd";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {debounceTime, map, switchMap} from "rxjs/operators";
-import {BehaviorSubject, Observable} from "rxjs";
-import {Objects} from "../../../../core/services/util.service";
-import {PurchaseOrderProductInfoVO} from "../../../../core/model/purchase-order";
+import { Component, OnInit } from "@angular/core";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ProductService } from "../../../../core/services/product.service";
+import { ProductVO } from "../../../../core/model/product";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NzMessageService } from "ng-zorro-antd";
+import { FormGroup } from "@angular/forms";
+import { BehaviorSubject } from "rxjs";
+import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'app-product-list',
