@@ -1,7 +1,11 @@
-package edu.nju.alerp.Service;
+package edu.nju.alerp.Service.Impl;
 
 import edu.nju.alerp.Dto.ProductDTO;
 import edu.nju.alerp.Repo.ProductRepository;
+import edu.nju.alerp.Service.ProductService;
+import edu.nju.alerp.common.ConditionSqlQuery.Condition;
+import edu.nju.alerp.common.ConditionSqlQuery.ConditionFactory;
+import edu.nju.alerp.common.ConditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,12 +37,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> findAllByPage(Pageable pageable, String name, int type) {
-        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
-            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
-            Predicate nameFuzzyMatch = criteriaBuilder.like(root.get("name").as(String.class), CommonUtils.fuzzyStringSplicing(name));
-            Predicate shorthandFuzzyMatch = criteriaBuilder.like(root.get("shorthand").as(String.class),CommonUtils.fuzzyStringSplicing(name));
-            return criteriaBuilder.and(typeEquals, criteriaBuilder.or(nameFuzzyMatch, shorthandFuzzyMatch));
-        };
+//        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+//            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
+//            Predicate nameFuzzyMatch = criteriaBuilder.like(root.get("name").as(String.class), CommonUtils.fuzzyStringSplicing(name));
+//            Predicate shorthandFuzzyMatch = criteriaBuilder.like(root.get("shorthand").as(String.class),CommonUtils.fuzzyStringSplicing(name));
+//            return criteriaBuilder.and(typeEquals, criteriaBuilder.or(nameFuzzyMatch, shorthandFuzzyMatch));
+//        };
+        QueryContainer<Product> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("type", type));
+            List<Condition> fuzzyMatch = new ArrayList<>();
+            fuzzyMatch.add(ConditionFactory.like("name", name));
+            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            sp.add(ConditionFactory.or(fuzzyMatch));
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
         return productRepository.findAll(sp, pageable);
     }
 
