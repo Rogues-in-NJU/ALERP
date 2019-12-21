@@ -3,16 +3,19 @@ package edu.nju.alerp.Controller;
 
 import edu.nju.alerp.Dto.ProductDTO;
 import edu.nju.alerp.Service.ProductService;
+import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.util.ListResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * @Description: 商品Controller
@@ -34,7 +37,8 @@ public class ProductController {
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name") String name,
                                                             @RequestParam(value = "type") int type) {
-        return ResponseResult.ok(productService.findAllByPage(pageIndex, pageSize, name, type));
+        Page<Product> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
     @RequestMapping(value = "/{id}")
@@ -43,7 +47,12 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public void addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
-
+    public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
+        try {
+            int res = productService.addOrUpdate(productDTO);
+            return ResponseResult.ok(res);
+        }catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
     }
 }

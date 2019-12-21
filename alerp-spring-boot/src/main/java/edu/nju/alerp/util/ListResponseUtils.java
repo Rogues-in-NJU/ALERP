@@ -1,6 +1,7 @@
 package edu.nju.alerp.util;
 
 import edu.nju.alerp.common.ListResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,5 +23,14 @@ public class ListResponseUtils {
                 .skip(pageSize * (pageIndex - 1))
                 .limit(pageSize).collect(Collectors.toList()));
         return res;
+    }
+
+    public static ListResponse generateResponse(Page page, int pageIndex, int pageSize) {
+        ListResponse listResponse = new ListResponse();
+        listResponse.setTotalPages(page.getTotalPages());
+        listResponse.setPageSize(pageSize);
+        listResponse.setPageIndex(pageIndex);
+        listResponse.setResult(page);
+        return listResponse;
     }
 }
