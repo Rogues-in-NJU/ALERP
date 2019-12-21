@@ -23,10 +23,10 @@ public class SpecialPrices {
     private int customerId;
     private int productId;
     private double price;
-    private String createdAt;
-    private int createdById;
-    private String updateAt;
-    private int updateById;
-    private String deletedAt;
-    private int deleteById;
+    private String created_at;
+    private int created_by;
+    private String update_at;
+    private int update_by;
+    private String delete_at;
+    private int delete_by;
 }

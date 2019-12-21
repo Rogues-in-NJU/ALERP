@@ -1,5 +1,6 @@
 package edu.nju.alerp.Controller;
 
+import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.Dto.UserDTO;
@@ -47,12 +48,12 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public ResponseResult<List<User>> list(@RequestParam(value = "pageIndex") int pageIndex,
-                                           @RequestParam(value = "pageSize") int pageSize,
-                                           @RequestParam(value = "name") String name,
-                                           @RequestParam(value = "status") int status) {
-        List<User> userList = userService.getUserList();
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
+                                             @RequestParam(value = "pageSize") int pageSize,
+                                             @RequestParam(value = "name") String name,
+                                             @RequestParam(value = "status") int status) {
+        ListResponse userList = userService.getUserList(pageIndex, pageSize, name, status);
         return ResponseResult.ok(userList);
     }
 

@@ -19,6 +19,6 @@ import javax.persistence.Id;
 public class Auth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
     private int action;
 }
