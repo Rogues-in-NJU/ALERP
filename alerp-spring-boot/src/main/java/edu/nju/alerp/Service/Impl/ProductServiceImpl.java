@@ -1,6 +1,7 @@
-package edu.nju.alerp.Service;
+package edu.nju.alerp.Service.Impl;
 
 import edu.nju.alerp.Repo.ProductRepository;
+import edu.nju.alerp.Service.ProductService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.Product;
 import lombok.extern.slf4j.Slf4j;
