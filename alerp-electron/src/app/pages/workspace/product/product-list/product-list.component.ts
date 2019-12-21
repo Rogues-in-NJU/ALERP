@@ -74,7 +74,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       type : this.query_type
     };
 
-    this.product.findAllByPage(queryParams)
+    this.product.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProductVO>>) =>{
         if(!res){
           return;

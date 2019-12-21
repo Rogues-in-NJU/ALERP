@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { PurchaseOrderVO, PurchaseOrderProductVO } from "../../../../core/model/purchase-order";
 import { ProductService } from "../../../../core/services/product.service";
 import { ProductVO } from "../../../../core/model/product";
-import { ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultVO } from "../../../../core/model/result-vm";
 import { BehaviorSubject, Observable } from "rxjs";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { NzMessageService } from "ng-zorro-antd";
@@ -67,21 +67,6 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i <= 3; i++) {
-      let item: PurchaseOrderProductVO = {
-        id: i,
-        productId: 1,
-        name: `Edrward ${i}`,
-        quantity: 0,
-        weight: 0,
-        price: 0,
-        priceType: 1,
-        cash: 0
-      };
-      item['_id'] = this.productCountIndex ++;
-
-      this.products.push(item);
-    }
     Object.assign(this.editCache, this.defaultEditCache);
     this.purchaseOrderForm = this.fb.group({
       purchasingCompany: [ null, Validators.required ],
@@ -93,7 +78,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<ProductVO[]>>
         = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll({});
+        .findAll(Object.assign(new QueryParams(), {}));
       return t.pipe(map(res => res.data));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChange$

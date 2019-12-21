@@ -1,5 +1,11 @@
 <nz-page-header>
   <nz-page-header-title>加工单详情</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary">
+      <i nz-icon nzType="printer" nzTheme="outline"></i>
+      打印
+    </button>
+  </nz-page-header-extra>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
   <nz-skeleton [nzActive]="true"></nz-skeleton>
@@ -42,9 +48,9 @@
     <tr>
       <th nzWidth="100px">商品编号</th>
       <th nzWidth="200px">商品</th>
-      <th nzWidth="240px">制作规格</th>
-      <th nzWidth="120px">数量</th>
-      <th nzWidth="120px">预计重量</th>
+      <th nzWidth="240px">加工规格</th>
+      <th nzWidth="120px">数量(件)</th>
+      <th nzWidth="120px">预计重量(千克)</th>
       <th>操作</th>
     </tr>
     </thead>
@@ -63,20 +69,22 @@
           {{ data.productName }}
         </ng-container>
         <ng-template #productNameEditTpl>
-          <nz-select [(ngModel)]="editCache.product"
-                     nzShowSearch
-                     nzServerSearch
-                     (nzOnSearch)="onProductSearch($event)"
-                     (ngModelChange)="onChangeSelectedProduct($event)"
-                     style="width: 100px">
-            <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
-            <ng-container *ngFor="let p of searchProducts; let i = index;">
-              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
-            </ng-container>
-            <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
-              <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
-            </nz-option>
-          </nz-select>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeSelectedProduct($event)"
+                       style="width: 150px">
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts; let i = index;">
+                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>
@@ -84,7 +92,7 @@
           {{ data.specification }}
         </ng-container>
         <ng-template #specificationEditTpl>
-          <nz-form-control [nzValidateStatus]="specificationValidateStatus">
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.specification">
             <input nz-input [(ngModel)]="editCache.data.specification"
                    (ngModelChange)="onSpecificationInput($event)"
                    [nzAutocomplete]="auto"/>
@@ -101,15 +109,23 @@
           {{ data.quantity }}
         </ng-container>
         <ng-template #quantityEditTpl>
-          <nz-input-number nzMin="1" nzStep="1" [(ngModel)]="editCache.data.quantity"></nz-input-number>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.quantity">
+            <nz-input-number nzMin="1" nzStep="1"
+                             [(ngModel)]="editCache.data.quantity"
+                             (ngModelChange)="checkModelNotNull('quantity')"></nz-input-number>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']; else exceptWeightEditTpl">
-          {{ data.exceptWeight }}
+        <ng-container *ngIf="editCache._id !== data['_id']; else expectedWeightEditTpl">
+          {{ data.expectedWeight }}
         </ng-container>
-        <ng-template #exceptWeightEditTpl>
-          <nz-input-number nzMin="0" nzStep="0.0001" [(ngModel)]="editCache.data.expectedWeight"></nz-input-number>
+        <ng-template #expectedWeightEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">
+            <nz-input-number nzMin="0" nzStep="0.0001"
+                             [(ngModel)]="editCache.data.expectedWeight"
+                             (ngModelChange)="checkModelNotNull('expectedWeight')"></nz-input-number>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>

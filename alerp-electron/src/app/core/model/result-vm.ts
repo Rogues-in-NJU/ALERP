@@ -1,6 +1,4 @@
-import construct = Reflect.construct;
-
-export interface ResultVO<T> {
+export class ResultVO<T> {
 
   readonly code: number;
   readonly message: string | null;
@@ -8,7 +6,7 @@ export interface ResultVO<T> {
 
 }
 
-export interface TableResultVO<T> {
+export class TableResultVO<T> {
 
   readonly totalPages: number;
   readonly pageIndex: number;
@@ -17,13 +15,13 @@ export interface TableResultVO<T> {
 
 }
 
-export interface QueryParams {
+export class QueryParams {
 
   [ name: string ]: any;
 
 }
 
-export interface TableQueryParams extends QueryParams {
+export class TableQueryParams {
 
   pageIndex: number | 1;
   pageSize: number | 10;
