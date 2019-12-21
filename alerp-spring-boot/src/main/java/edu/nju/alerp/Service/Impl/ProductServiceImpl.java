@@ -1,16 +1,22 @@
-package edu.nju.alerp.Service.Impl;
+package edu.nju.alerp.Service;
 
+import edu.nju.alerp.Dto.ProductDTO;
 import edu.nju.alerp.Repo.ProductRepository;
-import edu.nju.alerp.Service.ProductService;
-import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Date;
 import java.util.List;
-import java.util.ListResourceBundle;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,23 +31,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ListResponse findAllByPage(int pageIndex, int pageSize, String name, int type) {
-        List<Product> allProducts = findAll();
-        List<Product> allPages = allProducts.stream().filter(p -> p.getType() == type && (p.getName().contains(name) || p.getShorthand().contains(name)))
-                                                    .collect(Collectors.toList());
-
-        int totalPage = allPages.size() / pageSize + 1;
-        ListResponse res = new ListResponse();
-        res.setPageIndex(pageIndex);
-        res.setPageSize(pageSize);
-        res.setTotalPages(totalPage);
-        res.setResult(allPages.stream().skip(pageSize * (pageIndex - 1))
-                .limit(pageSize).collect(Collectors.toList()));
-        return res;
+    public Page<Product> findAllByPage(Pageable pageable, String name, int type) {
+        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
+            Predicate nameFuzzyMatch = criteriaBuilder.like(root.get("name").as(String.class), CommonUtils.fuzzyStringSplicing(name));
+            Predicate shorthandFuzzyMatch = criteriaBuilder.like(root.get("shorthand").as(String.class),CommonUtils.fuzzyStringSplicing(name));
+            return criteriaBuilder.and(typeEquals, criteriaBuilder.or(nameFuzzyMatch, shorthandFuzzyMatch));
+        };
+        return productRepository.findAll(sp, pageable);
     }
 
     @Override
     public Product findProductById(int id) {
         return productRepository.getOne(id);
+    }
+
+    @Override
+    public int addOrUpdate(ProductDTO productDTO) {
+        Product product = null;
+        if (productDTO.getId() == null){
+            product = Product.builder()
+                    .create_at(new Date())
+                    .update_at(new Date())
+                    .density(productDTO.getDensity())
+                    .name(productDTO.getName())
+                    .shorthand(productDTO.getShorthand())
+                    .type(Byte.valueOf(String.valueOf(productDTO.getType())))
+                    .specification(productDTO.getSpecification()).build();
+        }else {
+            product = Product.builder()
+                    .update_at(new Date())
+                    .id(productDTO.getId())
+                    .density(productDTO.getDensity())
+                    .name(productDTO.getName())
+                    .shorthand(productDTO.getShorthand())
+                    .type(Byte.valueOf(String.valueOf(productDTO.getType())))
+                    .specification(productDTO.getSpecification()).build();
+        }
+        return productRepository.saveAndFlush(product).getId();
     }
 }

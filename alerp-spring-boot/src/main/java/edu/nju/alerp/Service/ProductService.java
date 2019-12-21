@@ -1,7 +1,9 @@
 package edu.nju.alerp.Service;
 
-import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.Dto.ProductDTO;
 import edu.nju.alerp.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,7 +16,9 @@ public interface ProductService {
 
     public List<Product> findAll();
 
-    public ListResponse findAllByPage(int pageIndex, int pageSize, String name, int type);
+    public Page<Product> findAllByPage(Pageable pageable, String name, int type);
 
     public Product findProductById(int id);
+
+    public int addOrUpdate(ProductDTO productDTO);
 }
