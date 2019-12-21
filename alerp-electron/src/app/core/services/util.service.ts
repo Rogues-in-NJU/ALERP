@@ -79,7 +79,7 @@ export class SpecificationUtils {
       return [parseFloat(diameterStr), parseFloat(heightStr)];
     }
     if (splits.length === 3) {
-      for (const s in splits) {
+      for (const s of splits) {
         if (s.search(SpecificationUtils.NUM_PATT) === -1) {
           return null;
         }
@@ -93,6 +93,20 @@ export class SpecificationUtils {
 
   public static valid(str: string): boolean {
     return SpecificationUtils.convert(str) !== null;
+  }
+
+  public static calculateWeight(spec: string, density: number, quantity: number): number {
+    let specArr: number[] = SpecificationUtils.convert(spec);
+    if (!Object.values(specArr)) {
+      return -1;
+    }
+    let volumn: number;
+    if (specArr.length === 2) {
+      volumn = Math.pow(specArr[0] / 2.0, 2) * specArr[1];
+    } else {
+      volumn = specArr[0] * specArr[1] * specArr[2];
+    }
+    return volumn * density * quantity;
   }
 
 }

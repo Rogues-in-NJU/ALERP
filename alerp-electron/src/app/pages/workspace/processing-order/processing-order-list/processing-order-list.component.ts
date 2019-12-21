@@ -43,10 +43,10 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     console.log(this.selectedStatus);
     console.log(this.timeRange);
 
-    const queryParams: TableQueryParams = {
+    const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
-    };
+    });
     this.isLoading = true;
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {

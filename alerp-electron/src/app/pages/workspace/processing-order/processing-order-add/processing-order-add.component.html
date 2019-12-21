@@ -9,7 +9,158 @@
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content">
-  <form nz-form nzLayout="inline">
-
+  <form nz-form nzLayout="inline" [formGroup]="processingOrderForm">
+    <div nz-row nzGutter="24">
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">客户</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <nz-select formControlName="customerId"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onCustomerSearch($event)"
+                       class="info-input">
+              <ng-container *ngFor="let c of searchCustomers">
+                <nz-option *ngIf="!isCustomersLoading" nzLabel="{{ c.name }}" [nzValue]="c.id"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isCustomersLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzSpan="6">业务员</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <input nz-input type="text" formControlName="salesman" class="info-input"/>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
   </form>
+  <br/>
+  <div class="operate">
+    <button nz-button nzType="primary" (click)="addProductRow()" [disabled]="editCache._id !== null">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增商品
+    </button>
+  </div>
+  <nz-table #processingOrderAddProductsTable
+            nzBordered
+            nzShowPagination="false"
+            nzSize="middle"
+            [nzData]="products">
+    <thead>
+    <tr>
+      <th nzWidth="100px">商品编号</th>
+      <th nzWidth="200px">商品</th>
+      <th nzWidth="240px">加工规格</th>
+      <th nzWidth="120px">数量(件)</th>
+      <th nzWidth="120px">预计重量(千克)</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of processingOrderAddProductsTable.data">
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else productIdEditTpl">
+          {{ data.productId }}
+        </ng-container>
+        <ng-template #productIdEditTpl>
+          {{ editCache.data.productId }}
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else productNameEditTpl">
+          {{ data.productName }}
+        </ng-container>
+        <ng-template #productNameEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeSelectedProduct($event)"
+                       style="width: 150px">
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts; let i = index;">
+                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else specificationEditTpl">
+          {{ data.specification }}
+        </ng-container>
+        <ng-template #specificationEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.specification">
+            <input nz-input [(ngModel)]="editCache.data.specification"
+                   (ngModelChange)="onSpecificationInput($event)"
+                   [nzAutocomplete]="auto"/>
+            <nz-autocomplete nzBackfill #auto>
+              <nz-auto-option *ngFor="let option of specificationAutoComplete" [nzValue]="option.value">
+                {{ option.label }}
+              </nz-auto-option>
+            </nz-autocomplete>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else quantityEditTpl">
+          {{ data.quantity }}
+        </ng-container>
+        <ng-template #quantityEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.quantity">
+            <nz-input-number nzMin="1" nzStep="1"
+                             [(ngModel)]="editCache.data.quantity"
+                             (ngModelChange)="checkModelNotNull('quantity')"></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else expectedWeightEditTpl">
+          {{ data.expectedWeight }}
+        </ng-container>
+        <ng-template #expectedWeightEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">
+            <nz-input-number nzMin="0" nzStep="0.0001"
+                             [(ngModel)]="editCache.data.expectedWeight"
+                             (ngModelChange)="checkModelNotNull('expectedWeight')"></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id === null">
+          <a (click)="startEditProduct(data._id)">编辑</a>
+          <a nz-popconfirm
+             style="margin-left: 5px"
+             class="delete"
+             nzTitle="确认删除?"
+             (nzOnConfirm)="confirmProductDelete(data._id)">
+            删除
+          </a>
+        </ng-container>
+        <ng-container *ngIf="editCache._id !== data['_id']; else saveTpl">
+
+        </ng-container>
+        <ng-template #saveTpl>
+          <a (click)="saveProductEdit(data._id)">保存</a>
+          <a nz-popconfirm
+             nzTitle="确认取消?"
+             (nzOnConfirm)="cancelProductEdit(data._id)"
+             style="margin-left: 5px;">
+            取消
+          </a>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
 </div>

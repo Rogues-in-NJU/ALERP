@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
-import { ResultCode, ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultCode, ResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
 import { ProductVO } from "../../../../core/model/product";
@@ -25,7 +25,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
 
   editCache: {
     _id?: number,
-    data?: TempProcessingOrderInfoProductVO,
+    data?: TempProcessingOrderProductVO,
     product?: TempProductVO,
     currentProduct?: TempProductVO,
     isAdd?: boolean
@@ -37,20 +37,17 @@ export class ProcessingOrderInfoComponent implements OnInit {
     currentProduct: null,
     isAdd: false
   };
+  editCacheValidateStatus: any = {
+    productId: null,
+    specification: null,
+    quantity: null,
+    expectedWeight: null
+  };
   processingOrderInfoProductCountIndex: number = 0;
   searchProducts: ProductVO[];
   searchChanges$: BehaviorSubject<string> = new BehaviorSubject('');
   isProductsLoading: boolean = false;
   specificationAutoComplete: { label: string, value: string }[] = [];
-  specificationValidateStatus: string = null;
-
-  cashFormatter: any = (value: number) => {
-    if (Objects.valid(value)) {
-      return `¥ ${value}`;
-    } else {
-      return `¥`;
-    }
-  };
 
   constructor(
     private closeTab: TabService,
@@ -70,7 +67,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<ProductVO[]>>
         = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll({});
+        .findAll(Object.assign(new QueryParams(), {}));
       return t.pipe(map(res => res.data));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChanges$
@@ -94,8 +91,8 @@ export class ProcessingOrderInfoComponent implements OnInit {
       productName: '',
       type: 1,
       density: 1.00,
-      productSpecification: '1*1*1',
-      specification: '1*1*1',
+      productSpecification: '',
+      specification: '',
       quantity: 1,
       expectedWeight: 1
     };
@@ -143,6 +140,8 @@ export class ProcessingOrderInfoComponent implements OnInit {
     } else {
       this.editCache.isAdd = false;
     }
+
+    Object.values(this.editCacheValidateStatus).forEach(item => item = null);
   }
 
   confirmProductDelete(_id: number): void {
@@ -161,9 +160,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
       return;
     }
     // 验证规格格式
-    console.log(this.editCache.data.specification);
-    if (!SpecificationUtils.valid(this.editCache.data.specification)) {
-      this.specificationValidateStatus = 'error';
+    if (!this.checkProcessingOrderProductValid()) {
       return;
     }
     // TODO: 提交远程刷新
@@ -187,9 +184,9 @@ export class ProcessingOrderInfoComponent implements OnInit {
 
   onSpecificationInput(value: string): void {
     if (!Objects.valid(value)) {
-      this.specificationValidateStatus = 'error';
+      this.editCacheValidateStatus.specification = 'error';
     }
-    this.specificationValidateStatus = null;
+    this.editCacheValidateStatus.specification = null;
     this.specificationAutoComplete = [];
     let splits: string[] = value.split('*');
     if (splits.length === 0) {
@@ -199,75 +196,76 @@ export class ProcessingOrderInfoComponent implements OnInit {
     splits = splits.map(item => item.trim());
     console.log(splits);
     if (splits.length === 1) {
-      if (splits[0].startsWith(SpecificationUtils.FAI_U)
-        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
-        splits[0] = splits[0].substring(1);
-        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.specificationValidateStatus = 'error';
+      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
+        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
+        splits[ 0 ] = splits[ 0 ].substring(1);
+        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+          this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [{
-          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
-        }];
+        this.specificationAutoComplete = [ {
+          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
+        } ];
       } else {
-        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.specificationValidateStatus = 'error';
+        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+          this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [{
-          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
+        this.specificationAutoComplete = [ {
+          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
         }, {
-          label: '' + parseFloat(splits[0]),
-          value: '' + parseFloat(splits[0])
-        }];
+          label: '' + parseFloat(splits[ 0 ]),
+          value: '' + parseFloat(splits[ 0 ])
+        } ];
       }
       return;
     }
     if (splits.length === 2) {
-      if (splits[1].search(SpecificationUtils.NUM_PATT) === -1) {
-        this.specificationValidateStatus = 'error';
+      if (splits[ 1 ].search(SpecificationUtils.NUM_PATT) === -1) {
+        this.editCacheValidateStatus.specification = 'error';
         return;
       }
-      if (splits[0].startsWith(SpecificationUtils.FAI_U)
-        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
-        splits[0] = splits[0].substring(1);
-        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.specificationValidateStatus = 'error';
+      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
+        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
+        splits[ 0 ] = splits[ 0 ].substring(1);
+        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+          this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [{
-          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
-        }];
+        this.specificationAutoComplete = [ {
+          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
+        } ];
       } else {
-        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.specificationValidateStatus = 'error';
+        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+          this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [{
-          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
+        this.specificationAutoComplete = [ {
+          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
         }, {
-          label: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
-          value: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
-        }];
-        this.specificationValidateStatus = 'error';
+          label: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
+          value: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
+        } ];
+        this.editCacheValidateStatus.specification = 'error';
       }
       return;
     }
     if (splits.length === 3) {
-      for (const s in splits) {
+      for (const s of splits) {
+        console.log(s);
         if (s.search(SpecificationUtils.NUM_PATT) === -1) {
-          this.specificationValidateStatus = 'error';
+          this.editCacheValidateStatus.specification = 'error';
           return;
         }
       }
-      this.specificationAutoComplete = [{
-        label: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`,
-        value: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`
-      }];
+      this.specificationAutoComplete = [ {
+        label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
+        value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
+      } ];
       return;
     }
   }
@@ -291,6 +289,41 @@ export class ProcessingOrderInfoComponent implements OnInit {
       });
   }
 
+  checkModelNotNull(name: string): boolean {
+    if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
+      this.editCacheValidateStatus[name] = null;
+      console.log('here');
+      return true;
+    } else {
+      this.editCacheValidateStatus[name] = 'error';
+      return false;
+    }
+  }
+
+  checkProcessingOrderProductValid(): boolean {
+    if (!Objects.valid(this.editCache.data)) {
+      return false;
+    }
+    let isValid: boolean = true;
+    if (this.editCache.data.productId === 0) {
+      this.editCacheValidateStatus.productId = 'error';
+      isValid = false;
+    }
+    if (!this.checkModelNotNull('quantity')) {
+      isValid = false;
+    }
+    if (!this.checkModelNotNull('expectedWeight')) {
+      isValid = false;
+    }
+    // 验证规格格式
+    console.log(this.editCache.data.specification);
+    if (!SpecificationUtils.valid(this.editCache.data.specification)) {
+      this.editCacheValidateStatus.specification = 'error';
+      isValid = false;
+    }
+    return isValid;
+  }
+
 }
 
 interface TempProductVO {
@@ -303,7 +336,7 @@ interface TempProductVO {
 
 }
 
-interface TempProcessingOrderInfoProductVO {
+interface TempProcessingOrderProductVO {
 
   id?: number;
   productId?: number;

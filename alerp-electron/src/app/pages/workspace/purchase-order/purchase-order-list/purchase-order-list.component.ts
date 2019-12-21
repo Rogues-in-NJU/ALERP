@@ -46,10 +46,10 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
     // console.log(this.orderCode);
     // console.log(this.selectedStatus);
     // console.log(this.timeRange);
-    const queryParams: TableQueryParams = {
+    const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
-    };
+    });
     this.isLoading = true;
     this.purchaseOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<PurchaseOrderVO>>) => {
