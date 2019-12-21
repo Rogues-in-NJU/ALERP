@@ -1,7 +1,8 @@
-package edu.nju.alerp.user.service;
+package edu.nju.alerp.Service;
 
+import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.User;
-import edu.nju.alerp.user.dto.UserDTO;
+import edu.nju.alerp.Dto.UserDTO;
 
 import java.util.List;
 
@@ -21,5 +22,7 @@ public interface UserService {
     boolean deleteUser(int id);
 
     List<User> getUserList();
+
+    ListResponse getUserList(int pageIndex, int pageSize, String name, int status);
 
 }

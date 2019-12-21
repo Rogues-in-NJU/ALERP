@@ -1,4 +1,4 @@
-package edu.nju.alerp.customer.dto;
+package edu.nju.alerp.Dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -26,5 +26,5 @@ public class CustomerInfo {
     private String deleted_at;
     private int updated_by;
     private String updated_at;
-    private List<SpecialPricesDTO> specialPricesDTOList;
+    private List<SpecialPrciesInfo> specialPrciesInfoList;
 }

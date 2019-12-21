@@ -1,4 +1,4 @@
-package edu.nju.alerp.customer.dto;
+package edu.nju.alerp.Dto;
 
 import lombok.Builder;
 import lombok.Data;
