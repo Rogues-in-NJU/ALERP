@@ -63,7 +63,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult<List<User>> updateUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseResult<List<User>> saveUser(@Valid @RequestBody UserDTO userDTO) {
         if (userDTO.getId() == null) {
             userService.addUser(userDTO);
         } else {
