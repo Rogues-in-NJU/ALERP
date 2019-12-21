@@ -32,8 +32,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private ListResponseUtils listResponseUtils = new ListResponseUtils();
-
     @Override
     public boolean addCustomer(CustomerDTO customerDTO) {
         Customer customer = Customer.builder()
@@ -111,6 +109,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ListResponse getCustomerListByName(int pageIndex, int pageSize, String name) {
         List<Customer> customerList = getCustomerList().stream().filter(c -> c.getName().contains(name) || c.getShorthand().contains(name)).collect(Collectors.toList());
-        return listResponseUtils.getListResponse(customerList, pageIndex, pageSize);
+        return ListResponseUtils.getListResponse(customerList, pageIndex, pageSize);
     }
 }

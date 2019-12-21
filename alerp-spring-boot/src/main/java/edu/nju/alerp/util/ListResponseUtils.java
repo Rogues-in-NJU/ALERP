@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
  * @Author: qianen.yin
  * @CreateDate: 2019-12-20 21:21
  */
-public class ListResponseUtils<T> {
+public class ListResponseUtils {
 
-    public ListResponse getListResponse(List<T> responseList ,int pageIndex, int pageSize){
+    public static <T> ListResponse getListResponse(List<T> responseList ,int pageIndex, int pageSize){
         ListResponse res = new ListResponse();
         int totalPage = responseList.size() / pageSize + 1;
         res.setPageIndex(pageIndex);

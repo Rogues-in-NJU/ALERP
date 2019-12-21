@@ -26,7 +26,6 @@ public class UserServiceImpl implements UserService{
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private ListResponseUtils listResponseUtils = new ListResponseUtils();
 
     @Override
     public boolean addUser(UserDTO userDTO) {
@@ -76,7 +75,7 @@ public class UserServiceImpl implements UserService{
     public ListResponse getUserList(int pageIndex, int pageSize, String name, int status) {
         List<User> userList = getUserList().stream().filter(u -> u.getStatus() == status && (u.getName().contains(name) || u.getPhone_number().contains(name)))
                 .collect(Collectors.toList());
-        return listResponseUtils.getListResponse(userList, pageIndex, pageSize);
+        return ListResponseUtils.getListResponse(userList, pageIndex, pageSize);
     }
 
     @Override
