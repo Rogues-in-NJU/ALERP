@@ -1,5 +1,6 @@
-package edu.nju.alerp.Service;
+package edu.nju.alerp.Service.Impl;
 
+import edu.nju.alerp.Service.UserService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * @CreateDate: 2019-12-17 17:41
  */
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService{
                 .status(UserStatus.ONJOB.getCode())
                 .build();
         userRepository.save(user);
-        return false;
+        return true;
     }
 
     @Override

@@ -15,68 +15,72 @@ export class ProductService {
 
   }
 
-  findAll(
+  public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ProductVO>>>;
+
+  public findAll(queryParams: QueryParams): Observable<ResultVO<ProductVO[]>>;
+
+  public findAll(
     queryParams: QueryParams | TableQueryParams
   ): Observable<ResultVO<ProductVO[]>>
     | Observable<ResultVO<TableResultVO<ProductVO>>> {
-    return of({
-      code: 200,
-      message: '',
-      data: [{
-        id: 1,
-        name: 'XX商品',
-        shorthand: 'XX',
-        type: 1,
-        density: 1,
-        specification: '2*2*2'
-      }, {
-        id: 2,
-        name: 'YY商品',
-        shorthand: 'XX',
-        type: 1,
-        density: 1,
-        specification: '2*2*2'
-      }]
-    })
-  }
-
-  findAllByPage(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ProductVO>>> {
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result:  [{
+    if (queryParams instanceof TableQueryParams) {
+      return of({
+        code: 200,
+        message: '',
+        data: {
+          totalPages: 1,
+          pageIndex: 1,
+          pageSize: 10,
+          result:  [{
+            id: 1,
+            name: 'XX商品',
+            shorthand: 'XX',
+            type: 1,
+            density: 1,
+            specification: '2*2*2'
+          },
+            {
+              id: 2,
+              name: 'YY商品',
+              shorthand: 'XX',
+              type: 1,
+              density: 1,
+              specification: '2*2*2'
+            }
+          ]
+        }
+      });
+    } else {
+      return of({
+        code: 200,
+        message: '',
+        data: [{
           id: 1,
           name: 'XX商品',
           shorthand: 'XX',
           type: 1,
           density: 1,
           specification: '2*2*2'
-        },
-          {
-            id: 2,
-            name: 'YY商品',
-            shorthand: 'XX',
-            type: 1,
-            density: 1,
-            specification: '2*2*2'
-          }
-        ]
-      }
-      })
+        }, {
+          id: 2,
+          name: 'YY商品',
+          shorthand: 'XX',
+          type: 1,
+          density: 1,
+          specification: '2*2*2'
+        }]
+      });
+    }
   }
 
-  updateOrAddProduct(queryParams: ProductVO): ResultVO<any>{
+  public updateOrAddProduct(queryParams: ProductVO): ResultVO<any>{
     return {
       code: 200,
       message: 'success',
     }
   }
 
-  deleteProduct(productId: string): ResultVO<any>{
+  public deleteProduct(productId: string): ResultVO<any>{
     return {
       code: 400,
       message: '网络错误',

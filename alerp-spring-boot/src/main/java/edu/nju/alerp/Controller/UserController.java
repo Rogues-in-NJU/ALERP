@@ -63,13 +63,13 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult<List<User>> updateUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseResult<Boolean> saveUser(@Valid @RequestBody UserDTO userDTO) {
+        boolean result;
         if (userDTO.getId() == null) {
-            userService.addUser(userDTO);
+            result = userService.addUser(userDTO);
         } else {
-            userService.updateUser(userDTO);
+            result = userService.updateUser(userDTO);
         }
-        List<User> userList = userService.getUserList();
-        return ResponseResult.ok(userList);
+        return ResponseResult.ok(result);
     }
 }

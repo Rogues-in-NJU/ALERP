@@ -67,10 +67,10 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
 
   search(): void {
     console.log(this.customerName);
-    const queryParams: TableQueryParams = {
+    const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
-    };
+    });
     this.customer.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<CustomerVO>>) => {
         if (!Objects.valid(res)) {

@@ -8,6 +8,7 @@ import { ProcessingOrderAddComponent } from "./processing-order-add/processing-o
 import { ProcessingOrderStatusColorPipe, ProcessingOrderStatusPipe } from "./processing-order.pipe";
 import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
+import { ReactiveFormsModule } from "@angular/forms";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'list' },
@@ -43,7 +44,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes), NzPageHeaderModule ],
+  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes), NzPageHeaderModule, ReactiveFormsModule ],
   declarations: [
     ProcessingOrderListComponent,
     ProcessingOrderInfoComponent,
