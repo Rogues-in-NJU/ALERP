@@ -1,29 +1,23 @@
-package edu.nju.alerp.entity;
+package edu.nju.alerp.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.*;
+import java.util.List;
 
 /**
- * @Description: 客户实体类
+ * @Description: 客户详细信息
  * @Author: qianen.yin
- * @CreateDate: 2019-12-16 23:20
+ * @CreateDate: 2019-12-18 17:19
  */
 @Data
 @Builder
-@Entity
-@Table(name = "customer")
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class CustomerInfo {
+    private int id;
     private String name;
     private int type;
     private String shorthand;
-    //帐期
     private int period;
-    //对账日
     private int pay_date;
     private String description;
     private int created_by;
@@ -32,4 +26,5 @@ public class Customer {
     private String deleted_at;
     private int updated_by;
     private String updated_at;
+    private List<SpecialPrciesInfo> specialPrciesInfoList;
 }

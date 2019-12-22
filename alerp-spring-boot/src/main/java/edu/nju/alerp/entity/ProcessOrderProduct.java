@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Data
 @Builder
 @Entity
-@Table(name = "ProcessOrderProduct")
+@Table(name = "process_order_product")
 public class ProcessOrderProduct {
 
     @Id
