@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 公司支出DTO
+ *
  * @author luhailong
  * @date 2019/12/21
  */
@@ -15,7 +16,7 @@ public class ExpenseDTO {
     /**
      * 创建者id
      */
-    private int created_by;
+    private int createdBy;
 
     /**
      * 单据名称
@@ -35,5 +36,5 @@ public class ExpenseDTO {
     /**
      * 支出时间
      */
-    private String done_at;
+    private String doneAt;
 }

@@ -28,7 +28,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public boolean addExpense(ExpenseDTO expenseDTO) {
-        Expense expense = Expense.builder().created_at(sdf.format(new Date())).build();
+        Expense expense = Expense.builder().createdAt(sdf.format(new Date())).build();
         BeanUtils.copyProperties(expenseDTO, expense);
         expenseRepository.save(expense);
         return true;
@@ -37,8 +37,8 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public boolean deleteExpense(int id, int delete_by) {
         Expense expense = Expense.builder().id(id).
-            deleted_by(delete_by).
-            deleted_at(sdf.format(new Date())).
+            deletedBy(delete_by).
+            deletedAt(sdf.format(new Date())).
             build();
         expenseRepository.delete(expense);
         return true;

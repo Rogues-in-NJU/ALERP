@@ -9,47 +9,54 @@ import javax.persistence.Table;
 
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.GeneratorType;
 
 /**
- * 公司支出实体类
+ * 收款记录实体类
  *
  * @author luhailong
- * @date 2019/12/21
+ * @date 2019/12/22
  */
 @Data
 @Builder
 @Entity
-@Table(name = "expense")
-public class Expense {
+@Table(name = "receipt_record")
+public class ReceiptRecord {
     /**
-     * 自增主键
+     * 收款记录id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /**
-     * 单据编码
+     * 所在收款单id
      */
-    private String code;
+    private int arrearOrderId;
 
     /**
-     * 单据名称
+     * 状态：已确认，已废弃
      */
-    private String title;
+    private int status;
 
     /**
-     * 单据描述
-     */
-    private String description;
-
-    /**
-     * 支出金额
+     * 收款金额
      */
     private double cash;
 
     /**
-     * 支出时间
+     * 收款人id
+     */
+    @Column(name = "salesman_id")
+    private int salesmanId;
+
+    /**
+     * 备注
+     */
+    private String description;
+
+    /**
+     * 收款时间
      */
     @Column(name = "done_at")
     private String doneAt;
@@ -61,20 +68,21 @@ public class Expense {
     private String createdAt;
 
     /**
-     * 删除时间
-     */
-    @Column(name = "deleted_at")
-    private String deletedAt;
-
-    /**
      * 创建者id
      */
     @Column(name = "created_by")
     private int createdBy;
 
     /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
+
+    /**
      * 删除者id
      */
     @Column(name = "deleted_by")
     private int deletedBy;
+
 }
