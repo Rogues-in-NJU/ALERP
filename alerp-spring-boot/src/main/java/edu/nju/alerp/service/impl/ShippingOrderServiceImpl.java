@@ -7,7 +7,7 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.enums.ShippingOrderStatus;
-import edu.nju.alerp.repo.ReceiptRecordRepository;
+import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ShippingOrderRepository;
 import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.util.DateUtils;
@@ -32,7 +32,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Autowired
     ShippingOrderRepository shippingOrderRepository;
     @Autowired
-    ReceiptRecordRepository receiptRecordRepository;
+    CustomerRepository customerRepository;
 
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
@@ -43,7 +43,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
         int res = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
-        //todo 生成收款单
+        //todo 生成欠款单
         return res;
     }
 
@@ -70,13 +70,15 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String customerName, int status, String startTime, String endTime) {
+    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, int status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
+        List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
         try {
             sp.add(ConditionFactory.equal("status", status));
+            sp.add(ConditionFactory.In("customerId",customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", customerName));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", customerName));
+            fuzzyMatch.add(ConditionFactory.like("name", name));
+            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
             fuzzyMatch.add(ConditionFactory.greatThanEqualTo("created_at",startTime));
             fuzzyMatch.add(ConditionFactory.lessThanEqualTo("created_at",endTime));
             sp.add(ConditionFactory.or(fuzzyMatch));
