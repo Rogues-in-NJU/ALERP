@@ -42,50 +42,46 @@ public class CustomerServiceImpl implements CustomerService {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override
-    public boolean addCustomer(CustomerDTO customerDTO) {
-        Customer customer = Customer.builder()
-                .createdAt(sdf.format(new Date()))
-                .build();
-        BeanUtils.copyProperties(customerDTO, customer);
-        //前台需要传操作人信息，记录创建者是谁
-        List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
-        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
-            SpecialPrice specialPrice = SpecialPrice.builder()
+    public int saveCustomer(CustomerDTO customerDTO) {
+        Customer customer = null;
+        if (customerDTO.getId() == null) {
+            customer = Customer.builder()
                     .createdAt(sdf.format(new Date()))
-//                    .createdById() //待获取用户id
                     .build();
-            BeanUtils.copyProperties(specialPricesDTO, specialPrice);
-            specialPricesRepository.save(specialPrice);
-        }
-        customerRepository.save(customer);
-        return false;
-    }
-
-    @Override
-    public boolean updateCustomer(CustomerDTO customerDTO) {
-        Customer customer = Customer.builder()
-                .updatedAt(sdf.format(new Date()))
-                .build();
-        BeanUtils.copyProperties(customerDTO, customer);
-        List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
-        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
-            SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
-            if(specialPrice == null){
-                specialPrice = SpecialPrice.builder()
+            BeanUtils.copyProperties(customerDTO, customer);
+            //前台需要传操作人信息，记录创建者是谁
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
+                SpecialPrice specialPrice = SpecialPrice.builder()
                         .createdAt(sdf.format(new Date()))
 //                    .createdById() //待获取用户id
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
+                specialPricesRepository.save(specialPrice);
             }
-            else{
-                specialPrice.setUpdatedAt(sdf.format(new Date()));
+        } else {
+            customer = Customer.builder()
+                    .updatedAt(sdf.format(new Date()))
+                    .build();
+            BeanUtils.copyProperties(customerDTO, customer);
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
+                SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
+                if (specialPrice == null) {
+                    specialPrice = SpecialPrice.builder()
+                            .createdAt(sdf.format(new Date()))
+//                    .createdById() //待获取用户id
+                            .build();
+                    BeanUtils.copyProperties(specialPricesDTO, specialPrice);
+                } else {
+                    specialPrice.setUpdatedAt(sdf.format(new Date()));
 //                specialPrices.setUpdateById();//待获取用户id
+                }
+                specialPricesRepository.save(specialPrice);
             }
-            specialPricesRepository.save(specialPrice);
         }
-        customerRepository.save(customer);
 
-        return false;
+        return customerRepository.saveAndFlush(customer).getId();
     }
 
     @Override

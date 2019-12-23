@@ -108,11 +108,7 @@ public class CustomerController {
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseResult<List<Customer>> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        if (customerDTO.getId() == null) {
-            customerService.addCustomer(customerDTO);
-        } else {
-            customerService.updateCustomer(customerDTO);
-        }
+        customerService.saveCustomer(customerDTO);
         List<Customer> customerList = customerService.getCustomerList();
         return ResponseResult.ok(customerList);
     }

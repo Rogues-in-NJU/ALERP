@@ -1,5 +1,6 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.UserDTO;
@@ -68,12 +69,12 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
-        int result = 0;
-        if (userDTO.getId() == null) {
-            result = userService.addUser(userDTO);
-        } else {
-            result = userService.updateUser(userDTO);
+        try {
+            int result = userService.saveUser(userDTO);
+            return ResponseResult.ok(result);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
-        return ResponseResult.ok(result);
+
     }
 }

@@ -16,9 +16,7 @@ import java.util.List;
  */
 public interface CustomerService {
 
-    boolean addCustomer(CustomerDTO customerDTO);
-
-    boolean updateCustomer(CustomerDTO customerDTO);
+    int saveCustomer(CustomerDTO customerDTO);
 
     Customer getCustomer(int id);
 

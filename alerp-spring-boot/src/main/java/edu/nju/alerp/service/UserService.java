@@ -15,9 +15,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    int addUser(UserDTO userDTO);
-
-    int updateUser(UserDTO userDTO);
+    int saveUser(UserDTO userDTO);
 
     User getUser(int id);
 

@@ -35,28 +35,24 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public int addUser(UserDTO userDTO) {
-        User user = User.builder()
-                .name(userDTO.getName())
-                .password(userDTO.getPassword())
-                .phone_number(userDTO.getPhone_number())
-                .created_at(sdf.format(new Date()))
-                .status(UserStatus.ONJOB.getCode())
-                .build();
-        return userRepository.saveAndFlush(user).getId();
-    }
-
-    @Override
-    public int updateUser(UserDTO userDTO) {
-        User user = getUser(userDTO.getId());
-        if (user == null) {
-            //todo 待确认方案
-            return 0;
+    public int saveUser(UserDTO userDTO) {
+        User user = null;
+        if(userDTO.getId() == null){
+            user = User.builder()
+                    .name(userDTO.getName())
+                    .password(userDTO.getPassword())
+                    .phone_number(userDTO.getPhone_number())
+                    .created_at(sdf.format(new Date()))
+                    .status(UserStatus.ONJOB.getCode())
+                    .build();
         }
-        user.setName(userDTO.getName());
-        user.setPassword(userDTO.getPassword());
-        user.setPhone_number(userDTO.getPhone_number());
-        user.setUpdated_at(sdf.format(new Date()));
+        else{
+            user = getUser(userDTO.getId());
+            user.setName(userDTO.getName());
+            user.setPassword(userDTO.getPassword());
+            user.setPhone_number(userDTO.getPhone_number());
+            user.setUpdated_at(sdf.format(new Date()));
+        }
         return userRepository.saveAndFlush(user).getId();
     }
 
