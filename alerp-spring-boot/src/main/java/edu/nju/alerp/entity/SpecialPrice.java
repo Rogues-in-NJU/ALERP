@@ -6,15 +6,17 @@ import lombok.Data;
 import javax.persistence.*;
 
 /**
- * @Description: 出货单实体类
+ * @Description: 顾客特惠价
  * @Author: qianen.yin
- * @CreateDate: 2019-12-16 23:39
+ * @CreateDate: 2019-12-18 16:50
  */
+
 @Data
 @Builder
 @Entity
-@Table(name = "shipping_order")
-public class ShippingOrder {
+@Table(name = "special_prices")
+public class SpecialPrice {
+
     /**
      * 自增主键
      */
@@ -22,35 +24,17 @@ public class ShippingOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     /**
-     * 单据编码
-     */
-    private String code;
-    /**
      * 顾客id
      */
-    private int customer_id;
+    private int customerId;
     /**
-     * 收款单id
+     * 商品id
      */
-    private int arrear_order_id;
+    private int productId;
     /**
-     * 单据状态：已出货/已完成/已废弃
+     * 特惠价格
      */
-    private int status;
-    /**
-     * 总金额
-     */
-    private double cash;
-    /**
-     *浮动金额
-     */
-    @Column(name="floating_cash")
-    private double floatingCash;
-    /**
-     *实收金额
-     */
-    @Column(name="receivable_cash")
-    private double receivableCash;
+    private double price;
     /**
      * 创建者id
      */

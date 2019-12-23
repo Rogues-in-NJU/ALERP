@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @Entity
 @Builder
-@Table(name = "ProcessingOrder")
+@Table(name = "processing_order")
 public class ProcessingOrder {
 
     @Id
