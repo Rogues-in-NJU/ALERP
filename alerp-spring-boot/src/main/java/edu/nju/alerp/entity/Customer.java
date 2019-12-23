@@ -15,21 +15,65 @@ import javax.persistence.*;
 @Entity
 @Table(name = "customer")
 public class Customer {
+    /**
+     * 自增主键
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    /**
+     * 顾客姓名
+     */
     private String name;
+    /**
+     * 付款类型：月结，现金
+     */
     private int type;
+    /**
+     * 速记编号
+     */
     private String shorthand;
-    //帐期
+    /**
+     * 帐期
+     */
     private int period;
-    //对账日
+    /**
+     * 对账日
+     */
     private int pay_date;
+    /**
+     * 顾客描述
+     */
     private String description;
-    private int created_by;
-    private String created_at;
-    private int deleted_by;
-    private String deleted_at;
-    private int updated_by;
-    private String updated_at;
+    /**
+     * 创建者id
+     */
+    @Column(name = "created_by")
+    private int createdBy;
+    /**
+     * 创建时间
+     */
+    @Column(name = "created_at")
+    private String createdAt;
+    /**
+     * 删除者id
+     */
+    @Column(name = "deleted_by")
+    private int deletedBy;
+    /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
+    /**
+     * 更新者id
+     */
+    @Column(name = "update_by")
+    private int updatedBy;
+    /**
+     * 更新时间
+     */
+    @Column(name = "update_at")
+    private String updatedAt;
 }

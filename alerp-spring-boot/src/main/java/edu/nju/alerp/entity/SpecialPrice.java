@@ -17,16 +17,52 @@ import javax.persistence.*;
 @Table(name = "special_prices")
 public class SpecialPrice {
 
+    /**
+     * 自增主键
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    /**
+     * 顾客id
+     */
     private int customerId;
+    /**
+     * 商品id
+     */
     private int productId;
+    /**
+     * 特惠价格
+     */
     private double price;
+    /**
+     * 创建者id
+     */
+    @Column(name = "created_by")
+    private int createdBy;
+    /**
+     * 创建时间
+     */
+    @Column(name = "created_at")
     private String createdAt;
-    private int createdById;
-    private String updateAt;
-    private int updateBy;
-    private String deleteAt;
-    private int deleteBy;
+    /**
+     * 删除者id
+     */
+    @Column(name = "deleted_by")
+    private int deletedBy;
+    /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
+    /**
+     * 更新者id
+     */
+    @Column(name = "update_by")
+    private int updatedBy;
+    /**
+     * 更新时间
+     */
+    @Column(name = "update_at")
+    private String updatedAt;
 }
