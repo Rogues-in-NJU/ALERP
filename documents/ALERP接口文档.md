@@ -188,10 +188,15 @@ res:
 
 ### 公司支出
 
-### 查看公司支出列表
+#### 查看公司支出列表
 ```
 GET
 /api/expense/list
+
+params:
+
+* pageIndex(从1开始)
+* pageSize
 
 res:
 {
@@ -240,6 +245,7 @@ res:
 ### 用户管理
 
 #### 查看用户列表
+
 ```
 GET
 /api/user/list
@@ -267,7 +273,28 @@ res:
 }
 ```
 
+#### 通过用户id获取详细信息
+
+```
+GET
+/api/user/:id
+
+res:
+{
+  id: number | null,
+  name: string,
+  phoneNumber: string(在职的员工手机号唯一),
+  password: string
+  
+  auth: [{
+    id: string,
+    action: number(0不可读 1只读 2可读写)
+  }]
+}
+```
+
 #### 新增用户/修改用户信息
+
 ```
 POST
 /api/user
@@ -281,7 +308,7 @@ body:
   
   auth: [{
     id: string,
-    action: number(1只读 2可读写)
+    action: number(0不可读 1只读 2可读写)
   }]
 }
 
