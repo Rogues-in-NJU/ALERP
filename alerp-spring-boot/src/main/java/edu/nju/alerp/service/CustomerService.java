@@ -4,6 +4,9 @@ import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
 import edu.nju.alerp.dto.CustomerDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 /**
@@ -25,5 +28,5 @@ public interface CustomerService {
 
     List<Customer> getCustomerList();
 
-    ListResponse getCustomerListByName(int pageIndex, int pageSize, String name);
+    Page<Customer> getCustomerListByName(Pageable pageable, String name);
 }

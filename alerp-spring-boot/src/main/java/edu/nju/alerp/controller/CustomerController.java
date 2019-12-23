@@ -10,9 +10,12 @@ import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
 import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.ListResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +59,7 @@ public class CustomerController {
         List<SpecialPrciesInfo> specialPrciesInfoList = new ArrayList<>();
         for (SpecialPrice specialPrice : specialPriceList) {
             SpecialPrciesInfo specialPrciesInfo = SpecialPrciesInfo.builder()
-                    .createdByName(userService.getUser(specialPrice.getCreatedById()).getName())
+                    .createdByName(userService.getUser(specialPrice.getCreatedBy()).getName())
                     .productName(productService.findProductById(specialPrice.getProductId()).getName())
                     .build();
             BeanUtils.copyProperties(specialPrice, specialPrciesInfo);
@@ -89,11 +92,12 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name") String name) {
-        return ResponseResult.ok(customerService.getCustomerListByName(pageIndex, pageSize, name));
+        Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), name);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
     /**

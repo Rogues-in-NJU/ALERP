@@ -1,25 +1,31 @@
 package edu.nju.alerp.service.Impl;
 
+import edu.nju.alerp.common.conditionSqlQuery.Condition;
+import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
+import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.service.UserService;
-import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
-import edu.nju.alerp.util.ListResponseUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 用户服务层实现
  * @Author: qianen.yin
  * @CreateDate: 2019-12-17 17:41
  */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -29,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public boolean addUser(UserDTO userDTO) {
+    public int addUser(UserDTO userDTO) {
         User user = User.builder()
                 .name(userDTO.getName())
                 .password(userDTO.getPassword())
@@ -37,22 +43,21 @@ public class UserServiceImpl implements UserService {
                 .created_at(sdf.format(new Date()))
                 .status(UserStatus.ONJOB.getCode())
                 .build();
-        userRepository.save(user);
-        return true;
+        return userRepository.saveAndFlush(user).getId();
     }
 
     @Override
-    public boolean updateUser(UserDTO userDTO) {
+    public int updateUser(UserDTO userDTO) {
         User user = getUser(userDTO.getId());
-        if(user == null){
-            return false;
+        if (user == null) {
+            //todo 待确认方案
+            return 0;
         }
         user.setName(userDTO.getName());
         user.setPassword(userDTO.getPassword());
         user.setPhone_number(userDTO.getPhone_number());
         user.setUpdated_at(sdf.format(new Date()));
-        userRepository.save(user);
-        return true;
+        return userRepository.saveAndFlush(user).getId();
     }
 
     @Override
@@ -63,7 +68,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(int id) {
         User user = getUser(id);
-        if(user == null){
+        if (user == null) {
             return false;
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
@@ -73,10 +78,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListResponse getUserList(int pageIndex, int pageSize, String name, int status) {
-        List<User> userList = getUserList().stream().filter(u -> u.getStatus() == status && (u.getName().contains(name) || u.getPhone_number().contains(name)))
-                .collect(Collectors.toList());
-        return ListResponseUtils.getListResponse(userList, pageIndex, pageSize);
+    public Page<User> getUserList(Pageable pageable, String name, int status) {
+        QueryContainer<Product> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("status", status));
+            List<Condition> fuzzyMatch = new ArrayList<>();
+            fuzzyMatch.add(ConditionFactory.like("name", name));
+            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            fuzzyMatch.add(ConditionFactory.like("phone_number", name));
+            sp.add(ConditionFactory.or(fuzzyMatch));
+        } catch (Exception e) {
+            log.error("Value is null", e);
+        }
+        return userRepository.findAll(sp, pageable);
     }
 
     @Override
