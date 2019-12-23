@@ -19,8 +19,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "auth")
 public class Auth {
+    /**
+     * 自增主键
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    /**
+     * 操作类型
+     */
     private int action;
 }
