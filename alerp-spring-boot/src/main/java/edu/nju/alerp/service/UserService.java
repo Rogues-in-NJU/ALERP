@@ -3,6 +3,8 @@ package edu.nju.alerp.service;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,9 +15,7 @@ import java.util.List;
  */
 public interface UserService {
 
-    boolean addUser(UserDTO userDTO);
-
-    boolean updateUser(UserDTO userDTO);
+    int saveUser(UserDTO userDTO);
 
     User getUser(int id);
 
@@ -23,6 +23,6 @@ public interface UserService {
 
     List<User> getUserList();
 
-    ListResponse getUserList(int pageIndex, int pageSize, String name, int status);
+    Page<User> getUserList(Pageable pageable, String name, int status);
 
 }

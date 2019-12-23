@@ -1,5 +1,8 @@
 package edu.nju.alerp.service.Impl;
 
+import edu.nju.alerp.common.conditionSqlQuery.Condition;
+import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
+import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
 import edu.nju.alerp.service.CustomerService;
@@ -9,11 +12,15 @@ import edu.nju.alerp.repo.SpecialPricesRepository;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
 import edu.nju.alerp.util.ListResponseUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +30,7 @@ import java.util.stream.Collectors;
  * @Author: qianen.yin
  * @CreateDate: 2019-12-17 20:44
  */
+@Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -34,50 +42,46 @@ public class CustomerServiceImpl implements CustomerService {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Override
-    public boolean addCustomer(CustomerDTO customerDTO) {
-        Customer customer = Customer.builder()
-                .created_at(sdf.format(new Date()))
-                .build();
-        BeanUtils.copyProperties(customerDTO, customer);
-        //前台需要传操作人信息，记录创建者是谁
-        List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
-        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
-            SpecialPrice specialPrice = SpecialPrice.builder()
+    public int saveCustomer(CustomerDTO customerDTO) {
+        Customer customer = null;
+        if (customerDTO.getId() == null) {
+            customer = Customer.builder()
                     .createdAt(sdf.format(new Date()))
-//                    .createdById() //待获取用户id
                     .build();
-            BeanUtils.copyProperties(specialPricesDTO, specialPrice);
-            specialPricesRepository.save(specialPrice);
-        }
-        customerRepository.save(customer);
-        return false;
-    }
-
-    @Override
-    public boolean updateCustomer(CustomerDTO customerDTO) {
-        Customer customer = Customer.builder()
-                .updated_at(sdf.format(new Date()))
-                .build();
-        BeanUtils.copyProperties(customerDTO, customer);
-        List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
-        for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
-            SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
-            if(specialPrice == null){
-                specialPrice = SpecialPrice.builder()
+            BeanUtils.copyProperties(customerDTO, customer);
+            //前台需要传操作人信息，记录创建者是谁
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
+                SpecialPrice specialPrice = SpecialPrice.builder()
                         .createdAt(sdf.format(new Date()))
 //                    .createdById() //待获取用户id
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
+                specialPricesRepository.save(specialPrice);
             }
-            else{
-                specialPrice.setUpdateAt(sdf.format(new Date()));
+        } else {
+            customer = Customer.builder()
+                    .updatedAt(sdf.format(new Date()))
+                    .build();
+            BeanUtils.copyProperties(customerDTO, customer);
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
+                SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
+                if (specialPrice == null) {
+                    specialPrice = SpecialPrice.builder()
+                            .createdAt(sdf.format(new Date()))
+//                    .createdById() //待获取用户id
+                            .build();
+                    BeanUtils.copyProperties(specialPricesDTO, specialPrice);
+                } else {
+                    specialPrice.setUpdatedAt(sdf.format(new Date()));
 //                specialPrices.setUpdateById();//待获取用户id
+                }
+                specialPricesRepository.save(specialPrice);
             }
-            specialPricesRepository.save(specialPrice);
         }
-        customerRepository.save(customer);
 
-        return false;
+        return customerRepository.saveAndFlush(customer).getId();
     }
 
     @Override
@@ -96,7 +100,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer == null) {
             return false;
         }
-        customer.setDeleted_at(sdf.format(new Date()));
+        customer.setDeletedAt(sdf.format(new Date()));
         customerRepository.save(customer);
         //考虑到客户为懒删除，建议暂存特惠价格数据
         return false;
@@ -108,8 +112,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ListResponse getCustomerListByName(int pageIndex, int pageSize, String name) {
-        List<Customer> customerList = getCustomerList().stream().filter(c -> c.getName().contains(name) || c.getShorthand().contains(name)).collect(Collectors.toList());
-        return ListResponseUtils.getListResponse(customerList, pageIndex, pageSize);
+    public Page<Customer> getCustomerListByName(Pageable pageable, String name) {
+        QueryContainer<Customer> sp = new QueryContainer<>();
+        try {
+            List<Condition> fuzzyMatch = new ArrayList<>();
+            fuzzyMatch.add(ConditionFactory.like("name", name));
+            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            sp.add(ConditionFactory.or(fuzzyMatch));
+        } catch (Exception e) {
+            log.error("Value is null", e);
+        }
+        return customerRepository.findAll(sp, pageable);
     }
+
 }

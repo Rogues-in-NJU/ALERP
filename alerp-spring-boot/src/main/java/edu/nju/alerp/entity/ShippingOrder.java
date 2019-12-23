@@ -15,20 +15,70 @@ import javax.persistence.*;
 @Entity
 @Table(name = "shipping_order")
 public class ShippingOrder {
+    /**
+     * 自增主键
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    /**
+     * 单据编码
+     */
     private String code;
+    /**
+     * 顾客id
+     */
     private int customer_id;
+    /**
+     * 收款单id
+     */
     private int arrear_order_id;
+    /**
+     * 单据状态：已出货/已完成/已废弃
+     */
     private int status;
+    /**
+     * 总金额
+     */
     private double cash;
-    private double floating_cash;
-    private double receivable_cash;
-    private int created_by;
-    private String created_at;
-    private int deleted_by;
-    private String deleted_at;
-    private int updated_by;
-    private String updated_at;
+    /**
+     *浮动金额
+     */
+    @Column(name="floating_cash")
+    private double floatingCash;
+    /**
+     *实收金额
+     */
+    @Column(name="receivable_cash")
+    private double receivableCash;
+    /**
+     * 创建者id
+     */
+    @Column(name = "created_by")
+    private int createdBy;
+    /**
+     * 创建时间
+     */
+    @Column(name = "created_at")
+    private String createdAt;
+    /**
+     * 删除者id
+     */
+    @Column(name = "deleted_by")
+    private int deletedBy;
+    /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
+    /**
+     * 更新者id
+     */
+    @Column(name = "update_by")
+    private int updatedBy;
+    /**
+     * 更新时间
+     */
+    @Column(name = "update_at")
+    private String updatedAt;
 }

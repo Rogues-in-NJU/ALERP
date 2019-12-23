@@ -1,11 +1,17 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.entity.User;
 import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.ListResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,8 +57,8 @@ public class UserController {
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name") String name,
                                              @RequestParam(value = "status") int status) {
-        ListResponse userList = userService.getUserList(pageIndex, pageSize, name, status);
-        return ResponseResult.ok(userList);
+        Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
     /**
@@ -62,13 +68,13 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult<Boolean> saveUser(@Valid @RequestBody UserDTO userDTO) {
-        boolean result;
-        if (userDTO.getId() == null) {
-            result = userService.addUser(userDTO);
-        } else {
-            result = userService.updateUser(userDTO);
+    public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
+        try {
+            int result = userService.saveUser(userDTO);
+            return ResponseResult.ok(result);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
-        return ResponseResult.ok(result);
+
     }
 }
