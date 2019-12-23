@@ -1,4 +1,4 @@
-package edu.nju.alerp.service.Impl;
+package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.repo.ProductRepository;
