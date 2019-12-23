@@ -1,4 +1,4 @@
-package edu.nju.alerp.service.Impl;
+package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
@@ -6,12 +6,10 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
 import edu.nju.alerp.service.CustomerService;
-import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.SpecialPricesRepository;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
-import edu.nju.alerp.util.ListResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 客户服务层接口实现

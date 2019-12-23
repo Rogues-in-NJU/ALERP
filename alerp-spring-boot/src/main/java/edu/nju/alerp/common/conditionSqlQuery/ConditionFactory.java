@@ -16,7 +16,7 @@ public class ConditionFactory {
     public static SimpleCondition equal(String fieldName, Object value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.EQ);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.EQ);
     }
 
     /**
@@ -25,7 +25,7 @@ public class ConditionFactory {
     public static SimpleCondition notEqual(String fieldName, Object value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.NE);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.NE);
     }
 
     /**
@@ -34,7 +34,7 @@ public class ConditionFactory {
     public static SimpleCondition like(String fieldName, String value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.LIKE);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.LIKE);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ConditionFactory {
     public static <T extends Comparable> SimpleCondition greatThan(String fieldName, T value) throws Exception{
         if (value == null)
             throw  new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.GT);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.GT);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ConditionFactory {
     public static <T extends Comparable> SimpleCondition lessThan(String fieldName, T value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.LT);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.LT);
     }
 
     /**
@@ -61,7 +61,7 @@ public class ConditionFactory {
     public static <T extends Comparable> SimpleCondition greatThanEqualTo(String fieldName, T value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.GTE);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.GTE);
     }
 
     /**
@@ -70,7 +70,16 @@ public class ConditionFactory {
     public static <T extends Comparable> SimpleCondition lessThanEqualTo(String fieldName, T value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, Condition.Operator.LTE);
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.LTE);
+    }
+
+    /**
+     * between
+     * */
+    public static <T extends Comparable> SimpleCondition between(String fieldName, T value, T value2) throws Exception {
+        if (value == null)
+            throw new Exception();
+        return new SimpleCondition(fieldName, value, value2, Condition.Operator.BETWEEN);
     }
 
     /**

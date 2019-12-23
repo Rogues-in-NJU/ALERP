@@ -1,4 +1,4 @@
-package edu.nju.alerp.service.Impl;
+package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.repo.ProductRepository;
@@ -7,12 +7,14 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,8 +62,8 @@ public class ProductServiceImpl implements ProductService {
         Product product = null;
         if (productDTO.getId() == null){
             product = Product.builder()
-                    .create_at(new Date())
-                    .update_at(new Date())
+                    .createAt(TimeUtil.dateFormat(new Date()))
+                    .updateAt(TimeUtil.dateFormat(new Date()))
                     .density(productDTO.getDensity())
                     .name(productDTO.getName())
                     .shorthand(productDTO.getShorthand())
@@ -69,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
                     .specification(productDTO.getSpecification()).build();
         }else {
             product = Product.builder()
-                    .update_at(new Date())
+                    .updateAt(TimeUtil.dateFormat(new Date()))
                     .id(productDTO.getId())
                     .density(productDTO.getDensity())
                     .name(productDTO.getName())

@@ -1,4 +1,4 @@
-package edu.nju.alerp.service.Impl;
+package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
@@ -75,12 +75,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getUserList(Pageable pageable, String name, int status) {
-        QueryContainer<Product> sp = new QueryContainer<>();
+        QueryContainer<User> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.equal("status", status));
             List<Condition> fuzzyMatch = new ArrayList<>();
             fuzzyMatch.add(ConditionFactory.like("name", name));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+//            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
             fuzzyMatch.add(ConditionFactory.like("phone_number", name));
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {

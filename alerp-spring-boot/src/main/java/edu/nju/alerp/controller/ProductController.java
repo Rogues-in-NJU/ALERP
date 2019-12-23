@@ -32,6 +32,15 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+
+    /**
+     * 获取商品列表（分页）
+     * @param pageIndex
+     * @param pageSize
+     * @param name
+     * @param type
+     * @return
+     */
     @RequestMapping(value = "/list")
     public ResponseResult<ListResponse> findProductsByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                             @RequestParam(value = "pageSize") int pageSize,
@@ -41,11 +50,23 @@ public class ProductController {
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
+
+    /**
+     * 获取商品详情
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/{id}")
     public ResponseResult<Product> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(productService.findProductById(id));
     }
 
+    /**
+     * 新增公司支出
+     *
+     * @param productDTO
+     * @return
+     */
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
