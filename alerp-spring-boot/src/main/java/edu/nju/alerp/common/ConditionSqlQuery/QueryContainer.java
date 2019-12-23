@@ -9,6 +9,11 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Description: 查询条件容器
+ * @Author: yangguan
+ * @CreateDate: 2019-12-21 19:24
+ */
 public class QueryContainer<T> implements Specification<T> {
 
     private List<Condition> conditions = new ArrayList<>();

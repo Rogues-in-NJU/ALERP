@@ -8,6 +8,11 @@ import javax.persistence.criteria.*;
 
 @Data
 @AllArgsConstructor
+/**
+ * @Description: 简单条件表达式
+ * @Author: yangguan
+ * @CreateDate: 2019-12-21 19:24
+ */
 public class SimpleCondition implements Condition{
 
     private String fieldName;
