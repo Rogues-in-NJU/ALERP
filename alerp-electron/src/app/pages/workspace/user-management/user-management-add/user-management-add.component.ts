@@ -29,6 +29,8 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   isLoading: boolean = false;
 
   isSaving: boolean = false;
+  radioValue1 = '0';
+  radioValue2 = '0';
 
   disabledDate: any = (current: Date): boolean => {
     return DateUtils.compare(current, new Date()) > 0;
@@ -46,7 +48,9 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     this.userManagementForm = this.fb.group({
       name: [ null, Validators.required ],
-      phone_number: [ null, Validators.required ]
+      phone_number: [ null, Validators.required ],
+      radioValue1: [ 0, Validators.required ],
+      radioValue2: [ null, Validators.required ]
     });
 
   }
@@ -58,7 +62,9 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     let formData: any = this.userManagementForm.getRawValue();
     let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
-      phone_number: formData.phone_number
+      phone_number: formData.phone_number,
+      // radioValue1: formData.radioValue1,
+      // radioValue2: formData.radioValue2
     };
 
     this.isSaving = true;
