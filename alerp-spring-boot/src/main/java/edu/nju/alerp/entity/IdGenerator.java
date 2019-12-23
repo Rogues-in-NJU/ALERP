@@ -20,11 +20,21 @@ import javax.persistence.Table;
 @Table(name = "id_generator")
 public class IdGenerator {
 
+    /**
+     * 单据的类型
+     */
     @Id
     @GeneratedValue(generator = "documents")
     @GenericGenerator(name = "documents", strategy = "uuid")
     private String documents;
 
+    /**
+     * 当天某个单据的自增数
+     */
     private int currentCount;
+
+    /**
+     * 最后一次更新时间
+     */
     private String updateTime;
 }

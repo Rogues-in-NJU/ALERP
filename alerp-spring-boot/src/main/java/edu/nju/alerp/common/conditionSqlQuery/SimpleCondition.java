@@ -16,7 +16,17 @@ import javax.persistence.criteria.*;
 public class SimpleCondition implements Condition{
 
     private String fieldName;
+
+    /**
+     * 用于比较的第一个参数
+     * */
     private Object value;
+
+    /**
+     * 用于比较的第二个参数，between的时候用,其他时候为null
+     * */
+    private Object value2;
+
     private Operator operator;
 
     @Override
@@ -40,6 +50,8 @@ public class SimpleCondition implements Condition{
                 return builder.lessThanOrEqualTo(condition, (Comparable) value);
             case GTE:
                 return builder.greaterThanOrEqualTo(condition, (Comparable) value);
+            case BETWEEN:
+                return builder.between(condition, (Comparable) value, (Comparable) value2);
         }
         return null;
     }
