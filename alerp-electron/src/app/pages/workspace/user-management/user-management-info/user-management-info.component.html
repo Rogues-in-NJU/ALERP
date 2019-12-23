@@ -1,5 +1,14 @@
 <nz-page-header>
   <nz-page-header-title>用户详情</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary"
+            (click)="saveUser()"
+            [disabled]="!userManagementForm.valid || isSaving">
+      <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
+      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>
+      保存
+    </button>
+  </nz-page-header-extra>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
   <nz-skeleton [nzActive]="true"></nz-skeleton>
@@ -15,27 +24,33 @@
   </nz-descriptions>
   <br/>
   <h3>权限列表</h3>
-  <!--<nz-table #purchaseOrderProductsTable-->
-  <!--[nzData]="purchaseOrderData.products">-->
-  <!--<thead>-->
-  <!--<tr>-->
-  <!--<th>商品编号</th>-->
-  <!--<th>商品名称</th>-->
-  <!--<th>数量</th>-->
-  <!--<th>重量(kg)</th>-->
-  <!--<th>单价</th>-->
-  <!--<th>总价</th>-->
-  <!--</tr>-->
-  <!--</thead>-->
-  <!--<tbody>-->
-  <!--<tr *ngFor="let data of purchaseOrderProductsTable.data">-->
-  <!--<td>{{ data.id }}</td>-->
-  <!--<td>{{ data.name }}</td>-->
-  <!--<td>{{ data.quantity }}</td>-->
-  <!--<td>{{ data.weight }}</td>-->
-  <!--<td>{{ data.price }}</td>-->
-  <!--<td>&yen;{{ data.cash | number: '1.2-3' }}</td>-->
-  <!--</tr>-->
-  <!--</tbody>-->
-  <!--</nz-table>-->
+  <form nz-form nzLayout="inline" [formGroup]="userManagementForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">权限1</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <nz-radio-group formControlName="radioValue1">
+              <label nz-radio nzValue="0">不可读</label>
+              <label nz-radio nzValue="1">只读</label>
+              <label nz-radio nzValue="2">读写</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="8">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="6">权限2</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="14">
+            <nz-radio-group formControlName="radioValue2">
+              <label nz-radio nzValue="0">不可读</label>
+              <label nz-radio nzValue="1">只读</label>
+              <label nz-radio nzValue="2">读写</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
 </div>
+
