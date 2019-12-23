@@ -14,6 +14,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Slf4j
+/**
+ * @Description: 逻辑条件，用于多条件的or或and
+ * @Author: yangguan
+ * @CreateDate: 2019-12-21 19:24
+ */
 public class LogicalCondition implements Condition{
 
     private List<Condition> conditions;
