@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CustomerService } from "../../../../core/services/customer.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultVO } from "../../../../core/model/result-vm";
 import { CustomerSpecialPriceVO, CustomerVO } from "../../../../core/model/customer";
 import { Objects, StringUtils } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -90,7 +90,7 @@ export class CustomerInfoComponent implements OnInit {
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<ProductVO[]>>
         = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll({});
+        .findAll(Object.assign(new QueryParams(), {}));
       return t.pipe(map(res => res.data));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChange$

@@ -1,9 +1,10 @@
 package edu.nju.alerp.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * @Description: 商品实体类
@@ -12,7 +13,8 @@ import java.sql.Date;
  */
 @Data
 @Entity
-@Table(name = "Product")
+@Builder
+@Table(name = "product")
 public class Product {
 
     @Id

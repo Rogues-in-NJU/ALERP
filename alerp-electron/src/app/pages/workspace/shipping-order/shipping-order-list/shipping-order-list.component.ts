@@ -9,6 +9,7 @@ import {TabService} from "../../../../core/services/tab.service";
 import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {Objects} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
+import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
 
 @Component({
   selector: 'shipping-order-list',
@@ -59,6 +60,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
           return;
         }
         const tableResult: TableResultVO<ShippingOrderInfoVO> = res.data;
+
         this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;

@@ -8,9 +8,9 @@ import {ProductService} from "../../../../core/services/product.service";
 import {ProductVO} from "../../../../core/model/product";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {BehaviorSubject, Observable} from "rxjs";
 import {Objects} from "../../../../core/services/util.service";
+import { FormGroup } from "@angular/forms";
 
 @Component({
   selector: 'app-product-list',
@@ -74,7 +74,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       type : this.query_type
     };
 
-    this.product.findAllByPage(queryParams)
+    this.product.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProductVO>>) =>{
         if(!res){
           return;
