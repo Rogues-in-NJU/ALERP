@@ -1,8 +1,8 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.dto.CustomerDTO;
-import edu.nju.alerp.dto.CustomerInfo;
-import edu.nju.alerp.dto.SpecialPrciesInfo;
+import edu.nju.alerp.dto.info.CustomerInfo;
+import edu.nju.alerp.dto.info.SpecialPrciesInfo;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;

@@ -13,25 +13,25 @@ import javax.persistence.criteria.*;
  * @Author: yangguan
  * @CreateDate: 2019-12-21 19:24
  */
-public class SimpleCondition implements Condition{
+public class SimpleCondition implements Condition {
 
     private String fieldName;
 
     /**
      * 用于比较的第一个参数
-     * */
+     */
     private Object value;
 
     /**
      * 用于比较的第二个参数，between的时候用,其他时候为null
-     * */
+     */
     private Object value2;
 
     private Operator operator;
 
     @Override
     @SuppressWarnings("unchecked")
-    public Predicate toPredicate(Root<?> root, CriteriaQuery<?> query, CriteriaBuilder builder){
+    public Predicate toPredicate(Root<?> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         Path condition = root.get(fieldName);
         switch (operator) {
             case EQ:
@@ -41,7 +41,7 @@ public class SimpleCondition implements Condition{
             case LIKE:
 //                if (!(value instanceof String))
 //                    throw new Exception(); //抛String类型错误 exception #todo
-                return builder.like(condition, CommonUtils.fuzzyStringSplicing((String)value));
+                return builder.like(condition, CommonUtils.fuzzyStringSplicing((String) value));
             case LT:
                 return builder.lessThan(condition, (Comparable) value);
             case GT:
@@ -52,6 +52,10 @@ public class SimpleCondition implements Condition{
                 return builder.greaterThanOrEqualTo(condition, (Comparable) value);
             case BETWEEN:
                 return builder.between(condition, (Comparable) value, (Comparable) value2);
+            case IN:
+                return builder.isMember(value, condition);
+            case NOT_IN:
+                return builder.isNotMember(value, condition);
         }
         return null;
     }

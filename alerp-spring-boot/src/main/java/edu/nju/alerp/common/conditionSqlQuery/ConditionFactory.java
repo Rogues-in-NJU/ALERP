@@ -83,6 +83,24 @@ public class ConditionFactory {
     }
 
     /**
+     * 存在于
+     * */
+    public static <T extends Comparable> SimpleCondition In(String fieldName, List<T> value) throws Exception {
+        if (value == null)
+            throw new Exception();
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.IN);
+    }
+
+    /**
+     * 不存在于
+     * */
+    public static <T extends Comparable> SimpleCondition NotIn(String fieldName, List<T> value) throws Exception {
+        if (value == null)
+            throw new Exception();
+        return new SimpleCondition(fieldName, value, null, Condition.Operator.NOT_IN);
+    }
+
+    /**
      * 并且
      * */
     public static LogicalCondition and(List<Condition> conditions) throws Exception{

@@ -9,6 +9,7 @@ import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,8 +32,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
 
     @Override
     public int saveUser(UserDTO userDTO) {
@@ -42,7 +41,7 @@ public class UserServiceImpl implements UserService {
                     .name(userDTO.getName())
                     .password(userDTO.getPassword())
                     .phone_number(userDTO.getPhone_number())
-                    .created_at(sdf.format(new Date()))
+                    .created_at(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
         }
@@ -51,7 +50,7 @@ public class UserServiceImpl implements UserService {
             user.setName(userDTO.getName());
             user.setPassword(userDTO.getPassword());
             user.setPhone_number(userDTO.getPhone_number());
-            user.setUpdated_at(sdf.format(new Date()));
+            user.setUpdated_at(DateUtils.getToday());
         }
         return userRepository.saveAndFlush(user).getId();
     }
@@ -68,7 +67,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
-        user.setDeleted_at(sdf.format(new Date()));
+        user.setDeleted_at(DateUtils.getToday());
         userRepository.save(user);
         return true;
     }
