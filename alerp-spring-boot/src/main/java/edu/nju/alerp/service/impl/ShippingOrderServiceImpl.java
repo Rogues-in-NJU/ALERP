@@ -4,10 +4,13 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.domain.SpecialPrciesDO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
+import edu.nju.alerp.entity.ShippingOrderProduct;
 import edu.nju.alerp.enums.ShippingOrderStatus;
 import edu.nju.alerp.repo.CustomerRepository;
+import edu.nju.alerp.repo.ShippingOrderProductRepository;
 import edu.nju.alerp.repo.ShippingOrderRepository;
 import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.util.DateUtils;
@@ -33,6 +36,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     ShippingOrderRepository shippingOrderRepository;
     @Autowired
     CustomerRepository customerRepository;
+    @Autowired
+    ShippingOrderProductRepository shippingOrderProductRepository;
 
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
@@ -43,13 +48,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
         int res = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
-        //todo 生成欠款单
         return res;
     }
 
     @Override
-    public int ShippingOrderInfo(int id) {
-        return 0;
+    public ShippingOrder getShippingOrder(int id) {
+        return shippingOrderRepository.getOne(id);
     }
 
     @Override
@@ -59,6 +63,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             log.error("shippingOrder is null");
             return false;
         }
+
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
         shippingOrderRepository.save(shippingOrder);
         return true;
@@ -75,16 +80,26 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
         try {
             sp.add(ConditionFactory.equal("status", status));
-            sp.add(ConditionFactory.In("customerId",customerIdList));
+            sp.add(ConditionFactory.In("customerId", customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
             fuzzyMatch.add(ConditionFactory.like("name", name));
             fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("created_at",startTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("created_at",endTime));
+            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("created_at", startTime));
+            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("created_at", endTime));
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);
         }
         return shippingOrderRepository.findAll(sp, pageable);
+    }
+
+    @Override
+    public List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId) {
+        return shippingOrderProductRepository.findAllByShippingOrderId(shippingOrderId);
+    }
+
+    @Override
+    public List<Integer> getProcessingListById(int id) {
+        return shippingOrderProductRepository.findProcessingListByShippingId(id);
     }
 }

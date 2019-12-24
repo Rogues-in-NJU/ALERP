@@ -1,4 +1,4 @@
-package edu.nju.alerp.dto.info;
+package edu.nju.alerp.domain;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class SpecialPrciesInfo {
+public class SpecialPrciesDO {
     private int id;
     private int productId;
     private String productName;
