@@ -1,5 +1,6 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.repo.ProductRepository;
 import edu.nju.alerp.service.ProductService;
@@ -9,22 +10,31 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 @Slf4j
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private Cache<Integer, String> productNameCache;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        List<Product> products = findAll();
+        products.forEach(product -> productNameCache.put(product.getId(), product.getName()));
+    }
 
     @Override
     public List<Product> findAll() {
@@ -58,6 +68,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public String findProductNameById(int id) {
+        return productNameCache.get(id);
+    }
+
+    @Override
     public int addOrUpdate(ProductDTO productDTO) {
         Product product = null;
         if (productDTO.getId() == null){
@@ -79,6 +94,8 @@ public class ProductServiceImpl implements ProductService {
                     .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                     .specification(productDTO.getSpecification()).build();
         }
-        return productRepository.saveAndFlush(product).getId();
+        product = productRepository.saveAndFlush(product);
+        productNameCache.put(product.getId(), product.getName());
+        return product.getId();
     }
 }
