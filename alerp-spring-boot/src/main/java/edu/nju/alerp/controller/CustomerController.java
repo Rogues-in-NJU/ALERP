@@ -1,8 +1,8 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.domain.CustomerDO;
+import edu.nju.alerp.domain.SpecialPrciesDO;
 import edu.nju.alerp.dto.CustomerDTO;
-import edu.nju.alerp.dto.info.CustomerInfo;
-import edu.nju.alerp.dto.info.SpecialPrciesInfo;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
@@ -52,25 +52,25 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<CustomerInfo> customerInfo(
+    public ResponseResult<CustomerDO> CustomerDO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);
-        List<SpecialPrciesInfo> specialPrciesInfoList = new ArrayList<>();
+        List<SpecialPrciesDO> SpecialPrciesDOList = new ArrayList<>();
         for (SpecialPrice specialPrice : specialPriceList) {
-            SpecialPrciesInfo specialPrciesInfo = SpecialPrciesInfo.builder()
+            SpecialPrciesDO specialPrciesDO = SpecialPrciesDO.builder()
                     .createdByName(userService.getUser(specialPrice.getCreatedBy()).getName())
                     .productName(productService.findProductById(specialPrice.getProductId()).getName())
                     .build();
-            BeanUtils.copyProperties(specialPrice, specialPrciesInfo);
-            specialPrciesInfoList.add(specialPrciesInfo);
+            BeanUtils.copyProperties(specialPrice, specialPrciesDO);
+            SpecialPrciesDOList.add(specialPrciesDO);
         }
-        CustomerInfo customerInfo = CustomerInfo.builder()
-                .specialPrciesInfoList(specialPrciesInfoList)
+        CustomerDO customerDO = CustomerDO.builder()
+                .specialPrciesDOList(SpecialPrciesDOList)
                 .build();
-        BeanUtils.copyProperties(customer, customerInfo);
+        BeanUtils.copyProperties(customer, customerDO);
 
-        return ResponseResult.ok(customerInfo);
+        return ResponseResult.ok(customerDO);
     }
 
     /**
