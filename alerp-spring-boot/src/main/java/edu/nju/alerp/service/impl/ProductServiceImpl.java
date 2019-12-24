@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     private ProductRepository productRepository;
 
     @Autowired
-    private Cache<Integer, String> productNameCache;
+    private Cache<Integer, Object> productNameCache;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -64,12 +64,26 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public Product findProductById(int id) {
-        return productRepository.getOne(id);
+        Product pro = (Product) productNameCache.get(id);
+        if (pro == null)
+            pro = productRepository.getOne(id);
+        return pro;
     }
 
     @Override
     public String findProductNameById(int id) {
-        return productNameCache.get(id);
+        Product res = (Product) productNameCache.get(id);
+        String name = null;
+        if (res == null) {
+            res = findProductById(id);
+            if (res != null) {
+                name = res.getName();
+                productNameCache.put(id, res);
+            }
+        }else {
+            name = res.getName();
+        }
+        return name;
     }
 
     @Override
@@ -95,7 +109,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                     .specification(productDTO.getSpecification()).build();
         }
         product = productRepository.saveAndFlush(product);
-        productNameCache.put(product.getId(), product.getName());
+        productNameCache.put(product.getId(), product);
         return product.getId();
     }
 }

@@ -1,6 +1,9 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.entity.ProcessingOrder;
+import edu.nju.alerp.vo.ProcessingOrderDetailVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,5 +16,9 @@ public interface ProcessOrderService {
 
     public List<ProcessingOrder> findAll();
 
-//    public
+    public Page<ProcessingOrder> findAllByPage(Pageable pageable, String id,
+                                                   String customerName, Integer status,
+                                                   String createAtStartTime, String createAtEndTime);
+
+    public ProcessingOrderDetailVO findProcessingById(int id);
 }

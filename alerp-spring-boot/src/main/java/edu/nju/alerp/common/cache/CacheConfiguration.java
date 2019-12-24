@@ -1,10 +1,14 @@
 package edu.nju.alerp.common.cache;
 
 
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,25 +20,32 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheConfiguration {
 
     @Bean
-    public Cache<Integer, String> productNameCache() {
-        return buildStringCache("productNameCache", 1000000);
+    public Cache<Integer, Object> productNameCache() {
+        return buildObjectCache("productNameCache", 1000000);
     }
 
-    private Cache<Integer, String>  buildStringCache(String cacheName, long heapCacheLimit) {
+    private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
         String cacheFile = ""+ cacheName;
+        //todo 文件路径要配置好
         mkdir(cacheFile);
-//        DB db = DBMaker.fileDB(cacheFile)
-//                //.checksumHeaderBypass()
-//                //.fileMmapEnableIfSupported()//1
-//                //.fileMmapPreclearDisable()//2
-//                .cleanerHackEnable()//3
-//                .closeOnJvmShutdown()//4
-//                //.transactionEnable()//5
-//                .concurrencyScale(128)//6
-//                .checksumHeaderBypass()
-//                .fileChannelEnable()
+        DB db = DBMaker.fileDB(cacheFile)
+                //.checksumHeaderBypass()
+                //.fileMmapEnableIfSupported()//1
+                //.fileMmapPreclearDisable()//2
+                .cleanerHackEnable()//3
+                .closeOnJvmShutdown()//4
+                //.transactionEnable()//5
+                .concurrencyScale(128)//6
+                .checksumHeaderBypass()
+                .fileChannelEnable()
+                .make();
+
+        Map<Integer, Object> diskCache = db.hashMap(cacheName)
+                .keySerializer(Serializer.INTEGER)
+                .valueSerializer(Serializer.JAVA)
+                .createOrOpen();
 //
-        return new RealCache<>(new ConcurrentHashMap<>(), null, heapCacheLimit);
+        return new RealCache<>(new ConcurrentHashMap<>(), diskCache, heapCacheLimit);
     }
 
     private static void mkdir(String file) {

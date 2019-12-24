@@ -41,6 +41,18 @@ public class ProcessingOrder {
     private int customerId;
 
     /**
+     * 客户名字
+     * */
+    @Column(name = "customer_name")
+    private String customerName;
+
+    /**
+     * 客户的速记编号
+     * */
+    @Column(name = "shorthand")
+    private String shorthand;
+
+    /**
      * 出货单id
      */
     @Column(name = "shipping_order_id")
