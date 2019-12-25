@@ -9,8 +9,8 @@ import lombok.Data;
  */
 @Data
 public class ProcessingOrderProductDTO {
-    private int productId;
+    private Integer productId;
     private String specification;
-    private int quantity;
-    private int expectedWeight;
+    private Integer quantity;
+    private Integer expectedWeight;
 }

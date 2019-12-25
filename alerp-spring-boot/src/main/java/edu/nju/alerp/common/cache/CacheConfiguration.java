@@ -21,11 +21,11 @@ public class CacheConfiguration {
 
     @Bean
     public Cache<Integer, Object> productNameCache() {
-        return buildObjectCache("productNameCache", 1000000);
+        return buildObjectCache("productNameCache", 100000);
     }
 
     private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
-        String cacheFile = ""+ cacheName;
+        String cacheFile = "E:/mapdb/"+ cacheName;
         //todo 文件路径要配置好
         mkdir(cacheFile);
         DB db = DBMaker.fileDB(cacheFile)

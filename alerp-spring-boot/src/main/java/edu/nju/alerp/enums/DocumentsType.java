@@ -16,16 +16,10 @@ public enum DocumentsType {
         this.name = name;
     }
 
-    public static DocumentsType getDocumentsType(String name) {
-        switch (name) {
-            case "processing_order":
-                return DocumentsType.PROCESSING_ORDER;
-            case "product":
-                return DocumentsType.PRODUCT;
-            case "purchase_order":
-                return DocumentsType.PURCHASE_ORDER;
-            case "shipping_order":
-                return DocumentsType.SHIPPING_ORDER;
+    public static DocumentsType of(String name) {
+        for (DocumentsType item : DocumentsType.values()) {
+            if (item.name.equals(name))
+                return item;
         }
         return null;
     }
