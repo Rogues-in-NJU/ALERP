@@ -157,7 +157,7 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else priceEditTpl">
-          &yen; {{ data.price | number: '1.2-3' }}
+          &yen; {{ data.price | number: '1.2-2' }}
         </ng-container>
         <ng-template #priceEditTpl>
           <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" [nzFormatter]="cashFormatter"></nz-input-number>
