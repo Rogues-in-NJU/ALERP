@@ -11,10 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -56,6 +53,15 @@ public class DocumentsIdFactory implements InitializingBean {
 
     @Scheduled(cron = "0 0 0 * * ?")
     private void resetCount() {
+        List<IdGenerator> ids = new ArrayList<>();
+        for (DocumentsType item : DocumentsType.values()) {
+            ids.add(IdGenerator.builder().documents(item.getName())
+                                        .currentCount(0)
+                                        .updateTime(TimeUtil.dateFormat(new Date()))
+                                        .build());
+        }
+        idGeneratorRepository.saveAll(ids);
+        idGeneratorRepository.flush();
         idGenerator.forEach( (d, c) -> c.set(0));
     }
 

@@ -1,6 +1,7 @@
 package edu.nju.alerp.service;
 
 
+import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.entity.PurchaseOrder;
 import edu.nju.alerp.vo.PurchaseOrderDetailVO;
 import org.springframework.data.domain.Page;
@@ -22,4 +23,6 @@ public interface PurchaseOrderService {
                                              String doneEndTime);
 
     public PurchaseOrderDetailVO findPurchaseById(int id);
+
+    public int addNewPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO);
 }
