@@ -2,8 +2,6 @@ package edu.nju.alerp.service.impl;
 
 
 import edu.nju.alerp.common.DocumentsIdFactory;
-import edu.nju.alerp.common.cache.Cache;
-import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ProcessingOrderDTO;
@@ -14,7 +12,6 @@ import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ProcessingOrderStatus;
-import edu.nju.alerp.enums.ProductType;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ProcessOrderProductRepository;
 import edu.nju.alerp.repo.ProcessingOrderRepository;
