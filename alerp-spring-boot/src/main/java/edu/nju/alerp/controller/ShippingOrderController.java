@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,7 @@ public class ShippingOrderController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult<Boolean> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         //todo 前置判断欠款单数额，能否废弃
@@ -91,6 +93,7 @@ public class ShippingOrderController {
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult<Integer> saveUser(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
