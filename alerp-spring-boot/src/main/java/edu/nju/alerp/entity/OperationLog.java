@@ -29,6 +29,12 @@ public class OperationLog {
     private int userId;
 
     /**
+     * 用户姓名
+     */
+    @Column(name = "user_name")
+    private String userName;
+
+    /**
      * 操作时间
      */
     @Column(name = "created_at")

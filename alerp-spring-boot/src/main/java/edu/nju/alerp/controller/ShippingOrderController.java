@@ -42,9 +42,8 @@ public class ShippingOrderController {
     ShippingOrderService shippingOrderService;
     @Autowired
     ProductService productService;
-    //待关神接口
-//    @Autowired
-//    ProcessOrderService processOrderService;
+    @Autowired
+    ProcessOrderService processOrderService;
 
     /**
      * 删除出货单
@@ -63,7 +62,7 @@ public class ShippingOrderController {
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
         //根据id获取加工单，修改状态
 //        processingIdList.forEach(p ->{
-//            ProcessingOrder processingOrder =
+//            ProcessingOrder processingOrder = processOrderService.
 //        });
         //todo 废弃对应收款单
         return ResponseResult.ok(res);
