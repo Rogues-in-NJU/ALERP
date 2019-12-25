@@ -1,4 +1,4 @@
-package edu.nju.alerp.dto.info;
+package edu.nju.alerp.domain;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 @Builder
-public class CustomerInfo {
+public class CustomerDO {
     private int id;
     private String name;
     private int type;
@@ -26,5 +26,5 @@ public class CustomerInfo {
     private String deleted_at;
     private int updated_by;
     private String updated_at;
-    private List<SpecialPrciesInfo> specialPrciesInfoList;
+    private List<SpecialPrciesDO> specialPrciesDOList;
 }
