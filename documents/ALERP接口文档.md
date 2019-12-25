@@ -145,7 +145,22 @@ res:
     weight: number,
     price: number,
     cash: number
-  }]
+  }],
+
+  //12.24 新增
+  paymentRecords:[{
+    id: number,
+    purchaseOrderId:string,
+    cash:number,
+    status,number,
+    description:string,
+    salesman:string,
+    doneAt:string,
+    createdById: number,
+    createdByName: string,
+    deletedById: number,
+    deletedByName: string,
+    }]
 }
 ```
 
@@ -176,6 +191,36 @@ body:
 res:
 {}
 ```
+
+#### 新增采购单付款记录
+```
+POST
+/api/purchase-order/payment-record
+
+body:
+
+{
+    purchaseOrderId: number,
+    cash:number
+    description: string,
+    salesman: string,
+    doneAt: string
+}
+
+res:
+{}
+```
+
+#### 废弃采购单付款记录
+```
+GET
+/api/purchase-order/payment-record/delete/:id
+
+
+res:
+{}
+```
+
 
 #### 废弃采购单
 ```
@@ -725,6 +770,8 @@ res:
     code: string,
     customerId: number,
     customerName: string,
+    shippingOrderId： number;            //12.24新增
+    shippingOrderCode: string;           //12.24新增
     receivableCash: number,
     receivedCash: number,
     dueDate: string,
@@ -748,6 +795,8 @@ res:
   code: string,
   customerId: number,
   customerName: string,
+  shippingOrderId： number;            //12.24新增
+  shippingOrderCode: string;           //12.24新增
   receivableCash: number,
   receivedCash: number,
   dueDate: string,
@@ -843,3 +892,56 @@ res:
 ```
 
 ### 汇总信息模块
+
+### 供货商模块                        //12.24新增
+#### 查看供货商列表
+```
+GET
+/api/supplier/list
+
+params:
+* pageSize
+* pageIndex
+* name 
+
+res:
+{
+  totalPages: number,
+  pageIndex: number,
+  pageSize: number,
+  result: [{
+    id: number,
+    name: string,
+    description: string,
+    createdAt: string,
+    createdById: string,
+    createdByName: string
+  }]
+}
+```
+
+#### 新增供货商/编辑供货商
+```
+POST
+/api/supplier
+
+body:
+{
+  id: number,
+  name: string,
+  description: string
+
+}
+
+res: 
+{}
+```
+
+#### 删除供货商
+```
+GET
+/api/supplier/delete/:id
+
+res:
+{}
+```

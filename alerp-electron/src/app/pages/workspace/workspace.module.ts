@@ -35,6 +35,9 @@ const routes: Routes = [
   }, {
     path: 'shipping-order',
     loadChildren: './shipping-order/shipping-order.module#ShippingOrderModule'
+  }, {
+    path: 'arrear-order',
+    loadChildren: './arrear-order/arrear-order.module#ArrearOrderModule'
   }
 ];
 

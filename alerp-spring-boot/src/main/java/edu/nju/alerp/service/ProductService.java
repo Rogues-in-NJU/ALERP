@@ -20,5 +20,7 @@ public interface ProductService {
 
     public Product findProductById(int id);
 
+    public String findProductNameById(int id);
+
     public int addOrUpdate(ProductDTO productDTO);
 }
