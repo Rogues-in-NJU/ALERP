@@ -35,7 +35,7 @@ public class DocumentsIdFactory implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         List<IdGenerator> documents = idGeneratorRepository.findAll();
-        documents.forEach(id -> idGenerator.put(DocumentsType.getDocumentsType(id.getDocuments()), buildCurrentCount(id)));
+        documents.forEach(id -> idGenerator.put(DocumentsType.of(id.getDocuments()), buildCurrentCount(id)));
     }
 
     public String generateNextCode(DocumentsType documentsType) {
