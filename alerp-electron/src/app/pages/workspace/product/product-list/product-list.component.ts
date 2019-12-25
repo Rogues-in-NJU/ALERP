@@ -1,16 +1,16 @@
 /**
  * Created by Administrator on 2019/12/18.
  */
-import { Component, OnInit } from "@angular/core";
-import { RefreshableTab } from "../../tab/tab.component";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { ProductService } from "../../../../core/services/product.service";
-import { ProductVO } from "../../../../core/model/product";
-import { HttpErrorResponse } from "@angular/common/http";
-import { NzMessageService } from "ng-zorro-antd";
+import {Component, OnInit} from "@angular/core";
+import {RefreshableTab} from "../../tab/tab.component";
+import {TableQueryParams, ResultVO, TableResultVO} from "../../../../core/model/result-vm";
+import {ProductService} from "../../../../core/services/product.service";
+import {ProductVO} from "../../../../core/model/product";
+import {HttpErrorResponse} from "@angular/common/http";
+import {NzMessageService} from "ng-zorro-antd";
+import {BehaviorSubject, Observable} from "rxjs";
+import {Objects} from "../../../../core/services/util.service";
 import { FormGroup } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
-import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'app-product-list',
@@ -38,11 +38,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     _id?: number,
     data?: TempProductInfoVO,
     isAdd?: boolean
-  } = {
-    _id : null,
-    data: null,
-    isAdd: null
-  };
+  } = {};
 
   defaultEditCache: any  = {
     _id : null,
@@ -88,9 +84,9 @@ export class ProductListComponent implements RefreshableTab, OnInit{
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.products = tableResult.result;
-        this.products.forEach(item => {
-          item['_id'] = this.productCountIndex ++;
-        });
+        for(let product in this.products){
+          product['_id'] = this.productCountIndex ++;
+        }
     }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
     });
@@ -124,6 +120,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 
   addRow(){
     if (Objects.valid(this.editCache._id)) {
+      console.log("!!!!!" + this.editCache._id);
       this.message.warning('请先保存商品列表的更改!');
       return;
     }

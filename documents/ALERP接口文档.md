@@ -145,7 +145,22 @@ res:
     weight: number,
     price: number,
     cash: number
-  }]
+  }],
+
+  //12.24 新增
+  paymentRecords:[{
+    id: number,
+    purchaseOrderId:string,
+    cash:number,
+    status,number,
+    description:string,
+    salesman:string,
+    doneAt:string,
+    createdById: number,
+    createdByName: string,
+    deletedById: number,
+    deletedByName: string,
+    }]
 }
 ```
 
@@ -177,6 +192,36 @@ res:
 {}
 ```
 
+#### 新增采购单付款记录
+```
+POST
+/api/purchase-order/payment-record
+
+body:
+
+{
+    purchaseOrderId: number,
+    cash:number
+    description: string,
+    salesman: string,
+    doneAt: string
+}
+
+res:
+{}
+```
+
+#### 废弃采购单付款记录
+```
+GET
+/api/purchase-order/payment-record/delete/:id
+
+
+res:
+{}
+```
+
+
 #### 废弃采购单
 ```
 GET
@@ -188,10 +233,15 @@ res:
 
 ### 公司支出
 
-### 查看公司支出列表
+#### 查看公司支出列表
 ```
 GET
 /api/expense/list
+
+params:
+
+* pageIndex(从1开始)
+* pageSize
 
 res:
 {
@@ -240,6 +290,7 @@ res:
 ### 用户管理
 
 #### 查看用户列表
+
 ```
 GET
 /api/user/list
@@ -267,7 +318,28 @@ res:
 }
 ```
 
+#### 通过用户id获取详细信息
+
+```
+GET
+/api/user/:id
+
+res:
+{
+  id: number | null,
+  name: string,
+  phoneNumber: string(在职的员工手机号唯一),
+  password: string
+  
+  auth: [{
+    id: string,
+    action: number(0不可读 1只读 2可读写)
+  }]
+}
+```
+
 #### 新增用户/修改用户信息
+
 ```
 POST
 /api/user
@@ -281,7 +353,7 @@ body:
   
   auth: [{
     id: string,
-    action: number(1只读 2可读写)
+    action: number(0不可读 1只读 2可读写)
   }]
 }
 
@@ -698,6 +770,8 @@ res:
     code: string,
     customerId: number,
     customerName: string,
+    shippingOrderId： number;            //12.24新增
+    shippingOrderCode: string;           //12.24新增
     receivableCash: number,
     receivedCash: number,
     dueDate: string,
@@ -721,6 +795,8 @@ res:
   code: string,
   customerId: number,
   customerName: string,
+  shippingOrderId： number;            //12.24新增
+  shippingOrderCode: string;           //12.24新增
   receivableCash: number,
   receivedCash: number,
   dueDate: string,
@@ -816,3 +892,56 @@ res:
 ```
 
 ### 汇总信息模块
+
+### 供货商模块                        //12.24新增
+#### 查看供货商列表
+```
+GET
+/api/supplier/list
+
+params:
+* pageSize
+* pageIndex
+* name 
+
+res:
+{
+  totalPages: number,
+  pageIndex: number,
+  pageSize: number,
+  result: [{
+    id: number,
+    name: string,
+    description: string,
+    createdAt: string,
+    createdById: string,
+    createdByName: string
+  }]
+}
+```
+
+#### 新增供货商/编辑供货商
+```
+POST
+/api/supplier
+
+body:
+{
+  id: number,
+  name: string,
+  description: string
+
+}
+
+res: 
+{}
+```
+
+#### 删除供货商
+```
+GET
+/api/supplier/delete/:id
+
+res:
+{}
+```
