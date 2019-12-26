@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -72,6 +74,29 @@ public class UserController {
         try {
             int result = userService.saveUser(userDTO);
             return ResponseResult.ok(result);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
+    /**
+     * 用户登录
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseResult<Boolean> login(@RequestParam(value = "phone_number") String phone_number,
+                                         @RequestParam(value = "password") String password, HttpServletRequest httpServletRequest) {
+        try {
+            HttpSession session = httpServletRequest.getSession();
+            User user = userService.getUserByPhoneNumber(phone_number);
+            if(user == null){
+                return ResponseResult.ok(false);
+            }
+            session.setAttribute("userId",user.getId());
+            return ResponseResult.ok(password.equals(user.getPassword()));
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
