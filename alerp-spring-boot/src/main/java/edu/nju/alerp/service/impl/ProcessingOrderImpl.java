@@ -94,6 +94,16 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
+    public ProcessingOrder getOne(int id) {
+        return processingOrderRepository.getOne(id);
+    }
+
+    @Override
+    public int savaProcessingOrder(ProcessingOrder processingOrder) {
+        return processingOrderRepository.saveAndFlush(processingOrder).getId();
+    }
+
+    @Override
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
         ProcessingOrder processingOrder = ProcessingOrder.builder()
                                         .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER))

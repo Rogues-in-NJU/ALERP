@@ -24,6 +24,10 @@ public interface ProcessOrderService {
 
     public ProcessingOrderDetailVO findProcessingById(int id);
 
+    public ProcessingOrder getOne(int id);
+
+    public int savaProcessingOrder(ProcessingOrder processingOrder);
+
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO);
 
     /**
