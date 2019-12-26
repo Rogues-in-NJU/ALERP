@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
-import { ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
-import { PurchaseOrderVO } from "../model/purchase-order";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
+import { PurchaseOrderPaymentRecordVO, PurchaseOrderVO } from "../model/purchase-order";
 import { StringUtils } from "./util.service";
 
 @Injectable({
@@ -34,7 +34,8 @@ export class PurchaseOrderService {
           id: 1,
           code: '00001000',
           description: '',
-          purchasingCompany: '',
+          supplierId: 1,
+          supplierName: 'ZZZ公司',
           cash: 20000,
           salesman: '',
           doneAt: '2019-10-10 12:00',
@@ -54,7 +55,8 @@ export class PurchaseOrderService {
       data: {
         id: 1,
         code: '00001000',
-        purchasingCompany: 'XXX公司',
+        supplierId: 1,
+        supplierName: 'ZZZ公司',
         description: '',
         cash: 20000,
         status: 1,
@@ -70,6 +72,15 @@ export class PurchaseOrderService {
           price: 200,
           priceType: 1,
           cash: 2000
+        }],
+
+        paymentRecords: [{
+          id: 1,
+          purchaseOrderId: 1,
+          cash: 100,
+          description: '',
+          salesman: '',
+          doneAt: '2019-12-20 12:00'
         }]
       }
     });
@@ -84,7 +95,28 @@ export class PurchaseOrderService {
   }
 
   public abandon(id: string): Observable<ResultVO<any>> {
-    return of(null);
+    return of({
+      code: ResultCode.SUCCESS.code,
+      message: '',
+      data: null
+    });
+  }
+
+  public savePaymentRecord(paymentRecord: PurchaseOrderPaymentRecordVO): Observable<ResultVO<any>> {
+    console.log(paymentRecord);
+    return of({
+      code: ResultCode.SUCCESS.code,
+      message: '',
+      data: null
+    });
+  }
+
+  public deletePaymentRecord(id: number): Observable<ResultVO<any>> {
+    return of({
+      code: ResultCode.SUCCESS.code,
+      message: '',
+      data: null
+    });
   }
 
 }

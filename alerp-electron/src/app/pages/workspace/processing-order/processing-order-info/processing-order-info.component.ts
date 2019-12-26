@@ -11,13 +11,14 @@ import { ProductVO } from "../../../../core/model/product";
 import { BehaviorSubject, Observable } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
+import { RefreshableTab } from "../../tab/tab.component";
 
 @Component({
   selector: 'processing-order-info',
   templateUrl: './processing-order-info.component.html',
   styleUrls: [ './processing-order-info.component.less' ]
 })
-export class ProcessingOrderInfoComponent implements OnInit {
+export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
 
   isLoading: boolean = true;
   processingOrderId: number;
@@ -62,7 +63,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.processingOrderId = this.route.snapshot.params[ 'id' ];
-    this.reload();
+    this.refresh();
 
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<ProductVO[]>>
@@ -86,15 +87,16 @@ export class ProcessingOrderInfoComponent implements OnInit {
       return;
     }
     let item: ProcessingOrderProductVO = {
-      id: 0,
-      productId: 0,
+      id: null,
+      processingOrderId: this.processingOrderData.id,
+      productId: null,
       productName: '',
-      type: 1,
-      density: 1.00,
+      type: null,
+      density: null,
       productSpecification: '',
       specification: '',
-      quantity: 1,
-      expectedWeight: 1
+      quantity: null,
+      expectedWeight: null
     };
     item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
     this.processingOrderData.products = [
@@ -112,6 +114,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
   onChangeSelectedProduct(event: TempProductVO): void {
     this.editCache.data.productId = event.id;
     this.editCache.data.productName = event.name;
+    this.editCache.data.type = event.type;
     this.editCache.data.density = event.density;
   }
 
@@ -132,6 +135,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
     this.editCache.currentProduct = {
       id: t.productId,
       name: t.productName,
+      type: t.type,
       density: t.density
     };
     this.editCache.product = this.editCache.currentProduct;
@@ -145,6 +149,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
   }
 
   confirmProductDelete(_id: number): void {
+    // TODO: 提交后端修改
     this.processingOrderData.products = this.processingOrderData.products.filter(item => item[ '_id' ] !== _id);
   }
 
@@ -178,7 +183,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
-        this.reload();
+        this.refresh();
       });
   }
 
@@ -270,7 +275,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
     }
   }
 
-  reload(): void {
+  refresh(): void {
     Object.assign(this.editCache, this.defaultEditCache);
     this.processingOrder.find(this.processingOrderId)
       .subscribe((res: ResultVO<ProcessingOrderVO>) => {
@@ -281,6 +286,8 @@ export class ProcessingOrderInfoComponent implements OnInit {
         this.processingOrderData = res.data;
         if (Objects.valid(this.processingOrderData.products)) {
           this.processingOrderData.products.forEach(item => {
+            // TODO: check
+            // item.processingOrderId = this.processingOrderId;
             item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
           })
         }
@@ -305,7 +312,7 @@ export class ProcessingOrderInfoComponent implements OnInit {
       return false;
     }
     let isValid: boolean = true;
-    if (this.editCache.data.productId === 0) {
+    if (!Objects.valid(this.editCache.data.productId) || this.editCache.data.productId === 0) {
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
@@ -330,6 +337,7 @@ interface TempProductVO {
 
   id: number;
   name: string;
+  type: number,
   density: number;
 
   [ key: string ]: any;
