@@ -1,10 +1,65 @@
 <nz-page-header>
   <nz-page-header-title>出货单列表</nz-page-header-title>
   <nz-page-header-extra>
-    <button nz-button nzType="primary" routerLink="/workspace/shipping-order/add">
+    <button nz-button nzType="primary" (click)="showAddModal()">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增出货单
     </button>
+    <nz-modal [(nzVisible)]="shippingOrderAddVisible"
+              nzTitle="导入加工单"
+              (nzOnCancel)="cancelAdd()"
+              (nzOnOk)="confirmAdd()"
+              [nzOkLoading]="shippingOrderAddOkLoading">
+      <div nz-form nzLayout="inline">
+        <nz-form-item>
+          <nz-form-label>客户</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="text" [(ngModel)]="addShippingOrder_customerName"/>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary" (click)="searchProcessingOrderBycustomername()">搜索</button>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <nz-table
+        #rowSelectionTable
+        nzShowPagination
+        nzShowSizeChanger
+        [(nzPageIndex)]="addShippingOrder_pageIndex"
+        [(nzPageSize)]="addShippingOrder_pageSize"
+        [nzData]="addShippingOrder_allProcessingOrderList"
+        (nzCurrentPageDataChange)="currentPageDataChange($event)">
+        <thead>
+        <tr>
+          <th
+            nzShowCheckbox
+            [(nzChecked)]="isAllDisplayDataChecked"
+            [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)">
+          </th>
+          <th>编号</th>
+          <th>客户</th>
+          <th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data">
+          <td
+            nzShowCheckbox
+            [(nzChecked)]="mapOfCheckedId[data.id]"
+            [nzDisabled]="checkedCustomerId !== -1 && data.customerId !== checkedCustomerId"
+            (nzCheckedChange)="refreshStatus(data.customerId)"
+          ></td>
+          <td>{{ data.code }}</td>
+          <td>{{ data.customerName }}</td>
+          <td>{{ data.createdAt }}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-modal>
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content">

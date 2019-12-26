@@ -16,6 +16,112 @@ export class ProcessingOrderService {
   }
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ProcessingOrderVO>>> {
+    if(queryParams.pageSize === 1000){
+      return of({
+        code: ResultCode.SUCCESS.code,
+        message: '',
+        data: {
+          totalPages: 3,
+          pageIndex: 1,
+          pageSize: 2,
+          result: [{
+            id: 1,
+            code: '100201912260001',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 2,
+            code: '100201912260002',
+            customerId: 2,
+            customerName: '于海强2',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 3,
+            code: '100201912260003',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 4,
+            code: '100201912260004',
+            customerId: 2,
+            customerName: '于海强2',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 5,
+            code: '100201912260005',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          }]
+        }
+      });
+    }
+
+    if(queryParams.customerName === '于海强'){
+      return of({
+        code: ResultCode.SUCCESS.code,
+        message: '',
+        data: {
+          totalPages: 2,
+          pageIndex: 1,
+          pageSize: 2,
+          result: [{
+            id: 1,
+            code: '100201912260001',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 3,
+            code: '100201912260003',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          },{
+            id: 5,
+            code: '100201912260005',
+            customerId: 1,
+            customerName: '于海强',
+            shippingOrderId: null,
+            shippingOrderName: null,
+            salesman: '',
+            status: 1,
+            createdAt: '2019-12-17 12:00'
+          }]
+        }
+      });
+    }
+
     return of({
       code: ResultCode.SUCCESS.code,
       message: '',
