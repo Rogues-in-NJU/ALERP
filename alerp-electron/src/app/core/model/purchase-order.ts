@@ -5,7 +5,8 @@ export interface PurchaseOrderVO extends BaseInfo {
   id?: number;
   code?: string;
   description: string;
-  purchasingCompany: string;
+  supplierId: number;
+  supplierName: string;
   cash: number;
   salesman?: string;
   doneAt: string;

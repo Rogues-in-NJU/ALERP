@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { NzMessageService } from "ng-zorro-antd";
 import { TabService } from "../../../../core/services/tab.service";
 import { CustomerVO } from "../../../../core/model/customer";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects } from "../../../../core/services/util.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -71,6 +71,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    this.isLoading = true;
     this.customer.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<CustomerVO>>) => {
         if (!Objects.valid(res)) {
@@ -86,13 +87,25 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
         this.customerList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+      }, () => {
+        this.isLoading = false;
       });
   }
 
   refresh(): void {
+    this.customerAddOkLoading = false;
+    this.customerAddForm.reset({
+      name: null,
+      shorthand: null,
+      description: null,
+      period: 1,
+      payDate: 20
+    });
+    this.customerAddVisible = false;
+    this.search();
   }
 
-  confirmDelete(id: number) {
+  confirmDelete(id: number): void {
     console.log(id);
   }
 
@@ -118,18 +131,21 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
       return;
     }
     this.customerAddOkLoading = true;
-    setTimeout(() => {
-      this.customerAddOkLoading = false;
-      this.customerAddForm.reset({
-        name: null,
-        shorthand: null,
-        description: null,
-        period: 1,
-        payDate: 20
+    const customerAddData: CustomerVO = this.customerAddForm.getRawValue();
+    this.customer.save(customerAddData)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        this.message.success('添加成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+        this.refresh();
       });
-      this.customerAddVisible = false;
-      this.message.success('添加成功!');
-    }, 3000);
   }
 
   cancelAdd(): void {

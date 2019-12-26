@@ -10,7 +10,7 @@
     <nz-descriptions-item nzTitle="采购单编号">{{ purchaseOrderData.code }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购公司" [nzSpan]="2">{{ purchaseOrderData.purchasingCompany }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="描述" [nzSpan]="3">{{ purchaseOrderData.description }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-3' }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
       <nz-badge nzStatus="success" nzText="已完成" *ngIf="purchaseOrderData.status === 1"></nz-badge>
     </nz-descriptions-item>
@@ -40,7 +40,7 @@
       <td>{{ data.quantity }}</td>
       <td>{{ data.weight }}</td>
       <td>{{ data.price }}</td>
-      <td>&yen;{{ data.cash | number: '1.2-3' }}</td>
+      <td>&yen;{{ data.cash | number: '1.2-2' }}</td>
     </tr>
     </tbody>
   </nz-table>

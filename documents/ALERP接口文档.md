@@ -105,7 +105,8 @@ res:
     id: number,
     code: string,
     description: string,
-    purchasingCompany: string,
+    supplierId: number,
+    supplierName: string,
     cash: number,
     salesman: string,
     status: number (0 1 2 3...),
@@ -128,7 +129,8 @@ res:
   id: number,
   code: number,
   description: string,
-  purchasingCompany: string,
+  supplierId: number,
+  supplierName: string,
   cash: number,
   salesman: string,
   status: number (0 1 2 3...),
@@ -173,7 +175,7 @@ body:
 
 {
   description: string,
-  purchasingCompany: string,
+  supplierId: number,
   cash: number,
   salesman: string,
   doneAt: string (yyyy-MM-dd HH:mm)
