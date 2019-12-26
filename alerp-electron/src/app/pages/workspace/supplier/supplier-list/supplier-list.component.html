@@ -1,0 +1,118 @@
+<nz-page-header>
+  <nz-page-header-title>供应商列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" (click)="showAddModal()">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增供应商
+    </button>
+    <nz-modal [(nzVisible)]="supplierAddVisible"
+              nzTitle="新增供应商"
+              (nzOnCancel)="cancelAdd()"
+              (nzOnOk)="confirmAdd()"
+              [nzOkLoading]="supplierAddOkLoading">
+      <form nz-form nzLayout="inline" [formGroup]="supplierAddForm">
+        <div nz-row nzGutter="24">
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzRequired nzSpan="6">供应商名称</nz-form-label>
+              <nz-form-control nzHasFeedback nzSpan="14">
+                <input nz-input formControlName="name" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzSpan="6">描述</nz-form-label>
+              <nz-form-control nzSpan="14">
+                <input nz-input formControlName="description" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-modal>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>供应商名称</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="supplierName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div class="table-wrapper">
+    <nz-table #supplierTable
+              nzShowSizeChanger
+              [nzData]="supplierList"
+              [(nzPageIndex)]="pageIndex"
+              [(nzPageSize)]="pageSize"
+              (nzPageIndexChange)="search()"
+              (nzPageSizeChange)="search()"
+              [nzTotal]="totalPages"
+              [nzLoading]="isLoading"
+              [nzScroll]="{ x: '100%' }">
+      <thead>
+      <tr>
+        <th nzLeft="0px" nzWidth="150px">ID</th>
+        <th nzWidth="150px">供应商名称</th>
+        <th>描述</th>
+        <th nzRight="0px" nzWidth="150px">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of supplierTable.data">
+        <td nzLeft="0px">{{ data.id }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.description }}</td>
+        <td nzRight="0px">
+          <a (click)="showEditModal(data.id)">
+            修改
+          </a>
+          <a style="margin-left: 5px;"
+             class="delete"
+             [class.disabled]="false"
+             nz-popconfirm
+             nzPopconfirmTitle="确认删除?"
+             nzPopconfirmPlacement="top"
+             (nzOnConfirm)="confirmDelete(data.id)">
+            删除
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    <nz-modal [(nzVisible)]="supplierEditVisible"
+              nzTitle="供应商信息修改"
+              (nzOnCancel)="cancelEdit()"
+              (nzOnOk)="confirmEdit()"
+              [nzOkLoading]="supplierAddOkLoading">
+      <form nz-form nzLayout="inline" [formGroup]="supplierEditForm">
+        <div nz-row nzGutter="24">
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzRequired nzSpan="6">供应商名称</nz-form-label>
+              <nz-form-control nzHasFeedback nzSpan="14">
+                <input nz-input formControlName="name" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="24">
+            <nz-form-item nzFlex>
+              <nz-form-label nzSpan="6">描述</nz-form-label>
+              <nz-form-control nzSpan="14">
+                <input nz-input formControlName="description" class="add-input"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-modal>
+  </div>
+</div>
