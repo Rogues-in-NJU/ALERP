@@ -1,8 +1,7 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.vo.CustomerVO;
 import edu.nju.alerp.dto.CustomerDTO;
-import edu.nju.alerp.dto.CustomerInfo;
-import edu.nju.alerp.dto.SpecialPrciesInfo;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
@@ -11,6 +10,7 @@ import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.vo.SpecialPricesVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,25 +52,25 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<CustomerInfo> customerInfo(
+    public ResponseResult<CustomerVO> CustomerDO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);
-        List<SpecialPrciesInfo> specialPrciesInfoList = new ArrayList<>();
+        List<SpecialPricesVO> specialPricesVOList = new ArrayList<>();
         for (SpecialPrice specialPrice : specialPriceList) {
-            SpecialPrciesInfo specialPrciesInfo = SpecialPrciesInfo.builder()
+            SpecialPricesVO specialPricesVO = SpecialPricesVO.builder()
                     .createdByName(userService.getUser(specialPrice.getCreatedBy()).getName())
                     .productName(productService.findProductById(specialPrice.getProductId()).getName())
                     .build();
-            BeanUtils.copyProperties(specialPrice, specialPrciesInfo);
-            specialPrciesInfoList.add(specialPrciesInfo);
+            BeanUtils.copyProperties(specialPrice, specialPricesVO);
+            specialPricesVOList.add(specialPricesVO);
         }
-        CustomerInfo customerInfo = CustomerInfo.builder()
-                .specialPrciesInfoList(specialPrciesInfoList)
+        CustomerVO customerVO = CustomerVO.builder()
+                .specialPricesVOList(specialPricesVOList)
                 .build();
-        BeanUtils.copyProperties(customer, customerInfo);
+        BeanUtils.copyProperties(customer, customerVO);
 
-        return ResponseResult.ok(customerInfo);
+        return ResponseResult.ok(customerVO);
     }
 
     /**

@@ -16,11 +16,15 @@
     <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
       <li nz-menu-item routerLink="dashboard" nzMatchRouter>
         <i nz-icon nzType="dashboard"></i>
-        <span>控制面板</span>
+        <span>汇总信息</span>
       </li>
       <li nz-menu-item routerLink="customer/list" nzMatchRouter>
         <i nz-icon nzType="contacts" nzTheme="outline"></i>
         <span>客户管理</span>
+      </li>
+      <li nz-menu-item routerLink="supplier/list" nzMatchRouter>
+        <i nz-icon nzType="contacts" nzTheme="outline"></i>
+        <span>供应商管理</span>
       </li>
       <li nz-submenu nzTitle="采购单管理" nzIcon="shopping-cart">
         <ul>
@@ -96,6 +100,11 @@
         </span>
         <div class="header-nav">
           <ul nz-menu nzMode="horizontal">
+            <li nz-menu-item style="cursor:not-allowed; pointer-events:none;">
+              <label style="border: 1px solid rgba(0,21,41,.1); padding: 1px 4px; border-radius: 4px">
+                地区: <span style="margin-left: 10px">苏州</span>
+              </label>
+            </li>
             <li nz-submenu nzTitle="用户中心" nzIcon="user" [nzOpen]="isOpen">
               <ul>
                   <li nz-menu-item routerLink="user-center/user">用户信息</li>

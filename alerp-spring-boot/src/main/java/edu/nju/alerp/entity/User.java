@@ -1,7 +1,9 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,15 +16,21 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name="user")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String phone_number;
+    @Column(name = "phone_number")
+    private String phoneNumber;
     private String password;
     private int status;
-    private String created_at;
-    private String updated_at;
-    private String deleted_at;
+    @Column(name = "created_at")
+    private String createdAt;
+    @Column(name = "updated_at")
+    private String updatedAt;
+    @Column(name = "deleted_at")
+    private String deletedAt;
 }

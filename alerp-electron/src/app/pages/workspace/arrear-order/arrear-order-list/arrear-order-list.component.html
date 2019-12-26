@@ -1,0 +1,89 @@
+<nz-page-header>
+  <nz-page-header-title>欠款明细列表</nz-page-header-title>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label>客户</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="query_customerName"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>发票编号</nz-form-label>
+      <nz-form-control>
+        <input nz-input type="text" [(ngModel)]="query_invoiceNumber"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>状态</nz-form-label>
+      <nz-form-control>
+        <nz-select [(ngModel)]="query_selectedStatus" nzAllowClear="true" style="width: 7em">
+          <nz-option nzLabel="未收款" nzValue="0"></nz-option>
+          <nz-option nzLabel="部分收款" nzValue="1"></nz-option>
+          <nz-option nzLabel="已完成" nzValue="2"></nz-option>
+          <nz-option nzLabel="已废弃" nzValue="3"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>到期时间</nz-form-label>
+      <nz-form-control>
+        <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                         nzFormat="yyyy-MM-dd HH:mm"
+                         [nzPlaceHolder]="['开始时间', '结束时间']"
+                         [(ngModel)]="query_timeRange">
+
+        </nz-range-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="table-wrapper">
+      <nz-table #arrearOrderTable
+                nzShowSizeChanger
+                [nzData]="orderList"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages"
+                [nzLoading]="isLoading"
+                [nzScroll]="{ x: '100%'}">
+        <thead>
+        <tr>
+          <th nzLeft="0px" nzWidth="150px">编号</th>
+          <th>客户</th>
+          <th>应收金额</th>
+          <th>实收金额</th>
+          <th>状态</th>
+          <th>到期时间</th>
+          <th nzRight="0px" nzWidth="150px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of arrearOrderTable.data">
+          <td nzLeft="0px">
+            <a routerLink="/workspace/arrear-order/info/{{ data.code }}">{{ data.code }}</a>
+          </td>
+          <td>{{ data.customerName }}</td>
+          <td>&yen;{{ data.receivableCash | number: '1.2-3' }}</td>
+          <td>&yen;{{ data.receivedCash | number: '1.2-3' }}</td>
+          <td>{{ data.dueDate }}</td>
+          <td>
+            <nz-tag nzColor="{{ data.status |arrear_order_status_color }}">
+              {{ data.status | arrear_order_status }}
+            </nz-tag>
+          </td>
+          <td nzRight="0px">
+            <a routerLink="/workspace/arrear-order/info/{{ data.code }}">查看</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

@@ -4,9 +4,12 @@ import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.User;
+import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -32,6 +37,8 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    OperationLogService operationLogService;
 
     /**
      * 删除用户
@@ -62,6 +69,23 @@ public class UserController {
     }
 
     /**
+     * 用户操作日志查询
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET)
+    public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
+                                                    @RequestParam(value = "pageSize") int pageSize,
+                                                    @RequestParam(value = "userName") String userName,
+                                                    @RequestParam(value = "operationStartTime") String operationStartTime,
+                                                    @RequestParam(value = "operationEndTime") String operationEndTime) {
+
+        Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize), userName, operationStartTime, operationEndTime);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+    }
+
+    /**
      * 新增用户/修改用户信息
      *
      * @return
@@ -77,4 +101,28 @@ public class UserController {
         }
 
     }
+
+    /**
+     * 用户登录
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseResult<Boolean> login(@RequestParam(value = "phone_number") String phone_number,
+                                         @RequestParam(value = "password") String password) {
+        try {
+            HttpSession session = CommonUtils.getHttpSession();
+            User user = userService.getUserByPhoneNumber(phone_number);
+            if (user == null) {
+                return ResponseResult.ok(false);
+            }
+            session.setAttribute("userId", user.getId());
+            return ResponseResult.ok(password.equals(user.getPassword()));
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
 }

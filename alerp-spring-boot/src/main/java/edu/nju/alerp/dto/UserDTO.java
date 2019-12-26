@@ -16,7 +16,7 @@ import java.util.List;
 public class UserDTO {
     private Integer id;
     private String name;
-    private String phone_number;
+    private String phoneNumber;
     private String password;
     private List<Auth> authList;
 }

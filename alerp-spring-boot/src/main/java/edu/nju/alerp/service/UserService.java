@@ -1,6 +1,7 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ public interface UserService {
     int saveUser(UserDTO userDTO);
 
     User getUser(int id);
+
+    User getUserByPhoneNumber(String phoneNumber);
 
     boolean deleteUser(int id);
 

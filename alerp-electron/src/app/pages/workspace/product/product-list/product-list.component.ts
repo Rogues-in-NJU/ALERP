@@ -38,11 +38,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     _id?: number,
     data?: TempProductInfoVO,
     isAdd?: boolean
-  } = {
-    _id : null,
-    data: null,
-    isAdd: null
-  };
+  } = {};
 
   defaultEditCache: any  = {
     _id : null,
@@ -88,9 +84,9 @@ export class ProductListComponent implements RefreshableTab, OnInit{
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.products = tableResult.result;
-        this.products.forEach(item => {
-          item['_id'] = this.productCountIndex ++;
-        });
+        for(let product in this.products){
+          product['_id'] = this.productCountIndex ++;
+        }
     }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
     });
@@ -111,19 +107,20 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     //       map((res: ResultVO<ProductVO[]>) => res.data)
     //     )
     // };
-    // const optionList$: Observable<ProductVO[]> = this.searchChange$
+    // const optionList$: Observable<ProductVO[]> = this.searchProductsChange$
     //   .asObservable()
     //   .pipe(debounceTime(500))
     //   .pipe(switchMap(getProducts));
     // optionList$.subscribe((data: ProductVO[]) => {
     //   this.searchProducts = data;
-    //   this.isLoading = false;
+    //   this.isProductLoading = false;
     // })
     this.isLoading = false;
   }
 
   addRow(){
     if (Objects.valid(this.editCache._id)) {
+      console.log("!!!!!" + this.editCache._id);
       this.message.warning('请先保存商品列表的更改!');
       return;
     }
@@ -196,7 +193,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     this.searchChange$.next(value);
   }
 
-  // onChangeSelected(event: TempProductVO): void {
+  // onChangeProductSelected(event: TempProductVO): void {
   //   this.editCache.data.productId = event.id;
   //   this.editCache.data.name = event.name;
   // }

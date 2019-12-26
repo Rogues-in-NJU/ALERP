@@ -1,4 +1,4 @@
-package edu.nju.alerp.service.Impl;
+package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
@@ -6,24 +6,23 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
 import edu.nju.alerp.service.CustomerService;
-import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.SpecialPricesRepository;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
-import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.util.CommonUtils;
+import edu.nju.alerp.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sun.misc.Unsafe;
 
-import java.text.SimpleDateFormat;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 客户服务层接口实现
@@ -39,29 +38,28 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private SpecialPricesRepository specialPricesRepository;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
     @Override
     public int saveCustomer(CustomerDTO customerDTO) {
-        Customer customer = null;
+        Customer customer;
+        HttpSession session = CommonUtils.getHttpSession();
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
-                    .createdAt(sdf.format(new Date()))
+                    .createdAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
             //前台需要传操作人信息，记录创建者是谁
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
             for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                 SpecialPrice specialPrice = SpecialPrice.builder()
-                        .createdAt(sdf.format(new Date()))
-//                    .createdById() //待获取用户id
+                        .createdAt(DateUtils.getToday())
+                        .createdBy(getUserId())
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 specialPricesRepository.save(specialPrice);
             }
         } else {
             customer = Customer.builder()
-                    .updatedAt(sdf.format(new Date()))
+                    .updatedAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
@@ -69,13 +67,13 @@ public class CustomerServiceImpl implements CustomerService {
                 SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
                 if (specialPrice == null) {
                     specialPrice = SpecialPrice.builder()
-                            .createdAt(sdf.format(new Date()))
-//                    .createdById() //待获取用户id
+                            .createdAt(DateUtils.getToday())
+                            .createdBy(getUserId())
                             .build();
                     BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 } else {
-                    specialPrice.setUpdatedAt(sdf.format(new Date()));
-//                specialPrices.setUpdateById();//待获取用户id
+                    specialPrice.setUpdatedAt(DateUtils.getToday());
+                    specialPrice.setUpdatedBy(getUserId());
                 }
                 specialPricesRepository.save(specialPrice);
             }
@@ -100,7 +98,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer == null) {
             return false;
         }
-        customer.setDeletedAt(sdf.format(new Date()));
+        customer.setDeletedAt(DateUtils.getToday());
+        customer.setDeletedBy(getUserId());
         customerRepository.save(customer);
         //考虑到客户为懒删除，建议暂存特惠价格数据
         return false;
@@ -125,4 +124,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll(sp, pageable);
     }
 
+    private int getUserId(){
+        HttpSession session = CommonUtils.getHttpSession();
+        return session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+    }
 }
