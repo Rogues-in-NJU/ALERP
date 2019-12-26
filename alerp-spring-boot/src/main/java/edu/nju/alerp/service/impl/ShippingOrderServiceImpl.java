@@ -4,7 +4,6 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
-import edu.nju.alerp.domain.SpecialPrciesDO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
@@ -13,6 +12,7 @@ import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ShippingOrderProductRepository;
 import edu.nju.alerp.repo.ShippingOrderRepository;
 import edu.nju.alerp.service.ShippingOrderService;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +42,11 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
+        HttpSession session = CommonUtils.getHttpSession();
         ShippingOrder shippingOrder = ShippingOrder.builder()
 //                .code()
                 .createdAt(DateUtils.getToday())
+                .createdBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
@@ -59,12 +62,15 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public boolean deleteShippingOrder(int id) {
         ShippingOrder shippingOrder = shippingOrderRepository.getOne(id);
+        HttpSession session = CommonUtils.getHttpSession();
         if (shippingOrder == null) {
             log.error("shippingOrder is null");
             return false;
         }
 
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
+        shippingOrder.setDeletedAt(DateUtils.getToday());
+        shippingOrder.setDeletedBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"));
         shippingOrderRepository.save(shippingOrder);
         return true;
     }
