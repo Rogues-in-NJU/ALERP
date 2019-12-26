@@ -37,7 +37,7 @@ public class PurchaseOrder {
      * 供货商id
      */
     @Column(name = "supplier_id")
-    private String supplierId;
+    private int supplierId;
 
     /**
      * 金额

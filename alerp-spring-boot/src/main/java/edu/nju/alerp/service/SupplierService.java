@@ -1,6 +1,7 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.dto.SupplierDTO;
+import edu.nju.alerp.entity.Supplier;
 import edu.nju.alerp.vo.SupplierListVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface SupplierService {
     public int addOrUpdateSupplier(SupplierDTO supplierDTO);
 
     public int deleteSupplier(int id);
+
+    public String getSupplierName(int id);
 }

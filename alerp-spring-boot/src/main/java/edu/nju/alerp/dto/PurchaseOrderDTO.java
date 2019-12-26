@@ -14,7 +14,7 @@ import java.util.List;
 public class PurchaseOrderDTO {
 
     private String description;
-    private String supplierId;
+    private Integer supplierId;
     private Double cash;
     private String salesman;
     private String doneAt;

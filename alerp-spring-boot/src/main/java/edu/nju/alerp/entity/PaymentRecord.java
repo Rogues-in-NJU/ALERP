@@ -37,7 +37,7 @@ public class PaymentRecord {
     private double cash;
 
     /**
-     * 状态（0：未完成， 1：已完成， 2：已废弃）
+     * 状态（0：已确认， 1：已废弃）
      */
     @Column(nullable = false)
     private int status;
