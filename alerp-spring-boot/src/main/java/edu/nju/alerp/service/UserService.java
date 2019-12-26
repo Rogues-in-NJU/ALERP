@@ -19,6 +19,8 @@ public interface UserService {
 
     User getUser(int id);
 
+    User getUserByPhoneNumber(String phoneNumber);
+
     boolean deleteUser(int id);
 
     List<User> getUserList();
