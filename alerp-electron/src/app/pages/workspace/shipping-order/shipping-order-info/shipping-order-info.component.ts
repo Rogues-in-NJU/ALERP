@@ -17,9 +17,9 @@ import {ProductService} from "../../../../core/services/product.service";
 @Component({
   selector: 'shipping-order-info',
   templateUrl: './shipping-order-info.component.html',
-  styleUrls: [ './shipping-order-info.component.less' ]
+  styleUrls: ['./shipping-order-info.component.less']
 })
-export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
+export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
 
   isLoading: boolean = true;
   shippingOrderCode: string;
@@ -53,22 +53,36 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
   searchProducts: ProductVO[];
   searchChanges$: BehaviorSubject<string> = new BehaviorSubject('');
   isProductsLoading: boolean = false;
-  specificationAutoComplete: { label: string, value: string }[] = [];
+  specificationAutoComplete: {label: string, value: string}[] = [];
 
+  printCSS: string[];
+  printStyle: string;
 
-  constructor(
-    private closeTabService: TabService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private shippingOrder: ShippingOrderService,
-    private product: ProductService,
-    private message: NzMessageService
-  ) {
+  constructor(private closeTabService: TabService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private shippingOrder: ShippingOrderService,
+              private product: ProductService,
+              private message: NzMessageService) {
     this.shippingOrderCode = this.route.snapshot.params['code'];
+
+    this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
+
+    this.printStyle =
+      `
+        th, td {
+            color: blue !important;
+        }
+        `;
+  }
+
+
+  printComplete() {
+    console.log('打印完成！');
   }
 
   ngOnInit(): void {
-    this.shippingOrderCode = this.route.snapshot.params[ 'id' ];
+    this.shippingOrderCode = this.route.snapshot.params['id'];
     this.reload();
 
     const getProducts: any = (name: string) => {
@@ -103,12 +117,12 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
       quantity: 1,
       expectedWeight: 1
     };
-    item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+    item['_id'] = this.processingOrderInfoProductCountIndex++;
     this.shippingOrderData.products = [
       item,
       ...this.shippingOrderData.products
     ];
-    this.startEditProduct(item[ '_id' ], true);
+    this.startEditProduct(item['_id'], true);
   }
 
   tabClose(): void {
@@ -135,14 +149,14 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
       this.message.warning('请先保存加工商品列表的更改!');
       return;
     }
-    const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    const index = this.shippingOrderData.products.findIndex(item => item['_id'] === _id);
     if (index === -1) {
       this.message.error('没有该加工商品条目!');
       return;
     }
     this.editCache._id = _id;
     this.editCache.data = {};
-    const t: ShippingOrderProductInfoVO = this.shippingOrderData.products[ index ];
+    const t: ShippingOrderProductInfoVO = this.shippingOrderData.products[index];
     Object.assign(this.editCache.data, t);
     this.editCache.currentProduct = {
       id: t.productId,
@@ -160,12 +174,12 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
   }
 
   confirmProductDelete(_id: number): void {
-    this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item[ '_id' ] !== _id);
+    this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item['_id'] !== _id);
   }
 
   cancelProductEdit(_id: number): void {
     if (Objects.valid(this.editCache.isAdd) && this.editCache.isAdd) {
-      this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item[ '_id' ] !== _id);
+      this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item['_id'] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
   }
@@ -179,10 +193,10 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
       return;
     }
     // TODO: 提交远程刷新
-    const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
-    Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
+    const index = this.shippingOrderData.products.findIndex(item => item['_id'] === _id);
+    Object.assign(this.shippingOrderData.products[index], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
-    this.shippingOrder.saveProduct(this.shippingOrderData.products[ index ])
+    this.shippingOrder.saveProduct(this.shippingOrderData.products[index])
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
           return;
@@ -196,6 +210,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
         this.reload();
       });
   }
+
   checkShippingOrderProductValid(): boolean {
     if (!Objects.valid(this.editCache.data)) {
       return false;
@@ -243,7 +258,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
         this.shippingOrderData = res.data;
         if (Objects.valid(this.shippingOrderData.products)) {
           this.shippingOrderData.products.forEach(item => {
-            item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+            item['_id'] = this.processingOrderInfoProductCountIndex++;
           })
         }
       }, (error: HttpErrorResponse) => {
@@ -265,60 +280,60 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
     splits = splits.map(item => item.trim());
     console.log(splits);
     if (splits.length === 1) {
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[0].startsWith(SpecificationUtils.FAI_U)
+        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
+        splits[0] = splits[0].substring(1);
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        } ];
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
+        }];
       } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
         }, {
-          label: '' + parseFloat(splits[ 0 ]),
-          value: '' + parseFloat(splits[ 0 ])
-        } ];
+          label: '' + parseFloat(splits[0]),
+          value: '' + parseFloat(splits[0])
+        }];
       }
       return;
     }
     if (splits.length === 2) {
-      if (splits[ 1 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[1].search(SpecificationUtils.NUM_PATT) === -1) {
         this.editCacheValidateStatus.specification = 'error';
         return;
       }
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[0].startsWith(SpecificationUtils.FAI_U)
+        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
+        splits[0] = splits[0].substring(1);
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
+        }];
       } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
         }, {
-          label: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
+          label: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
+        }];
         this.editCacheValidateStatus.specification = 'error';
       }
       return;
@@ -331,10 +346,10 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit{
           return;
         }
       }
-      this.specificationAutoComplete = [ {
-        label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
-        value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
-      } ];
+      this.specificationAutoComplete = [{
+        label: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`,
+        value: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`
+      }];
       return;
     }
   }
