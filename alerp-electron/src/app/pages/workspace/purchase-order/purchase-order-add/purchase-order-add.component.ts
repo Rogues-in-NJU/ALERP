@@ -13,6 +13,8 @@ import { debounceTime, map, switchMap } from "rxjs/operators";
 import { NzMessageService } from "ng-zorro-antd";
 import { DateUtils, Objects } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
+import { SupplierVO } from "../../../../core/model/supplier";
+import { SupplierService } from "../../../../core/services/supplier.service";
 
 @Component({
   selector: 'purchase-order-add',
@@ -39,8 +41,11 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   };
   productCountIndex: number = 0;
   searchProducts: ProductVO[];
-  searchChange$: BehaviorSubject<string> = new BehaviorSubject('');
-  isLoading: boolean = false;
+  searchProductsChange$: BehaviorSubject<string> = new BehaviorSubject('');
+  isProductLoading: boolean = false;
+  searchSuppliers: SupplierVO[];
+  searchSuppliersChange$: BehaviorSubject<string> = new BehaviorSubject('');
+  isSupplierLoading: boolean = false;
 
   isSaving: boolean = false;
 
@@ -58,6 +63,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   constructor(
     private closeTab: TabService,
     private purchaseOrder: PurchaseOrderService,
+    private supplier: SupplierService,
     private router: Router,
     private fb: FormBuilder,
     private product: ProductService,
@@ -69,7 +75,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     Object.assign(this.editCache, this.defaultEditCache);
     this.purchaseOrderForm = this.fb.group({
-      purchasingCompany: [ null, Validators.required ],
+      supplierId: [ null, Validators.required ],
       description: [ null ],
       cash: [ null, Validators.required ],
       salesman: [ null ],
@@ -81,14 +87,28 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
         .findAll(Object.assign(new QueryParams(), {}));
       return t.pipe(map(res => res.data));
     };
-    const optionList$: Observable<ProductVO[]> = this.searchChange$
+    const productOptionList$: Observable<ProductVO[]> = this.searchProductsChange$
       .asObservable()
       .pipe(debounceTime(500))
       .pipe(switchMap(getProducts));
-    optionList$.subscribe((data: ProductVO[]) => {
+    productOptionList$.subscribe((data: ProductVO[]) => {
       this.searchProducts = data;
-      this.isLoading = false;
-    })
+      this.isProductLoading = false;
+    });
+    const getSuppliers: any = (name: string) => {
+      const t: Observable<ResultVO<SupplierVO[]>>
+        = <Observable<ResultVO<SupplierVO[]>>>this.supplier
+        .findAll(Object.assign(new QueryParams(), {}));
+      return t.pipe(map(res => res.data));
+    };
+    const supplierOptionList$: Observable<SupplierVO[]> = this.searchSuppliersChange$
+      .asObservable()
+      .pipe(debounceTime(500))
+      .pipe(switchMap(getSuppliers));
+    supplierOptionList$.subscribe((data: SupplierVO[]) => {
+      this.searchSuppliers = data;
+      this.isSupplierLoading = false;
+    });
   }
 
   saveOrder(): void {
@@ -97,7 +117,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     }
     let formData: any = this.purchaseOrderForm.getRawValue();
     let purchaseOrderAdd: PurchaseOrderVO = {
-      purchasingCompany: formData.purchasingCompany,
+      supplierId: formData.supplierId,
       description: formData.description,
       cash: formData.cash,
       salesman: formData.salesman,
@@ -142,14 +162,19 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     this.startEdit(item['_id'], true);
   }
 
-  onSearch(value: string): void {
-    this.isLoading = true;
-    this.searchChange$.next(value);
+  onProductSearch(value: string): void {
+    this.isProductLoading = true;
+    this.searchProductsChange$.next(value);
   }
 
-  onChangeSelected(event: TempProductVO): void {
+  onChangeProductSelected(event: TempProductVO): void {
     this.editCache.data.productId = event.id;
     this.editCache.data.name = event.name;
+  }
+
+  onSupplierSearch(value: string): void {
+    this.isSupplierLoading = true;
+    this.searchSuppliersChange$.next(value);
   }
 
   startEdit(_id: number, isAdd?: boolean): void {

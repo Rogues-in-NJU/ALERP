@@ -3,6 +3,7 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.entity.User;
@@ -34,9 +35,10 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
 
+
     @Override
     public int saveUser(UserDTO userDTO) {
-        User user = null;
+        User user;
         if(userDTO.getId() == null){
             user = User.builder()
                     .name(userDTO.getName())

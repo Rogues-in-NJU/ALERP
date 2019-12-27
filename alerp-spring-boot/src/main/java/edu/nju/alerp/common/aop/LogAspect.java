@@ -4,6 +4,7 @@
 //import edu.nju.alerp.entity.OperationLog;
 //import edu.nju.alerp.service.OperationLogService;
 //import edu.nju.alerp.service.UserService;
+//import edu.nju.alerp.util.CommonUtils;
 //import edu.nju.alerp.util.TimeUtil;
 //import lombok.extern.slf4j.Slf4j;
 //import org.aspectj.lang.ProceedingJoinPoint;
@@ -39,7 +40,7 @@
 //
 //    @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
 //    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-//        HttpServletRequest request = getHttpServletRequest();
+//        HttpServletRequest request = CommonUtils.getHttpServletRequest();
 //        HttpSession session = request.getSession();
 //        Integer userId = (Integer) session.getAttribute("userId");
 //        log.info("[Controller-Log] time:", System.currentTimeMillis());
@@ -76,10 +77,6 @@
 //        }
 //    }
 //
-//    private static HttpServletRequest getHttpServletRequest() {
-//        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-//                .getRequest();
-//    }
 //
 //    private String buildMethodInvokeLog(ProceedingJoinPoint joinPoint, int userid) {
 //        StringBuilder sb = new StringBuilder();

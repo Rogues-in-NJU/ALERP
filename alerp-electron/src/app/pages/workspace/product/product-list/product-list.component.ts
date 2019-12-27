@@ -107,13 +107,13 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     //       map((res: ResultVO<ProductVO[]>) => res.data)
     //     )
     // };
-    // const optionList$: Observable<ProductVO[]> = this.searchChange$
+    // const optionList$: Observable<ProductVO[]> = this.searchProductsChange$
     //   .asObservable()
     //   .pipe(debounceTime(500))
     //   .pipe(switchMap(getProducts));
     // optionList$.subscribe((data: ProductVO[]) => {
     //   this.searchProducts = data;
-    //   this.isLoading = false;
+    //   this.isProductLoading = false;
     // })
     this.isLoading = false;
   }
@@ -193,7 +193,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     this.searchChange$.next(value);
   }
 
-  // onChangeSelected(event: TempProductVO): void {
+  // onChangeProductSelected(event: TempProductVO): void {
   //   this.editCache.data.productId = event.id;
   //   this.editCache.data.name = event.name;
   // }

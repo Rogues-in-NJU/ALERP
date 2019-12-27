@@ -1,6 +1,8 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.entity.OperationLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @Description: 操作日志service层
@@ -8,5 +10,7 @@ import edu.nju.alerp.entity.OperationLog;
  * @CreateDate: 2019-12-25 21:35
  */
 public interface OperationLogService {
-    public int addOperationLog(OperationLog operationLog);
+    int addOperationLog(OperationLog operationLog);
+
+    Page<OperationLog> getOpearationLogList(Pageable pageable, String userName, String operationStartTime, String operationEndTime);
 }

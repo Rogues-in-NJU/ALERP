@@ -8,11 +8,13 @@ import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
+import edu.nju.alerp.enums.ProcessingOrderStatus;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ProductVO;
+import edu.nju.alerp.vo.ShippingArrearRelationVO;
 import edu.nju.alerp.vo.ShippingOrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -60,10 +62,12 @@ public class ShippingOrderController {
         boolean res = shippingOrderService.deleteShippingOrder(id);
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
-        //根据id获取加工单，修改状态
-//        processingIdList.forEach(p ->{
-//            ProcessingOrder processingOrder = processOrderService.
-//        });
+//        根据id获取加工单，修改状态
+        processingIdList.forEach(p ->{
+            ProcessingOrder processingOrder = processOrderService.getOne(p);
+            processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
+            processOrderService.savaProcessingOrder(processingOrder);
+        });
         //todo 废弃对应收款单
         return ResponseResult.ok(res);
     }
@@ -93,11 +97,15 @@ public class ShippingOrderController {
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
-    public ResponseResult<Integer> saveUser(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
+    public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
             //todo 生成欠款单
-            return ResponseResult.ok(result);
+            ShippingArrearRelationVO shippingArrearRelationVO = ShippingArrearRelationVO.builder()
+                    .shippingOrderId(result)
+                    .arrearOrderId(0) //todo 待获取
+                    .build();
+            return ResponseResult.ok(shippingArrearRelationVO);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }

@@ -3,7 +3,6 @@ package edu.nju.alerp.service;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
-import edu.nju.alerp.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

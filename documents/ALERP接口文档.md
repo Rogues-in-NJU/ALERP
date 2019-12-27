@@ -152,7 +152,7 @@ res:
   //12.24 新增
   paymentRecords:[{
     id: number,
-    purchaseOrderId:string,
+    purchaseOrderId:number,
     cash:number,
     status,number,
     description:string,
