@@ -93,16 +93,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean deleteCustomer(int id) {
+    public int deleteCustomer(int id) {
         Customer customer = getCustomer(id);
         if (customer == null) {
-            return false;
+            return 0;
         }
         customer.setDeletedAt(DateUtils.getToday());
         customer.setDeletedBy(getUserId());
         customerRepository.save(customer);
         //考虑到客户为懒删除，建议暂存特惠价格数据
-        return false;
+        return customerRepository.save(customer).getId();
     }
 
     @Override
