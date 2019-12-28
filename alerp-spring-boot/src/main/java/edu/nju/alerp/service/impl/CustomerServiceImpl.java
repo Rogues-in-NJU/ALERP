@@ -10,6 +10,7 @@ import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.SpecialPricesRepository;
 import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import sun.misc.Unsafe;
+
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +40,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public int saveCustomer(CustomerDTO customerDTO) {
-        Customer customer = null;
+        Customer customer;
+        HttpSession session = CommonUtils.getHttpSession();
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
@@ -47,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
             for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                 SpecialPrice specialPrice = SpecialPrice.builder()
                         .createdAt(DateUtils.getToday())
-//                    .createdById() //待获取用户id
+                        .createdBy(getUserId())
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 specialPricesRepository.save(specialPrice);
@@ -63,12 +68,12 @@ public class CustomerServiceImpl implements CustomerService {
                 if (specialPrice == null) {
                     specialPrice = SpecialPrice.builder()
                             .createdAt(DateUtils.getToday())
-//                    .createdById() //待获取用户id
+                            .createdBy(getUserId())
                             .build();
                     BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 } else {
                     specialPrice.setUpdatedAt(DateUtils.getToday());
-//                specialPrices.setUpdateById();//待获取用户id
+                    specialPrice.setUpdatedBy(getUserId());
                 }
                 specialPricesRepository.save(specialPrice);
             }
@@ -88,15 +93,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean deleteCustomer(int id) {
+    public int deleteCustomer(int id) {
         Customer customer = getCustomer(id);
         if (customer == null) {
-            return false;
+            return 0;
         }
         customer.setDeletedAt(DateUtils.getToday());
+        customer.setDeletedBy(getUserId());
         customerRepository.save(customer);
         //考虑到客户为懒删除，建议暂存特惠价格数据
-        return false;
+        return customerRepository.save(customer).getId();
     }
 
     @Override
@@ -118,4 +124,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll(sp, pageable);
     }
 
+    private int getUserId(){
+        HttpSession session = CommonUtils.getHttpSession();
+        return session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+    }
 }

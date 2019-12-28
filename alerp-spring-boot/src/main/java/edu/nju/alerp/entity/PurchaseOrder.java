@@ -34,10 +34,10 @@ public class PurchaseOrder {
     private String description;
 
     /**
-     * 采购公司
+     * 供货商id
      */
-    @Column(name = "purchaing_company")
-    private String purchaingCompany;
+    @Column(name = "supplier_id")
+    private int supplierId;
 
     /**
      * 金额
@@ -56,7 +56,7 @@ public class PurchaseOrder {
     private String doneAt;
 
     /**
-     * 状态（0：已完成，1：已废弃）
+     * 状态（0：未完成，1：已完成， 2：已废弃）
      */
     private int status;
 
@@ -71,6 +71,18 @@ public class PurchaseOrder {
      */
     @Column(name = "create_by")
     private int createBy;
+
+    /**
+     * 最后更新者id
+     */
+    @Column(name = "update_by")
+    private int  updateBy;
+
+    /**
+     * 最后更新时间
+     */
+    @Column(name = "update_at")
+    private String updateAt;
 
     /**
      * 废弃时间

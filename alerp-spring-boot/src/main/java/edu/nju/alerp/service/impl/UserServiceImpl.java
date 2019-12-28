@@ -3,6 +3,7 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,15 +35,16 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
 
+
     @Override
     public int saveUser(UserDTO userDTO) {
-        User user = null;
+        User user;
         if(userDTO.getId() == null){
             user = User.builder()
                     .name(userDTO.getName())
                     .password(userDTO.getPassword())
-                    .phone_number(userDTO.getPhone_number())
-                    .created_at(DateUtils.getToday())
+                    .phoneNumber(userDTO.getPhoneNumber())
+                    .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
         }
@@ -49,8 +52,8 @@ public class UserServiceImpl implements UserService {
             user = getUser(userDTO.getId());
             user.setName(userDTO.getName());
             user.setPassword(userDTO.getPassword());
-            user.setPhone_number(userDTO.getPhone_number());
-            user.setUpdated_at(DateUtils.getToday());
+            user.setPhoneNumber(userDTO.getPhoneNumber());
+            user.setUpdatedAt(DateUtils.getToday());
         }
         return userRepository.saveAndFlush(user).getId();
     }
@@ -61,13 +64,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserByPhoneNumber(String phoneNumber) {
+        return userRepository.findDistinctByPhoneNumber(phoneNumber);
+    }
+
+    @Override
     public boolean deleteUser(int id) {
         User user = getUser(id);
         if (user == null) {
             return false;
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
-        user.setDeleted_at(DateUtils.getToday());
+        user.setDeletedAt(DateUtils.getToday());
         userRepository.save(user);
         return true;
     }
@@ -80,7 +88,7 @@ public class UserServiceImpl implements UserService {
             List<Condition> fuzzyMatch = new ArrayList<>();
             fuzzyMatch.add(ConditionFactory.like("name", name));
 //            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            fuzzyMatch.add(ConditionFactory.like("phone_number", name));
+            fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);

@@ -22,7 +22,7 @@ public interface CustomerService {
 
     List<SpecialPrice> getSpecialPricesListByCustomerId(int id);
 
-    boolean deleteCustomer(int id);
+    int deleteCustomer(int id);
 
     List<Customer> getCustomerList();
 

@@ -14,9 +14,20 @@
     <div nz-row nzGutter="24">
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">客户</nz-form-label>
+          <nz-form-label nzRequired nzSpan="6">供应商</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <input nz-input formControlName="purchasingCompany" class="info-input"/>
+            <nz-select formControlName="supplierId"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onSupplierSearch($event)"
+                       class="info-input">
+              <ng-container *ngFor="let p of searchSuppliers">
+                <nz-option *ngIf="!isSupplierLoading" nzLabel="{{ p.name }}" [nzValue]="p.id"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isSupplierLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -104,14 +115,14 @@
           <nz-select [(ngModel)]="editCache.product"
                      nzShowSearch
                      nzServerSearch
-                     (nzOnSearch)="onSearch($event)"
-                     (ngModelChange)="onChangeSelected($event)"
+                     (nzOnSearch)="onProductSearch($event)"
+                     (ngModelChange)="onChangeProductSelected($event)"
                      style="width: 100px">
-            <nz-option *ngIf="!isLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+            <nz-option *ngIf="!isProductLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
             <ng-container *ngFor="let p of searchProducts">
-              <nz-option *ngIf="!isLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              <nz-option *ngIf="!isProductLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
             </ng-container>
-            <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+            <nz-option *ngIf="isProductLoading" nzDisabled nzCustomContent>
               <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
             </nz-option>
           </nz-select>
@@ -135,7 +146,7 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']">
-          &yen; {{ data.price | number: '1.2-3' }}
+          &yen; {{ data.price | number: '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
@@ -154,7 +165,7 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']">
-          &yen; {{ data.cash | number: '1.2-3' }}
+          &yen; {{ data.cash | number: '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-input-number [(ngModel)]="editCache.data.cash" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>

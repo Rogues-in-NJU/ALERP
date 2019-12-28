@@ -7,13 +7,16 @@ import {SimpleReuseStrategy} from "../../core/strategy/simple-reuse.strategy";
 import {TabComponent} from "./tab/tab.component";
 
 const routes: Routes = [
-  {path: '', pathMatch: 'full', redirectTo: 'dashboard'},
+  {path: '', pathMatch: 'full', redirectTo: 'user-center'},
   {
     path: 'dashboard',
     loadChildren: './dashboard/dashboard.module#DashboardModule'
   }, {
     path: 'customer',
     loadChildren: './customer/customer.module#CustomerModule'
+  }, {
+    path: 'supplier',
+    loadChildren: './supplier/supplier.module#SupplierModule'
   }, {
     path: 'purchase-order',
     loadChildren: './purchase-order/purchase-order.module#PurchaseOrderModule'

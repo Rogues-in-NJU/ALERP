@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Data
 @Builder
 @Entity
-@Table(name = "Purchase_order_product")
+@Table(name = "purchase_order_product")
 public class PurchaseOrderProduct {
 
     /**

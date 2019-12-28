@@ -162,6 +162,7 @@ export class ProcessingOrderService {
 
         products: [{
           id: 1,
+          processingOrderId: 1,
           productId: 1,
           productName: '铝棒',
           type: 1,

@@ -8,17 +8,20 @@ import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
+import edu.nju.alerp.enums.ProcessingOrderStatus;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ProductVO;
+import edu.nju.alerp.vo.ShippingArrearRelationVO;
 import edu.nju.alerp.vo.ShippingOrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,9 +44,8 @@ public class ShippingOrderController {
     ShippingOrderService shippingOrderService;
     @Autowired
     ProductService productService;
-    //待关神接口
-//    @Autowired
-//    ProcessOrderService processOrderService;
+    @Autowired
+    ProcessOrderService processOrderService;
 
     /**
      * 删除出货单
@@ -53,16 +55,19 @@ public class ShippingOrderController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult<Boolean> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         //todo 前置判断欠款单数额，能否废弃
         boolean res = shippingOrderService.deleteShippingOrder(id);
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
-        //根据id获取加工单，修改状态
-//        processingIdList.forEach(p ->{
-//            ProcessingOrder processingOrder =
-//        });
+//        根据id获取加工单，修改状态
+        processingIdList.forEach(p ->{
+            ProcessingOrder processingOrder = processOrderService.getOne(p);
+            processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
+            processOrderService.savaProcessingOrder(processingOrder);
+        });
         //todo 废弃对应收款单
         return ResponseResult.ok(res);
     }
@@ -91,11 +96,16 @@ public class ShippingOrderController {
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult<Integer> saveUser(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
             //todo 生成欠款单
-            return ResponseResult.ok(result);
+            ShippingArrearRelationVO shippingArrearRelationVO = ShippingArrearRelationVO.builder()
+                    .shippingOrderId(result)
+                    .arrearOrderId(0) //todo 待获取
+                    .build();
+            return ResponseResult.ok(shippingArrearRelationVO);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }

@@ -1,7 +1,6 @@
 package edu.nju.alerp.controller;
 
-import edu.nju.alerp.domain.CustomerDO;
-import edu.nju.alerp.domain.SpecialPrciesDO;
+import edu.nju.alerp.vo.CustomerVO;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.ListResponse;
@@ -11,6 +10,7 @@ import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.SpecialPrice;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.vo.SpecialPricesVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,25 +52,25 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<CustomerDO> CustomerDO(
+    public ResponseResult<CustomerVO> CustomerDO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);
-        List<SpecialPrciesDO> SpecialPrciesDOList = new ArrayList<>();
+        List<SpecialPricesVO> specialPricesVOList = new ArrayList<>();
         for (SpecialPrice specialPrice : specialPriceList) {
-            SpecialPrciesDO specialPrciesDO = SpecialPrciesDO.builder()
+            SpecialPricesVO specialPricesVO = SpecialPricesVO.builder()
                     .createdByName(userService.getUser(specialPrice.getCreatedBy()).getName())
                     .productName(productService.findProductById(specialPrice.getProductId()).getName())
                     .build();
-            BeanUtils.copyProperties(specialPrice, specialPrciesDO);
-            SpecialPrciesDOList.add(specialPrciesDO);
+            BeanUtils.copyProperties(specialPrice, specialPricesVO);
+            specialPricesVOList.add(specialPricesVO);
         }
-        CustomerDO customerDO = CustomerDO.builder()
-                .specialPrciesDOList(SpecialPrciesDOList)
+        CustomerVO customerVO = CustomerVO.builder()
+                .specialPricesVOList(specialPricesVOList)
                 .build();
-        BeanUtils.copyProperties(customer, customerDO);
+        BeanUtils.copyProperties(customer, customerVO);
 
-        return ResponseResult.ok(customerDO);
+        return ResponseResult.ok(customerVO);
     }
 
     /**
@@ -81,7 +81,7 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public ResponseResult<Boolean> delete(
+    public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(customerService.deleteCustomer(id));
     }
