@@ -18,7 +18,7 @@ export interface ProcessingOrderVO extends BaseInfo {
 export interface ProcessingOrderProductVO {
 
   id?: number;
-  processingOrderId: number,
+  processingOrderId?: number,
   productId: number;
   productName: string;
   type: number;

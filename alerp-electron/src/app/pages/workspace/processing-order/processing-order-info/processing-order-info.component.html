@@ -12,6 +12,42 @@
   <nz-skeleton [nzActive]="true"></nz-skeleton>
 </div>
 <div class="content" *ngIf="!isLoading">
+  <div id="print_div" #print_div>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th id="th_green">First Name</th>
+        <th>Last Name</th>
+        <th>Username</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="td_blue">1</td>
+        <td>2</td>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td class="td_blue">1</td>
+        <td>2</td>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td class="td_blue">1</td>
+        <td>2</td>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <e-ngx-print
+    [btnText]="'iframe模式'"
+    [btnClass]="{'btn': true, 'btn-success': true}" [printHTML]="print_div">
+  </e-ngx-print>
   <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="2">{{ processingOrderData.code }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">{{ processingOrderData.shippingOrderCode }}</nz-descriptions-item>
