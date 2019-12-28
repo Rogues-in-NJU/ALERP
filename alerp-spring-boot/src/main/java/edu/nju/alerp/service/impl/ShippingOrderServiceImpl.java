@@ -1,12 +1,14 @@
 package edu.nju.alerp.service.impl;
 
 
+import edu.nju.alerp.common.DocumentsIdFactory;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
+import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ShippingOrderStatus;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ShippingOrderProductRepository;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,19 +42,20 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     CustomerRepository customerRepository;
     @Autowired
     ShippingOrderProductRepository shippingOrderProductRepository;
+    @Resource
+    private DocumentsIdFactory documentsIdFactory;
 
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         HttpSession session = CommonUtils.getHttpSession();
         ShippingOrder shippingOrder = ShippingOrder.builder()
-//                .code()
+                .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER))
                 .createdAt(DateUtils.getToday())
                 .createdBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        int res = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
-        return res;
+        return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
     }
 
     @Override
