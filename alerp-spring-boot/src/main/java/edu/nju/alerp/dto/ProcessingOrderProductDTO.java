@@ -12,5 +12,5 @@ public class ProcessingOrderProductDTO {
     private Integer productId;
     private String specification;
     private Integer quantity;
-    private Integer expectedWeight;
+    private Double expectedWeight;
 }

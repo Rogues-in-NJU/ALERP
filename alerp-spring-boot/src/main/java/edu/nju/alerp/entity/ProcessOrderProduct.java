@@ -1,9 +1,12 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 
 /**
  * @Description: 加工单商品关联实体类
@@ -14,6 +17,8 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "process_order_product")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProcessOrderProduct {
 
     /**

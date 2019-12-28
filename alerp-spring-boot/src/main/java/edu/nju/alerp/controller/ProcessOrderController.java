@@ -35,11 +35,11 @@ public class ProcessOrderController {
     @RequestMapping(value = "/list")
     public ResponseResult<ListResponse> findProcessOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                 @RequestParam(value = "pageSize") int pageSize,
-                                                                @RequestParam(value = "id") String code,
-                                                                @RequestParam(value = "customerName") String name,
-                                                                @RequestParam(value = "status") int status,
-                                                                @RequestParam(value = "createAtStartTime") String startTime,
-                                                                @RequestParam(value = "createAtEndTime") String endTime) {
+                                                                @RequestParam(value = "id", required = false) String code,
+                                                                @RequestParam(value = "customerName", required = false) String name,
+                                                                @RequestParam(value = "status", required = false) Integer status, // todo 这里的status是不是必须的
+                                                                @RequestParam(value = "createAtStartTime", required = false) String startTime,
+                                                                @RequestParam(value = "createAtEndTime", required = false) String endTime) {
         // todo 增加入参空判断
         Page<ProcessingOrder> processingOrders =
                 processOrderService.findAllByPage(PageRequest.of(pageIndex, pageSize), code, name, status, startTime, endTime);

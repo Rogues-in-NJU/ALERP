@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,26 +28,36 @@ public class DocumentsIdFactory implements InitializingBean {
     @Autowired
     private IdGeneratorRepository idGeneratorRepository;
 
-    private Map<DocumentsType, AtomicInteger> idGenerator = new HashMap<>();
+    private Map<DocumentsType, AtomicInteger> idGenerator = new ConcurrentHashMap<>();
+
+    private Map<DocumentsType, IdGenerator> generatorMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
         List<IdGenerator> documents = idGeneratorRepository.findAll();
-        documents.forEach(id -> idGenerator.put(DocumentsType.of(id.getDocuments()), buildCurrentCount(id)));
+        documents.forEach(id -> {
+            idGenerator.put(DocumentsType.of(id.getDocuments()), buildCurrentCount(id));
+            generatorMap.put(DocumentsType.of(id.getDocuments()), id);
+        });
+
     }
 
     public String generateNextCode(DocumentsType documentsType) {
         int year = TimeUtil.getNowYear();
         int month = TimeUtil.getNowMonth();
         int day = TimeUtil.getNowDay();
-        return String.valueOf(year) + String.format("%02", month) + String.format("%02", day) + String.format("%03", getNext(documentsType));
+        return String.valueOf(year) + String.format("%02d", month) + String.format("%02d", day) + String.format("%03d", getNext(documentsType));
     }
 
     private int getNext(DocumentsType documentsType) {
-        int nextCount = idGenerator.get(documentsType).getAndIncrement();
-        IdGenerator idGenerator = IdGenerator.builder().currentCount(nextCount)
-                            .documents(documentsType.getName())
-                            .updateTime(TimeUtil.dateFormat(new Date())).build();
+        AtomicInteger atomicInteger = idGenerator.get(documentsType) == null ? new AtomicInteger() : idGenerator.get(documentsType);
+        int nextCount = atomicInteger.incrementAndGet();
+        IdGenerator idGenerator = generatorMap.get(documentsType) == null ?
+                IdGenerator.builder().documents(documentsType.getName()).build() : generatorMap.get(documentsType);
+
+        idGenerator.setCurrentCount(nextCount);
+        idGenerator.setUpdateTime(TimeUtil.dateFormat(new Date()));
+//        idGeneratorRepository.updateIdByDocumentsType(nextCount, TimeUtil.dateFormat(new Date()), documentsType.getName());
         idGeneratorRepository.saveAndFlush(idGenerator);
         return nextCount;
     }
