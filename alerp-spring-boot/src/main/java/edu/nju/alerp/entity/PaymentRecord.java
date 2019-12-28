@@ -1,8 +1,10 @@
 package edu.nju.alerp.entity;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -15,6 +17,8 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Table(name = "payment_record")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentRecord {
 
     /**

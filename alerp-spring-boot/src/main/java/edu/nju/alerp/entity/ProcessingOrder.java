@@ -1,7 +1,9 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,6 +16,8 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Table(name = "processing_order")
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProcessingOrder {
 
     /**
@@ -73,7 +77,7 @@ public class ProcessingOrder {
     /**
      * 创建者id
      */
-    @Column(name = "create_by", nullable = false)
+    @Column(name = "create_by")
     private int createBy;
 
     /**
@@ -97,7 +101,7 @@ public class ProcessingOrder {
     /**
      * 最后更新者id
      */
-    @Column(name = "update_by", nullable = false)
+    @Column(name = "update_by")
     private int updateBy;
 
 }

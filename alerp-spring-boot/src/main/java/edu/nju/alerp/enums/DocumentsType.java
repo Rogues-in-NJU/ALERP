@@ -5,7 +5,6 @@ import lombok.Getter;
 public enum DocumentsType {
 
     PROCESSING_ORDER("processing_order"),
-    PRODUCT("product"),
     PURCHASE_ORDER("purchase_order"),
     SHIPPING_ORDER("shipping_order");
 

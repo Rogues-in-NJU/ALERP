@@ -1,7 +1,6 @@
 package edu.nju.alerp.vo;
 
 import edu.nju.alerp.entity.PurchaseOrder;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
  * @CreateDate: 2019-12-25 21:15
  */
 @Data
-@Builder
 @NoArgsConstructor
 public class PurchaseOrderListVO {
 
