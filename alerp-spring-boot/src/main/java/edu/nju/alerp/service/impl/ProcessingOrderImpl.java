@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -134,13 +135,14 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
-                                                                    .id(updateProcessProductDTO.getId())
                                                                     .processOrderId(updateProcessProductDTO.getProcessingOrderId())
                                                                     .productId(updateProcessProductDTO.getProductId())
                                                                     .quantity(updateProcessProductDTO.getQuantity())
                                                                     .specification(updateProcessProductDTO.getSpecification())
                                                                     .expectedWeight(updateProcessProductDTO.getExpectedWeight())
                                                                     .build();
+        if (updateProcessProductDTO.getId() != null)
+            processOrderProduct.setId(updateProcessProductDTO.getId());
         ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
                                                                     .updateAt(TimeUtil.dateFormat(new Date()))
                                                                     // todo .updateBy() session里拿
@@ -194,12 +196,18 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public Page<ProcessingOrder> findAllByPage(Pageable pageable, String id, String customerName,
                                                    Integer status, String createAtStartTime, String createAtEndTime) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
-        List<Integer> customers = customerRepository.findCustomerIdByNameAndShorthand(customerName);
+        List<Integer> customers = new ArrayList<>();
+        if (customerName != null)  // todo 这里要改一下，是不是在这里判空
+            customers = customerRepository.findCustomerIdByNameAndShorthand(customerName);
         try {
-            sp.add(ConditionFactory.In("customerId",customers));
-            sp.add(ConditionFactory.like("code", id));
-            sp.add(ConditionFactory.equal("status", status));
-            sp.add(ConditionFactory.between("create_at", createAtStartTime, createAtEndTime));
+            if (customerName != null)
+                sp.add(ConditionFactory.In("customerId",customers));
+            if (id != null)
+                sp.add(ConditionFactory.like("code", id));
+            if (createAtStartTime != null && createAtEndTime != null) {
+                sp.add(ConditionFactory.equal("status", status));
+                sp.add(ConditionFactory.between("create_at", createAtStartTime, createAtEndTime));
+            }
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
