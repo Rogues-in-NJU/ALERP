@@ -541,6 +541,7 @@ res:
   
   products: [{
     id: number,
+    processingOrderId: number,
     productId: number,
     productName: string,
     type: number,
