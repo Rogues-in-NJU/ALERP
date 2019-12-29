@@ -16,7 +16,7 @@ public interface ProductService {
 
     public List<Product> findAll();
 
-    public Page<Product> findAllByPage(Pageable pageable, String name, int type);
+    public Page<Product> findAllByPage(Pageable pageable, String name, Integer type);
 
     public Product findProductById(int id);
 

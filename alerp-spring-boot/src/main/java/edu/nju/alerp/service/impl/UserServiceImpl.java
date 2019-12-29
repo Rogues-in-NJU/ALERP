@@ -1,5 +1,6 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
@@ -11,12 +12,14 @@ import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.util.DateUtils;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,10 +34,13 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
+
     @Autowired
     UserRepository userRepository;
 
-
+    @Resource
+    private Cache<Integer, Object> userCache;
 
     @Override
     public int saveUser(UserDTO userDTO) {
@@ -55,12 +61,21 @@ public class UserServiceImpl implements UserService {
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }
-        return userRepository.saveAndFlush(user).getId();
+        User res = userRepository.saveAndFlush(user);
+        userCache.put(userDTO.getId(), res);
+        return res.getId();
     }
 
     @Override
     public User getUser(int id) {
-        return userRepository.getOne(id);
+        User user = (User) userCache.get(id);
+        if (user == null) {
+            user = userRepository.getOne(id);
+            if (user != null) {
+                userCache.put(id, user);
+            }
+        }
+        return user;
     }
 
     @Override
@@ -77,6 +92,7 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatus.OFFJOB.getCode());
         user.setDeletedAt(DateUtils.getToday());
         userRepository.save(user);
+        userCache.put(id, user);
         return true;
     }
 

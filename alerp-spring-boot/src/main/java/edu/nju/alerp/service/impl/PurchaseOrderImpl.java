@@ -18,17 +18,18 @@ import edu.nju.alerp.repo.PurchaseOrderRepository;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.service.PurchaseOrderService;
 import edu.nju.alerp.service.SupplierService;
+import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.PurchaseOrderDetailVO;
 import edu.nju.alerp.vo.PurchaseOrderListVO;
 import edu.nju.alerp.vo.PurchaseProductVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -61,6 +62,9 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public List<PurchaseOrder> findAll() {
         return purchaseOrderRepository.findAll();
@@ -70,15 +74,19 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
     public Page<PurchaseOrderListVO> findAllByPage(Pageable pageable, String id, Integer status, String doneStartTime, String doneEndTime) {
         QueryContainer<PurchaseOrder> sp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.like("code", id));
-            sp.add(ConditionFactory.equal("status", status));
-            sp.add(ConditionFactory.between("done_at", doneStartTime, doneEndTime));
+            if (id != null)
+                sp.add(ConditionFactory.like("code", id));
+            if (status != null)
+                sp.add(ConditionFactory.equal("status", status));
+            else
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
+            sp.add(ConditionFactory.between("doneAt", doneStartTime, doneEndTime));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
         List<PurchaseOrder> res = purchaseOrderRepository.findAll(sp);
         List<PurchaseOrderListVO> resultList = res.parallelStream()
-                                            .map(p -> PurchaseOrderListVO.buildVO(p, supplierService.getSupplierName(p.getSupplierId()), "创建者的名字"))
+                                            .map(p -> PurchaseOrderListVO.buildVO(p, supplierService.getSupplierName(p.getSupplierId()), userService.getUser(p.getCreateBy()).getName()))
                                             .filter(Objects::nonNull).collect(Collectors.toList());
         return new PageImpl<>(resultList, pageable, resultList.size());
     }
@@ -89,8 +97,8 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         QueryContainer<PurchaseOrderProduct> sp = new QueryContainer<>();
         QueryContainer<PaymentRecord> paySp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("product_id", id));
-            paySp.add(ConditionFactory.equal("purchase_order_id", id));
+            sp.add(ConditionFactory.equal("productId", id));
+            paySp.add(ConditionFactory.equal("purchaseOrderId", id));
         } catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -111,13 +119,14 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                             .doneAt(purchaseOrder.getDoneAt())
                                             .createdAt(purchaseOrder.getCreateAt())
                                             .createdById(purchaseOrder.getCreateBy())
-                                            // todo .createdByName()
+                                            .createdByName(userService.getUser(purchaseOrder.getCreateBy()).getName())
                                             .products(productVOS)
                                             .paymentRecords(paymentRecords).build();
     }
 
     @Override
     public int addNewPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) {
+        HttpSession session = CommonUtils.getHttpSession();
         PurchaseOrder purchaseOrder = PurchaseOrder.builder().description(purchaseOrderDTO.getDescription())
                                                             .supplierId(purchaseOrderDTO.getSupplierId())
                                                             .cash(purchaseOrderDTO.getCash())
@@ -126,9 +135,9 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER))
                                                             .status(PurchaseOrderStatus.UNFINISHED.getCode())
                                                             .createAt(TimeUtil.dateFormat(new Date()))
-                                                            //createBy
+                                                            .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                                             .updateAt(TimeUtil.dateFormat(new Date()))
-                                                            // update_by
+                                                            .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                                             .build();
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
 
@@ -149,9 +158,10 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
 
     @Override
     public int addNewPaymentRecord(AddPaymentRecordDTO addPaymentRecordDTO) throws Exception{
+        HttpSession session = CommonUtils.getHttpSession();
         PurchaseOrder purchaseOrder = purchaseOrderRepository.getOne(addPaymentRecordDTO.getPurchaseOrderId());
         if (!PurchaseOrderStatus.of(purchaseOrder.getStatus()).paymentable())
-            throw new Exception(); // todo 不能支付错误
+            throw new Exception("该单据不能继续支付");
 
         QueryContainer<PaymentRecord> sp = new QueryContainer<>();
         sp.add(ConditionFactory.equal("purchase_order_id", purchaseOrder.getId()));
@@ -159,7 +169,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(sp);
         double payed = paymentRecords.parallelStream().mapToDouble(PaymentRecord::getCash).sum();
         if (purchaseOrder.getCash() - payed < addPaymentRecordDTO.getCash())
-            throw new Exception(); //todo 付了过多的钱的异常
+            throw new Exception("已付超过应收");
 
         PaymentRecord newPayment = PaymentRecord.builder().purchaseOrderId(addPaymentRecordDTO.getPurchaseOrderId())
                                                         .cash(addPaymentRecordDTO.getCash())
@@ -168,7 +178,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                         .salesman(addPaymentRecordDTO.getSalesman())
                                                         .doneAt(addPaymentRecordDTO.getDoneAt())
                                                         .createAt(TimeUtil.dateFormat(new Date()))
-                                                        // todo .createBy()
+                                                        .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                                         .build();
         int result = paymentRecordRepository.saveAndFlush(newPayment).getId();
 
@@ -186,7 +196,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.getOne(paymentRecord.getPurchaseOrderId());
 
         if (PaymentRecordStatus.of(paymentRecord.getStatus()) == PaymentRecordStatus.ABANDONED)
-            throw new Exception(); // todo 已废弃的不能再废弃
+            throw new Exception("该单据已被废弃");
 
         paymentRecord.setStatus(PaymentRecordStatus.ABANDONED.getCode());
         int result = paymentRecordRepository.saveAndFlush(paymentRecord).getId();
@@ -200,7 +210,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
     public int abandonPurchaseOrder(int id) throws Exception{
         PurchaseOrder purchaseOrder = purchaseOrderRepository.getOne(id);
         if (!PurchaseOrderStatus.of(purchaseOrder.getStatus()).abandonable())
-            throw new Exception(); // todo 不能废弃
+            throw new Exception("该单据目前不能被废弃");
 
         purchaseOrder.setStatus(PurchaseOrderStatus.ABANDONED.getCode());
         return purchaseOrderRepository.saveAndFlush(purchaseOrder).getId();

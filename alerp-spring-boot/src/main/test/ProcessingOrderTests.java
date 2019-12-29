@@ -14,6 +14,11 @@ public class ProcessingOrderTests extends BaseTest{
     private ProcessOrderService processOrderService;
 
     @Test
+    public void findAll() {
+        log.info("[{}]", processOrderService.findAll());
+    }
+
+    @Test
     public void addProcessingOrder() {
         ProcessingOrderDTO processingOrderDTO = new ProcessingOrderDTO();
         processingOrderDTO.setSalesman("yangguan02");

@@ -1,10 +1,15 @@
 <nz-page-header>
   <nz-page-header-title>加工单详情</nz-page-header-title>
   <nz-page-header-extra>
-    <button nz-button nzType="primary">
-      <i nz-icon nzType="printer" nzTheme="outline"></i>
-      打印
-    </button>
+    <div>
+      <e-ngx-print
+        [btnText]="'打印'"
+        [printHTML]="print_div"
+        [printStyle]="printStyle"
+        [printCSS]="printCSS"
+        (printComplete)="printComplete()">
+      </e-ngx-print>
+    </div>
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
@@ -12,45 +17,10 @@
   <nz-skeleton [nzActive]="true"></nz-skeleton>
 </div>
 <div class="content" *ngIf="!isLoading">
-  <div id="print_div" #print_div>
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th id="th_green">First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td class="td_blue">1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>4</td>
-      </tr>
-      <tr>
-        <td class="td_blue">1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>4</td>
-      </tr>
-      <tr>
-        <td class="td_blue">1</td>
-        <td>2</td>
-        <td>3</td>
-        <td>4</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <e-ngx-print
-    [btnText]="'iframe模式'"
-    [btnClass]="{'btn': true, 'btn-success': true}" [printHTML]="print_div">
-  </e-ngx-print>
   <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="2">{{ processingOrderData.code }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">{{ processingOrderData.shippingOrderCode }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">{{ processingOrderData.shippingOrderCode }}
+    </nz-descriptions-item>
     <nz-descriptions-item nzTitle="客户" [nzSpan]="3">{{ processingOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ processingOrderData.salesman }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
@@ -112,7 +82,8 @@
                        (nzOnSearch)="onProductSearch($event)"
                        (ngModelChange)="onChangeSelectedProduct($event)"
                        style="width: 150px">
-              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}"
+                         [nzValue]="editCache.currentProduct" nzHide></nz-option>
               <ng-container *ngFor="let p of searchProducts; let i = index;">
                 <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
               </ng-container>
@@ -191,4 +162,37 @@
     </tr>
     </tbody>
   </nz-table>
+</div>
+
+<div id="print_div" #print_div>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <p>(购货单位:){{ processingOrderData.customerName }}</p>
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 200px">(型号)</th>
+      <th style="width: 300px">(加工规格)</th>
+      <th style="width: 120px">(数量(件))</th>
+      <th style="width: 120px">(预计重量(千克))</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of processingOrderData.products">
+      <td> {{ data.productName }}</td>
+      <td> {{ data.specification }}</td>
+      <td> {{ data.quantity }}</td>
+      <td> {{ data.expectedWeight }}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td> (重量汇总)</td>
+      <td> xxx(数据库加字段)</td>
+    </tr>
+    </tbody>
+  </table>
+  <p>注* ()中的最后会去除</p>
 </div>

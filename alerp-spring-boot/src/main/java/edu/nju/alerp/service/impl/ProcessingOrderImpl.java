@@ -18,16 +18,21 @@ import edu.nju.alerp.repo.ProcessingOrderRepository;
 import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
+import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
 import edu.nju.alerp.vo.ProcessingOrderProductVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +59,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -90,7 +98,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                 .status(processingOrder.getStatus())
                                                 .createdAt(processingOrder.getCreateAt())
                                                 .createdById(String.valueOf(processingOrder.getCreateBy()))
-                                                .createdByName("从User那里去拿")  //todo
+                                                .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
                                                 .products(productVOS).build();
     }
 
@@ -106,15 +114,16 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
+        HttpSession session = CommonUtils.getHttpSession();
         ProcessingOrder processingOrder = ProcessingOrder.builder()
                                         .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER))
                                         .status(ProcessingOrderStatus.DRAFTING.getCode())
                                         .customerId(processingOrderDTO.getCustomerId())
                                         .salesman(processingOrderDTO.getSalesman())
                                         .createAt(TimeUtil.dateFormat(new Date()))
-                                        //.createBy() 要去从session里拿
+                                        .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                         .updateAt(TimeUtil.dateFormat(new Date()))
-                                        //.updateBy() session里拿
+                                        .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                         .build();
 
         ProcessingOrder entity = processingOrderRepository.saveAndFlush(processingOrder);
@@ -134,6 +143,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
+        HttpSession session = CommonUtils.getHttpSession();
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
                                                                     .processOrderId(updateProcessProductDTO.getProcessingOrderId())
                                                                     .productId(updateProcessProductDTO.getProductId())
@@ -145,7 +155,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             processOrderProduct.setId(updateProcessProductDTO.getId());
         ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
                                                                     .updateAt(TimeUtil.dateFormat(new Date()))
-                                                                    // todo .updateBy() session里拿
+                                                                     .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                                                     .build();
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
         processingOrderRepository.saveAndFlush(processingOrder);
@@ -156,12 +166,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public int deleteProcessProduct(int id) throws Exception{
         ProcessOrderProduct processOrderProduct = processOrderProductRepository.getOne(id);
         if (processOrderProduct == null)
-            return 0; //todo 抛出空异常
+            throw new Exception("该条目不存在");
         ProcessingOrder processingOrder = processingOrderRepository.getOne(processOrderProduct.getProcessOrderId());
         if (processingOrder == null)
-            return 0;
+            throw new Exception("不存在该加工单");
         if (ProcessingOrderStatus.of(processingOrder.getStatus()) != ProcessingOrderStatus.DRAFTING)
-            return 0; // todo 抛出该单据不支持删除的异常
+            throw new Exception("该状态下单据不支持该操作");
         processOrderProductRepository.deleteById(id);
         return id;
     }
@@ -170,9 +180,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public int printProcessingOrder(int id) throws Exception{
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
-            return 0;  //todo 抛出空异常
+            throw new Exception("不存在该加工单");
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).printable())
-            return 0; // todo 抛出该单据不支持打印的异常
+            throw new Exception("该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
@@ -180,14 +190,15 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int abandonProcessingOrder(int id) throws Exception{
+        HttpSession session = CommonUtils.getHttpSession();
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
-            return 0;  //todo 抛出空异常
+            throw new Exception("不存在该加工单");
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).abandonable())
-            return 0; // todo 抛出该单据不支持废弃的异常
+            throw new Exception("该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.ABANDONED.getCode());
         processingOrder.setDeleteAt(TimeUtil.dateFormat(new Date()));
-        //processingOrder.setDeleteBy();
+        processingOrder.setDeleteBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"));
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
     }
@@ -204,10 +215,13 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 sp.add(ConditionFactory.In("customerId",customers));
             if (id != null)
                 sp.add(ConditionFactory.like("code", id));
-            if (createAtStartTime != null && createAtEndTime != null) {
+            if (status != null)
                 sp.add(ConditionFactory.equal("status", status));
-                sp.add(ConditionFactory.between("create_at", createAtStartTime, createAtEndTime));
-            }
+            else
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
+//            sp.add(ConditionFactory.between("createAt", createAtStartTime, createAtEndTime));
+            sp.add(ConditionFactory.greatThanEqualTo("createAt", createAtStartTime));
+            sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
