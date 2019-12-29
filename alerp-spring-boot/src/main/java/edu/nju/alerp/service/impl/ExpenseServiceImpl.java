@@ -1,14 +1,18 @@
 package edu.nju.alerp.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.dto.ExpenseDTO;
+import edu.nju.alerp.entity.Expense;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.repo.ExpenseRepository;
 import edu.nju.alerp.service.ExpenseService;
-import edu.nju.alerp.common.ListResponse;
-import edu.nju.alerp.entity.Expense;
+import edu.nju.alerp.util.CommonUtils;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +28,24 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Autowired
     private ExpenseRepository expenseRepository;
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
     @Override
-    public boolean addExpense(ExpenseDTO expenseDTO) {
-        Expense expense = Expense.builder().createdAt(sdf.format(new Date())).build();
+    public int addExpense(ExpenseDTO expenseDTO) {
+        Expense expense = Expense.builder().createdAt(DateUtils.getToday()).createdBy(getUserId()).build();
         BeanUtils.copyProperties(expenseDTO, expense);
-        expenseRepository.save(expense);
-        return true;
+        Expense result = expenseRepository.save(expense);
+        return result.getId();
     }
 
     @Override
-    public boolean deleteExpense(int id, int delete_by) {
-        Expense expense = Expense.builder().id(id).
-            deletedBy(delete_by).
-            deletedAt(sdf.format(new Date())).
-            build();
-        expenseRepository.delete(expense);
-        return true;
+    public int deleteExpense(int id) {
+        Expense expense = expenseRepository.getOne(id);
+        if (expense == null) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到该公司支出");
+        }
+        expense.setDeletedAt(DateUtils.getToday());
+        expense.setDeletedBy(getUserId());
+        Expense result = expenseRepository.save(expense);
+        return result.getId();
     }
 
     @Override
@@ -52,6 +56,11 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ListResponse getExpenseList(int pageIndex, int pageSize) {
         List<Expense> expenseList = expenseRepository.findAll();
-        return ListResponseUtils.getListResponse(expenseList,pageIndex,pageSize);
+        return ListResponseUtils.getListResponse(expenseList, pageIndex, pageSize);
+    }
+
+    private int getUserId() {
+        HttpSession session = CommonUtils.getHttpSession();
+        return session.getAttribute("userId") == null ? 0 : (int)session.getAttribute("userId");
     }
 }

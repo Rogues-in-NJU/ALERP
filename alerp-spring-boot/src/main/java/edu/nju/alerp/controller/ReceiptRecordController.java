@@ -1,13 +1,10 @@
 package edu.nju.alerp.controller;
 
-import javax.validation.Valid;
-
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.NJUException;
-import edu.nju.alerp.dto.ExpenseDTO;
-import edu.nju.alerp.service.ExpenseService;
-import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.dto.ReceiptRecordDTO;
+import edu.nju.alerp.service.ReceiptRecordServie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,52 +12,51 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 公司支出controller
+ * 收款记录controller
  *
  * @author luhailong
- * @date 2019/12/21
+ * @date 2019/12/28
  */
 @Slf4j
 @RestController
 @Validated
-@RequestMapping(value = "/api/expense")
-public class ExpenseController {
+@RequestMapping(value = "/api/arrear-order/receipt-record")
+public class ReceiptRecordController {
 
     @Autowired
-    private ExpenseService expenseService;
+    private ReceiptRecordServie receiptRecordServie;
 
     /**
-     * 新增公司支出
+     * 增加收款记录
      *
-     * @param expenseDTO
+     * @param receiptRecordDTO
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult<Integer> addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
+    public ResponseResult<Integer> addReceiptRecord(@RequestBody ReceiptRecordDTO receiptRecordDTO) {
         try {
-            return ResponseResult.ok(expenseService.addExpense(expenseDTO));
+            return ResponseResult.ok(receiptRecordServie.addReceiptRecord(receiptRecordDTO));
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
     }
 
     /**
-     * 删除公司支出
+     * 删除收款记录
      *
      * @param id
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
-    public ResponseResult<Integer> deleteExpense(@PathVariable(value = "id") int id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseResult<Integer> deleteReceiptRecord(@PathVariable(value = "id") int id) {
         try {
-            return ResponseResult.ok(expenseService.deleteExpense(id));
+            return ResponseResult.ok(receiptRecordServie.deleteReceiptRecord(id));
         } catch (NJUException nju) {
             return ResponseResult.fail(nju.getExceptionEnum(), nju.getMessage());
         } catch (Exception e) {
@@ -68,18 +64,4 @@ public class ExpenseController {
         }
     }
 
-    /**
-     * 获取公司支出列表（分页）
-     *
-     * @param pageIndex
-     * @param pageSize
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResponseResult<ListResponse> getExpenseList(@RequestParam(value = "pageIndex") int pageIndex,
-        @RequestParam(value = "pageSize") int pageSize) {
-        ListResponse listResponse = expenseService.getExpenseList(pageIndex, pageSize);
-        return ResponseResult.ok(listResponse);
-    }
 }

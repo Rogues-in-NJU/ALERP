@@ -12,5 +12,12 @@ public interface ReceiptRecordServie {
      * @param receiptRecordDTO
      * @return
      */
-    boolean addReceiptRecord(ReceiptRecordDTO receiptRecordDTO);
+    int addReceiptRecord(ReceiptRecordDTO receiptRecordDTO);
+
+    /**
+     * 删除收款记录
+     * @param id
+     * @return
+     */
+    int deleteReceiptRecord(int id);
 }

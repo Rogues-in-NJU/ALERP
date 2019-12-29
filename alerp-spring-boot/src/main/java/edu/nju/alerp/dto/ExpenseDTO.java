@@ -12,12 +12,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ExpenseDTO {
-
-    /**
-     * 创建者id
-     */
-    private int createdBy;
-
     /**
      * 单据名称
      */

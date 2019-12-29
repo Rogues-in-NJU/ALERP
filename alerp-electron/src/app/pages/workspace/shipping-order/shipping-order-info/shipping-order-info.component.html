@@ -118,30 +118,36 @@
 
 
 <div id="print_div" #print_div>
-  <p>出货单编号:{{ shippingOrderData.code }}</p>
-  <p>收款单编号:{{ shippingOrderData.arrearOrderCode }}</p>
-  <p>客户:{{ shippingOrderData.customerName }}</p>
-  <p>状态:{{ shippingOrderData.status === 1 }}</p>
-  <p>创建时间:{{ shippingOrderData.createdAt }}</p>
-  <p>创建者:{{ shippingOrderData.createdByName }}</p>
-  <p>废弃时间:{{ shippingOrderData.deletedAt }}</p>
-  <p>废弃者:{{ shippingOrderData.deletedByName }}</p>
-  <p>加工单编号:{{ code }}</p>
+  <p>(出货单编号:){{ shippingOrderData.code }}</p>
+  <p>(收款单编号:){{ shippingOrderData.arrearOrderCode }}</p>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <p>(客户:){{ shippingOrderData.customerName }}</p>
+  <!--<p>状态:{{ shippingOrderData.status === 1 }}</p>-->
+  <!--<p>创建时间:{{ shippingOrderData.createdAt }}</p>-->
+  <!--<p>创建者:{{ shippingOrderData.createdByName }}</p>-->
+  <!--<p>废弃时间:{{ shippingOrderData.deletedAt }}</p>-->
+  <!--<p>废弃者:{{ shippingOrderData.deletedByName }}</p>-->
+  <!--<p>加工单编号:{{ code }}</p>-->
 
-  <p>累计金额:{{ shippingOrderData.cash }}</p>
-  <p>浮动金额:{{ shippingOrderData.floatingCash }}</p>
-  <p>应收金额:{{ shippingOrderData.receivableCash }}</p>
+
+  <!--<p>浮动金额:{{ shippingOrderData.floatingCash }}</p>-->
+  <!--<p>应收金额:{{ shippingOrderData.receivableCash }}</p>-->
   <table>
     <thead>
     <tr>
-      <th nzWidth="150px">加工单编号</th>
-      <th nzWidth="100px">商品</th>
-      <th nzWidth="160px">加工规格</th>
-      <th nzWidth="100px">数量(件)</th>
-      <th nzWidth="100px">单价</th>
-      <th nzWidth="100px">预计重量</th>
-      <th nzWidth="100px">实际重量</th>
-      <th>金额</th>
+      <th style="width: 200px">(加工单编号)</th>
+      <th style="width: 100px">(商品)</th>
+      <th style="width: 200px">(加工规格)</th>
+      <th style="width: 100px">(数量(件))</th>
+      <th style="width: 100px">(单价)</th>
+      <!--<th nzWidth="100px">(预计重量)</th>-->
+      <th style="width: 100px">(实际重量)</th>
+      <th style="width: 100px">(金额)</th>
     </tr>
     </thead>
     <tbody>
@@ -151,12 +157,23 @@
       <td> {{ data.specification }}</td>
       <td> {{ data.quantity }}</td>
       <td> {{ data.price }}</td>
-      <td> {{ data.expectedWeight }}</td>
-      <td>{{ data.weight }}</td>
-      <td>{{ data.cash }}</td>
+      <!--<td> {{ data.expectedWeight }}</td>-->
+      <td> {{ data.weight }}</td>
+      <td> {{ data.cash }}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <!--<td></td>-->
+      <td></td>
+      <td>(合计)</td>
+      <td> {{ shippingOrderData.cash }}</td>
     </tr>
     </tbody>
   </table>
+  <p>注* ()中的最后会去除</p>
 </div>
 
 

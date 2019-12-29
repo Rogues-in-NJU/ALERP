@@ -50,6 +50,9 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   isProductsLoading: boolean = false;
   specificationAutoComplete: { label: string, value: string }[] = [];
 
+  printCSS: string[];
+  printStyle: string;
+
   constructor(
     private closeTab: TabService,
     private route: ActivatedRoute,
@@ -58,7 +61,18 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     private product: ProductService,
     private message: NzMessageService,
   ) {
+    this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
 
+    this.printStyle =
+      `
+        th, td {
+            color: blue !important;
+        }
+        `;
+  }
+
+  printComplete() {
+    console.log('打印完成！');
   }
 
   ngOnInit(): void {
