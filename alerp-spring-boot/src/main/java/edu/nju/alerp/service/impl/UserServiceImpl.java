@@ -1,11 +1,14 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.enums.ExceptionEnum;
+import edu.nju.alerp.repo.UserCityRelationRepository;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
@@ -38,6 +41,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserCityRelationRepository userCityRelationRepository;
 
     @Resource
     private Cache<Integer, Object> userCache;
@@ -84,16 +89,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(int id) {
+    public int deleteUser(int id) {
         User user = getUser(id);
         if (user == null) {
-            return false;
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户id不存在！");
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
         user.setDeletedAt(DateUtils.getToday());
-        userRepository.save(user);
+        int ans = userRepository.save(user).getId();
         userCache.put(id, user);
-        return true;
+        return ans;
     }
 
     @Override
@@ -119,7 +124,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getIdFromName(String name){
-        //fixme:用户中如果有重名的怎么办？
         return userRepository.findDistinctByName(name).getId();
     }
 }

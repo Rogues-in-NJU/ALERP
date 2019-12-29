@@ -22,7 +22,7 @@ public interface UserService {
 
     User getUserByPhoneNumber(String phoneNumber);
 
-    boolean deleteUser(int id);
+    int deleteUser(int id);
 
     List<User> getUserList();
 

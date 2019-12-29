@@ -1,13 +1,11 @@
 package edu.nju.alerp.controller;
 
-import edu.nju.alerp.common.DocumentsIdFactory;
-import edu.nju.alerp.common.ExceptionWrapper;
-import edu.nju.alerp.common.ListResponse;
-import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.*;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.ArrearOrderStatus;
 import edu.nju.alerp.enums.DocumentsType;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ProcessingOrderStatus;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ProcessOrderService;
@@ -29,7 +27,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -65,15 +62,15 @@ public class ShippingOrderController {
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     @Transactional(rollbackFor = Exception.class)
-    public ResponseResult<Boolean> delete(
+    public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        int arrearOrderId = shippingOrderService.getShippingOrder(id).getArrear_order_id();
+        int arrearOrderId = shippingOrderService.getShippingOrder(id).getArrearOrderId();
         ArrearOrder arrearOrder = arrearOrderService.getOne(arrearOrderId);
         if(arrearOrder.getReceivedCash() > 0){
             //如果已收金额大于0，则不能被出货单不能被废弃。
-            return ResponseResult.ok(false);
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃");
         }
-        boolean res = shippingOrderService.deleteShippingOrder(id);
+        int res = shippingOrderService.deleteShippingOrder(id);
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
 //        根据id获取加工单，修改状态
@@ -115,8 +112,7 @@ public class ShippingOrderController {
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
-            HttpSession session = CommonUtils.getHttpSession();
-            int userId = session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+            int userId = CommonUtils.getUserId();
             ArrearOrder arrearOrder = ArrearOrder.builder()
                     .createdAt(DateUtils.getToday())
                     .createdBy(userId)

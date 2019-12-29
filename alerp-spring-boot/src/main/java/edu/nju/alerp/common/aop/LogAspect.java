@@ -41,8 +41,7 @@
 //    @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
 //    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 //        HttpServletRequest request = CommonUtils.getHttpServletRequest();
-//        HttpSession session = request.getSession();
-//        Integer userId = (Integer) session.getAttribute("userId");
+//        int userId =  CommonUtils.getUserId();
 //        log.info("[Controller-Log] time:", System.currentTimeMillis());
 //        String methodInvokeLog = buildMethodInvokeLog(joinPoint, userId);
 //        try {

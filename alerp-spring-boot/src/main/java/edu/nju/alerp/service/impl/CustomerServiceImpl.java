@@ -1,10 +1,12 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.SpecialPricesRepository;
@@ -41,18 +43,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public int saveCustomer(CustomerDTO customerDTO) {
         Customer customer;
-        HttpSession session = CommonUtils.getHttpSession();
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
-            //前台需要传操作人信息，记录创建者是谁
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
             for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                 SpecialPrice specialPrice = SpecialPrice.builder()
                         .createdAt(DateUtils.getToday())
-                        .createdBy(getUserId())
+                        .createdBy(CommonUtils.getUserId())
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 specialPricesRepository.save(specialPrice);
@@ -68,12 +68,12 @@ public class CustomerServiceImpl implements CustomerService {
                 if (specialPrice == null) {
                     specialPrice = SpecialPrice.builder()
                             .createdAt(DateUtils.getToday())
-                            .createdBy(getUserId())
+                            .createdBy(CommonUtils.getUserId())
                             .build();
                     BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 } else {
                     specialPrice.setUpdatedAt(DateUtils.getToday());
-                    specialPrice.setUpdatedBy(getUserId());
+                    specialPrice.setUpdatedBy(CommonUtils.getUserId());
                 }
                 specialPricesRepository.save(specialPrice);
             }
@@ -96,11 +96,10 @@ public class CustomerServiceImpl implements CustomerService {
     public int deleteCustomer(int id) {
         Customer customer = getCustomer(id);
         if (customer == null) {
-            return 0;
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");
         }
         customer.setDeletedAt(DateUtils.getToday());
-        customer.setDeletedBy(getUserId());
-        customerRepository.save(customer);
+        customer.setDeletedBy(CommonUtils.getUserId());
         //考虑到客户为懒删除，建议暂存特惠价格数据
         return customerRepository.save(customer).getId();
     }
@@ -124,8 +123,4 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll(sp, pageable);
     }
 
-    private int getUserId(){
-        HttpSession session = CommonUtils.getHttpSession();
-        return session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
-    }
 }
