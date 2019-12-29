@@ -1,12 +1,10 @@
 package edu.nju.alerp.controller;
 
-import javax.xml.ws.Response;
-
-import edu.nju.alerp.common.ExceptionWrapper;
-import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
 import edu.nju.alerp.service.ArrearOrderService;
+import edu.nju.alerp.vo.ArrearDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,19 +31,15 @@ public class ArrearOrderController {
 
     /**
      * 获取收款单详情
+     *
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/{id}")
-    public ResponseResult<Integer> findArrearDetails(@PathVariable int id){
-        try {
-            return ResponseResult.ok(arrearOrderService.findArrearDetails(id));
-        } catch (NJUException nju){
-            return ResponseResult.fail(nju.getExceptionEnum(),nju.getMessage());
-        }catch (Exception e){
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
+    public ResponseResult<ArrearDetailVO> findArrearDetails(@PathVariable int id) {
+        return ResponseResult.ok(arrearOrderService.findArrearDetails(id));
     }
 
     /**
@@ -54,17 +48,11 @@ public class ArrearOrderController {
      * @param dto
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/due-date")
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
-        try {
-            return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
-        } catch (NJUException nju) {
-            return ResponseResult.fail(nju.getExceptionEnum(), nju.getMessage());
-        } catch (Exception e) {
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
-
+        return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
     }
 
 }

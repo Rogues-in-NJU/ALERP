@@ -1,11 +1,16 @@
 package edu.nju.alerp.dto;
 
+import lombok.Builder;
+import lombok.Data;
+
 /**
  * 欠款明细详情中的收款记录DTO
  *
  * @author luhailong
  * @date 2019/12/29
  */
+@Data
+@Builder
 public class ReceiptRecordForArrearDTO {
     /**
      * 收款记录id

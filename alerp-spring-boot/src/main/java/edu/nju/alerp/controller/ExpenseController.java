@@ -2,12 +2,11 @@ package edu.nju.alerp.controller;
 
 import javax.validation.Valid;
 
-import edu.nju.alerp.common.ExceptionWrapper;
-import edu.nju.alerp.common.NJUException;
-import edu.nju.alerp.dto.ExpenseDTO;
-import edu.nju.alerp.service.ExpenseService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
+import edu.nju.alerp.dto.ExpenseDTO;
+import edu.nju.alerp.service.ExpenseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -40,14 +39,11 @@ public class ExpenseController {
      * @param expenseDTO
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseResult<Integer> addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
-        try {
-            return ResponseResult.ok(expenseService.addExpense(expenseDTO));
-        } catch (Exception e) {
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
+        return ResponseResult.ok(expenseService.addExpense(expenseDTO));
     }
 
     /**
@@ -56,16 +52,11 @@ public class ExpenseController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteExpense(@PathVariable(value = "id") int id) {
-        try {
-            return ResponseResult.ok(expenseService.deleteExpense(id));
-        } catch (NJUException nju) {
-            return ResponseResult.fail(nju.getExceptionEnum(), nju.getMessage());
-        } catch (Exception e) {
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
+        return ResponseResult.ok(expenseService.deleteExpense(id));
     }
 
     /**
@@ -75,6 +66,7 @@ public class ExpenseController {
      * @param pageSize
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> getExpenseList(@RequestParam(value = "pageIndex") int pageIndex,

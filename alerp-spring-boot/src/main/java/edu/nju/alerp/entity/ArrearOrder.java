@@ -47,8 +47,8 @@ public class ArrearOrder {
     /**
      * 客户id
      */
-    @Column(name = "product_id")
-    private int productId;
+    @Column(name = "customer_id")
+    private int customerId;
 
     /**
      * 应收金额

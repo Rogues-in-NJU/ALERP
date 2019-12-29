@@ -77,7 +77,7 @@ public class ArrearDetailVO {
     /**
      * 创建者id
      */
-    private String createdById;
+    private int createdById;
 
     /**
      * 创建者姓名

@@ -1,10 +1,9 @@
 package edu.nju.alerp.controller;
 
-import edu.nju.alerp.common.ExceptionWrapper;
-import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ReceiptRecordDTO;
-import edu.nju.alerp.service.ReceiptRecordServie;
+import edu.nju.alerp.service.ReceiptRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReceiptRecordController {
 
     @Autowired
-    private ReceiptRecordServie receiptRecordServie;
+    private ReceiptRecordService receiptRecordService;
 
     /**
      * 增加收款记录
@@ -36,14 +35,11 @@ public class ReceiptRecordController {
      * @param receiptRecordDTO
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseResult<Integer> addReceiptRecord(@RequestBody ReceiptRecordDTO receiptRecordDTO) {
-        try {
-            return ResponseResult.ok(receiptRecordServie.addReceiptRecord(receiptRecordDTO));
-        } catch (Exception e) {
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
+        return ResponseResult.ok(receiptRecordService.addReceiptRecord(receiptRecordDTO));
     }
 
     /**
@@ -52,16 +48,11 @@ public class ReceiptRecordController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteReceiptRecord(@PathVariable(value = "id") int id) {
-        try {
-            return ResponseResult.ok(receiptRecordServie.deleteReceiptRecord(id));
-        } catch (NJUException nju) {
-            return ResponseResult.fail(nju.getExceptionEnum(), nju.getMessage());
-        } catch (Exception e) {
-            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
-        }
+        return ResponseResult.ok(receiptRecordService.deleteReceiptRecord(id));
     }
 
 }

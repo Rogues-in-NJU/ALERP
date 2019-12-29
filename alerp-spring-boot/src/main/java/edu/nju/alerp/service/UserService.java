@@ -28,4 +28,10 @@ public interface UserService {
 
     Page<User> getUserList(Pageable pageable, String name, int status);
 
+    /**
+     * 通过用户的姓名获取id
+     * @param name
+     * @return
+     */
+    int getIdFromName(String name);
 }

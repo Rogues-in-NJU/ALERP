@@ -100,4 +100,10 @@ public class UserServiceImpl implements UserService {
     public List<User> getUserList() {
         return userRepository.findAll();
     }
+
+    @Override
+    public int getIdFromName(String name){
+        //fixme:用户中如果有重名的怎么办？
+        return userRepository.findDistinctByName(name).getId();
+    }
 }

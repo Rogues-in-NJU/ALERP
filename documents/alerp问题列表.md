@@ -42,12 +42,16 @@
 
 - [ ] 错误：timeUtil里时间格式转换，精确到分而不是秒
 
-- [ ] 新增运行时异常类NJUException（之后可以做成环切）
+- [x] 新增运行时异常类NJUException（之后可以做成环切）
+
+  已完成。
 
 - [ ] DAO层加不加全参/无参构造器
 
 - [ ] 很多前台传姓名的接口，用户重名怎么办
 
-- [ ] 
+- [x] 在userService里加接口：getIdFromName
 
-- [ ] 
+  已完成
+  
+- [ ] session抽到工具类里，另：session还是cookie？
