@@ -8,6 +8,8 @@ import edu.nju.alerp.entity.Supplier;
 import edu.nju.alerp.enums.SupplierStatus;
 import edu.nju.alerp.repo.SupplierRepository;
 import edu.nju.alerp.service.SupplierService;
+import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.SupplierListVO;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +38,9 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Resource
     private Cache<Integer, String> supplierNameCache;
@@ -55,7 +61,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
                                         .description(s.getDescription())
                                         .createdAt(s.getCreateAt())
                                         .createdById(s.getCreateBy())
-                                        //todo .createdByName
+                                        .createdByName(userService.getUser(s.getId()).getName())
                                         .build()).collect(Collectors.toList());
     }
 
@@ -67,26 +73,32 @@ public class SupplierImpl implements SupplierService, InitializingBean {
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
-        List<SupplierListVO> queryed = supplierRepository.findAll(sp).parallelStream()
+        List<Supplier> suppliers = null;
+        if (sp.isEmpty())
+            suppliers = supplierRepository.findAll();
+        else
+            suppliers = supplierRepository.findAll(sp);
+        List<SupplierListVO> queryed = suppliers.parallelStream()
                                                         .map(s -> SupplierListVO.builder()
                                                                 .id(s.getId())
                                                                 .name(s.getName())
                                                                 .description(s.getDescription())
                                                                 .createdAt(s.getCreateAt())
                                                                 .createdById(s.getCreateBy())
-                                                                //todo .createdByName
+                                                                .createdByName(userService.getUser(s.getCreateBy()).getName())
                                                                 .build()).collect(Collectors.toList());
         return new PageImpl<>(queryed, pageable, queryed.size());
     }
 
     @Override
     public int addOrUpdateSupplier(SupplierDTO supplierDTO) {
+        HttpSession session = CommonUtils.getHttpSession();
         Supplier supplier = Supplier.builder().id(supplierDTO.getId())
                                                 .name(supplierDTO.getName())
                                                 .status(SupplierStatus.NORMAL.getCode())
                                                 .description(supplierDTO.getDescription())
                                                 .createAt(TimeUtil.dateFormat(new Date()))
-                                                // todo .createBy()
+                                                 .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
                                                 .build();
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());
