@@ -1,17 +1,20 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.common.DocumentsIdFactory;
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.ShippingOrderDTO;
-import edu.nju.alerp.entity.ProcessingOrder;
-import edu.nju.alerp.entity.Product;
-import edu.nju.alerp.entity.ShippingOrder;
-import edu.nju.alerp.entity.ShippingOrderProduct;
+import edu.nju.alerp.entity.*;
+import edu.nju.alerp.enums.ArrearOrderStatus;
+import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ProcessingOrderStatus;
+import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.service.ShippingOrderService;
+import edu.nju.alerp.util.CommonUtils;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ProductVO;
 import edu.nju.alerp.vo.ShippingArrearRelationVO;
@@ -25,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -46,6 +51,10 @@ public class ShippingOrderController {
     ProductService productService;
     @Autowired
     ProcessOrderService processOrderService;
+    @Autowired
+    ArrearOrderService arrearOrderService;
+    @Resource
+    private DocumentsIdFactory documentsIdFactory;
 
     /**
      * 删除出货单
@@ -58,7 +67,12 @@ public class ShippingOrderController {
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<Boolean> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        //todo 前置判断欠款单数额，能否废弃
+        int arrearOrderId = shippingOrderService.getShippingOrder(id).getArrear_order_id();
+        ArrearOrder arrearOrder = arrearOrderService.getOne(arrearOrderId);
+        if(arrearOrder.getReceivedCash() > 0){
+            //如果已收金额大于0，则不能被出货单不能被废弃。
+            return ResponseResult.ok(false);
+        }
         boolean res = shippingOrderService.deleteShippingOrder(id);
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
@@ -68,7 +82,8 @@ public class ShippingOrderController {
             processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             processOrderService.savaProcessingOrder(processingOrder);
         });
-        //todo 废弃对应收款单
+        arrearOrder.setStatus(ArrearOrderStatus.ABANDONED.getCode());
+        arrearOrderService.saveArrearOrder(arrearOrder);
         return ResponseResult.ok(res);
     }
 
@@ -100,10 +115,22 @@ public class ShippingOrderController {
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
-            //todo 生成欠款单
+            HttpSession session = CommonUtils.getHttpSession();
+            int userId = session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+            ArrearOrder arrearOrder = ArrearOrder.builder()
+                    .createdAt(DateUtils.getToday())
+                    .createdBy(userId)
+                    .updatedAt(DateUtils.getToday())
+                    .updatedBy(userId)
+                    .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER))
+                    .customerId(shippingOrderDTO.getCustomerId())
+                    .receivableCash(shippingOrderDTO.getReceivableCash())
+                    .receivedCash(shippingOrderDTO.getCash())
+                    .build();
+            int arrearOrderId = arrearOrderService.saveArrearOrder(arrearOrder);
             ShippingArrearRelationVO shippingArrearRelationVO = ShippingArrearRelationVO.builder()
                     .shippingOrderId(result)
-                    .arrearOrderId(0) //todo 待获取
+                    .arrearOrderId(arrearOrderId)
                     .build();
             return ResponseResult.ok(shippingArrearRelationVO);
         } catch (Exception e) {

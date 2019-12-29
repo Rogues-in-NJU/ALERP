@@ -48,10 +48,13 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         HttpSession session = CommonUtils.getHttpSession();
+        int userId = session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER))
                 .createdAt(DateUtils.getToday())
-                .createdBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                .createdBy(userId)
+                .updatedAt(DateUtils.getToday())
+                .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
