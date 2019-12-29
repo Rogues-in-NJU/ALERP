@@ -50,7 +50,7 @@ public class PurchaseOrderController {
                                                                   @RequestParam(value = "status") int status,
                                                                   @RequestParam(value = "doneStartTime") String doneStartTime,
                                                                   @RequestParam(value = "doneEndTime") String doneEndTime){
-        Page<PurchaseOrderListVO> res =  purchaseOrderService.findAllByPage(PageRequest.of(pageIndex, pageSize),id, status, doneStartTime, doneEndTime);
+        Page<PurchaseOrderListVO> res =  purchaseOrderService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize),id, status, doneStartTime, doneEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(res, pageIndex, pageSize));
     }
 

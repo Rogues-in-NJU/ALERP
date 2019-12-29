@@ -44,8 +44,8 @@ public class ProductController {
     @RequestMapping(value = "/list")
     public ResponseResult<ListResponse> findProductsByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                             @RequestParam(value = "pageSize") int pageSize,
-                                                            @RequestParam(value = "name") String name,
-                                                            @RequestParam(value = "type") int type) {
+                                                            @RequestParam(value = "name", required = false) String name,
+                                                            @RequestParam(value = "type", required = false) Integer type) {
         Page<Product> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }

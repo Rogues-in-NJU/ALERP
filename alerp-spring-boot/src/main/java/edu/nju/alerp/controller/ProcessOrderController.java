@@ -40,9 +40,8 @@ public class ProcessOrderController {
                                                                 @RequestParam(value = "status", required = false) Integer status, // todo 这里的status是不是必须的
                                                                 @RequestParam(value = "createAtStartTime", required = false) String startTime,
                                                                 @RequestParam(value = "createAtEndTime", required = false) String endTime) {
-        // todo 增加入参空判断
         Page<ProcessingOrder> processingOrders =
-                processOrderService.findAllByPage(PageRequest.of(pageIndex, pageSize), code, name, status, startTime, endTime);
+                processOrderService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), code, name, status, startTime, endTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(processingOrders, pageIndex, pageSize));
     }
 

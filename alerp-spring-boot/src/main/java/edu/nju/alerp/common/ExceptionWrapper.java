@@ -26,4 +26,12 @@ public class ExceptionWrapper {
                                 t.getMessage()))
                 .build();
     }
+
+    public static ExceptionWrapper customExceptionWrapper(ExceptionEnum exceptionEnum, String errorMessage) {
+        return ExceptionWrapper.builder()
+                    .errorMessage(String.format("[%s]%s", ExceptionEnum.SERVER_ERROR.getMessage(),
+                            errorMessage))
+                    .exceptionEnum(exceptionEnum)
+                    .build();
+    }
 }

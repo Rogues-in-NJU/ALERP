@@ -85,6 +85,17 @@ public class RealCache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void remove(K key) {
+        if (useHeap) {
+            heapCache.remove(key);
+        }
+
+        if (useOffHeap) {
+            cachePool.submit( () -> offHeapCache.remove(key));
+        }
+    }
+
+    @Override
     public Map<K, V> getAll(Collection<K> ks) {
         return ks.parallelStream()
                 .map(k -> new MutablePair<>(k, get(k)))

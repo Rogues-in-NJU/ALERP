@@ -33,4 +33,8 @@ public class QueryContainer<T> implements Specification<T> {
         if (condition != null)
             conditions.add(condition);
     }
+
+    public boolean isEmpty() {
+        return conditions.size() == 0;
+    }
 }
