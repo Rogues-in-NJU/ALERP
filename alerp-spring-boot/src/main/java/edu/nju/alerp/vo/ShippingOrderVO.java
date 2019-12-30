@@ -21,6 +21,7 @@ public class ShippingOrderVO {
     private double floatingCash;
     private double receivableCash;
     private int status;
+    private String city;
     private String createdAt;
     private int createdById;
     private String createdByName;

@@ -22,15 +22,40 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    /**
+     * 姓名
+     */
     private String name;
+    /**
+     * 手机号
+     */
     @Column(name = "phone_number")
     private String phoneNumber;
+    /**
+     * 密码
+     */
     private String password;
+    /**
+     * 城市
+     */
+    private String city;
+    /**
+     * 用户状态
+     */
     private int status;
+    /**
+     * 创建时间
+     */
     @Column(name = "created_at")
     private String createdAt;
+    /**
+     * 更新时间
+     */
     @Column(name = "updated_at")
     private String updatedAt;
+    /**
+     * 删除时间
+     */
     @Column(name = "deleted_at")
     private String deletedAt;
 }

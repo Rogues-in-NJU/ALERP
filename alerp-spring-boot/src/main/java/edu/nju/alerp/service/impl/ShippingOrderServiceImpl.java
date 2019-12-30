@@ -78,6 +78,9 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             log.error("shippingOrder is null");
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "出货单id不存在！");
         }
+        if (shippingOrder.getStatus() == ShippingOrderStatus.ABANDONED.getCode()) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除出货单失败，出货单已被删除！");
+        }
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
         shippingOrder.setDeletedAt(DateUtils.getToday());
         shippingOrder.setDeletedBy(CommonUtils.getUserId());

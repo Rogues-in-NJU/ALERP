@@ -48,6 +48,10 @@ public class ShippingOrder {
      */
     private double cash;
     /**
+     * 城市
+     */
+    private String city;
+    /**
      *浮动金额
      */
     @Column(name="floating_cash")
