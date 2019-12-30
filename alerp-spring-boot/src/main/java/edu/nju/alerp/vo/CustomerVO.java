@@ -18,13 +18,13 @@ public class CustomerVO {
     private int type;
     private String shorthand;
     private int period;
-    private int pay_date;
+    private int payDate;
     private String description;
-    private int created_by;
-    private String created_at;
-    private int deleted_by;
-    private String deleted_at;
-    private int updated_by;
-    private String updated_at;
+    private int createdBy;
+    private String createdAt;
+    private int deletedBy;
+    private String deletedAt;
+    private int updatedBy;
+    private String updatedAt;
     private List<SpecialPricesVO> specialPricesVOList;
 }

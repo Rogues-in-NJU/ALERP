@@ -18,5 +18,6 @@ public class UserDTO {
     private String name;
     private String phoneNumber;
     private String password;
+    private String updateTime;
     private List<Auth> authList;
 }
