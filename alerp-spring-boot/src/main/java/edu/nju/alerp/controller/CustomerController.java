@@ -52,7 +52,7 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<CustomerVO> CustomerDO(
+    public ResponseResult<CustomerVO> CustomerVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);

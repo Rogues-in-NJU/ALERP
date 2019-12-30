@@ -21,5 +21,6 @@ public class CustomerDTO {
     private int period;
     private int pay_date;
     private String description;
+    private String updateTime;
     private List<SpecialPricesDTO> specialPricesList;
 }

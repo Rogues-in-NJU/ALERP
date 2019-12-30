@@ -53,11 +53,16 @@ public class CustomerServiceImpl implements CustomerService {
                 SpecialPrice specialPrice = SpecialPrice.builder()
                         .createdAt(DateUtils.getToday())
                         .createdBy(CommonUtils.getUserId())
+                        .updatedAt(DateUtils.getToday())
+                        .updatedBy(CommonUtils.getUserId())
                         .build();
                 BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 specialPricesRepository.save(specialPrice);
             }
         } else {
+//            todo 判断是否有其他用户更改过
+//            Customer nowCustomer = getCustomer(customerDTO.getId());
+
             customer = Customer.builder()
                     .updatedAt(DateUtils.getToday())
                     .build();
