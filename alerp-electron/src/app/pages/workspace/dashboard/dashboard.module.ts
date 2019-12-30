@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, OnInit } from "@angular/core";
 import { DashboardComponent } from "./dashboard.component";
 import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
@@ -12,7 +12,7 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [ AuthorizationGuard ],
     data: {
-      title: '控制台',
+      title: '汇总信息',
       removable: true
     }
   }
@@ -24,4 +24,5 @@ const routes: Routes = [
   exports: [ RouterModule ]
 })
 export class DashboardModule {
+
 }
