@@ -7,6 +7,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.entity.UserCityRelation;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.repo.UserCityRelationRepository;
 import edu.nju.alerp.service.UserService;
@@ -132,5 +133,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getIdFromName(String name) {
         return userRepository.findDistinctByName(name).getId();
+    }
+
+    @Override
+    public List<Integer> getCitiesByUserId(int userId) {
+        return userCityRelationRepository.findCitiesByUserId(userId);
     }
 }
