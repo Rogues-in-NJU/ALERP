@@ -5,6 +5,7 @@ import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.UserCityRelation;
@@ -16,6 +17,7 @@ import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.util.DateUtils;
+import edu.nju.alerp.util.PasswordUtil;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
         if (userDTO.getId() == null) {
             user = User.builder()
                     .name(userDTO.getName())
-                    .password(userDTO.getPassword())
+                    .password(PasswordUtil.getMD5(userDTO.getPassword()))
                     .city(userDTO.getCity())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
@@ -67,7 +69,7 @@ public class UserServiceImpl implements UserService {
             }
             user.setCity(userDTO.getCity());
             user.setName(userDTO.getName());
-            user.setPassword(userDTO.getPassword());
+            user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }
@@ -125,6 +127,18 @@ public class UserServiceImpl implements UserService {
             log.error("Value is null", e);
         }
         return userRepository.findAll(sp, pageable);
+    }
+
+    public boolean checkLogin(LoginDTO loginDTO){
+        User user = getUserByPhoneNumber(loginDTO.getPhoneNumber());
+        if (user == null) {
+            return false;
+        }
+        List<Integer> cityList = getCitiesByUserId(user.getId());
+        if (!cityList.contains(loginDTO.getCity())) {
+            return false;
+        }
+        return user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
     }
 
     @Override

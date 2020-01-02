@@ -1,6 +1,7 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
@@ -31,10 +32,12 @@ public interface UserService {
 
     /**
      * 通过用户的姓名获取id
+     *
      * @param name
      * @return
      */
     int getIdFromName(String name);
 
     List<Integer> getCitiesByUserId(int userId);
+
 }
