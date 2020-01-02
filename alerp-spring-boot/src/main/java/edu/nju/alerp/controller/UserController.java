@@ -4,6 +4,7 @@ import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
+import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
@@ -115,24 +116,41 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseResult<String> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseResult<LoginResultDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
+            LoginResultDTO loginResultDTO = null;
             User user = userService.getUserByPhoneNumber(loginDTO.getPhoneNumber());
             if (user == null) {
-                return ResponseResult.ok(LoginResult.NONE.getMessage());
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.NONE.getCode())
+                        .result(LoginResult.NONE.getMessage())
+                        .build();
+                return ResponseResult.ok(loginResultDTO);
             }
             List<Integer> cityList = userService.getCitiesByUserId(user.getId());
             if (!cityList.contains(loginDTO.getCity())) {
-                return ResponseResult.ok(LoginResult.NONE.getMessage());
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.DENIED.getCode())
+                        .result(LoginResult.DENIED.getMessage())
+                        .build();
+                return ResponseResult.ok(loginResultDTO);
             }
             boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
             if (res) {
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("cityId", loginDTO.getCity());
-                return ResponseResult.ok(LoginResult.SUCCESS.getMessage());
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.SUCCESS.getCode())
+                        .result(LoginResult.SUCCESS.getMessage())
+                        .build();
+                return ResponseResult.ok(loginResultDTO);
             }
-            return ResponseResult.ok(LoginResult.INCORRECT.getMessage());
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.SUCCESS.getCode())
+                    .result(LoginResult.SUCCESS.getMessage())
+                    .build();
+            return ResponseResult.ok(loginResultDTO);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
