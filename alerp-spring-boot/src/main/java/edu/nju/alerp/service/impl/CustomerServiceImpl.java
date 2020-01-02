@@ -6,6 +6,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
+import edu.nju.alerp.enums.CustomerType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.repo.CustomerRepository;
@@ -60,9 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
                 specialPricesRepository.save(specialPrice);
             }
         } else {
-//            todo 判断是否有其他用户更改过
-//            Customer nowCustomer = getCustomer(customerDTO.getId());
-
+            Customer nowCustomer = getCustomer(customerDTO.getId());
+            if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdateTime())) {
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
+            }
             customer = Customer.builder()
                     .updatedAt(DateUtils.getToday())
                     .build();
@@ -102,6 +104,9 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = getCustomer(id);
         if (customer == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");
+        }
+        if (customer.getUpdatedAt() != null) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户已被删除！");
         }
         customer.setDeletedAt(DateUtils.getToday());
         customer.setDeletedBy(CommonUtils.getUserId());

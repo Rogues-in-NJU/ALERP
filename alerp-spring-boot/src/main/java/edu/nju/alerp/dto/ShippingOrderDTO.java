@@ -17,5 +17,6 @@ public class ShippingOrderDTO {
     private double cash;
     private double floatingCash;
     private double receivableCash;
+    private String city;
     private List<ShippingProductDTO> shippingProductDTOList;
 }

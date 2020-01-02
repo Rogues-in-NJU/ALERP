@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int saveUser(UserDTO userDTO) {
         User user;
-        if(userDTO.getId() == null){
+        if (userDTO.getId() == null) {
             user = User.builder()
                     .name(userDTO.getName())
                     .password(userDTO.getPassword())
@@ -58,9 +58,11 @@ public class UserServiceImpl implements UserService {
                     .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
-        }
-        else{
+        } else {
             user = getUser(userDTO.getId());
+            if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
+            }
             user.setName(userDTO.getName());
             user.setPassword(userDTO.getPassword());
             user.setPhoneNumber(userDTO.getPhoneNumber());
@@ -94,6 +96,9 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户id不存在！");
         }
+        if (user.getStatus() == UserStatus.OFFJOB.getCode()) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除用户失败，用户已被删除！");
+        }
         user.setStatus(UserStatus.OFFJOB.getCode());
         user.setDeletedAt(DateUtils.getToday());
         int ans = userRepository.save(user).getId();
@@ -123,7 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getIdFromName(String name){
+    public int getIdFromName(String name) {
         return userRepository.findDistinctByName(name).getId();
     }
 }
