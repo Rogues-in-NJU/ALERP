@@ -10,10 +10,12 @@ import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.entity.UserCityRelation;
 import edu.nju.alerp.enums.CityEnum;
+import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.util.PasswordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -113,20 +115,24 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseResult<Boolean> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseResult<String> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
             User user = userService.getUserByPhoneNumber(loginDTO.getPhoneNumber());
             if (user == null) {
-                return ResponseResult.ok(false);
+                return ResponseResult.ok(LoginResult.NONE.getMessage());
             }
             List<Integer> cityList = userService.getCitiesByUserId(user.getId());
             if (!cityList.contains(loginDTO.getCity())) {
-                return ResponseResult.ok(false);
+                return ResponseResult.ok(LoginResult.NONE.getMessage());
             }
-            session.setAttribute("userId", user.getId());
-            session.setAttribute("cityId", loginDTO.getCity());
-            return ResponseResult.ok(loginDTO.getPassword().equals(user.getPassword()));
+            boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
+            if (res) {
+                session.setAttribute("userId", user.getId());
+                session.setAttribute("cityId", loginDTO.getCity());
+                return ResponseResult.ok(LoginResult.SUCCESS.getMessage());
+            }
+            return ResponseResult.ok(LoginResult.INCORRECT.getMessage());
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
