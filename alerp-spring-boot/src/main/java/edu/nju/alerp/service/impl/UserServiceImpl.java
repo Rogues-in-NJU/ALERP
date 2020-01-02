@@ -112,9 +112,11 @@ public class UserServiceImpl implements UserService {
         try {
             sp.add(ConditionFactory.equal("status", status));
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", name));
+            if (!"".equals(name)) {
+                fuzzyMatch.add(ConditionFactory.like("name", name));
 //            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
+                fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
+            }
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);

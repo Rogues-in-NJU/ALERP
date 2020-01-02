@@ -124,8 +124,10 @@ public class CustomerServiceImpl implements CustomerService {
         QueryContainer<Customer> sp = new QueryContainer<>();
         try {
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", name));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            if (!"".equals(name)) {
+                fuzzyMatch.add(ConditionFactory.like("name", name));
+                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            }
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);

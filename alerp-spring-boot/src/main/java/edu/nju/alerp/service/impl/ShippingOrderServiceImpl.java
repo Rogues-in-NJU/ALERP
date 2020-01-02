@@ -58,7 +58,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        shippingOrderDTO.getShippingProductDTOList().forEach(p ->{
+        shippingOrderDTO.getShippingProductDTOList().forEach(p -> {
             ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
             BeanUtils.copyProperties(p, shippingOrderProduct);
             shippingOrderProductRepository.save(shippingOrderProduct);
@@ -100,8 +100,10 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             sp.add(ConditionFactory.equal("status", status));
             sp.add(ConditionFactory.In("customerId", customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", name));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            if (!"".equals(name)) {
+                fuzzyMatch.add(ConditionFactory.like("name", name));
+                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            }
             fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             sp.add(ConditionFactory.or(fuzzyMatch));
