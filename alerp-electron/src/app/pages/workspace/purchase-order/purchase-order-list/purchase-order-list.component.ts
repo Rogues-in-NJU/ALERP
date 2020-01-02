@@ -7,7 +7,7 @@ import { PurchaseOrderService } from "../../../../core/services/purchase-order.s
 import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 import { Objects } from "../../../../core/services/util.service";
 
 @Component({
@@ -39,6 +39,11 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/purchase-order/list') {
+        this.refresh();
+      }
+    });
     this.refresh();
   }
 

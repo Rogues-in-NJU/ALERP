@@ -28,10 +28,11 @@ export class AuthService {
   ) {
   }
 
-  public login(username: string, password: string): Observable<ResultVO<any>> {
+  public login(phoneNumber: string, password: string, city: number): Observable<ResultVO<any>> {
     return this.http.post<ResultVO<any>>('', {
-      username: username,
-      password: password
+      phone_number: phoneNumber,
+      password: password,
+      city: city
     });
   }
 

@@ -2,13 +2,12 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { ResultVO, TableQueryParams } from "../model/result-vm";
 import { Observable, of } from "rxjs";
-import { ProductVO } from "../model/product";
-import {AuthVO} from "../model/auth";
+import { AuthVO } from "../model/auth";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class AuthService {
 
   constructor(
     private http: HttpClient
