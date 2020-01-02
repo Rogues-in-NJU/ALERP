@@ -49,7 +49,7 @@ public class Customer {
     /**
      * 城市
      */
-    private String city;
+    private int city;
     /**
      * 顾客描述
      */

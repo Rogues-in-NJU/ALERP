@@ -7,6 +7,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.entity.UserCityRelation;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.repo.UserCityRelationRepository;
 import edu.nju.alerp.service.UserService;
@@ -54,6 +55,7 @@ public class UserServiceImpl implements UserService {
             user = User.builder()
                     .name(userDTO.getName())
                     .password(userDTO.getPassword())
+                    .city(userDTO.getCity())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
@@ -63,6 +65,7 @@ public class UserServiceImpl implements UserService {
             if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
+            user.setCity(userDTO.getCity());
             user.setName(userDTO.getName());
             user.setPassword(userDTO.getPassword());
             user.setPhoneNumber(userDTO.getPhoneNumber());
@@ -132,5 +135,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public int getIdFromName(String name) {
         return userRepository.findDistinctByName(name).getId();
+    }
+
+    @Override
+    public List<Integer> getCitiesByUserId(int userId) {
+        return userCityRelationRepository.findCitiesByUserId(userId);
     }
 }

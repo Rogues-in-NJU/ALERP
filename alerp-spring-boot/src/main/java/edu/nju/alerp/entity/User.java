@@ -38,7 +38,7 @@ public class User {
     /**
      * 城市
      */
-    private String city;
+    private int city;
     /**
      * 用户状态
      */

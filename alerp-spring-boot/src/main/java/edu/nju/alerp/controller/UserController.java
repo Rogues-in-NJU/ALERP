@@ -3,10 +3,13 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.User;
+import edu.nju.alerp.entity.UserCityRelation;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
@@ -22,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @Description: 用户Controller层
@@ -76,10 +80,10 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
-                                                    @RequestParam(value = "pageSize") int pageSize,
-                                                    @RequestParam(value = "userName") String userName,
-                                                    @RequestParam(value = "operationStartTime") String operationStartTime,
-                                                    @RequestParam(value = "operationEndTime") String operationEndTime) {
+                                                         @RequestParam(value = "pageSize") int pageSize,
+                                                         @RequestParam(value = "userName") String userName,
+                                                         @RequestParam(value = "operationStartTime") String operationStartTime,
+                                                         @RequestParam(value = "operationEndTime") String operationEndTime) {
 
         Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize), userName, operationStartTime, operationEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
@@ -109,16 +113,20 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseResult<Boolean> login(@RequestParam(value = "phone_number") String phone_number,
-                                         @RequestParam(value = "password") String password) {
+    public ResponseResult<Boolean> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
-            User user = userService.getUserByPhoneNumber(phone_number);
+            User user = userService.getUserByPhoneNumber(loginDTO.getPhoneNumber());
             if (user == null) {
                 return ResponseResult.ok(false);
             }
+            List<Integer> cityList = userService.getCitiesByUserId(user.getId());
+            if (!cityList.contains(loginDTO.getCity())) {
+                return ResponseResult.ok(false);
+            }
             session.setAttribute("userId", user.getId());
-            return ResponseResult.ok(password.equals(user.getPassword()));
+            session.setAttribute("cityId", loginDTO.getCity());
+            return ResponseResult.ok(loginDTO.getPassword().equals(user.getPassword()));
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
