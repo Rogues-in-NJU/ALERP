@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
             user = User.builder()
                     .name(userDTO.getName())
                     .password(userDTO.getPassword())
+                    .city(userDTO.getCity())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
@@ -64,6 +65,7 @@ public class UserServiceImpl implements UserService {
             if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
+            user.setCity(userDTO.getCity());
             user.setName(userDTO.getName());
             user.setPassword(userDTO.getPassword());
             user.setPhoneNumber(userDTO.getPhoneNumber());
