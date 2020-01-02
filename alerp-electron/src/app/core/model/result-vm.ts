@@ -53,12 +53,31 @@ export class ResultCode {
     this._message = message;
   }
 
-  get code(): number{
+  get code(): number {
     return this._code;
   }
 
   get message(): string {
     return this._message;
+  }
+
+}
+
+export class LoginCode {
+
+  public static SUCCESS: LoginCode = new LoginCode(1);
+  public static INCORRECT: LoginCode = new LoginCode(2);
+  public static NONE: LoginCode = new LoginCode(3);
+  public static DENIED: LoginCode = new LoginCode(4);
+
+  private _code: number;
+
+  private constructor(code: number) {
+    this._code = code;
+  }
+
+  get code(): number {
+    return this._code;
   }
 
 }
