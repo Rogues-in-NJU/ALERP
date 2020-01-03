@@ -47,6 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
+                    .updatedAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
