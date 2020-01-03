@@ -110,48 +110,61 @@
           <a routerLink="/processing-order/info/">{{ data.processingOrderCode }}</a>
         </ng-container>
       </td>
+
+<!--      productName-->
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id'] && isAddSunHao; else productNameEditTpl">
+        <ng-container>
           {{ data.productName }}
         </ng-container>
-        <ng-template #productNameEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
-            <nz-select [(ngModel)]="editCache.product"
-                       nzShowSearch
-                       nzServerSearch
-                       (nzOnSearch)="onProductSearch($event)"
-                       (ngModelChange)="onChangeSelectedProduct($event)"
-                       style="width: 150px">
-              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
-              <ng-container *ngFor="let p of searchProducts; let i = index;">
-                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
-              </ng-container>
-              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
-                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
-              </nz-option>
-            </nz-select>
-          </nz-form-control>
-        </ng-template>
+<!--        <ng-template #productNameEditTpl>-->
+<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">-->
+<!--            <nz-select [(ngModel)]="editCache.product"-->
+<!--                       nzShowSearch-->
+<!--                       nzServerSearch-->
+<!--                       (nzOnSearch)="onProductSearch($event)"-->
+<!--                       (ngModelChange)="onChangeSelectedProduct($event)"-->
+<!--                       style="width: 150px">-->
+<!--              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>-->
+<!--              <ng-container *ngFor="let p of searchProducts; let i = index;">-->
+<!--                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>-->
+<!--              </ng-container>-->
+<!--              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>-->
+<!--                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...-->
+<!--              </nz-option>-->
+<!--            </nz-select>-->
+<!--          </nz-form-control>-->
+<!--        </ng-template>-->
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']; else specificationEditTpl">
+        <ng-container>
           {{ data.specification }}
         </ng-container>
-        <ng-template #specificationEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.specification">
-            <input nz-input [(ngModel)]="editCache.data.specification"
-                   (ngModelChange)="onSpecificationInput($event)"
-                   [nzAutocomplete]="auto"/>
-            <nz-autocomplete nzBackfill #auto>
-              <nz-auto-option *ngFor="let option of specificationAutoComplete" [nzValue]="option.value">
-                {{ option.label }}
-              </nz-auto-option>
-            </nz-autocomplete>
-          </nz-form-control>
-        </ng-template>
+<!--        <ng-template #specificationEditTpl>-->
+<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.specification">-->
+<!--            <input nz-input [(ngModel)]="editCache.data.specification"-->
+<!--                   (ngModelChange)="onSpecificationInput($event)"-->
+<!--                   [nzAutocomplete]="auto"/>-->
+<!--            <nz-autocomplete nzBackfill #auto>-->
+<!--              <nz-auto-option *ngFor="let option of specificationAutoComplete" [nzValue]="option.value">-->
+<!--                {{ option.label }}-->
+<!--              </nz-auto-option>-->
+<!--            </nz-autocomplete>-->
+<!--          </nz-form-control>-->
+<!--        </ng-template>-->
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']; else quantityEditTpl">
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.priceType | shipping_order_price_type }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-select [(ngModel)]="editCache.data.priceType">
+            <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+          </nz-select>
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao ; else quantityEditTpl">
           {{ data.quantity }}
         </ng-container>
         <ng-template #quantityEditTpl>
@@ -175,25 +188,25 @@
         </ng-template>
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']; else expectedWeightEditTpl">
+        <ng-container>
           {{ data.expectedWeight }}
         </ng-container>
-        <ng-template #expectedWeightEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">
-            <nz-input-number nzMin="0" nzStep="0.0001"
-                             [(ngModel)]="editCache.data.expectedWeight"
-                             (ngModelChange)="checkModelNotNull('expectedWeight')"></nz-input-number>
-          </nz-form-control>
-        </ng-template>
+<!--        <ng-template #expectedWeightEditTpl>-->
+<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">-->
+<!--            <nz-input-number nzMin="0" nzStep="0.0001"-->
+<!--                             [(ngModel)]="editCache.data.expectedWeight"-->
+<!--                             (ngModelChange)="checkModelNotNull('expectedWeight')"></nz-input-number>-->
+<!--          </nz-form-control>-->
+<!--        </ng-template>-->
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else weightEditTpl">
           {{ data.weight }}
         </ng-container>
         <ng-template #weightEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
+          <nz-form-control >
             <nz-input-number nzMin="0" nzStep="0.0001"
-                             [(ngModel)]="editCache.data.expectedWeight"
+                             [(ngModel)]="editCache.data.weight"
                              (ngModelChange)="checkModelNotNull('weight')"></nz-input-number>
           </nz-form-control>
         </ng-template>
@@ -203,9 +216,9 @@
           {{ data.cash }}
         </ng-container>
         <ng-template #cashEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
+          <nz-form-control >
             <nz-input-number nzMin="0" nzStep="0.0001"
-                             [(ngModel)]="editCache.data.expectedWeight"
+                             [(ngModel)]="editCache.data.cash"
                              (ngModelChange)="checkModelNotNull('cash')"></nz-input-number>
           </nz-form-control>
         </ng-template>
@@ -237,4 +250,44 @@
     </tr>
     </tbody>
   </nz-table>
+
+  <br>
+  <hr>
+  <br>
+
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label >累计金额</nz-form-label>
+      <nz-form-control >
+        <nz-input-group nzSuffix="元">
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.cash"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>浮动金额</nz-form-label>
+      <nz-form-control>
+        <nz-input-group nzPrefix="-" nzSuffix="元">
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.floatingCash"/>
+        </nz-input-group>
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>应收金额</nz-form-label>
+      <nz-form-control>
+        <nz-input-group nzSuffix="元">
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.receivableCash"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="confirmAddShippingOrder()">确认</button>
+      </div>
+    </div>
+  </div>
+
 </div>

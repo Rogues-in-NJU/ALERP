@@ -22,10 +22,24 @@ import {ProcessingOrderService} from "../../../../core/services/processing-order
 })
 export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
-  isLoading: boolean = true;
-  shippingOrderCode: string;
-  shippingOrderData: ShippingOrderInfoVO = {
+  //todo 特价
 
+  //todo 自动计价
+
+  //todo 输入框上下调整问题
+
+  //todo 详情跳转至欠款明细
+
+
+  isLoading: boolean = true;
+  shippingOrderCode: string = "";
+  shippingOrderData: ShippingOrderInfoVO = {
+    processingOrderCodes: [],
+    products: [],
+
+    cash: 0,
+    floatingCash: 0,
+    receivableCash: 0,
   };
 
   cash: number = 0;
@@ -91,12 +105,28 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     private product: ProductService,
     private message: NzMessageService
   ) {
-    this.shippingOrderCode = this.route.snapshot.params['code'];
+    // this.shippingOrderCode = this.route.snapshot.params['code'];
   }
 
   ngOnInit(): void {
     this.showAddModal();
     Object.assign(this.editCache, this.defaultEditCache);
+
+    //todo 只能出损耗
+    const getProducts: any = (name: string) => {
+      const t: Observable<ResultVO<ProductVO[]>>
+        = <Observable<ResultVO<ProductVO[]>>>this.product
+        .findAll(Object.assign(new QueryParams(), {}));
+      return t.pipe(map(res => res.data));
+    };
+    const productOptionList$: Observable<ProductVO[]> = this.searchChanges$
+      .asObservable()
+      .pipe(debounceTime(500))
+      .pipe(switchMap(getProducts));
+    productOptionList$.subscribe((data: ProductVO[]) => {
+      this.searchProducts = data;
+      this.isProductsLoading = false;
+    });
   }
 
   addProductRow(): void {
@@ -211,7 +241,14 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     //   }, () => {
     //     this.reload();
     //   });
+
+    //todo 写个累加金额的方法
+    this.shippingOrderData.cash += this.editCache.data.cash;
     this.isAddSunHao = false;
+  }
+
+  confirmAddShippingOrder():void {
+    //todo
   }
 
   checkShippingOrderProductValid(): boolean {
@@ -372,22 +409,49 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     this.shippingOrderAddOkLoading = true;
 
     // todo 根据加工单产生出货单
-    this.shippingOrder.find(this.shippingOrderCode)
-      .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
-        if (!Objects.valid(res)) {
-          return;
-        }
-        this.isLoading = false;
-        this.shippingOrderData = res.data;
-        if (Objects.valid(this.shippingOrderData.products)) {
-          this.shippingOrderData.products.forEach(item => {
-            item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
-          })
-        }
-      }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
-      });
+    // this.shippingOrder.find(this.shippingOrderCode)
+    //   .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
+    //     if (!Objects.valid(res)) {
+    //       return;
+    //     }
+    //     this.isLoading = false;
+    //     this.shippingOrderData = res.data;
+    //     if (Objects.valid(this.shippingOrderData.products)) {
+    //       this.shippingOrderData.products.forEach(item => {
+    //         item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
+    //       })
+    //     }
+    //   }, (error: HttpErrorResponse) => {
+    //     this.message.error(error.message);
+    //   });
 
+    for(let processingOrder of this.addShippingOrder_allProcessingOrderList){
+      if(!this.mapOfCheckedId[processingOrder.id]){
+        continue;
+      }
+
+      this.shippingOrderData.customerId = processingOrder.customerId;
+      this.shippingOrderData.customerName = processingOrder.customerName;
+      this.shippingOrderData.processingOrderCodes.push(processingOrder.code);
+
+      for(let product of processingOrder.products){
+        let shippingProduct: ShippingOrderProductInfoVO = {};
+        shippingProduct.processingOrderId = processingOrder.id;
+        shippingProduct.processingOrderCode = processingOrder.code;
+        shippingProduct.productId = product.id;
+        shippingProduct.productName = product.productName;
+        shippingProduct.type = product.type;
+        shippingProduct.density = product.density;
+        shippingProduct.specification = product.specification;
+        shippingProduct.quantity = product.quantity;
+        shippingProduct.expectedWeight = product.expectedWeight;
+
+        shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
+        this.shippingOrderData.products.push(shippingProduct);
+      }
+
+    }
+    this.isLoading = false;
     this.shippingOrderAddOkLoading = false;
     this.shippingOrderAddVisible = false;
     this.message.success('添加成功!');
@@ -507,6 +571,7 @@ interface TempShippingOrderProductVO {
   productSpecification?: string;
   specification?: string;
   quantity?: number;
+  priceType?: number;
   price?: number;
   expectedWeight?: number;
   weight?: number;
