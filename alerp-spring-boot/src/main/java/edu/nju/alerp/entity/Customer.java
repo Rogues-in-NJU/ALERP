@@ -45,6 +45,7 @@ public class Customer {
     /**
      * 对账日
      */
+    @Column(name = "pay_Date")
     private int payDate;
     /**
      * 城市
