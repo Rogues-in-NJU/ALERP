@@ -11,6 +11,7 @@ import edu.nju.alerp.entity.Customer;
 import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ProcessingOrderStatus;
@@ -115,7 +116,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     @Override
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
         ProcessingOrder processingOrder = ProcessingOrder.builder()
-                                        .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER))
+                                        .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER, CityEnum.of(CommonUtils.getCity())))
                                         .status(ProcessingOrderStatus.DRAFTING.getCode())
                                         .customerId(processingOrderDTO.getCustomerId())
                                         .salesman(processingOrderDTO.getSalesman())

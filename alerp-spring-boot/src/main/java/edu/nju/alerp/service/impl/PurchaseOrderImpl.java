@@ -10,10 +10,7 @@ import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.entity.PaymentRecord;
 import edu.nju.alerp.entity.PurchaseOrder;
 import edu.nju.alerp.entity.PurchaseOrderProduct;
-import edu.nju.alerp.enums.DocumentsType;
-import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.PaymentRecordStatus;
-import edu.nju.alerp.enums.PurchaseOrderStatus;
+import edu.nju.alerp.enums.*;
 import edu.nju.alerp.repo.PaymentRecordRepository;
 import edu.nju.alerp.repo.PurchaseOrderProductRepository;
 import edu.nju.alerp.repo.PurchaseOrderRepository;
@@ -131,7 +128,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .cash(purchaseOrderDTO.getCash())
                                                             .salesman(purchaseOrderDTO.getSalesman())
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
-                                                            .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER))
+                                                            .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER, CityEnum.of(CommonUtils.getCity())))
                                                             .status(PurchaseOrderStatus.UNFINISHED.getCode())
                                                             .createAt(DateUtils.getToday())
                                                             .createBy(CommonUtils.getUserId())

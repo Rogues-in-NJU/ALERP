@@ -9,6 +9,7 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ShippingOrderStatus;
@@ -50,7 +51,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
-                .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER))
+                .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
                 .createdAt(DateUtils.getToday())
                 .createdBy(userId)
                 .updatedAt(DateUtils.getToday())

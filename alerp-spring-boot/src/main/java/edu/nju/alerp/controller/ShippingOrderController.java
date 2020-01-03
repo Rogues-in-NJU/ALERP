@@ -3,10 +3,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.*;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
-import edu.nju.alerp.enums.ArrearOrderStatus;
-import edu.nju.alerp.enums.DocumentsType;
-import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.ProcessingOrderStatus;
+import edu.nju.alerp.enums.*;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
@@ -118,7 +115,7 @@ public class ShippingOrderController {
                     .createdBy(userId)
                     .updatedAt(DateUtils.getToday())
                     .updatedBy(userId)
-                    .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER))
+                    .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
                     .customerId(shippingOrderDTO.getCustomerId())
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(shippingOrderDTO.getCash())

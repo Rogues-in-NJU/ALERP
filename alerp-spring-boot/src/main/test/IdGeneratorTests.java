@@ -1,5 +1,6 @@
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.nju.alerp.common.DocumentsIdFactory;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class IdGeneratorTests extends BaseTest{
     }
 
     private String generate(DocumentsType documentsType) {
-        String id = documentsIdFactory.generateNextCode(documentsType);
+        String id = documentsIdFactory.generateNextCode(documentsType, CityEnum.SZ);
 //        log.info(String.format(message,
 //                documentsType.getName(), id, TimeUtil.dateFormat(new Date())));
         return String.format(message,

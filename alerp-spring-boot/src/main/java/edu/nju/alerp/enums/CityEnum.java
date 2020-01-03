@@ -11,12 +11,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CityEnum {
-    SZ(1, "苏州"),
+    SZ(1, "苏州", "SZ"),
 
-    KS(2, "昆山");
+    KS(2, "昆山", "KS");
 
     private int code;
     private String message;
+    private String shorthand;
 
 
     public static CityEnum of(int code) {
