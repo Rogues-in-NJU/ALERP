@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { ResultVO } from "../model/result-vm";
 import { LoginResultVO, PassportVO, UserInfoVO } from "../model/user";
+import { AppConfig } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class UserService {
   }
 
   public login(loginVO: PassportVO): Observable<ResultVO<LoginResultVO>> {
-    return this.http.post<ResultVO<any>>('', loginVO);
+    return this.http.post<ResultVO<LoginResultVO>>(`${AppConfig.BASE_URL}/api/user/login`, loginVO);
   }
 
   public hasActionAuth(route: string, action: number): Observable<ResultVO<boolean>> {

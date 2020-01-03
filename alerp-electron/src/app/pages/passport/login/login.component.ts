@@ -59,10 +59,11 @@ export class LoginComponent implements OnInit {
         if (loginVO.code === LoginCode.SUCCESS.code) {
           this.router.navigate(['/workspace']);
         } else {
-          this.message.error(loginVO.message);
+          this.message.error(loginVO.result);
         }
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isLoading = false;
       }, () => {
         this.isLoading = false;
       });

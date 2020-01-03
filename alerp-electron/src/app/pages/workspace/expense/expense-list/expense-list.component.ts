@@ -1,13 +1,12 @@
-import {Component, OnInit} from "@angular/core";
-import {Router} from "@angular/router";
-import {RefreshableTab} from "../../tab/tab.component";
-import {AuthService} from "../../../../core/services/user.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {HttpErrorResponse} from "@angular/common/http";
-import {NzMessageService} from "ng-zorro-antd";
-import {TabService} from "../../../../core/services/tab.service";
-import {ExpenseService} from "../../../../core/services/expense.service";
-import {ExpenseInfoVO} from "../../../../core/model/expense";
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NzMessageService } from "ng-zorro-antd";
+import { TabService } from "../../../../core/services/tab.service";
+import { ExpenseService } from "../../../../core/services/expense.service";
+import { ExpenseInfoVO } from "../../../../core/model/expense";
 
 @Component({
   selector: 'expense-list',
@@ -24,7 +23,6 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
   expenseList: ExpenseInfoVO[] = [];
 
   constructor(private router: Router,
-              private auth: AuthService,
               private Expense: ExpenseService,
               private message: NzMessageService,
               private tab: TabService) {
