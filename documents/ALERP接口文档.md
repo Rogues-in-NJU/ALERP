@@ -683,6 +683,7 @@ res:
   products: [{
     id: number,
     processingOrderId: number,
+    processingOrderCode: string,            // 12.28 新增
     productId: number,
     productName: string,
     type: number,
@@ -690,6 +691,7 @@ res:
     quantity: number,
     expectedWeight: number,
     price: number,
+    priceType: number                      //12.28 新增
     weight: number,
     cash: number
   }];
