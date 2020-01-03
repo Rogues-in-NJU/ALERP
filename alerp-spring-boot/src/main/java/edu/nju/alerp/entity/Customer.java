@@ -45,7 +45,7 @@ public class Customer {
     /**
      * 对账日
      */
-    private int pay_date;
+    private int payDate;
     /**
      * 城市
      */
