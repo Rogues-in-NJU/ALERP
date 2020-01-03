@@ -77,6 +77,8 @@ public class CustomerServiceImpl implements CustomerService {
                     specialPrice = SpecialPrice.builder()
                             .createdAt(DateUtils.getToday())
                             .createdBy(CommonUtils.getUserId())
+                            .updatedAt(DateUtils.getToday())
+                            .updatedBy(CommonUtils.getUserId())
                             .build();
                     BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                 } else {
