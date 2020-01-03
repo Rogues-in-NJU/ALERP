@@ -55,25 +55,27 @@ export class CustomerService {
   ): Observable<ResultVO<CustomerVO[]>>
     | Observable<ResultVO<TableResultVO<CustomerVO>>> {
     if (queryParams instanceof TableQueryParams) {
-      // return this.http.get(`${AppConfig.BASE_URL}/api`)
-      return of({
-        code: 200,
-        message: '',
-        data: {
-          totalPages: 1,
-          pageIndex: 1,
-          pageSize: 1,
-          result: [{
-            id: 1,
-            name: 'XXX公司',
-            shorthand: '',
-            type: 1,
-            period: 1,
-            payDate: 20,
-            description: ''
-          }]
-        }
+      return this.http.get<ResultVO<TableResultVO<CustomerVO>>>(`${AppConfig.BASE_URL}/api/customer/list`, {
+        params: queryParams
       });
+      // return of({
+      //   code: 200,
+      //   message: '',
+      //   data: {
+      //     totalPages: 1,
+      //     pageIndex: 1,
+      //     pageSize: 1,
+      //     result: [{
+      //       id: 1,
+      //       name: 'XXX公司',
+      //       shorthand: '',
+      //       type: 1,
+      //       period: 1,
+      //       payDate: 20,
+      //       description: ''
+      //     }]
+      //   }
+      // });
     } else {
       return of({
         code: 200,
@@ -92,7 +94,13 @@ export class CustomerService {
   }
 
   public save(customer: CustomerVO): Observable<ResultVO<any>> {
-    return of(null);
+    // return of(null);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/customer`, customer);
+  }
+
+  public delete(id: number): Observable<ResultVO<any>> {
+    // return of(null);
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/customer/delete/${id}`);
   }
 
 }

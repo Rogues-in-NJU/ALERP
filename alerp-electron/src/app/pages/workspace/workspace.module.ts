@@ -1,13 +1,13 @@
-import {NgModule} from "@angular/core";
-import {CoreModule} from "../../core/core.module";
-import {SharedModule} from "../../shared/shared.module";
-import {WorkspaceComponent} from "./workspace.component";
-import {RouteReuseStrategy, RouterModule, Routes} from "@angular/router";
-import {SimpleReuseStrategy} from "../../core/strategy/simple-reuse.strategy";
-import {TabComponent} from "./tab/tab.component";
+import { NgModule } from "@angular/core";
+import { CoreModule } from "../../core/core.module";
+import { SharedModule } from "../../shared/shared.module";
+import { CityPipe, WorkspaceComponent } from "./workspace.component";
+import { RouteReuseStrategy, RouterModule, Routes } from "@angular/router";
+import { SimpleReuseStrategy } from "../../core/strategy/simple-reuse.strategy";
+import { TabComponent } from "./tab/tab.component";
 
 const routes: Routes = [
-  {path: '', pathMatch: 'full', redirectTo: 'user-center'},
+  { path: '', pathMatch: 'full', redirectTo: 'user-center' },
   {
     path: 'dashboard',
     loadChildren: './dashboard/dashboard.module#DashboardModule'
@@ -46,11 +46,11 @@ const routes: Routes = [
 
 @NgModule({
   providers: [
-    {provide: RouteReuseStrategy, useClass: SimpleReuseStrategy}
+    { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }
   ],
-  imports: [CoreModule, SharedModule, RouterModule.forChild(routes)],
-  declarations: [WorkspaceComponent, TabComponent],
-  exports: [WorkspaceComponent, RouterModule]
+  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes) ],
+  declarations: [ WorkspaceComponent, TabComponent, CityPipe ],
+  exports: [ WorkspaceComponent, RouterModule ]
 })
 export class WorkspaceModule {
 }

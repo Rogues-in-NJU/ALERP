@@ -7,7 +7,7 @@ import { RefreshTabEvent, TabService } from "../../../../core/services/tab.servi
 import { CustomerVO } from "../../../../core/model/customer";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Objects } from "../../../../core/services/util.service";
+import { Objects, StringUtils } from "../../../../core/services/util.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
@@ -71,18 +71,23 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    console.log(this.customerName);
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    if (!StringUtils.isEmpty(this.customerName)) {
+      Object.assign(queryParams, {
+        name: this.customerName
+      });
+    }
     this.isLoading = true;
     this.customer.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<CustomerVO>>) => {
+        console.log(res);
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<CustomerVO> = res.data;
@@ -92,6 +97,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
         this.customerList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isLoading = false;
       }, () => {
         this.isLoading = false;
       });
@@ -112,6 +118,25 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
 
   confirmDelete(id: number): void {
     console.log(id);
+    if (!Objects.valid(id)) {
+      this.refresh();
+      return;
+    }
+    this.customer.delete(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   showAddModal(): void {
@@ -148,6 +173,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
         this.message.success('添加成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
       }, () => {
         this.refresh();
       });

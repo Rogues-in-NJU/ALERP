@@ -7,6 +7,7 @@ import { LoginCode, ResultCode, ResultVO } from "../../../core/model/result-vm";
 import { LoginResultVO } from "../../../core/model/user";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects } from "../../../core/services/util.service";
+import { LocalStorageService } from "../../../core/services/local-storage.service";
 
 @Component({
   selector: 'passport-login',
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
     private user: UserService,
     private message: NzMessageService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private storage: LocalStorageService
   ) {
   }
 
@@ -57,6 +59,10 @@ export class LoginComponent implements OnInit {
         }
         const loginVO: LoginResultVO = res.data;
         if (loginVO.code === LoginCode.SUCCESS.code) {
+          this.storage.setObject('user', {
+            userId: loginVO.userId,
+            city: this.loginForm.getRawValue()['city']
+          });
           this.router.navigate(['/workspace']);
         } else {
           this.message.error(loginVO.result);
