@@ -50,7 +50,7 @@ public class ShippingOrder {
     /**
      * 城市
      */
-    private String city;
+    private int city;
     /**
      *浮动金额
      */

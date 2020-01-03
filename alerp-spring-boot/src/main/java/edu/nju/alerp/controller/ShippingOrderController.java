@@ -3,10 +3,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.*;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
-import edu.nju.alerp.enums.ArrearOrderStatus;
-import edu.nju.alerp.enums.DocumentsType;
-import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.ProcessingOrderStatus;
+import edu.nju.alerp.enums.*;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
@@ -66,7 +63,7 @@ public class ShippingOrderController {
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         int arrearOrderId = shippingOrderService.getShippingOrder(id).getArrearOrderId();
         ArrearOrder arrearOrder = arrearOrderService.getOne(arrearOrderId);
-        if(arrearOrder.getReceivedCash() > 0){
+        if (arrearOrder.getReceivedCash() > 0) {
             //如果已收金额大于0，则不能被出货单不能被废弃。
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃");
         }
@@ -74,7 +71,7 @@ public class ShippingOrderController {
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
 //        根据id获取加工单，修改状态
-        processingIdList.forEach(p ->{
+        processingIdList.forEach(p -> {
             ProcessingOrder processingOrder = processOrderService.getOne(p);
             processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             processOrderService.savaProcessingOrder(processingOrder);
@@ -158,6 +155,7 @@ public class ShippingOrderController {
         });
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
+                .city(CityEnum.of(shippingOrder.getCity()).getMessage())
                 .productVOList(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
