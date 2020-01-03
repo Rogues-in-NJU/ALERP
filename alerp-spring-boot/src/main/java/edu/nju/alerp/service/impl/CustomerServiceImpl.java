@@ -134,6 +134,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         QueryContainer<Customer> sp = new QueryContainer<>();
         try {
+            sp.add(ConditionFactory.isNull("deletedAt"));
             List<Condition> fuzzyMatch = new ArrayList<>();
             fuzzyMatch.add(ConditionFactory.like("name", name));
             fuzzyMatch.add(ConditionFactory.like("shorthand", name));
