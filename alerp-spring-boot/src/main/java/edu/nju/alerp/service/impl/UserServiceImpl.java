@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5(userDTO.getPassword()))
                     .city(userDTO.getCity())
+                    .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
@@ -129,7 +130,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(sp, pageable);
     }
 
-    public boolean checkLogin(LoginDTO loginDTO){
+    public boolean checkLogin(LoginDTO loginDTO) {
         User user = getUserByPhoneNumber(loginDTO.getPhoneNumber());
         if (user == null) {
             return false;
