@@ -70,7 +70,7 @@ public class UserController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name") String name,
+                                             @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status") int status) {
         Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
@@ -85,7 +85,7 @@ public class UserController {
     @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
                                                          @RequestParam(value = "pageSize") int pageSize,
-                                                         @RequestParam(value = "userName") String userName,
+                                                         @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
                                                          @RequestParam(value = "operationStartTime") String operationStartTime,
                                                          @RequestParam(value = "operationEndTime") String operationEndTime) {
 

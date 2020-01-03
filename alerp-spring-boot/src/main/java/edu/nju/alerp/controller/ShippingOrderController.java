@@ -93,7 +93,7 @@ public class ShippingOrderController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name") String name,
+                                             @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status") int status,
                                              @RequestParam(value = "createAtStartTime") String createAtStartTime,
                                              @RequestParam(value = "createAtEndTime") String createAtEndTime) {
