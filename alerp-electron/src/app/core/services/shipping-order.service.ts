@@ -121,4 +121,6 @@ export class ShippingOrderService {
     });
   }
 
+  //根据加工单ids生成新的出货单
+  //不对，前端根据加工单生成界面，确认后生成出货单
 }

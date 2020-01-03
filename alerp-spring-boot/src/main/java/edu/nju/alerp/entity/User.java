@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Data
 @Builder
 @Entity
-@Table(name="user")
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -35,10 +35,6 @@ public class User {
      * 密码
      */
     private String password;
-    /**
-     * 城市
-     */
-    private int city;
     /**
      * 用户状态
      */

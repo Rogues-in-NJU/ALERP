@@ -56,6 +56,8 @@ public class SimpleCondition implements Condition {
                 return builder.isMember(value, condition);
             case NOT_IN:
                 return builder.isNotMember(value, condition);
+            case ISNULL:
+                return builder.isNull(condition);
         }
         return null;
     }

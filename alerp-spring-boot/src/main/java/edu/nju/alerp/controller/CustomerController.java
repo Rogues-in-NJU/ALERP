@@ -95,7 +95,7 @@ public class CustomerController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name") String name) {
+                                             @RequestParam(value = "name", required = false, defaultValue = "") String name) {
         Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), name);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
@@ -106,7 +106,7 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<List<Customer>> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         customerService.saveCustomer(customerDTO);
         List<Customer> customerList = customerService.getCustomerList();

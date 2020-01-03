@@ -6,10 +6,12 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.LoginDTO;
+import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.entity.UserCityRelation;
 import edu.nju.alerp.enums.ExceptionEnum;
+import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.repo.UserCityRelationRepository;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.entity.User;
@@ -57,7 +59,6 @@ public class UserServiceImpl implements UserService {
             user = User.builder()
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5(userDTO.getPassword()))
-                    .city(userDTO.getCity())
                     .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
@@ -68,14 +69,25 @@ public class UserServiceImpl implements UserService {
             if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
-            user.setCity(userDTO.getCity());
             user.setName(userDTO.getName());
             user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }
         User res = userRepository.saveAndFlush(user);
-        userCache.put(userDTO.getId(), res);
+        List<Integer> cities = userCityRelationRepository.findCitiesByUserId(res.getId());
+        userDTO.getCity().forEach(c -> {
+            if (!cities.contains(c)) {
+                UserCityRelation userCityRelation = UserCityRelation.builder()
+                        .userId(res.getId())
+                        .cityId(c)
+                        .build();
+                userCityRelationRepository.saveAndFlush(userCityRelation);
+            }
+        });
+
+
+        userCache.put(res.getId(), res);
         return res.getId();
     }
 
@@ -120,26 +132,55 @@ public class UserServiceImpl implements UserService {
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
-//            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
                 fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
             }
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);
         }
-        return userRepository.findAll(sp, pageable);
+        return sp.isEmpty() ? userRepository.findAll(pageable) : userRepository.findAll(sp, pageable);
     }
 
-    public boolean checkLogin(LoginDTO loginDTO) {
+    @Override
+    public LoginResultDTO checkLogin(LoginDTO loginDTO) {
+        LoginResultDTO loginResultDTO;
         User user = getUserByPhoneNumber(loginDTO.getPhoneNumber());
         if (user == null) {
-            return false;
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.NONE.getCode())
+                    .result(LoginResult.NONE.getMessage())
+                    .build();
+            return loginResultDTO;
+        }
+        if (user.getStatus() != UserStatus.ONJOB.getCode()) {
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.OFFJOB.getCode())
+                    .result(LoginResult.OFFJOB.getMessage())
+                    .build();
+            return loginResultDTO;
         }
         List<Integer> cityList = getCitiesByUserId(user.getId());
         if (!cityList.contains(loginDTO.getCity())) {
-            return false;
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.DENIED.getCode())
+                    .result(LoginResult.DENIED.getMessage())
+                    .build();
+            return loginResultDTO;
         }
-        return user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
+        boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
+        if (res) {
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.SUCCESS.getCode())
+                    .result(LoginResult.SUCCESS.getMessage())
+                    .userId(user.getId())
+                    .build();
+            return loginResultDTO;
+        }
+        loginResultDTO = LoginResultDTO.builder()
+                .code(LoginResult.INCORRECT.getCode())
+                .result(LoginResult.INCORRECT.getMessage())
+                .build();
+        return loginResultDTO;
     }
 
     @Override
@@ -154,6 +195,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Integer> getCitiesByUserId(int userId) {
-        return userCityRelationRepository.findCitiesByUserId(userId);
+        List<Integer> cityList = userCityRelationRepository.findCitiesByUserId(userId);
+        log.info("userId:{}, cityList:{}", userId, cityList);
+        return cityList;
     }
 }
