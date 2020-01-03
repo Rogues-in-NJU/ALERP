@@ -156,8 +156,8 @@ public class UserController {
                 return ResponseResult.ok(loginResultDTO);
             }
             loginResultDTO = LoginResultDTO.builder()
-                    .code(LoginResult.SUCCESS.getCode())
-                    .result(LoginResult.SUCCESS.getMessage())
+                    .code(LoginResult.INCORRECT.getCode())
+                    .result(LoginResult.INCORRECT.getMessage())
                     .build();
             return ResponseResult.ok(loginResultDTO);
         } catch (Exception e) {
