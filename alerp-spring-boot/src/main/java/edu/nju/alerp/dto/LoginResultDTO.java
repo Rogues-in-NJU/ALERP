@@ -13,4 +13,5 @@ import lombok.Data;
 public class LoginResultDTO {
     private int code;
     private String result;
+    private Integer userId;
 }

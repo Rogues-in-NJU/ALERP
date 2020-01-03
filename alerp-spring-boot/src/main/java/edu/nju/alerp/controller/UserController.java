@@ -152,6 +152,7 @@ public class UserController {
                 loginResultDTO = LoginResultDTO.builder()
                         .code(LoginResult.SUCCESS.getCode())
                         .result(LoginResult.SUCCESS.getMessage())
+                        .userId(user.getId())
                         .build();
                 return ResponseResult.ok(loginResultDTO);
             }
