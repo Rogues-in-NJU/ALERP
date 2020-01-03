@@ -99,7 +99,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
         try {
             int result = userService.saveUser(userDTO);
@@ -120,45 +120,11 @@ public class UserController {
     public ResponseResult<LoginResultDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
-            LoginResultDTO loginResultDTO = null;
-            User user = userService.getUserByPhoneNumber(loginDTO.getPhoneNumber());
-            if (user == null) {
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.NONE.getCode())
-                        .result(LoginResult.NONE.getMessage())
-                        .build();
-                return ResponseResult.ok(loginResultDTO);
-            }
-            if (user.getStatus() != UserStatus.ONJOB.getCode()) {
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.OFFJOB.getCode())
-                        .result(LoginResult.OFFJOB.getMessage())
-                        .build();
-                return ResponseResult.ok(loginResultDTO);
-            }
-            List<Integer> cityList = userService.getCitiesByUserId(user.getId());
-            if (!cityList.contains(loginDTO.getCity())) {
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.DENIED.getCode())
-                        .result(LoginResult.DENIED.getMessage())
-                        .build();
-                return ResponseResult.ok(loginResultDTO);
-            }
-            boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
-            if (res) {
-                session.setAttribute("userId", user.getId());
+            LoginResultDTO loginResultDTO = userService.checkLogin(loginDTO);
+            if (loginResultDTO.getCode() == LoginResult.SUCCESS.getCode()) {
+                session.setAttribute("userId", loginResultDTO.getUserId());
                 session.setAttribute("cityId", loginDTO.getCity());
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.SUCCESS.getCode())
-                        .result(LoginResult.SUCCESS.getMessage())
-                        .userId(user.getId())
-                        .build();
-                return ResponseResult.ok(loginResultDTO);
             }
-            loginResultDTO = LoginResultDTO.builder()
-                    .code(LoginResult.INCORRECT.getCode())
-                    .result(LoginResult.INCORRECT.getMessage())
-                    .build();
             return ResponseResult.ok(loginResultDTO);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
