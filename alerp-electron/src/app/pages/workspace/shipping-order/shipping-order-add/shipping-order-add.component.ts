@@ -8,11 +8,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
 import {ProductService} from "../../../../core/services/product.service";
 import {NzMessageService} from "ng-zorro-antd";
-import {QueryParams, ResultCode, ResultVO} from "../../../../core/model/result-vm";
+import {QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {debounceTime, map, switchMap} from "rxjs/operators";
 import {Objects, SpecificationUtils, StringUtils} from "../../../../core/services/util.service";
-import {ProcessingOrderProductVO} from "../../../../core/model/processing-order";
+import {ProcessingOrderProductVO, ProcessingOrderVO} from "../../../../core/model/processing-order";
 import {HttpErrorResponse} from "@angular/common/http";
+import {ProcessingOrderService} from "../../../../core/services/processing-order.service";
 
 @Component({
   selector: 'shipping-order-add',
@@ -23,11 +24,32 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
   isLoading: boolean = true;
   shippingOrderCode: string;
-  shippingOrderData: ShippingOrderInfoVO;
+  shippingOrderData: ShippingOrderInfoVO = {
+
+  };
 
   cash: number = 0;
   floatingCash: number = 0;
   receivableCash: number = 0;
+
+  //modal
+  shippingOrderAddVisible: boolean = false;
+  shippingOrderAddOkLoading: boolean = false;
+  addShippingOrder_customerName: string;
+  addShippingOrder_allProcessingOrderList: ProcessingOrderVO[] =[];
+
+  addShippingOrder_isLoading: boolean = false;
+  addShippingOrder_totalPages: number = 1;
+  addShippingOrder_pageIndex: number = 1;
+  addShippingOrder_pageSize: number = 2;
+
+  isAllDisplayDataChecked = false;
+  isOperating = false;
+  isIndeterminate = false;
+  listOfDisplayData: ProcessingOrderVO[] = [];
+  mapOfCheckedId: { [key: number]: boolean } = {};
+  numberOfChecked = 0;
+  checkedCustomerId: number = -1;
 
   editCache: {
     _id?: number,
@@ -36,6 +58,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     currentProduct?: TempProductVO,
     isAdd?: boolean
   } = {};
+
   defaultEditCache: any = {
     _id: null,
     data: null,
@@ -43,24 +66,28 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     currentProduct: null,
     isAdd: false
   };
+
   editCacheValidateStatus: any = {
     productId: null,
     specification: null,
     quantity: null,
     expectedWeight: null
   };
-  processingOrderInfoProductCountIndex: number = 0;
+
+  shippingOrderInfoProductCountIndex: number = 0;
   searchProducts: ProductVO[];
   searchChanges$: BehaviorSubject<string> = new BehaviorSubject('');
   isProductsLoading: boolean = false;
   specificationAutoComplete: { label: string, value: string }[] = [];
 
+  isAddSunHao: boolean = false;
 
   constructor(
     private closeTabService: TabService,
     private route: ActivatedRoute,
     private router: Router,
     private shippingOrder: ShippingOrderService,
+    private processingOrder: ProcessingOrderService,
     private product: ProductService,
     private message: NzMessageService
   ) {
@@ -68,23 +95,8 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   }
 
   ngOnInit(): void {
-    this.shippingOrderCode = this.route.snapshot.params[ 'id' ];
-    this.reload();
-
-    const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
-    };
-    const optionList$: Observable<ProductVO[]> = this.searchChanges$
-      .asObservable()
-      .pipe(debounceTime(500))
-      .pipe(switchMap(getProducts));
-    optionList$.subscribe((data: ProductVO[]) => {
-      this.searchProducts = data;
-      this.isProductsLoading = false;
-    });
+    this.showAddModal();
+    Object.assign(this.editCache, this.defaultEditCache);
   }
 
   addProductRow(): void {
@@ -92,22 +104,25 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.message.warning('请先保存加工商品列表的更改!');
       return;
     }
-    let item: ProcessingOrderProductVO = {
-      id: 0,
-      productId: 0,
-      productName: '',
+    let item: ShippingOrderProductInfoVO = {
+      id: -1,
+      processingOrderCode: '',
+      productId: -1,
+      productName: '损耗',
       type: 1,
-      density: 1.00,
-      productSpecification: '',
       specification: '',
       quantity: 1,
-      expectedWeight: 1
+      price: null,
+      expectedWeight: null,
+      weight: 0,
+      cash: null,
     };
-    item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+    item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
     this.shippingOrderData.products = [
       item,
       ...this.shippingOrderData.products
     ];
+    this.isAddSunHao = true;
     this.startEditProduct(item[ '_id' ], true);
   }
 
@@ -168,6 +183,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item[ '_id' ] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
+    this.isAddSunHao = false;
   }
 
   saveProductEdit(_id: number): void {
@@ -178,24 +194,26 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     if (!this.checkShippingOrderProductValid()) {
       return;
     }
-    // TODO: 提交远程刷新
-    const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
-    Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
-    Object.assign(this.editCache, this.defaultEditCache);
-    this.shippingOrder.saveProduct(this.shippingOrderData.products[ index ])
-      .subscribe((res: ResultVO<any>) => {
-        if (!Objects.valid(res)) {
-          return;
-        }
-        if (res.code !== ResultCode.SUCCESS.code) {
-          return;
-        }
-      }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
-      }, () => {
-        this.reload();
-      });
+    // TODO: 提交远程刷新 -> 不提交了，放到vo里
+    // const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    // Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
+    // Object.assign(this.editCache, this.defaultEditCache);
+    // this.shippingOrder.saveProduct(this.shippingOrderData.products[ index ])
+    //   .subscribe((res: ResultVO<any>) => {
+    //     if (!Objects.valid(res)) {
+    //       return;
+    //     }
+    //     if (res.code !== ResultCode.SUCCESS.code) {
+    //       return;
+    //     }
+    //   }, (error: HttpErrorResponse) => {
+    //     this.message.error(error.message);
+    //   }, () => {
+    //     this.reload();
+    //   });
+    this.isAddSunHao = false;
   }
+
   checkShippingOrderProductValid(): boolean {
     if (!Objects.valid(this.editCache.data)) {
       return false;
@@ -229,26 +247,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.editCacheValidateStatus[name] = 'error';
       return false;
     }
-  }
-
-
-  reload(): void {
-    Object.assign(this.editCache, this.defaultEditCache);
-    this.shippingOrder.find(this.shippingOrderCode)
-      .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
-        if (!Objects.valid(res)) {
-          return;
-        }
-        this.isLoading = false;
-        this.shippingOrderData = res.data;
-        if (Objects.valid(this.shippingOrderData.products)) {
-          this.shippingOrderData.products.forEach(item => {
-            item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
-          })
-        }
-      }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
-      });
   }
 
   onSpecificationInput(value: string): void {
@@ -340,6 +338,150 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   }
 
   refresh(): void {
+  }
+
+  showAddModal(): void {
+    this.shippingOrderAddVisible = true;
+    this.resetAddProcessingOrderModal();
+
+    const queryParams: TableQueryParams = {
+      pageIndex: this.addShippingOrder_pageIndex,
+      pageSize: 1000,
+      status: 1, //未完成
+    };
+    this.processingOrder.findAll(queryParams)
+      .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        const tableResult: TableResultVO<ProcessingOrderVO> = res.data;
+
+        this.addShippingOrder_totalPages = tableResult.totalPages;
+        this.addShippingOrder_pageIndex = tableResult.pageIndex;
+        this.addShippingOrder_pageSize = tableResult.pageSize;
+        this.addShippingOrder_allProcessingOrderList = tableResult.result;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+  }
+
+  confirmAdd(): void {
+    this.shippingOrderAddOkLoading = true;
+
+    // todo 根据加工单产生出货单
+    this.shippingOrder.find(this.shippingOrderCode)
+      .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        this.isLoading = false;
+        this.shippingOrderData = res.data;
+        if (Objects.valid(this.shippingOrderData.products)) {
+          this.shippingOrderData.products.forEach(item => {
+            item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
+          })
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+
+    this.shippingOrderAddOkLoading = false;
+    this.shippingOrderAddVisible = false;
+    this.message.success('添加成功!');
+  }
+
+  cancelAdd(): void {
+    this.shippingOrderAddVisible = false;
+    this.resetAddProcessingOrderModal();
+  }
+
+  searchProcessingOrderBycustomername(): void {
+    this.addShippingOrder_isLoading = true;
+
+    this.resetAddProcessingOrderModal();
+
+    const queryParams: TableQueryParams = {
+      pageIndex: this.addShippingOrder_pageIndex,
+      pageSize: this.addShippingOrder_pageSize,
+      customerName: this.addShippingOrder_customerName,
+      status: 1, //未完成
+    };
+    this.processingOrder.findAll(queryParams)
+      .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        const tableResult: TableResultVO<ProcessingOrderVO> = res.data;
+
+        this.addShippingOrder_totalPages = tableResult.totalPages;
+        this.addShippingOrder_pageIndex = tableResult.pageIndex;
+        this.addShippingOrder_pageSize = tableResult.pageSize;
+        this.addShippingOrder_allProcessingOrderList = tableResult.result;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+
+    this.addShippingOrder_isLoading = false;
+  }
+
+  currentPageDataChange($event: ProcessingOrderVO[]): void {
+    this.listOfDisplayData = $event;
+    this.refreshStatus(null);
+  }
+
+  refreshStatus(id: number): void {
+    this.isAllDisplayDataChecked = this.listOfDisplayData
+      .filter(item => this.isProcessingOrderAvailable(item.customerId))
+      .every(item => this.mapOfCheckedId[item.id]);
+    this.isIndeterminate =
+      this.listOfDisplayData.filter(item => this.isProcessingOrderAvailable(item.customerId))
+        .some(item => this.mapOfCheckedId[item.id]) &&
+      !this.isAllDisplayDataChecked;
+    this.numberOfChecked = this.addShippingOrder_allProcessingOrderList
+      .filter(item => this.mapOfCheckedId[item.id]).length;
+
+    if(id !== null){
+      if(this.checkedCustomerId === -1){
+        this.checkedCustomerId = id;
+      } else if(this.numberOfChecked === 0){
+        this.checkedCustomerId = -1;
+      }
+    }
+
+  }
+
+  checkAll(value: boolean): void {
+    this.listOfDisplayData.filter(item =>this.isProcessingOrderAvailable(item.customerId))
+      .forEach(item => (this.mapOfCheckedId[item.id] = value));
+    if(!value){
+      this.checkedCustomerId = -1;
+    }
+    this.refreshStatus(null);
+  }
+
+  isProcessingOrderAvailable(customerId: number): boolean{
+    if(this.checkedCustomerId === -1){
+      return true;
+    }
+    if(customerId === this.checkedCustomerId){
+      return true;
+    }
+    return false;
+  }
+
+  resetAddProcessingOrderModal():void{
+    this.isAllDisplayDataChecked = false;
+    this.isIndeterminate = false;
+    this.listOfDisplayData= [];
+    this.mapOfCheckedId= {};
+    this.numberOfChecked = 0;
+    this.checkedCustomerId= -1;
   }
 }
 
