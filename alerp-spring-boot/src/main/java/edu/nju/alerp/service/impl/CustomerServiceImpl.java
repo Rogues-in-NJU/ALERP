@@ -129,18 +129,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Page<Customer> getCustomerListByName(Pageable pageable, String name) {
+        if ("".equals(name)) {
+            return customerRepository.findAll(pageable);
+        }
         QueryContainer<Customer> sp = new QueryContainer<>();
         try {
             List<Condition> fuzzyMatch = new ArrayList<>();
-            if (!"".equals(name)) {
-                fuzzyMatch.add(ConditionFactory.like("name", name));
-                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            }
+            fuzzyMatch.add(ConditionFactory.like("name", name));
+            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);
         }
-        return customerRepository.findAll(sp, pageable);
+        return sp.isEmpty() ? customerRepository.findAll(pageable) : customerRepository.findAll(sp, pageable);
     }
 
 }

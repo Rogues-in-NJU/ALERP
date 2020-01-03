@@ -130,14 +130,13 @@ public class UserServiceImpl implements UserService {
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
-//            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
                 fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
             }
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);
         }
-        return userRepository.findAll(sp, pageable);
+        return sp.isEmpty() ? userRepository.findAll(pageable) : userRepository.findAll(sp, pageable);
     }
 
     public boolean checkLogin(LoginDTO loginDTO) {
