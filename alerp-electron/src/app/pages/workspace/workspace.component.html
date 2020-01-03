@@ -102,7 +102,7 @@
           <ul nz-menu nzMode="horizontal">
             <li nz-menu-item style="cursor:not-allowed; pointer-events:none;">
               <label style="border: 1px solid rgba(0,21,41,.1); padding: 1px 4px; border-radius: 4px">
-                地区: <span style="margin-left: 10px">苏州</span>
+                地区: <span style="margin-left: 10px">{{ city | city }}</span>
               </label>
             </li>
             <li nz-submenu nzTitle="用户中心" nzIcon="user" [nzOpen]="isOpen">

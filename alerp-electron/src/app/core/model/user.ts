@@ -28,7 +28,15 @@ export interface PassportVO {
 
 export interface LoginResultVO {
 
+  userId: number;
   code: number;
   result: string;
+
+}
+
+export interface UserStorageVO {
+
+  id: number;
+  city: number;
 
 }
