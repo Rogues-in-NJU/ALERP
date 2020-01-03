@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { ResultVO } from "../model/result-vm";
-import { UserInfoVO } from "../model/user";
+import { LoginResultVO, PassportVO, UserInfoVO } from "../model/user";
 
 @Injectable({
   providedIn: 'root'
@@ -17,22 +17,8 @@ export class UserService {
     return of(null);
   }
 
-}
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
-  constructor(
-    private http: HttpClient
-  ) {
-  }
-
-  public login(username: string, password: string): Observable<ResultVO<any>> {
-    return this.http.post<ResultVO<any>>('', {
-      username: username,
-      password: password
-    });
+  public login(loginVO: PassportVO): Observable<ResultVO<LoginResultVO>> {
+    return this.http.post<ResultVO<any>>('', loginVO);
   }
 
   public hasActionAuth(route: string, action: number): Observable<ResultVO<boolean>> {

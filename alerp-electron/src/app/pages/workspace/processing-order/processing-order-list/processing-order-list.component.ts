@@ -7,6 +7,7 @@ import { RefreshableTab } from "../../tab/tab.component";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects } from "../../../../core/services/util.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'processing-order-list',
@@ -29,12 +30,18 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
   constructor(
     private router: Router,
     private processingOrder: ProcessingOrderService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
 
   ngOnInit(): void {
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/processing-order/list') {
+        this.refresh();
+      }
+    });
     this.refresh();
   }
 

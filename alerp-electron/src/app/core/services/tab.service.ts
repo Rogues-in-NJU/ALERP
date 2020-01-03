@@ -11,6 +11,7 @@ export class TabService {
 
   constructor() {
     this._closeEvent = new EventEmitter<CloseTabEvent>();
+    this._refreshEvent = new EventEmitter<RefreshTabEvent>();
   }
 
   get closeEvent(): EventEmitter<CloseTabEvent> {

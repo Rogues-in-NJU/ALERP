@@ -110,6 +110,7 @@ export class TabComponent {
       this.router.navigate([ menu.url ]);
     }
     if (Objects.valid(refreshUrl)) {
+      console.log(refreshUrl);
       this.tab.refreshEvent.emit({
         url: refreshUrl
       });
