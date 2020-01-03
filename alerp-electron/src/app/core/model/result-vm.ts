@@ -65,15 +65,18 @@ export class ResultCode {
 
 export class LoginCode {
 
-  public static SUCCESS: LoginCode = new LoginCode(1);
-  public static INCORRECT: LoginCode = new LoginCode(2);
-  public static NONE: LoginCode = new LoginCode(3);
-  public static DENIED: LoginCode = new LoginCode(4);
+  public static SUCCESS: LoginCode = new LoginCode(1, '登录成功');
+  public static INCORRECT: LoginCode = new LoginCode(2, '密码错误');
+  public static NONE: LoginCode = new LoginCode(3, '没有该手机号的用户');
+  public static DENIED: LoginCode = new LoginCode(4, '没有该城市访问权限');
+  public static OFFJOB: LoginCode = new LoginCode(5, '用户已离职');
 
   private _code: number;
+  private _message: string;
 
-  private constructor(code: number) {
+  private constructor(code: number, message: string) {
     this._code = code;
+    this._message = message;
   }
 
   get code(): number {

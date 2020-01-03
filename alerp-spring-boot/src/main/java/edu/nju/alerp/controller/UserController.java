@@ -41,7 +41,6 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(value = "/api/user")
-@CrossOrigin
 public class UserController {
 
     @Autowired
