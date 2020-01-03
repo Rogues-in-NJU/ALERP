@@ -840,6 +840,21 @@ res:
 {}
 ```
 
+#### 修改发票流水号  // 1.3 新增
+```
+POST
+/api/arrear-order/invoice-number
+
+body:
+{
+  id: number,
+  invoiceNumber: string
+}
+
+res:
+{}
+```
+
 #### 添加收款记录
 ```
 POST
