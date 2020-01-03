@@ -29,6 +29,6 @@ export interface PassportVO {
 export interface LoginResultVO {
 
   code: number;
-  message: string;
+  result: string;
 
 }

@@ -1,15 +1,13 @@
-import {Component, OnInit} from "@angular/core";
-import {RefreshableTab} from "../../tab/tab.component";
-import {ShippingOrderInfoVO} from "../../../../core/model/shipping-order";
-import {Router} from "@angular/router";
-import {AuthService} from "../../../../core/services/user.service";
-import {NzMessageService} from "ng-zorro-antd";
-import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
-import {TabService} from "../../../../core/services/tab.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {Objects} from "../../../../core/services/util.service";
-import {HttpErrorResponse} from "@angular/common/http";
-import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
+import { Component, OnInit } from "@angular/core";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ShippingOrderInfoVO } from "../../../../core/model/shipping-order";
+import { Router } from "@angular/router";
+import { NzMessageService } from "ng-zorro-antd";
+import { ShippingOrderService } from "../../../../core/services/shipping-order.service";
+import { TabService } from "../../../../core/services/tab.service";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { Objects } from "../../../../core/services/util.service";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: 'shipping-order-list',
@@ -34,7 +32,6 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
 
   constructor(
     private router: Router,
-    private auth: AuthService,
     private shippingOrder: ShippingOrderService,
     private message: NzMessageService,
     private tab: TabService
