@@ -43,7 +43,7 @@ public class PurchaseOrderController {
      * @param doneEndTime
      * @return
      */
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
                                                                   @RequestParam(value = "id") String id,
@@ -59,7 +59,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<PurchaseOrderDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(purchaseOrderService.findPurchaseById(id));
     }
@@ -95,7 +95,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/payment-record/delete/{id}")
+    @RequestMapping(value = "/payment-record/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deletePaymentRecord(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(purchaseOrderService.deletePaymentReport(id));
@@ -109,7 +109,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/abandon/{id}")
+    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(purchaseOrderService.abandonPurchaseOrder(id));

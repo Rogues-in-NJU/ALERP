@@ -92,13 +92,12 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Override
     public int addOrUpdateSupplier(SupplierDTO supplierDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         Supplier supplier = Supplier.builder().id(supplierDTO.getId())
                                                 .name(supplierDTO.getName())
                                                 .status(SupplierStatus.NORMAL.getCode())
                                                 .description(supplierDTO.getDescription())
                                                 .createAt(TimeUtil.dateFormat(new Date()))
-                                                 .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                                                 .createBy(CommonUtils.getUserId())
                                                 .build();
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());

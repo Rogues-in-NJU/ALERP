@@ -93,12 +93,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         Product product = Product.builder()
                 .createAt(TimeUtil.dateFormat(new Date()))
-                .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                .createBy(CommonUtils.getUserId())
                 .updateAt(TimeUtil.dateFormat(new Date()))
-                .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
                 .shorthand(productDTO.getShorthand())

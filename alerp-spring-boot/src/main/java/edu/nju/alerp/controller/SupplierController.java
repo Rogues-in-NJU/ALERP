@@ -33,7 +33,7 @@ public class SupplierController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
                                                                   @RequestParam(value = "name") String name){
@@ -45,7 +45,7 @@ public class SupplierController {
         return ResponseResult.ok(supplierService.addOrUpdateSupplier(supplierDTO));
     }
 
-    @RequestMapping(value = "/delete/{id}")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteProcessingProduct(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
             return ResponseResult.ok(supplierService.deleteSupplier(id));
     }

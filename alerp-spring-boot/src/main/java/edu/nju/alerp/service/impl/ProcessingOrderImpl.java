@@ -2,6 +2,7 @@ package edu.nju.alerp.service.impl;
 
 
 import edu.nju.alerp.common.DocumentsIdFactory;
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ProcessingOrderDTO;
@@ -11,6 +12,7 @@ import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.enums.DocumentsType;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ProcessingOrderStatus;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ProcessOrderProductRepository;
@@ -114,16 +116,15 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         ProcessingOrder processingOrder = ProcessingOrder.builder()
                                         .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER))
                                         .status(ProcessingOrderStatus.DRAFTING.getCode())
                                         .customerId(processingOrderDTO.getCustomerId())
                                         .salesman(processingOrderDTO.getSalesman())
                                         .createAt(TimeUtil.dateFormat(new Date()))
-                                        .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                                        .createBy(CommonUtils.getUserId())
                                         .updateAt(TimeUtil.dateFormat(new Date()))
-                                        .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                                        .updateBy(CommonUtils.getUserId())
                                         .build();
 
         ProcessingOrder entity = processingOrderRepository.saveAndFlush(processingOrder);
@@ -143,7 +144,6 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
                                                                     .processOrderId(updateProcessProductDTO.getProcessingOrderId())
                                                                     .productId(updateProcessProductDTO.getProductId())
@@ -155,7 +155,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             processOrderProduct.setId(updateProcessProductDTO.getId());
         ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
                                                                     .updateAt(TimeUtil.dateFormat(new Date()))
-                                                                     .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                                                                     .updateBy(CommonUtils.getUserId())
                                                                     .build();
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
         processingOrderRepository.saveAndFlush(processingOrder);
@@ -166,12 +166,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public int deleteProcessProduct(int id) throws Exception{
         ProcessOrderProduct processOrderProduct = processOrderProductRepository.getOne(id);
         if (processOrderProduct == null)
-            throw new Exception("该条目不存在");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该条目不存在");
         ProcessingOrder processingOrder = processingOrderRepository.getOne(processOrderProduct.getProcessOrderId());
         if (processingOrder == null)
-            throw new Exception("不存在该加工单");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
         if (ProcessingOrderStatus.of(processingOrder.getStatus()) != ProcessingOrderStatus.DRAFTING)
-            throw new Exception("该状态下单据不支持该操作");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processOrderProductRepository.deleteById(id);
         return id;
     }
@@ -180,9 +180,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public int printProcessingOrder(int id) throws Exception{
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
-            throw new Exception("不存在该加工单");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).printable())
-            throw new Exception("该状态下单据不支持该操作");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
@@ -190,15 +190,14 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int abandonProcessingOrder(int id) throws Exception{
-        HttpSession session = CommonUtils.getHttpSession();
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
-            throw new Exception("不存在该加工单");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).abandonable())
-            throw new Exception("该状态下单据不支持该操作");
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.ABANDONED.getCode());
         processingOrder.setDeleteAt(TimeUtil.dateFormat(new Date()));
-        processingOrder.setDeleteBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"));
+        processingOrder.setDeleteBy(CommonUtils.getUserId());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
     }
