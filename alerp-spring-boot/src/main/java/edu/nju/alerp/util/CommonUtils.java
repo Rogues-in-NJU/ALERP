@@ -26,8 +26,13 @@ public class CommonUtils {
         return getHttpServletRequest().getSession();
     }
 
-    public static int getUserId(){
+    public static int getUserId() {
         HttpSession session = getHttpSession();
         return session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+    }
+
+    public static int getCity() {
+        HttpSession session = getHttpSession();
+        return session.getAttribute("cityId") == null ? 0 : (int) session.getAttribute("cityId");
     }
 }
