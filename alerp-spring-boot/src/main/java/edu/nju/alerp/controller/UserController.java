@@ -125,7 +125,7 @@ public class UserController {
                 session.setAttribute("userId", loginResultDTO.getUserId());
                 session.setAttribute("cityId", loginDTO.getCity());
             }
-
+            return ResponseResult.ok(loginResultDTO);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
