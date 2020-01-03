@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
         });
 
 
-        userCache.put(userDTO.getId(), res);
+        userCache.put(res.getId(), res);
         return res.getId();
     }
 

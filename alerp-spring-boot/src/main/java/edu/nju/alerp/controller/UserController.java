@@ -99,10 +99,11 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
         try {
             int result = userService.saveUser(userDTO);
+            log.info("saved userId:{}", result);
             return ResponseResult.ok(result);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
