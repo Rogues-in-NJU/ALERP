@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
             user = User.builder()
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5(userDTO.getPassword()))
-                    .city(userDTO.getCity())
                     .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
@@ -68,13 +67,24 @@ public class UserServiceImpl implements UserService {
             if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
-            user.setCity(userDTO.getCity());
             user.setName(userDTO.getName());
             user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }
         User res = userRepository.saveAndFlush(user);
+        List<Integer> cities = userCityRelationRepository.findCitiesByUserId(res.getId());
+        userDTO.getCity().forEach(c -> {
+            if (!cities.contains(c)) {
+                UserCityRelation userCityRelation = UserCityRelation.builder()
+                        .userId(res.getId())
+                        .cityId(c)
+                        .build();
+                userCityRelationRepository.saveAndFlush(userCityRelation);
+            }
+        });
+
+
         userCache.put(userDTO.getId(), res);
         return res.getId();
     }
@@ -154,6 +164,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Integer> getCitiesByUserId(int userId) {
-        return userCityRelationRepository.findCitiesByUserId(userId);
+        List<Integer> cityList = userCityRelationRepository.findCitiesByUserId(userId);
+        log.info("userId:{}, cityList:{}", userId, cityList);
+        return cityList;
     }
 }
