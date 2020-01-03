@@ -2,6 +2,7 @@ package edu.nju.alerp.service;
 
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.dto.LoginDTO;
+import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
@@ -39,5 +40,7 @@ public interface UserService {
     int getIdFromName(String name);
 
     List<Integer> getCitiesByUserId(int userId);
+
+    LoginResultDTO checkLogin(LoginDTO loginDTO);
 
 }

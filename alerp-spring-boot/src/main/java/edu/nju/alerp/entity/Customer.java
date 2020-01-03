@@ -45,7 +45,7 @@ public class Customer {
     /**
      * 对账日
      */
-    @Column(name = "pay_Date")
+    @Column(name = "pay_date")
     private int payDate;
     /**
      * 城市
