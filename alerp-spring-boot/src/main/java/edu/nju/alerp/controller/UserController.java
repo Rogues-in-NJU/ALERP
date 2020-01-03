@@ -12,6 +12,7 @@ import edu.nju.alerp.entity.User;
 import edu.nju.alerp.entity.UserCityRelation;
 import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.LoginResult;
+import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
@@ -125,6 +126,13 @@ public class UserController {
                 loginResultDTO = LoginResultDTO.builder()
                         .code(LoginResult.NONE.getCode())
                         .result(LoginResult.NONE.getMessage())
+                        .build();
+                return ResponseResult.ok(loginResultDTO);
+            }
+            if (user.getStatus() != UserStatus.ONJOB.getCode()) {
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.OFFJOB.getCode())
+                        .result(LoginResult.OFFJOB.getMessage())
                         .build();
                 return ResponseResult.ok(loginResultDTO);
             }
