@@ -9,6 +9,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.util.CommonUtils;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -93,12 +94,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         Product product = Product.builder()
-                .createAt(TimeUtil.dateFormat(new Date()))
-                .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
-                .updateAt(TimeUtil.dateFormat(new Date()))
-                .updateBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                .createAt(DateUtils.getToday())
+                .createBy(CommonUtils.getUserId())
+                .updateAt(DateUtils.getToday())
+                .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
                 .shorthand(productDTO.getShorthand())

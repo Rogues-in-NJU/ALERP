@@ -32,7 +32,7 @@ public class ProcessOrderController {
     @Autowired
     private ProcessOrderService processOrderService;
 
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> findProcessOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                 @RequestParam(value = "pageSize") int pageSize,
                                                                 @RequestParam(value = "id", required = false) String code,
@@ -45,7 +45,7 @@ public class ProcessOrderController {
         return ResponseResult.ok(ListResponseUtils.generateResponse(processingOrders, pageIndex, pageSize));
     }
 
-    @RequestMapping(value = "/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<ProcessingOrderDetailVO> findProcessingOrderDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(processOrderService.findProcessingById(id));
     }
@@ -60,7 +60,7 @@ public class ProcessOrderController {
         return ResponseResult.ok(processOrderService.addOrUpdateProcessProduct(updateProcessProductDTO));
     }
 
-    @RequestMapping(value = "/product/delete/{id}")
+    @RequestMapping(value = "/product/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteProcessingProduct(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.deleteProcessProduct(id));
@@ -69,7 +69,7 @@ public class ProcessOrderController {
         }
     }
 
-    @RequestMapping(value = "/print/{id}")
+    @RequestMapping(value = "/print/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> printProcessingOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.printProcessingOrder(id));
@@ -78,7 +78,7 @@ public class ProcessOrderController {
         }
     }
 
-    @RequestMapping(value = "/abandon/{id}")
+    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> abandonProcessingOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.abandonProcessingOrder(id));

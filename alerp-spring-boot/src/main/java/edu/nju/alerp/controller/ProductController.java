@@ -41,7 +41,7 @@ public class ProductController {
      * @param type
      * @return
      */
-    @RequestMapping(value = "/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> findProductsByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name", required = false) String name,
@@ -56,7 +56,7 @@ public class ProductController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<Product> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(productService.findProductById(id));
     }

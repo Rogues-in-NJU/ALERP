@@ -38,6 +38,11 @@ public class PurchaseOrder {
     private String description;
 
     /**
+     * 城市
+     */
+    private String city;
+
+    /**
      * 供货商id
      */
     @Column(name = "supplier_id")

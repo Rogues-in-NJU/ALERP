@@ -43,6 +43,11 @@ public class Product {
     private int type;
 
     /**
+     * 城市
+     */
+    private String city;
+
+    /**
      * 密度
      */
     private double density;

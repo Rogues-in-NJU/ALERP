@@ -10,6 +10,7 @@ import edu.nju.alerp.repo.SupplierRepository;
 import edu.nju.alerp.service.SupplierService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.SupplierListVO;
 import lombok.extern.slf4j.Slf4j;
@@ -92,13 +93,12 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Override
     public int addOrUpdateSupplier(SupplierDTO supplierDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
         Supplier supplier = Supplier.builder().id(supplierDTO.getId())
                                                 .name(supplierDTO.getName())
                                                 .status(SupplierStatus.NORMAL.getCode())
                                                 .description(supplierDTO.getDescription())
-                                                .createAt(TimeUtil.dateFormat(new Date()))
-                                                 .createBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                                                .createAt(DateUtils.getToday())
+                                                 .createBy(CommonUtils.getUserId())
                                                 .build();
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());

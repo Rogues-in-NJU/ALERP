@@ -115,7 +115,7 @@ public class ShippingOrderController {
                     .createdBy(userId)
                     .updatedAt(DateUtils.getToday())
                     .updatedBy(userId)
-                    .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER))
+                    .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
                     .customerId(shippingOrderDTO.getCustomerId())
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(shippingOrderDTO.getCash())

@@ -45,4 +45,10 @@ public class IdGenerator {
      */
     @Column(nullable = false)
     private String updateTime;
+
+    public void increment() {
+        synchronized (this) {
+            currentCount++;
+        }
+    }
 }

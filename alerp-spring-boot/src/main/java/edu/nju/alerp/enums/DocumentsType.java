@@ -23,4 +23,8 @@ public enum DocumentsType {
         }
         return null;
     }
+
+    public String appendCity(String city) {
+        return this.name + "_" + city;
+    }
 }
