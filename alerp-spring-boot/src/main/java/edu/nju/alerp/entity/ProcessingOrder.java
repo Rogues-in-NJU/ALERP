@@ -44,6 +44,11 @@ public class ProcessingOrder {
      */
     @Column(name = "customer_id", nullable = false)
     private int customerId;
+
+    /**
+     * 城市
+     */
+    private String city;
 //
 //    /**
 //     * 客户名字

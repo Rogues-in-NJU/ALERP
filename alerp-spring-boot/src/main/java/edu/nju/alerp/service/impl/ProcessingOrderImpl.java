@@ -22,7 +22,7 @@ import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
-import edu.nju.alerp.util.TimeUtil;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
 import edu.nju.alerp.vo.ProcessingOrderProductVO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +34,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -82,7 +80,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         Customer customerForProcessingOrder = customerService.getCustomer(processingOrder.getCustomerId());
         QueryContainer<ProcessOrderProduct> sp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("process_order_id", id));
+            sp.add(ConditionFactory.equal("processOrderId", id));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -121,9 +119,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                         .status(ProcessingOrderStatus.DRAFTING.getCode())
                                         .customerId(processingOrderDTO.getCustomerId())
                                         .salesman(processingOrderDTO.getSalesman())
-                                        .createAt(TimeUtil.dateFormat(new Date()))
+                                        .createAt(DateUtils.getToday())
                                         .createBy(CommonUtils.getUserId())
-                                        .updateAt(TimeUtil.dateFormat(new Date()))
+                                        .updateAt(DateUtils.getToday())
                                         .updateBy(CommonUtils.getUserId())
                                         .build();
 
@@ -154,7 +152,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         if (updateProcessProductDTO.getId() != null)
             processOrderProduct.setId(updateProcessProductDTO.getId());
         ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
-                                                                    .updateAt(TimeUtil.dateFormat(new Date()))
+                                                                    .updateAt(DateUtils.getToday())
                                                                      .updateBy(CommonUtils.getUserId())
                                                                     .build();
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
@@ -196,7 +194,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).abandonable())
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.ABANDONED.getCode());
-        processingOrder.setDeleteAt(TimeUtil.dateFormat(new Date()));
+        processingOrder.setDeleteAt(DateUtils.getToday());
         processingOrder.setDeleteBy(CommonUtils.getUserId());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
@@ -207,7 +205,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                    Integer status, String createAtStartTime, String createAtEndTime) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
         List<Integer> customers = new ArrayList<>();
-        if (customerName != null)  // todo 这里要改一下，是不是在这里判空
+        if (customerName != null)
             customers = customerRepository.findCustomerIdByNameAndShorthand(customerName);
         try {
             if (customerName != null)

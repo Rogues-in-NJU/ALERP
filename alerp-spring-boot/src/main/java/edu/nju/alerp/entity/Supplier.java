@@ -38,6 +38,11 @@ public class Supplier {
     private int status;
 
     /**
+     * 城市
+     */
+    private String city;
+
+    /**
      * 备注
      */
     private String description;

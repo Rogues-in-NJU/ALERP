@@ -22,7 +22,7 @@ import edu.nju.alerp.service.PurchaseOrderService;
 import edu.nju.alerp.service.SupplierService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
-import edu.nju.alerp.util.TimeUtil;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.PurchaseOrderDetailVO;
 import edu.nju.alerp.vo.PurchaseOrderListVO;
 import edu.nju.alerp.vo.PurchaseProductVO;
@@ -31,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -135,9 +133,9 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER))
                                                             .status(PurchaseOrderStatus.UNFINISHED.getCode())
-                                                            .createAt(TimeUtil.dateFormat(new Date()))
+                                                            .createAt(DateUtils.getToday())
                                                             .createBy(CommonUtils.getUserId())
-                                                            .updateAt(TimeUtil.dateFormat(new Date()))
+                                                            .updateAt(DateUtils.getToday())
                                                             .updateBy(CommonUtils.getUserId())
                                                             .build();
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
@@ -177,7 +175,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                         .description(addPaymentRecordDTO.getDescription())
                                                         .salesman(addPaymentRecordDTO.getSalesman())
                                                         .doneAt(addPaymentRecordDTO.getDoneAt())
-                                                        .createAt(TimeUtil.dateFormat(new Date()))
+                                                        .createAt(DateUtils.getToday())
                                                         .createBy(CommonUtils.getUserId())
                                                         .build();
         int result = paymentRecordRepository.saveAndFlush(newPayment).getId();
