@@ -2,12 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { RefreshableTab } from "../../tab/tab.component";
 import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
-import { AuthService } from "../../../../core/services/user.service";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
 import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 import { Objects } from "../../../../core/services/util.service";
 
 @Component({
@@ -30,7 +29,6 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
     private purchaseOrder: PurchaseOrderService,
     private message: NzMessageService,
     private tab: TabService
@@ -39,6 +37,11 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/purchase-order/list') {
+        this.refresh();
+      }
+    });
     this.refresh();
   }
 

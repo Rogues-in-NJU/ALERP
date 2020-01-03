@@ -1,13 +1,12 @@
-import {Component, OnInit} from "@angular/core";
-import {Router} from "@angular/router";
-import {RefreshableTab} from "../../tab/tab.component";
-import {AuthService} from "../../../../core/services/user.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {HttpErrorResponse} from "@angular/common/http";
-import {NzMessageService} from "ng-zorro-antd";
-import {TabService} from "../../../../core/services/tab.service";
-import {OperationInfoVO} from "../../../../core/model/operation";
-import {OperationService} from "../../../../core/services/operation.service";
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NzMessageService } from "ng-zorro-antd";
+import { TabService } from "../../../../core/services/tab.service";
+import { OperationInfoVO } from "../../../../core/model/operation";
+import { OperationService } from "../../../../core/services/operation.service";
 
 @Component({
   selector: 'user-management-operation',
@@ -26,7 +25,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
   operationList: OperationInfoVO[] = [];
 
   constructor(private router: Router,
-              private auth: AuthService,
               private Operation: OperationService,
               private message: NzMessageService,
               private tab: TabService) {

@@ -1,18 +1,17 @@
-import {Component, OnInit} from "@angular/core";
-import {ClosableTab} from "../../tab/tab.component";
-import {TabService} from "../../../../core/services/tab.service";
-import {Router} from "@angular/router";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ResultVO} from "../../../../core/model/result-vm";
-import {BehaviorSubject, Observable} from "rxjs";
-import {debounceTime, map, switchMap} from "rxjs/operators";
-import {NzMessageService} from "ng-zorro-antd";
-import {DateUtils, Objects} from "../../../../core/services/util.service";
-import {HttpErrorResponse} from "@angular/common/http";
-import {UserManagementService} from "../../../../core/services/user-management.service";
-import {AuthVO} from "../../../../core/model/auth";
-import {AuthService} from "../../../../core/services/user.service";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import { Component, OnInit } from "@angular/core";
+import { ClosableTab } from "../../tab/tab.component";
+import { TabService } from "../../../../core/services/tab.service";
+import { Router } from "@angular/router";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ResultVO } from "../../../../core/model/result-vm";
+import { BehaviorSubject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
+import { NzMessageService } from "ng-zorro-antd";
+import { DateUtils } from "../../../../core/services/util.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { UserManagementService } from "../../../../core/services/user-management.service";
+import { AuthVO } from "../../../../core/model/auth";
+import { UserManagementInfoVO } from "../../../../core/model/user-management";
 
 @Component({
   selector: 'user-management-add',
@@ -40,7 +39,6 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
               private userManagement: UserManagementService,
               private router: Router,
               private fb: FormBuilder,
-              private auth: AuthService,
               private message: NzMessageService) {
 
   }

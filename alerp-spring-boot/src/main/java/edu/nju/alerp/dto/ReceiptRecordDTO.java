@@ -21,9 +21,9 @@ public class ReceiptRecordDTO {
     private double cash;
 
     /**
-     * 收款人id
+     * 收款人
      */
-    private int salesmanId;
+    private String salesman;
 
     /**
      * 备注

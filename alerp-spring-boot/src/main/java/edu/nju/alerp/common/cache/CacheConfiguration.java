@@ -29,8 +29,13 @@ public class CacheConfiguration {
         return buildStringCache("supplierNameCache", 100000);
     }
 
+    @Bean
+    public Cache<Integer, Object> userCache() {
+        return buildObjectCache("userCache", 10000);
+    }
+
     private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
-        String cacheFile = "E:/mapdb/"+ cacheName;
+        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
         //todo 文件路径要配置好
         mkdir(cacheFile);
         DB db = DBMaker.fileDB(cacheFile)

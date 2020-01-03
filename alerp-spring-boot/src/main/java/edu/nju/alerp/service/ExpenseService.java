@@ -17,16 +17,14 @@ public interface ExpenseService {
      * @param expenseDTO
      * @return
      */
-    boolean addExpense(ExpenseDTO expenseDTO);
+    int addExpense(ExpenseDTO expenseDTO);
 
     /**
      * 删除公司支出
-     *
      * @param id
-     * @param delete_by
      * @return
      */
-    boolean deleteExpense(int id, int delete_by);
+    int deleteExpense(int id);
 
     /**
      * 获取公司支出列表

@@ -18,7 +18,7 @@ public interface ShippingOrderService {
 
     ShippingOrder getShippingOrder(int id);
 
-    boolean deleteShippingOrder(int id);
+    int deleteShippingOrder(int id);
 
     boolean printShippingOrder(int id);
 

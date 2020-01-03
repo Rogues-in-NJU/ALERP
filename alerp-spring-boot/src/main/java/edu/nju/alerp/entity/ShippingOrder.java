@@ -32,11 +32,13 @@ public class ShippingOrder {
     /**
      * 顾客id
      */
-    private int customer_id;
+    @Column(name = "customer_id")
+    private int customerId;
     /**
      * 收款单id
      */
-    private int arrear_order_id;
+    @Column(name = "arrear_order_id")
+    private int arrearOrderId;
     /**
      * 单据状态：已出货/已完成/已废弃
      */
@@ -45,6 +47,10 @@ public class ShippingOrder {
      * 总金额
      */
     private double cash;
+    /**
+     * 城市
+     */
+    private String city;
     /**
      *浮动金额
      */

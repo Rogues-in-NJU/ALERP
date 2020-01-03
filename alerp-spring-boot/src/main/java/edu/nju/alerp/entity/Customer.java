@@ -47,6 +47,10 @@ public class Customer {
      */
     private int pay_date;
     /**
+     * 城市
+     */
+    private int city;
+    /**
      * 顾客描述
      */
     private String description;

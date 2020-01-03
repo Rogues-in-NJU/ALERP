@@ -52,7 +52,7 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<CustomerVO> CustomerDO(
+    public ResponseResult<CustomerVO> CustomerVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);
@@ -95,7 +95,7 @@ public class CustomerController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name") String name) {
+                                             @RequestParam(value = "name", required = false, defaultValue = "") String name) {
         Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), name);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }

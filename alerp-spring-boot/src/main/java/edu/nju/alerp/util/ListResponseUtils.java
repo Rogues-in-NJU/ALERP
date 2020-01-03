@@ -30,7 +30,7 @@ public class ListResponseUtils {
         listResponse.setTotalPages(page.getTotalPages());
         listResponse.setPageSize(pageSize);
         listResponse.setPageIndex(pageIndex);
-        listResponse.setResult(page);
+        listResponse.setResult(page.getContent());
         return listResponse;
     }
 }

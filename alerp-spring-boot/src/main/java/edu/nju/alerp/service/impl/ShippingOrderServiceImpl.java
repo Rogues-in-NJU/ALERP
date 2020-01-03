@@ -2,6 +2,7 @@ package edu.nju.alerp.service.impl;
 
 
 import edu.nju.alerp.common.DocumentsIdFactory;
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
@@ -9,6 +10,7 @@ import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
 import edu.nju.alerp.enums.DocumentsType;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ShippingOrderStatus;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ShippingOrderProductRepository;
@@ -24,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,14 +48,21 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     @Override
     public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
-        HttpSession session = CommonUtils.getHttpSession();
+        int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER))
                 .createdAt(DateUtils.getToday())
-                .createdBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"))
+                .createdBy(userId)
+                .updatedAt(DateUtils.getToday())
+                .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
+        shippingOrderDTO.getShippingProductDTOList().forEach(p -> {
+            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+            BeanUtils.copyProperties(p, shippingOrderProduct);
+            shippingOrderProductRepository.save(shippingOrderProduct);
+        });
         return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
     }
 
@@ -64,19 +72,19 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public boolean deleteShippingOrder(int id) {
+    public int deleteShippingOrder(int id) {
         ShippingOrder shippingOrder = shippingOrderRepository.getOne(id);
-        HttpSession session = CommonUtils.getHttpSession();
         if (shippingOrder == null) {
             log.error("shippingOrder is null");
-            return false;
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "出货单id不存在！");
         }
-
+        if (shippingOrder.getStatus() == ShippingOrderStatus.ABANDONED.getCode()) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除出货单失败，出货单已被删除！");
+        }
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
         shippingOrder.setDeletedAt(DateUtils.getToday());
-        shippingOrder.setDeletedBy(session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId"));
-        shippingOrderRepository.save(shippingOrder);
-        return true;
+        shippingOrder.setDeletedBy(CommonUtils.getUserId());
+        return shippingOrderRepository.save(shippingOrder).getId();
     }
 
     @Override
@@ -92,10 +100,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             sp.add(ConditionFactory.equal("status", status));
             sp.add(ConditionFactory.In("customerId", customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", name));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("created_at", startTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("created_at", endTime));
+            if (!"".equals(name)) {
+                fuzzyMatch.add(ConditionFactory.like("name", name));
+                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            }
+            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             sp.add(ConditionFactory.or(fuzzyMatch));
         } catch (Exception e) {
             log.error("Value is null", e);

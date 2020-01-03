@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { QueryParams, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { CustomerVO } from "../model/customer";
+import { AppConfig } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class CustomerService {
   ): Observable<ResultVO<CustomerVO[]>>
     | Observable<ResultVO<TableResultVO<CustomerVO>>> {
     if (queryParams instanceof TableQueryParams) {
+      // return this.http.get(`${AppConfig.BASE_URL}/api`)
       return of({
         code: 200,
         message: '',

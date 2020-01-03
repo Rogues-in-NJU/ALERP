@@ -18,6 +18,8 @@ public interface Cache<K, V> {
 
     void putAll(Map<K, V> m);
 
+    void remove(K key);
+
     Map<K, V> getAll(Collection<K> ks);
 
     Map<K, V> getHeapAll();

@@ -17,3 +17,18 @@ export interface Auth {
   action?: number;
 
 }
+
+export interface PassportVO {
+
+  phoneNumber: string;
+  password: string;
+  city: number;
+
+}
+
+export interface LoginResultVO {
+
+  code: number;
+  result: string;
+
+}

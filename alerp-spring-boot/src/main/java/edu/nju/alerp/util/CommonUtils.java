@@ -25,4 +25,9 @@ public class CommonUtils {
     public static HttpSession getHttpSession() {
         return getHttpServletRequest().getSession();
     }
+
+    public static int getUserId(){
+        HttpSession session = getHttpSession();
+        return session.getAttribute("userId") == null ? 0 : (int) session.getAttribute("userId");
+    }
 }

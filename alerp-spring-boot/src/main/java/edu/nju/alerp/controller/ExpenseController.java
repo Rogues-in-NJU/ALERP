@@ -2,10 +2,11 @@ package edu.nju.alerp.controller;
 
 import javax.validation.Valid;
 
-import edu.nju.alerp.dto.ExpenseDTO;
-import edu.nju.alerp.service.ExpenseService;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
+import edu.nju.alerp.dto.ExpenseDTO;
+import edu.nju.alerp.service.ExpenseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 公司支出controller
+ *
  * @author luhailong
  * @date 2019/12/21
  */
@@ -36,39 +39,39 @@ public class ExpenseController {
      * @param expenseDTO
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseResult addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
-        expenseService.addExpense(expenseDTO);
-        return ResponseResult.ok();
+    public ResponseResult<Integer> addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
+        return ResponseResult.ok(expenseService.addExpense(expenseDTO));
     }
 
     /**
      * 删除公司支出
      *
      * @param id
-     * @param delete_by
      * @return
      */
+    @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}/{delete_by}", method = RequestMethod.GET)
-    public ResponseResult deleteExpense(@PathVariable(value = "id") int id,
-        @PathVariable(value = "delete_by") Integer delete_by) {
-        expenseService.deleteExpense(id, delete_by);
-        return ResponseResult.ok();
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
+    public ResponseResult<Integer> deleteExpense(@PathVariable(value = "id") int id) {
+        return ResponseResult.ok(expenseService.deleteExpense(id));
     }
 
     /**
      * 获取公司支出列表（分页）
+     *
      * @param pageIndex
      * @param pageSize
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> getExpenseList(@RequestParam(value = "pageIndex") int pageIndex,
         @RequestParam(value = "pageSize") int pageSize) {
-        ListResponse listResponse = expenseService.getExpenseList(pageIndex,pageSize);
+        ListResponse listResponse = expenseService.getExpenseList(pageIndex, pageSize);
         return ResponseResult.ok(listResponse);
     }
 }

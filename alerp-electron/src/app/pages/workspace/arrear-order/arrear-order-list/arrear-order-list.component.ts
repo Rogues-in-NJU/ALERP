@@ -1,15 +1,13 @@
-import {Component, OnInit} from "@angular/core";
-import {RefreshableTab} from "../../tab/tab.component";
-import {ArrearOrderInfoVO} from "../../../../core/model/arrear-order";
-import {Router} from "@angular/router";
-import {AuthService} from "../../../../core/services/user.service";
-import {NzMessageService} from "ng-zorro-antd";
-import {TabService} from "../../../../core/services/tab.service";
-import {ArrearOrderService} from "../../../../core/services/arrear-order.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import {PurchaseOrderVO} from "../../../../core/model/purchase-order";
-import {Objects} from "../../../../core/services/util.service";
-import {HttpErrorResponse} from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
+import { RefreshableTab } from "../../tab/tab.component";
+import { ArrearOrderInfoVO } from "../../../../core/model/arrear-order";
+import { Router } from "@angular/router";
+import { NzMessageService } from "ng-zorro-antd";
+import { TabService } from "../../../../core/services/tab.service";
+import { ArrearOrderService } from "../../../../core/services/arrear-order.service";
+import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { Objects } from "../../../../core/services/util.service";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: 'arrear-order-list',
@@ -32,7 +30,6 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
 
   constructor(
     private router: Router,
-    private auth: AuthService,
     private arrearOrder: ArrearOrderService,
     private message: NzMessageService,
     private tab: TabService

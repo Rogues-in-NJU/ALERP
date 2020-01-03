@@ -1,9 +1,11 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.entity.UserCityRelation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,10 +24,20 @@ public interface UserService {
 
     User getUserByPhoneNumber(String phoneNumber);
 
-    boolean deleteUser(int id);
+    int deleteUser(int id);
 
     List<User> getUserList();
 
     Page<User> getUserList(Pageable pageable, String name, int status);
+
+    /**
+     * 通过用户的姓名获取id
+     *
+     * @param name
+     * @return
+     */
+    int getIdFromName(String name);
+
+    List<Integer> getCitiesByUserId(int userId);
 
 }

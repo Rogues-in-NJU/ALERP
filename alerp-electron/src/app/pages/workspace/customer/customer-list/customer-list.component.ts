@@ -3,7 +3,7 @@ import { RefreshableTab } from "../../tab/tab.component";
 import { CustomerService } from "../../../../core/services/customer.service";
 import { Router } from "@angular/router";
 import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 import { CustomerVO } from "../../../../core/model/customer";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -55,6 +55,11 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/customer/list') {
+        this.refresh();
+      }
+    });
     this.customerAddForm = this.fb.group({
       name: [ null, Validators.required ],
       shorthand: [ null ],

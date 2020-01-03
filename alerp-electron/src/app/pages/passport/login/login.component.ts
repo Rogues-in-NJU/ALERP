@@ -1,8 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService, UserService } from "../../../core/services/user.service";
+import { UserService } from "../../../core/services/user.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { LoginCode, ResultCode, ResultVO } from "../../../core/model/result-vm";
+import { LoginResultVO } from "../../../core/model/user";
+import { HttpErrorResponse } from "@angular/common/http";
+import { Objects } from "../../../core/services/util.service";
 
 @Component({
   selector: 'passport-login',
@@ -12,10 +16,10 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  isLoading: boolean = false;
 
   constructor(
     private user: UserService,
-    private auth: AuthService,
     private message: NzMessageService,
     private fb: FormBuilder,
     private router: Router
@@ -28,20 +32,41 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      username: [ null, [ Validators.required, Validators.pattern(/^1[3456789]\d{9}$/) ] ],
+      phoneNumber: [ null, [ Validators.required, Validators.pattern(/^1[3456789]\d{9}$/) ] ],
       password: [ null, Validators.required ],
-      location: [ 1, Validators.required ]
+      city: [ 1, Validators.required ]
     });
   }
 
   login(): void {
-    this.router.navigate(['/workspace']);
-    // if (!this.loginForm.valid) {
-    //   Object.values(this.loginForm.controls).forEach(c => {
-    //     c.markAsDirty();
-    //     c.updateValueAndValidity();
-    //   });
-    // }
+    if (!this.loginForm.valid) {
+      Object.values(this.loginForm.controls).forEach(item => {
+        item.markAsDirty();
+        item.updateValueAndValidity();
+      });
+      return;
+    }
+    this.isLoading = true;
+    this.user.login(this.loginForm.getRawValue())
+      .subscribe((res: ResultVO<LoginResultVO>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        const loginVO: LoginResultVO = res.data;
+        if (loginVO.code === LoginCode.SUCCESS.code) {
+          this.router.navigate(['/workspace']);
+        } else {
+          this.message.error(loginVO.result);
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.isLoading = false;
+      }, () => {
+        this.isLoading = false;
+      });
   }
 
 }
