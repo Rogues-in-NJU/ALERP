@@ -69,6 +69,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
 
     @Override
     public Page<PurchaseOrderListVO> findAllByPage(Pageable pageable, String id, Integer status, String doneStartTime, String doneEndTime) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         QueryContainer<PurchaseOrder> sp = new QueryContainer<>();
         try {
             if (id != null)
@@ -77,6 +78,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                 sp.add(ConditionFactory.equal("status", status));
             else
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
+            sp.add(ConditionFactory.equal("city", city));
             sp.add(ConditionFactory.between("doneAt", doneStartTime, doneEndTime));
         }catch (Exception e) {
             log.error("Value is null.", e);
@@ -123,10 +125,12 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
 
     @Override
     public int addNewPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         PurchaseOrder purchaseOrder = PurchaseOrder.builder().description(purchaseOrderDTO.getDescription())
                                                             .supplierId(purchaseOrderDTO.getSupplierId())
                                                             .cash(purchaseOrderDTO.getCash())
                                                             .salesman(purchaseOrderDTO.getSalesman())
+                                                            .city(city)
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER, CityEnum.of(CommonUtils.getCity())))
                                                             .status(PurchaseOrderStatus.UNFINISHED.getCode())
@@ -159,7 +163,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据不能继续支付");
 
         QueryContainer<PaymentRecord> sp = new QueryContainer<>();
-        sp.add(ConditionFactory.equal("purchase_order_id", purchaseOrder.getId()));
+        sp.add(ConditionFactory.equal("purchaseOrderId", purchaseOrder.getId()));
         sp.add(ConditionFactory.equal("status", PaymentRecordStatus.CONFIRMED));
         List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(sp);
         double payed = paymentRecords.parallelStream().mapToDouble(PaymentRecord::getCash).sum();

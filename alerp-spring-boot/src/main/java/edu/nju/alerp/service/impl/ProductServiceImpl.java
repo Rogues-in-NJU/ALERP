@@ -2,6 +2,7 @@ package edu.nju.alerp.service.impl;
 
 import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.dto.ProductDTO;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.repo.ProductRepository;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
@@ -54,11 +55,16 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 //        };
         QueryContainer<Product> sp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("type", type));
+            if (type != null)
+                sp.add(ConditionFactory.equal("type", type));
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("name", name));
-            fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-            sp.add(ConditionFactory.or(fuzzyMatch));
+            if (name != null) {
+                fuzzyMatch.add(ConditionFactory.like("name", name));
+                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
+            String city = CityEnum.of(CommonUtils.getCity()).getMessage();
+            sp.add(ConditionFactory.equal("city", city));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -94,6 +100,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         Product product = Product.builder()
                 .createAt(DateUtils.getToday())
                 .createBy(CommonUtils.getUserId())
@@ -102,6 +109,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
                 .shorthand(productDTO.getShorthand())
+                .city(city)
                 .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                 .specification(productDTO.getSpecification()).build();
         if (productDTO.getId() != null){
