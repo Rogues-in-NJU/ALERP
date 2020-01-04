@@ -36,7 +36,7 @@ public class SupplierController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
-                                                                  @RequestParam(value = "name") String name){
+                                                                  @RequestParam(value = "name", required = false) String name){
         return ResponseResult.ok(ListResponseUtils.generateResponse(supplierService.findSuppliersByPage(PageRequest.of(pageIndex - 1, pageSize), name),pageIndex,pageSize));
     }
 

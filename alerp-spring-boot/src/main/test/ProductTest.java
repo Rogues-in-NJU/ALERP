@@ -17,4 +17,9 @@ public class ProductTest extends BaseTest{
         List<Product> products = productRepository.findAll();
         log.info("[{}]", products);
     }
+
+    @Test
+    public void testPath() {
+        log.info(ProductTest.class.getResource("/").getPath());
+    }
 }
