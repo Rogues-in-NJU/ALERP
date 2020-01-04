@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
                     .updatedAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
-            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice = SpecialPrice.builder()
@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
                     .updatedAt(DateUtils.getToday())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
-            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPricesList();
+            List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());

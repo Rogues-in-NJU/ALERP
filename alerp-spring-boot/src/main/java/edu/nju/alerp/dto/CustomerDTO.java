@@ -23,5 +23,5 @@ public class CustomerDTO {
     private int city;
     private String description;
     private String updateTime;
-    private List<SpecialPricesDTO> specialPricesList;
+    private List<SpecialPricesDTO> specialPrices;
 }
