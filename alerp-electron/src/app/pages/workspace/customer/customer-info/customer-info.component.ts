@@ -10,13 +10,14 @@ import { ProductVO } from "../../../../core/model/product";
 import { BehaviorSubject, Observable } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
+import { RefreshableTab } from "../../tab/tab.component";
 
 @Component({
   selector: 'customer-info',
   templateUrl: './customer-info.component.html',
   styleUrls: [ './customer-info.component.less' ]
 })
-export class CustomerInfoComponent implements OnInit {
+export class CustomerInfoComponent implements RefreshableTab, OnInit {
 
   isLoading: boolean = true;
   customerId: number;
@@ -85,7 +86,7 @@ export class CustomerInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.customerId = this.route.snapshot.params[ 'id' ];
-    this.reload();
+    this.refresh();
 
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<ProductVO[]>>
@@ -156,7 +157,7 @@ export class CustomerInfoComponent implements OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
-        this.reload();
+        this.refresh();
         this.isInfoSaving = false;
         this.isInfoEditing = false;
       });
@@ -176,8 +177,8 @@ export class CustomerInfoComponent implements OnInit {
       return;
     }
     let item: CustomerSpecialPriceVO = {
-      id: 0,
-      productId: 0,
+      id: null,
+      productId: null,
       productName: '',
       price: 0,
       priceType: 1
@@ -247,7 +248,7 @@ export class CustomerInfoComponent implements OnInit {
     // TODO: 提交远程
   }
 
-  reload(): void {
+  refresh(): void {
     this.isLoading = true;
     Object.assign(this.editCache, this.defaultEditCache);
     this.customer.find(this.customerId)

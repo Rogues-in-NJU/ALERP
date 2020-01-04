@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { PurchaseOrderVO, PurchaseOrderProductVO } from "../../../../core/model/purchase-order";
 import { ProductService } from "../../../../core/services/product.service";
 import { ProductVO } from "../../../../core/model/product";
-import { QueryParams, ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { BehaviorSubject, Observable } from "rxjs";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { NzMessageService } from "ng-zorro-antd";
@@ -82,10 +82,22 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       doneAt: [ null, Validators.required ]
     });
     const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<ProductVO>>>
+        = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 100000,
+          name: name
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const productOptionList$: Observable<ProductVO[]> = this.searchProductsChange$
       .asObservable()
@@ -96,10 +108,22 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       this.isProductLoading = false;
     });
     const getSuppliers: any = (name: string) => {
-      const t: Observable<ResultVO<SupplierVO[]>>
-        = <Observable<ResultVO<SupplierVO[]>>>this.supplier
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<SupplierVO>>>
+        = <Observable<ResultVO<TableResultVO<SupplierVO>>>>this.supplier
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 100000,
+          name: name
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const supplierOptionList$: Observable<SupplierVO[]> = this.searchSuppliersChange$
       .asObservable()

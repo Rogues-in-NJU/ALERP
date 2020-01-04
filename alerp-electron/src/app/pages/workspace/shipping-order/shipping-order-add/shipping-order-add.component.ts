@@ -239,7 +239,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     //   }, (error: HttpErrorResponse) => {
     //     this.message.error(error.message);
     //   }, () => {
-    //     this.reload();
+    //     this.refresh();
     //   });
 
     //todo 写个累加金额的方法
