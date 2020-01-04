@@ -66,7 +66,7 @@ public class CustomerController {
             specialPricesVOList.add(specialPricesVO);
         }
         CustomerVO customerVO = CustomerVO.builder()
-                .specialPricesVOList(specialPricesVOList)
+                .specialPrices(specialPricesVOList)
                 .build();
         BeanUtils.copyProperties(customer, customerVO);
 

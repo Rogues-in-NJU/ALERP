@@ -54,6 +54,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
                 .createdAt(DateUtils.getToday())
                 .createdBy(userId)
+                .city(CommonUtils.getCity())
                 .updatedAt(DateUtils.getToday())
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())

@@ -27,5 +27,5 @@ public class CustomerVO {
     private String deletedAt;
     private int updatedBy;
     private String updatedAt;
-    private List<SpecialPricesVO> specialPricesVOList;
+    private List<SpecialPricesVO> specialPrices;
 }
