@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { PurchaseOrderPaymentRecordVO, PurchaseOrderVO } from "../model/purchase-order";
-import { StringUtils } from "./util.service";
+import { AppConfig } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -18,31 +18,30 @@ export class PurchaseOrderService {
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<PurchaseOrderVO>>> {
     // // prod
-    // return this.http.post<ResultVO<TableResultVO<PurchaseOrderVO>>>(
-    //   `${AppConfig.BASE_URL}/api/purchase-order/list`,
-    //   queryParams
-    // );
-    // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result: [{
-          id: 1,
-          code: '00001000',
-          description: '',
-          supplierId: 1,
-          supplierName: 'ZZZ公司',
-          cash: 20000,
-          salesman: '',
-          doneAt: '2019-10-10 12:00',
-          status: 1
-        }]
-      }
+    return this.http.get<ResultVO<TableResultVO<PurchaseOrderVO>>>(`${AppConfig.BASE_URL}/api/purchase-order/list`, {
+      params: queryParams
     });
+    // test
+    // return of({
+    //   code: 200,
+    //   message: '',
+    //   data: {
+    //     totalPages: 1,
+    //     pageIndex: 1,
+    //     pageSize: 10,
+    //     result: [{
+    //       id: 1,
+    //       code: '00001000',
+    //       description: '',
+    //       supplierId: 1,
+    //       supplierName: 'ZZZ公司',
+    //       cash: 20000,
+    //       salesman: '',
+    //       doneAt: '2019-10-10 12:00',
+    //       status: 1
+    //     }]
+    //   }
+    // });
   }
 
   public find(id: number): Observable<ResultVO<PurchaseOrderVO>> {

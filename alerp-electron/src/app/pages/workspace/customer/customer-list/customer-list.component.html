@@ -62,7 +62,7 @@
     <nz-form-item>
       <nz-form-label>客户名称/速记编号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="customerName"/>
+        <input nz-input type="text" [(ngModel)]="customerName" (keypress)="($event.which === 13) ? search() : 0"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>

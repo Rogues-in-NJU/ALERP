@@ -6,6 +6,7 @@ import {AuthorizationGuard} from "../../../guards/authorization.guard";
 import {ArrearOrderListComponent} from "./arrear-order-list/arrear-order-list.component";
 import {ArrearOrderInfoComponent} from "./arrear-order-info/arrear-order-info.component";
 import {ArrearOrderStatusColorPipe, ArrearOrderStatusPipe} from "./arrear-order.pipe";
+import {ArrearOrderStatisticsComponent} from "./arrear-order-statistics/arrear-order-statistics.component";
 
 
 const routes: Routes = [
@@ -28,6 +29,14 @@ const routes: Routes = [
       removable: true,
       replaceParams: [ 'code' ]
     }
+  },{
+    path: 'statistics',
+    component: ArrearOrderStatisticsComponent,
+    canActivate: [ AuthorizationGuard ],
+    data: {
+      title: '欠款统计',        // title内容将会被显示在tab的标签上，其中通过{}和replaceParams来依次填充route中的特殊内容
+      removable: true,
+    }
   }
 ];
 
@@ -41,7 +50,8 @@ const routes: Routes = [
   declarations: [ArrearOrderListComponent,
     ArrearOrderInfoComponent,
     ArrearOrderStatusPipe,
-    ArrearOrderStatusColorPipe],
+    ArrearOrderStatusColorPipe,
+    ArrearOrderStatisticsComponent],
   exports: [ RouterModule ]
 })
 export class ArrearOrderModule {
