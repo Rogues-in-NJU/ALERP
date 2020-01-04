@@ -1,0 +1,48 @@
+<nz-page-header>
+  <nz-page-header-title>欠款统计</nz-page-header-title>
+</nz-page-header>
+<div class="content">
+  <div class="table-wrapper">
+    <nz-table #statisticsTable
+              nzShowPagination="false"
+              [nzData]="customers"
+              [nzLoading]="isLoading"
+              [nzScroll]="{ x: '100%'}">
+      <thead>
+      <tr>
+        <th nzLeft="0px" nzWidth="150px">客户</th>
+        <th>明细</th>
+        <th nzWidth="150px">统计</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of statisticsTable.data">
+        <td>
+          <a routerLink="/workspace/customer/info/{{ data.customerId }}">{{ data.customerName }}</a>
+        </td>
+        <td>
+          <nz-descriptions *ngFor="let overdue of data.overdues">
+            <nz-descriptions-item [nzSpan]="4" nzTitle="{{overdue.month}}">{{overdue.cash}}</nz-descriptions-item>
+          </nz-descriptions>
+        </td>
+        <td>
+          {{ data.total }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          总计
+        </td>
+        <td>
+          <nz-descriptions *ngFor="let overdue of statistics.overdues">
+            <nz-descriptions-item [nzSpan]="4" nzTitle="{{overdue.month}}">{{overdue.cash}}</nz-descriptions-item>
+          </nz-descriptions>
+        </td>
+        <td>
+          {{ statistics.total }}
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

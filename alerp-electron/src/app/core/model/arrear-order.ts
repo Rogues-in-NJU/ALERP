@@ -29,3 +29,29 @@ export interface ArrearOrderReceiptRecordVO extends BaseInfo {
   doneAt?: string;
 
 }
+
+export interface ArrearStatisticsVO {
+
+  customers?: CustomerOverduesVO[];
+  statistics?: AllOverDuesVO;
+
+}
+
+export interface CustomerOverduesVO {
+  customerId?: number;
+  customerName?: string;
+  total?: number;
+
+  overdues?: OverdueVO[];
+}
+
+export interface AllOverDuesVO {
+  total?: number;
+
+  overdues?: OverdueVO[];
+}
+
+export interface OverdueVO {
+  month?: string;
+  cash?: number;
+}

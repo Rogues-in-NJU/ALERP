@@ -4,7 +4,7 @@ import { Observable, of } from "rxjs";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
 import {PurchaseOrderPaymentRecordVO, PurchaseOrderVO} from "../model/purchase-order";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
-import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO} from "../model/arrear-order";
+import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO, ArrearStatisticsVO} from "../model/arrear-order";
 
 @Injectable({
   providedIn: 'root'
@@ -108,5 +108,71 @@ export class ArrearOrderService {
     });
   }
 
+  public getArrearStatistics() : Observable<ResultVO<ArrearStatisticsVO>>{
+    return of({
+      code: ResultCode.SUCCESS.code,
+      message: '',
+      data: {
+        customers: [
+          {
+            customerId: 1,
+            customerName: '于海强1',
+            overdues: [{
+                month: '七月',
+                cash: 10000,
+              },{
+                month: '八月',
+                cash: 10000,
+              },{
+                month: '九月',
+                cash: 10000,
+            }],
+            total: 30000
+          },{
+            customerId: 2,
+            customerName: '于海强2',
+            overdues: [{
+              month: '七月',
+              cash: 10000,
+            },{
+              month: '八月',
+              cash: 10000,
+            },{
+              month: '九月',
+              cash: 10000,
+            }],
+            total: 30000
+          },{
+            customerId: 3,
+            customerName: '于海强3',
+            overdues: [{
+              month: '七月',
+              cash: 10000,
+            },{
+              month: '八月',
+              cash: 10000,
+            },{
+              month: '九月',
+              cash: 10000,
+            }],
+            total: 30000
+          }
+        ],
+        statistics:{
+          overdues: [{
+            month: '七月',
+            cash: 30000,
+          },{
+            month: '八月',
+            cash: 30000,
+          },{
+            month: '九月',
+            cash: 30000,
+          }],
+          total: 90000
+        }
+      }
+    });
+  }
 
 }
