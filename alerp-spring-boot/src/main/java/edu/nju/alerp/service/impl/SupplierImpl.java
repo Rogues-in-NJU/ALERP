@@ -5,6 +5,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.SupplierDTO;
 import edu.nju.alerp.entity.Supplier;
+import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.SupplierStatus;
 import edu.nju.alerp.repo.SupplierRepository;
 import edu.nju.alerp.service.SupplierService;
@@ -68,9 +69,11 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Override
     public Page<SupplierListVO> findSuppliersByPage(Pageable pageable, String name) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         QueryContainer<Supplier> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.like("name", name));
+            sp.add(ConditionFactory.equal("city", city));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -93,8 +96,10 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Override
     public int addOrUpdateSupplier(SupplierDTO supplierDTO) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         Supplier supplier = Supplier.builder().id(supplierDTO.getId())
                                                 .name(supplierDTO.getName())
+                                                .city(city)
                                                 .status(SupplierStatus.NORMAL.getCode())
                                                 .description(supplierDTO.getDescription())
                                                 .createAt(DateUtils.getToday())

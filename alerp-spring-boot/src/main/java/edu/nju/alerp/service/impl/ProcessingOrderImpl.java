@@ -115,11 +115,13 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         ProcessingOrder processingOrder = ProcessingOrder.builder()
                                         .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER, CityEnum.of(CommonUtils.getCity())))
                                         .status(ProcessingOrderStatus.DRAFTING.getCode())
                                         .customerId(processingOrderDTO.getCustomerId())
                                         .salesman(processingOrderDTO.getSalesman())
+                                        .city(city)
                                         .createAt(DateUtils.getToday())
                                         .createBy(CommonUtils.getUserId())
                                         .updateAt(DateUtils.getToday())
@@ -205,6 +207,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public Page<ProcessingOrder> findAllByPage(Pageable pageable, String id, String customerName,
                                                    Integer status, String createAtStartTime, String createAtEndTime) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
+        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         List<Integer> customers = new ArrayList<>();
         if (customerName != null)
             customers = customerRepository.findCustomerIdByNameAndShorthand(customerName);
@@ -218,6 +221,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             else
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
 //            sp.add(ConditionFactory.between("createAt", createAtStartTime, createAtEndTime));
+            sp.add(ConditionFactory.equal("city", city));
             sp.add(ConditionFactory.greatThanEqualTo("createAt", createAtStartTime));
             sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
         }catch (Exception e) {
