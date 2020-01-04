@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
-import { QueryParams, ResultCode, ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
 import { ProductVO } from "../../../../core/model/product";
@@ -12,6 +12,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
+import { CustomerVO } from "../../../../core/model/customer";
 
 @Component({
   selector: 'processing-order-info',
@@ -80,10 +81,22 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     this.refresh();
 
     const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<ProductVO>>>
+        = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 100000,
+          name: name
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChanges$
       .asObservable()
