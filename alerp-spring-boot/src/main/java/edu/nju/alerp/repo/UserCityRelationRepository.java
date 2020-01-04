@@ -3,6 +3,7 @@ package edu.nju.alerp.repo;
 import edu.nju.alerp.entity.UserCityRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 public interface UserCityRelationRepository extends JpaRepository<UserCityRelation, Integer> {
 
     @Query("select u.cityId from UserCityRelation u where u.userId = :userId")
-    List<Integer> findCitiesByUserId(@RequestParam("userId") int userId);
+    List<Integer> findCitiesByUserId(@Param("userId") int userId);
 
 
 }

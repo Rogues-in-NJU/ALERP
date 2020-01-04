@@ -3,6 +3,7 @@ package edu.nju.alerp.repo;
 import edu.nju.alerp.entity.ShippingOrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -16,5 +17,5 @@ public interface ShippingOrderProductRepository extends JpaRepository<ShippingOr
     List<ShippingOrderProduct> findAllByShippingOrderId(int shippingOrderId);
 
     @Query("select distinct s.processingOrderId from ShippingOrderProduct s where s.shippingOrderId = :shippingOrderId")
-    List<Integer> findProcessingListByShippingId(@RequestParam("shippingOrderId") int shippingOrderId);
+    List<Integer> findProcessingListByShippingId(@Param("shippingOrderId") int shippingOrderId);
 }
