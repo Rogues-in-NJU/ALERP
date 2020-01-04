@@ -114,6 +114,9 @@ public class CustomerServiceImpl implements CustomerService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");
         }
         if (customer.getUpdatedAt() != null) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户状态发生更新！");
+        }
+        if (customer.getDeletedAt() != null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户已被删除！");
         }
         customer.setDeletedAt(DateUtils.getToday());
