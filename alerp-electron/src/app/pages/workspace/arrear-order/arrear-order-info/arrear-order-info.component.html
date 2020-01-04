@@ -6,77 +6,58 @@
   <nz-skeleton [nzActive]="true"></nz-skeleton>
 </div>
 <div class="content" *ngIf="!isLoading">
+<!--  欠款单编号 出货单编号 状态 发票流水号 客户  应收金额 已收金额 截至日期 创建者 创建时间 删除者 删除时间-->
   <nz-descriptions nzBordered nzSize="small">
-    <nz-descriptions-item nzTitle="采购单编号" [nzSpan]="2">{{ purchaseOrderData.code }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="采购公司" [nzSpan]="2">{{ purchaseOrderData.supplierName }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="描述" [nzSpan]="2">{{ purchaseOrderData.description }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="欠款明细编号" [nzSpan]="2">{{ arrearOrderData.code }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">{{ arrearOrderData.shippingOrderCode }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="客户" [nzSpan]="2">{{ arrearOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
-      <nz-badge nzStatus="success" nzText="已完成" *ngIf="purchaseOrderData.status === 1"></nz-badge>
+      <nz-badge nzStatus="success" nzText="已完成" *ngIf="arrearOrderData.status === 1"></nz-badge>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="已付金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="采购时间" [nzSpan]="2">{{ purchaseOrderData.doneAt }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ purchaseOrderData.salesman }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ purchaseOrderData.createdAt }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="创建者" [nzSpan]="2">{{ purchaseOrderData.createdByName }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="应收金额" [nzSpan]="2">&yen;{{ arrearOrderData.receivableCash | number:'1.2-2' }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="已收金额" [nzSpan]="2">&yen;{{ arrearOrderData.receivedCash | number:'1.2-2' }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="截至时间" [nzSpan]="4">{{ arrearOrderData.dueDate }}</nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="发票流水号" [nzSpan]="4">{{ arrearOrderData.invoiceNumber }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ arrearOrderData.createdAt }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="创建者" [nzSpan]="2">{{ arrearOrderData.createdByName }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="最近更新时间" [nzSpan]="2">{{ arrearOrderData.updatedAt }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="更新者" [nzSpan]="2">{{ arrearOrderData.updatedByName }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="删除时间" [nzSpan]="2">{{ arrearOrderData.deletedAt }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="删除者" [nzSpan]="2">{{ arrearOrderData.deletedByName }}</nz-descriptions-item>
   </nz-descriptions>
   <br/>
   <nz-tabset>
-    <nz-tab nzTitle="采购商品列表">
-      <nz-table #purchaseOrderProductsTable
-                nzSize="middle"
-                [nzData]="purchaseOrderData.products">
-        <thead>
-        <tr>
-          <th>商品编号</th>
-          <th>商品名称</th>
-          <th>数量</th>
-          <th>重量(kg)</th>
-          <th>单价</th>
-          <th>总价</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let data of purchaseOrderProductsTable.data">
-          <td>{{ data.id }}</td>
-          <td>{{ data.name }}</td>
-          <td>{{ data.quantity }}</td>
-          <td>{{ data.weight }}</td>
-          <td>{{ data.price }}</td>
-          <td>&yen;{{ data.cash | number: '1.2-2' }}</td>
-        </tr>
-        </tbody>
-      </nz-table>
-    </nz-tab>
     <nz-tab nzTitle="付款记录">
       <div nz-row>
         <button nz-button
-                (click)="addPaymentRecordRow()"
+                (click)="addReceiptRecordRow()"
                 nzType="primary"
                 [disabled]="editCache._id !== null">
           <i nz-icon nzType="plus" nzTheme="outline"></i>
-          新增付款记录
+          新增收款记录
         </button>
       </div>
       <br/>
-      <nz-table #purchaseOrderPaymentRecordTable
+      <nz-table #arrearOrderReceiptRecordTable
                 nzBordered
                 nzShowPagination="false"
                 nzSize="middle"
-                [nzData]="purchaseOrderData.paymentRecords"
+                [nzData]="arrearOrderData.receipts"
                 [nzScroll]="{ y: '400px' }">
         <thead>
+<!--        金额 描述 业务员 收款时间 状态 操作-->
         <tr>
           <th nzWidth="120px">金额</th>
           <th nzWidth="200px">描述</th>
           <th nzWidth="120px">业务员</th>
-          <th nzWidth="250px">付款日期</th>
+          <th nzWidth="250px">收款日期</th>
           <th nzWidth="100px">状态</th>
           <th>操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of purchaseOrderPaymentRecordTable.data">
+        <tr *ngFor="let data of arrearOrderReceiptRecordTable.data">
           <td>
             <ng-container *ngIf="editCache._id !== data['_id']; else cashEditTpl">
               &yen;{{ data.cash | number:'1.2-2' }}
@@ -138,7 +119,7 @@
 
             </ng-container>
             <ng-template #saveTpl>
-              <a (click)="savePaymentEdit(data._id)">保存</a>
+              <a (click)="saveReceiptsEdit(data._id)">保存</a>
               <a nz-popconfirm
                  nzTitle="确认取消?"
                  (nzOnConfirm)="cancelPaymentRecordDelete(data._id)"

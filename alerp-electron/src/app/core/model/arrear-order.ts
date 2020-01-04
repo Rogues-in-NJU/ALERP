@@ -21,6 +21,7 @@ export interface ArrearOrderInfoVO extends BaseInfo {
 export interface ArrearOrderReceiptRecordVO extends BaseInfo {
 
   id?: number;
+  arrearOrderId?: number;
   status?: number;
   cash?: number;
   salesman?: string;
