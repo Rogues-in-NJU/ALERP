@@ -113,9 +113,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");
         }
-        if (customer.getUpdatedAt() != null) {
-            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户状态发生更新！");
-        }
         if (customer.getDeletedAt() != null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户已被删除！");
         }
@@ -130,11 +127,13 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findAll();
     }
 
+
     @Override
     public Page<Customer> getCustomerListByName(Pageable pageable, String name) {
         QueryContainer<Customer> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.isNull("deletedAt"));
+            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             if (!"".equals(name)) {
                 List<Condition> fuzzyMatch = new ArrayList<>();
                 fuzzyMatch.add(ConditionFactory.like("name", name));

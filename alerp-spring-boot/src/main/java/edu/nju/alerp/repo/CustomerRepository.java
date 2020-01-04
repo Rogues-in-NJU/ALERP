@@ -17,4 +17,7 @@ import java.util.List;
 public interface CustomerRepository extends JpaRepository<Customer, Integer>, JpaSpecificationExecutor<Customer> {
     @Query("select id from Customer c where c.name like %:name% or c.shorthand like %:name%")
     List<Integer> findCustomerIdByNameAndShorthand(@Param("name") String name);
+
+    @Query("select c from Customer c where c.name like %:name% or c.shorthand like %:name%")
+    List<Customer> findCustomerListByName(@Param("name") String name);
 }

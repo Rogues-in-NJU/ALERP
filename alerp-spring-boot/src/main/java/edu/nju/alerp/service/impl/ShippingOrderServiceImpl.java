@@ -100,6 +100,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
         try {
             sp.add(ConditionFactory.equal("status", status));
+            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             sp.add(ConditionFactory.In("customerId", customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {

@@ -18,6 +18,7 @@ import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.PasswordUtil;
 import io.swagger.models.auth.In;
@@ -129,6 +130,7 @@ public class UserServiceImpl implements UserService {
         QueryContainer<User> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.equal("status", status));
+            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
