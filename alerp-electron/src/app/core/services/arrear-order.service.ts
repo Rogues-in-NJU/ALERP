@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
-import { ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
-import {PurchaseOrderVO} from "../model/purchase-order";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
+import {PurchaseOrderPaymentRecordVO, PurchaseOrderVO} from "../model/purchase-order";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
-import {ArrearOrderInfoVO} from "../model/arrear-order";
+import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO} from "../model/arrear-order";
 
 @Injectable({
   providedIn: 'root'
@@ -86,8 +86,9 @@ export class ArrearOrderService {
         overDue: false,
         createdBy: '于海强',
 
-        products: [{
+        receipts: [{
           id: 1,
+          arrearOrderId: 1,
           status: 0,
           cash: 2000,
           salesman: '殷乾恩',
@@ -97,4 +98,15 @@ export class ArrearOrderService {
       }
     })
   }
+
+  public saveReceiptRecord(receiptRecord: ArrearOrderReceiptRecordVO): Observable<ResultVO<any>> {
+    console.log(receiptRecord);
+    return of({
+      code: ResultCode.SUCCESS.code,
+      message: '',
+      data: null
+    });
+  }
+
+
 }
