@@ -104,7 +104,7 @@ public class ShippingOrderController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
