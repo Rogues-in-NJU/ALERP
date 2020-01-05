@@ -132,4 +132,23 @@ public class UserController {
 
     }
 
+    /**
+     * 用户登出
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ResponseResult<Boolean> logout() {
+        try {
+            HttpSession session = CommonUtils.getHttpSession();
+            session.removeAttribute("userId");
+            session.removeAttribute("cityId");
+            return ResponseResult.ok(true);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
 }

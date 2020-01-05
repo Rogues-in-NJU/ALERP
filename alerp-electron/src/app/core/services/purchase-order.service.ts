@@ -19,7 +19,8 @@ export class PurchaseOrderService {
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<PurchaseOrderVO>>> {
     // // prod
     return this.http.get<ResultVO<TableResultVO<PurchaseOrderVO>>>(`${AppConfig.BASE_URL}/api/purchase-order/list`, {
-      params: queryParams
+      params: queryParams,
+      withCredentials: true
     });
     // test
     // return of({
