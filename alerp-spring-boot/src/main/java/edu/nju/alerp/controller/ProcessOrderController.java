@@ -50,7 +50,7 @@ public class ProcessOrderController {
         return ResponseResult.ok(processOrderService.findProcessingById(id));
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addNewProcessingOrder(@RequestBody ProcessingOrderDTO processingOrderDTO) {
         return ResponseResult.ok(processOrderService.addProcessingOrder(processingOrderDTO));
     }

@@ -62,12 +62,12 @@ public class ProductController {
     }
 
     /**
-     * 新增公司支出
+     * 新增或更新商品
      *
      * @param productDTO
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
             int res = productService.addOrUpdate(productDTO);

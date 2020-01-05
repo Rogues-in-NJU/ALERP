@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,12 +81,12 @@ public class SupplierImpl implements SupplierService, InitializingBean {
         }catch (Exception e) {
             log.error("Value is null.");
         }
-        List<Supplier> suppliers = null;
+        Page<Supplier> suppliers = null;
         if (sp.isEmpty())
-            suppliers = supplierRepository.findAll();
+            suppliers = supplierRepository.findAll(pageable);
         else
-            suppliers = supplierRepository.findAll(sp);
-        List<SupplierListVO> queryed = suppliers.parallelStream()
+            suppliers = supplierRepository.findAll(sp, pageable);
+        List<SupplierListVO> queryed = suppliers.getContent().stream()
                                                         .map(s -> SupplierListVO.builder()
                                                                 .id(s.getId())
                                                                 .name(s.getName())

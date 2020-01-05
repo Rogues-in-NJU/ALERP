@@ -83,8 +83,8 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
-        List<PurchaseOrder> res = purchaseOrderRepository.findAll(sp);
-        List<PurchaseOrderListVO> resultList = res.parallelStream()
+        Page<PurchaseOrder> res = purchaseOrderRepository.findAll(sp, pageable);
+        List<PurchaseOrderListVO> resultList = res.getContent().parallelStream()
                                             .map(p -> PurchaseOrderListVO.buildVO(p, supplierService.getSupplierName(p.getSupplierId()), userService.getUser(p.getCreateBy()).getName()))
                                             .filter(Objects::nonNull).collect(Collectors.toList());
         return new PageImpl<>(resultList, pageable, resultList.size());
