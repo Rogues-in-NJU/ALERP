@@ -142,8 +142,7 @@ public class UserController {
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
-            session.removeAttribute("userId");
-            session.removeAttribute("cityId");
+            session.invalidate();
             return ResponseResult.ok(true);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
