@@ -965,3 +965,50 @@ GET
 res:
 {}
 ```
+
+### 汇总信息模块
+#### 汇总信息
+```
+GET
+/api/summary/info
+
+res:
+{
+  processingOrderTotalWeight: number, // 加工单铝材总重量
+  shippingOrderTotalWeight: number,  // 出货单铝材总重量
+  shippingOrderTotalCash: number,  // 新增出货单金额
+  totalReceivedCash: number,  // 收款金额
+  totalOverdueCash: number,  // 逾期金额
+  purchaseOrderTotalUnpaidCash: number,  // 采购单未付款金额
+  processingOrderTotalNum: number,  // 生成加工单数
+  shippingOrderTotalNum: number,  // 生成出货单数
+
+  averagePriceMonthly: number,  // 现金客户平均单价
+  averagePriceCash: number  // 月结客户平均单价
+}
+```
+
+#### 汇总商品平均单价
+```
+GET
+/api/summary/product
+
+params:
+* pageIndex
+* pageSize
+* name
+
+res:
+{
+  totalPages: number,
+  pageIndex: number,
+  pageSize: number,
+  result: [{
+    id: number,
+    name: string,
+    totalWeight: number,
+    averagePrice: number
+  }]
+}
+
+```
