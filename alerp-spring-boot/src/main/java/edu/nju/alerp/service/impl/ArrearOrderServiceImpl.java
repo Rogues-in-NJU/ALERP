@@ -57,7 +57,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         }
         arrearOrder.setDueDate(dueDate);
         arrearOrder.setUpdatedAt(DateUtils.getToday());
-        arrearOrder.setUpdatedBy(getUserId());
+        arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
         return result.getId();
     }
@@ -95,7 +95,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
                 id(record.getId()).
                 status(record.getStatus()).
                 cash(record.getCash()).
-                salesman(userService.getUser(record.getSalesmanId()).getName()).
+                salesman(record.getSalesman()).
                 description(record.getDescription()).
                 doneAt(record.getDoneAt()).
                 createdAt(record.getCreatedAt()).
@@ -105,10 +105,5 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         }
         arrearDetailVO.setReceiptRecordList(targetDTOList);
         return arrearDetailVO;
-    }
-
-    private int getUserId() {
-        HttpSession session = CommonUtils.getHttpSession();
-        return session.getAttribute("userId") == null ? 0 : (int)session.getAttribute("userId");
     }
 }

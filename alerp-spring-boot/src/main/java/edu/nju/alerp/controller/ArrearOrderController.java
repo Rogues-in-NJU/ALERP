@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +38,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<ArrearDetailVO> findArrearDetails(@PathVariable int id) {
         return ResponseResult.ok(arrearOrderService.findArrearDetails(id));
     }
@@ -50,7 +51,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/due-date")
+    @RequestMapping(value = "/due-date", method = RequestMethod.POST)
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
     }

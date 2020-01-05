@@ -2,56 +2,76 @@
 
 问题列表：
 
-- [x] 杨关建的dao，数据库里的datetime，应用层用String是不是比Date好一点？
+- [x] 增删改查要加异常处理，譬如增加一条数据库中id已有的记录？异常类？
 
-  统一用string
+  环切
 
-- [x] 大法Entity的字段命名风格不统一，created_at和createdAt
+- [x] log日志都没打（和上文，异常处理结合）
 
-  数据库里统一用created_at,使用@column，应用层用createdAt
-
-- [ ] 增删改查要加异常处理，譬如增加一条数据库中id已有的记录？异常类？
-
-- [ ] log日志都没打（和上文，异常处理结合）
-
-- [x] 新增公司支出应该带上创建者id，删除公司支出应该带上删除者id？（接口有问题，或者我们去session里拿）
-
-- [x] 查看公司列表接口，前端应该带上pageIndex和pageSize
-
-  已确认，前端确实是要带上pageIndex和pageSize
-
-- [x] 包名改成小写
-
-- [x] 数据库表名统一小写
-
-- [x] 都需要补一下单元测试
-
-  重点逻辑补一下。
+  环切
 
 - [x] 都需要补一下注释。尤其是Entity的，每一个字段都要有注释；接口方法必须有注释
 
 - [x] 互相review代码
 
-- [ ] 同时修改一张表的处理
-
-- [ ] 发号器？
+- [x] 发号器？
 
 - [x] 添加收款记录接口：前端传来的salesman应该是id不应该是string
 
   传的就是name不是id
 
-- [ ] 错误：timeUtil里时间格式转换，精确到分而不是秒
+- [x] 错误：timeUtil里时间格式转换，精确到分而不是秒
 
 - [x] 新增运行时异常类NJUException（之后可以做成环切）
 
   已完成。
 
-- [ ] DAO层加不加全参/无参构造器
+- [ ] DAO层加不加全参/无参构造器？为什么
 
-- [ ] 很多前台传姓名的接口，用户重名怎么办
+- [x] 很多前台传姓名的接口，用户重名怎么办
 
+  用户自己建的时候就区分：张三（上海），张三（昆山）
+
+- [ ] 性能相关的问题要及时记录，最后汇总：
+
+  - [ ] 网络异常
+  - [ ] 数据库异常
+  - [ ] 同时修改一条记录
+  - [ ] 缓存相关
+  
 - [x] 在userService里加接口：getIdFromName
 
   已完成
   
-- [ ] session抽到工具类里，另：session还是cookie？
+- [x] session抽到工具类里，另：session还是cookie？
+
+  - [ ] 就用session
+  - [ ] session里把city放进去
+
+- [ ] 单测
+
+- [x] 使用wagger测试
+
+- [ ] controller上注解method方法value
+
+- [ ] @validated注解
+
+- [ ] 分页查询，查询条件，ConditionFactory
+
+- [ ] queryContent为空的时候，查出来的也是空
+
+- [ ] ConditionFactory.like（）的第一个参数是entity的名字不是表的字段名
+
+- [x] 联调前保证service之间每个接口可以调通。
+
+- [x] TimeUtil里的方法用到的话挪到DateUtil里。统一使用DateUtil的方法
+
+- [ ] 常用的东西，查询量大的话，放在缓存里。service里加一下
+
+- [x] 补注释：推荐安装Java开发规范插件，要求很多。例如：每个接口都要写javadoc注释
+
+- [ ] 收款单的截止日期字段在哪里填进去的？
+
+- [ ] 收款单、公司支出、收款记录要不要“城市”字段？
+
+- [ ] 收款单、公司支出、收款记录添加处理并发操作

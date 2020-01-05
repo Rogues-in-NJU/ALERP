@@ -1,6 +1,7 @@
 package edu.nju.alerp.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -10,8 +11,31 @@ import java.util.Date;
  */
 public class DateUtils {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static SimpleDateFormat sdfInDay = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static String getToday(){
+    public static String getToday() {
         return sdf.format(new Date());
+    }
+
+    /**
+     * 获取当天是几号
+     *
+     * @return
+     */
+    public static int getNowDay() {
+        return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * 获取还款日
+     */
+    public static String getDueDate(int payDate) {
+        Calendar calendar = Calendar.getInstance();
+        int today = getNowDay();
+        if (payDate <= today) {
+            calendar.add(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+        }
+        calendar.set(Calendar.DAY_OF_MONTH, payDate);
+        return sdfInDay.format(calendar.getTime());
     }
 }
