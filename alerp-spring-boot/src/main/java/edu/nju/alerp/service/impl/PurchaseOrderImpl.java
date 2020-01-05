@@ -96,7 +96,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         QueryContainer<PurchaseOrderProduct> sp = new QueryContainer<>();
         QueryContainer<PaymentRecord> paySp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("productId", id));
+            sp.add(ConditionFactory.equal("purchaseOrderId", id));
             paySp.add(ConditionFactory.equal("purchaseOrderId", id));
         } catch (Exception e) {
             log.error("Value is null.", e);
@@ -164,7 +164,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
 
         QueryContainer<PaymentRecord> sp = new QueryContainer<>();
         sp.add(ConditionFactory.equal("purchaseOrderId", purchaseOrder.getId()));
-        sp.add(ConditionFactory.equal("status", PaymentRecordStatus.CONFIRMED));
+        sp.add(ConditionFactory.equal("status", PaymentRecordStatus.CONFIRMED.getCode()));
         List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(sp);
         double payed = paymentRecords.parallelStream().mapToDouble(PaymentRecord::getCash).sum();
         if (purchaseOrder.getCash() - payed < addPaymentRecordDTO.getCash())
@@ -198,6 +198,8 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据已被废弃");
 
         paymentRecord.setStatus(PaymentRecordStatus.ABANDONED.getCode());
+        paymentRecord.setDeleteAt(DateUtils.getToday());
+        paymentRecord.setDeleteBy(CommonUtils.getUserId());
         int result = paymentRecordRepository.saveAndFlush(paymentRecord).getId();
 
         purchaseOrder.setStatus(PurchaseOrderStatus.UNFINISHED.getCode());

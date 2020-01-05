@@ -13,12 +13,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum  PurchaseOrderStatus {
 
-    UNFINISHED(0, "未完成") {
+    UNPAID(0, "未付款") {
         @Override
         public boolean abandonable() {
             return true;
         }
-
+    },
+    UNFINISHED(0, "未完成") {
         @Override
         public boolean paymentable() {
             return true;
