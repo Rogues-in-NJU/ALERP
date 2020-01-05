@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         List<Product> products = findAll();
-        products.forEach(product -> productNameCache.put(product.getId(), product.getName()));
+        products.forEach(product -> productNameCache.put(product.getId(), product));
     }
 
     @Override
