@@ -17,5 +17,5 @@ public class ShippingOrderDTO {
     private double cash;
     private double floatingCash;
     private double receivableCash;
-    private List<ShippingProductDTO> shippingProductDTOList;
+    private List<ShippingProductDTO> products;
 }
