@@ -19,7 +19,9 @@ export class UserService {
   }
 
   public login(loginVO: PassportVO): Observable<ResultVO<LoginResultVO>> {
-    return this.http.post<ResultVO<LoginResultVO>>(`${AppConfig.BASE_URL}/api/user/login`, loginVO);
+    return this.http.post<ResultVO<LoginResultVO>>(`${AppConfig.BASE_URL}/api/user/login`, loginVO, {
+      withCredentials: true
+    });
   }
 
   public hasActionAuth(route: string, action: number): Observable<ResultVO<boolean>> {
