@@ -38,7 +38,7 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
             build();
         record.setArrearOrderId(dto.getArrearOrderId());
         record.setCash(dto.getCash());
-        record.setSalesmanId(userService.getIdFromName(dto.getSalesman()));
+        record.setSalesman(dto.getSalesman());
         record.setDescription(dto.getDescription());
         record.setDoneAt(dto.getDoneAt());
         ReceiptRecord result = receiptRecordRepository.save(record);
@@ -53,7 +53,7 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到单据或单据已废弃");
         }
         record.setDeletedAt(DateUtils.getToday());
-        record.setDeletedBy(getUserId());
+        record.setDeletedBy(CommonUtils.getUserId());
         record.setStatus(ReceiptRecordStatus.ABANDONED.getCode());
         ReceiptRecord result = receiptRecordRepository.save(record);
         return result.getId();
@@ -64,11 +64,6 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         List<ReceiptRecord> recordList = receiptRecordRepository.findReceiptRecordsByArrearOrderIdAndStatusOrderByDoneAt(arrearId,
             status);
         return recordList;
-    }
-
-    private int getUserId() {
-        HttpSession session = CommonUtils.getHttpSession();
-        return session.getAttribute("userId") == null ? 0 : (int)session.getAttribute("userId");
     }
 
 }

@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 公司支出实体类
@@ -20,6 +22,8 @@ import lombok.Data;
 @Builder
 @Entity
 @Table(name = "expense")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Expense {
     /**
      * 自增主键

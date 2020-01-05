@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 收款单实体类
@@ -20,6 +22,8 @@ import lombok.Data;
 @Builder
 @Entity
 @Table(name = "arrear_order")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArrearOrder {
     /**
      * 自增主键

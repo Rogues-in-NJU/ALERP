@@ -32,7 +32,7 @@ public class InvokeControlAspect {
             return result;
         } catch (Throwable t) {
             if (t instanceof NJUException) {
-                // 业务异常，输入业务日志
+                // 业务异常，输出业务日志
                 return ResponseResult.fail(((NJUException)t).getExceptionEnum(), t.getMessage());
             }
             // 系统异常，输出堆栈信息
