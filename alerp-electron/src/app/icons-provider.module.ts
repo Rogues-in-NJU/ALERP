@@ -6,7 +6,7 @@ import {
   UserOutline, LockOutline, SettingOutline, MailOutline, AppstoreOutline,
   AccountBookOutline, RocketOutline, ShoppingCartOutline, UploadOutline,
   ContactsOutline, EditOutline, TransactionOutline,
-  PlusOutline, SaveOutline, LoadingOutline, PrinterOutline} from '@ant-design/icons-angular/icons';
+  PlusOutline, SaveOutline, LoadingOutline, PrinterOutline, ShopOutline} from '@ant-design/icons-angular/icons';
 
 const icons = [
   MenuFoldOutline,
@@ -28,7 +28,8 @@ const icons = [
   ContactsOutline,
   EditOutline,
   TransactionOutline,
-  PrinterOutline
+  PrinterOutline,
+  ShopOutline
 ];
 
 @NgModule({
