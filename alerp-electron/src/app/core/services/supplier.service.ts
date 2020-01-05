@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { SupplierVO } from "../model/supplier";
+import { AppConfig } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -36,20 +37,24 @@ export class SupplierService {
   ): Observable<ResultVO<SupplierVO[]>>
     | Observable<ResultVO<TableResultVO<SupplierVO>>> {
     if (queryParams instanceof TableQueryParams) {
-      return of({
-        code: ResultCode.SUCCESS.code,
-        message: '',
-        data: {
-          totalPages: 1,
-          pageIndex: 1,
-          pageSize: 1,
-          result: [{
-            id: 1,
-            name: 'XXX公司',
-            description: ''
-          }]
-        }
+      return this.http.get<ResultVO<TableResultVO<SupplierVO>>>(`${AppConfig.BASE_URL}/api/supplier/list`, {
+        params: queryParams,
+        withCredentials: true
       });
+      // return of({
+      //   code: ResultCode.SUCCESS.code,
+      //   message: '',
+      //   data: {
+      //     totalPages: 1,
+      //     pageIndex: 1,
+      //     pageSize: 1,
+      //     result: [{
+      //       id: 1,
+      //       name: 'XXX公司',
+      //       description: ''
+      //     }]
+      //   }
+      // });
     } else {
       return of({
         code: ResultCode.SUCCESS.code,
@@ -64,7 +69,16 @@ export class SupplierService {
   }
 
   public save(supplier: SupplierVO): Observable<ResultVO<any>> {
-    return of(null);
+    // return of(null);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/supplier`, supplier, {
+      withCredentials: true
+    });
+  }
+
+  public delete(id: number): Observable<ResultVO<any>> {
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/supplier/delete/${id}`, {
+      withCredentials: true
+    });
   }
 
 }

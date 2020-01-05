@@ -7,7 +7,7 @@ import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/mode
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
 import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
-import { Objects } from "../../../../core/services/util.service";
+import { DateUtils, Objects, StringUtils } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'purchase-order-list',
@@ -46,13 +46,26 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    // console.log(this.orderCode);
-    // console.log(this.selectedStatus);
-    // console.log(this.timeRange);
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    if (!StringUtils.isEmpty(this.orderCode)) {
+      Object.assign(queryParams, {
+        id: this.orderCode
+      });
+    }
+    if (Objects.valid(this.selectedStatus)) {
+      Object.assign(queryParams, {
+        status: this.selectedStatus
+      });
+    }
+    if (Objects.valid(this.timeRange) && this.timeRange.length === 2) {
+      Object.assign(queryParams, {
+        doneStartTime: DateUtils.format(this.timeRange[0]),
+        doneEndTime: DateUtils.format(this.timeRange[1])
+      });
+    }
     this.isLoading = true;
     this.purchaseOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<PurchaseOrderVO>>) => {

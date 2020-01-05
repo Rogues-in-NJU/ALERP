@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { CustomerService } from "../../../../core/services/customer.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { QueryParams, ResultVO } from "../../../../core/model/result-vm";
+import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { CustomerSpecialPriceVO, CustomerVO } from "../../../../core/model/customer";
 import { Objects, StringUtils } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -89,10 +89,21 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     this.refresh();
 
     const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<ProductVO>>>
+        = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 100000
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const optionList$: Observable<ProductVO[]> = this.searchChange$
       .asObservable()
