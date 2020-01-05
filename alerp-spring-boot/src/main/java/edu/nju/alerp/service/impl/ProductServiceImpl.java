@@ -1,8 +1,10 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.enums.CityEnum;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.repo.ProductRepository;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
@@ -63,8 +65,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 fuzzyMatch.add(ConditionFactory.like("shorthand", name));
                 sp.add(ConditionFactory.or(fuzzyMatch));
             }
-            String city = CityEnum.of(CommonUtils.getCity()).getMessage();
-            sp.add(ConditionFactory.equal("city", city));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -100,20 +100,23 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
-        String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         Product product = Product.builder()
-                .createAt(DateUtils.getToday())
-                .createBy(CommonUtils.getUserId())
                 .updateAt(DateUtils.getToday())
                 .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
                 .shorthand(productDTO.getShorthand())
-                .city(city)
                 .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                 .specification(productDTO.getSpecification()).build();
         if (productDTO.getId() != null){
             product.setId(productDTO.getId());
+            Product originProduct = (Product) productNameCache.get(productDTO.getId());
+            if (!productDTO.getUpdateTime().equals(originProduct.getUpdateAt())) {
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "商品信息已变更，请重新更新");
+            }
+        }else {
+            product.setCreateAt(DateUtils.getToday());
+            product.setCreateBy(CommonUtils.getUserId());
         }
         product = productRepository.saveAndFlush(product);
         productNameCache.put(product.getId(), product);

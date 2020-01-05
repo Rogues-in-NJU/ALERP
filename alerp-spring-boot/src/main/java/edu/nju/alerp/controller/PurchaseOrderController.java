@@ -46,10 +46,10 @@ public class PurchaseOrderController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
-                                                                  @RequestParam(value = "id") String id,
-                                                                  @RequestParam(value = "status") int status,
-                                                                  @RequestParam(value = "doneStartTime") String doneStartTime,
-                                                                  @RequestParam(value = "doneEndTime") String doneEndTime){
+                                                                  @RequestParam(value = "id", required = false) String id,
+                                                                  @RequestParam(value = "status", required = false) Integer status,
+                                                                  @RequestParam(value = "doneStartTime", required = false) String doneStartTime,
+                                                                  @RequestParam(value = "doneEndTime", required = false) String doneEndTime){
         Page<PurchaseOrderListVO> res =  purchaseOrderService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize),id, status, doneStartTime, doneEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(res, pageIndex, pageSize));
     }

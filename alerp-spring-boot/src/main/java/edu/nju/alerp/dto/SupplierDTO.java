@@ -14,4 +14,5 @@ public class SupplierDTO {
     private Integer id;
     private String name;
     private String description;
+    private String updateTime;
 }

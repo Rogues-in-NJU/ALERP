@@ -59,4 +59,27 @@ public class Supplier {
     @Column(name = "create_by")
     private int createBy;
 
+    /**
+     * 废弃时间
+     */
+    @Column(name = "delete_at")
+    private String deleteAt;
+
+    /**
+     * 废弃者id
+     */
+    @Column(name = "delete_by")
+    private int deleteBy;
+
+    /**
+     * 最后修改时间
+     */
+    @Column(name = "update_at")
+    private String updateAt;
+
+    /**
+     * 最后修改者id
+     */
+    @Column(name = "update_by")
+    private int updateBy;
 }

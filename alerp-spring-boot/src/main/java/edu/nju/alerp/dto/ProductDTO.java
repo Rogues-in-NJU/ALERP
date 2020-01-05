@@ -10,4 +10,5 @@ public class ProductDTO {
     private int type;
     private double density;
     private String specification;
+    private String updateTime;
 }

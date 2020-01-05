@@ -35,7 +35,8 @@ public class CacheConfiguration {
     }
 
     private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
-        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
+//        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
+        String cacheFile = "../../mapdb/"+ cacheName;
         //todo 文件路径要配置好
         mkdir(cacheFile);
         DB db = DBMaker.fileDB(cacheFile)
@@ -59,7 +60,7 @@ public class CacheConfiguration {
     }
 
     private Cache<Integer, String>  buildStringCache(String cacheName, long heapCacheLimit) {
-        String cacheFile = "E:/mapdb/"+ cacheName;
+        String cacheFile = "../../mapdb/"+ cacheName;
         //todo 文件路径要配置好
         mkdir(cacheFile);
         DB db = DBMaker.fileDB(cacheFile)
