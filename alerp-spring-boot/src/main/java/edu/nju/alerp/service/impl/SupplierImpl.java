@@ -78,7 +78,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
             sp.add(ConditionFactory.like("name", name));
             sp.add(ConditionFactory.equal("city", city));
         }catch (Exception e) {
-            log.error("Value is null.", e);
+            log.error("Value is null.");
         }
         List<Supplier> suppliers = null;
         if (sp.isEmpty())

@@ -49,10 +49,10 @@ public class ReceiptRecord {
     private double cash;
 
     /**
-     * 收款人id
+     * 收款人姓名
      */
-    @Column(name = "salesman_id")
-    private int salesmanId;
+    @Column(name = "salesman")
+    private String salesman;
 
     /**
      * 备注

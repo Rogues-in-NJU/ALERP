@@ -40,7 +40,7 @@ public class SupplierController {
         return ResponseResult.ok(ListResponseUtils.generateResponse(supplierService.findSuppliersByPage(PageRequest.of(pageIndex - 1, pageSize), name),pageIndex,pageSize));
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addOrUpdateProcessingProduct(@RequestBody SupplierDTO supplierDTO) {
         return ResponseResult.ok(supplierService.addOrUpdateSupplier(supplierDTO));
     }
