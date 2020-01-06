@@ -152,7 +152,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                                     .specification(updateProcessProductDTO.getSpecification())
                                                                     .expectedWeight(updateProcessProductDTO.getExpectedWeight())
                                                                     .build();
-        
+
         if (updateProcessProductDTO.getId() != null) {
             processOrderProduct = processOrderProductRepository.getOne(updateProcessProductDTO.getId());
             processOrderProduct.setProcessOrderId(updateProcessProductDTO.getProcessingOrderId());
