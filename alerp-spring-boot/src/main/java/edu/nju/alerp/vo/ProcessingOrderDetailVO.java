@@ -24,7 +24,7 @@ public class ProcessingOrderDetailVO {
     private String createdAt;
     private String createdById;
     private String createdByName;
-    private String updateAt;
+    private String updatedAt;
     private List<ProcessingOrderProductVO> products;
-
+    private Double totalWeight;
 }
