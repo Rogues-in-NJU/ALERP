@@ -92,7 +92,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
         }
 
         const tableResult: TableResultVO<ProductVO> = res.data;
-        this.pageIndex = tableResult.pageIndex;
+        this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.products = tableResult.result;
