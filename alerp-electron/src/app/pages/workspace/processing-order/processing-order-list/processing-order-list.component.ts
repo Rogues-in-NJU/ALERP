@@ -32,7 +32,7 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     private router: Router,
     private processingOrder: ProcessingOrderService,
     private message: NzMessageService,
-    private tab: TabService
+    private tab: TabService,
   ) {
 
   }
@@ -47,10 +47,6 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    console.log(this.orderCode);
-    console.log(this.selectedStatus);
-    console.log(this.timeRange);
-
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -76,9 +72,12 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
         createAtEndTime: DateUtils.format(this.timeRange[1])
       });
     }
+
     this.isLoading = true;
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res);
+
         if (!Objects.valid(res)) {
           return;
         }

@@ -10,12 +10,15 @@ import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ProductVO;
 import edu.nju.alerp.vo.ShippingArrearRelationVO;
+import edu.nju.alerp.vo.ShippingOrderBriefVO;
 import edu.nju.alerp.vo.ShippingOrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 出货单Controller层
@@ -93,8 +97,18 @@ public class ShippingOrderController {
                                              @RequestParam(value = "status") int status,
                                              @RequestParam(value = "createAtStartTime") String createAtStartTime,
                                              @RequestParam(value = "createAtEndTime") String createAtEndTime) {
-        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(PageRequest.of(pageIndex - 1, pageSize), name, status, createAtStartTime, createAtEndTime);
-        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, name, status, createAtStartTime, createAtEndTime);
+        List<ShippingOrderBriefVO> result = new ArrayList<>();
+        page.getContent().forEach(s -> {
+            ShippingOrderBriefVO shippingOrderBriefVO = ShippingOrderBriefVO.builder()
+                    .customerName(customerService.getCustomer(s.getCustomerId()).getName())
+                    .build();
+            BeanUtils.copyProperties(s, shippingOrderBriefVO);
+            result.add(shippingOrderBriefVO);
+        });
+
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
     }
 
     /**
@@ -157,9 +171,11 @@ public class ShippingOrderController {
             BeanUtils.copyProperties(s, productVO);
             productVOList.add(productVO);
         });
+        double totalWeight = productVOList.stream().mapToDouble(ProductVO::getWeight).sum();
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
                 .city(CityEnum.of(shippingOrder.getCity()).getMessage())
+                .totalWeight(totalWeight)
                 .productVOList(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);

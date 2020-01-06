@@ -157,9 +157,27 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     }
   }
 
-  confirmDelete(_id: number){
-    this.products = this.products.filter(item => item['_id'] !== _id);
-  }
+  confirmDelete(id: number){
+    console.log(id);
+    if (!Objects.valid(id)) {
+      this.refresh();
+      return;
+    }
+    this.product.deleteProduct(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });}
 
   saveEdit(_id: number): void {
     if (_id !== this.editCache._id) {

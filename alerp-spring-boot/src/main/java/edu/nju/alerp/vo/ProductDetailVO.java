@@ -15,7 +15,7 @@ public class ProductDetailVO {
     private String createdAt;
     private Integer createdById;
     private String createdByName;
-    private String updateAt;
+    private String updatedAt;
 
     public static ProductDetailVO buildProductDetailVO(Product product, String userName) {
         ProductDetailVO productDetailVO = new ProductDetailVO();
@@ -28,7 +28,7 @@ public class ProductDetailVO {
         productDetailVO.setCreatedAt(product.getCreateAt());
         productDetailVO.setCreatedById(product.getCreateBy());
         productDetailVO.setCreatedByName(userName);
-        productDetailVO.setUpdateAt(product.getUpdateAt());
+        productDetailVO.setUpdatedAt(product.getUpdateAt());
         return productDetailVO;
     }
 }
