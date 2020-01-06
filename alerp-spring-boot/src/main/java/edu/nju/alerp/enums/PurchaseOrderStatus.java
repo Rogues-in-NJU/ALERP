@@ -18,17 +18,22 @@ public enum  PurchaseOrderStatus {
         public boolean abandonable() {
             return true;
         }
-    },
-    UNFINISHED(0, "未完成") {
+
         @Override
         public boolean paymentable() {
             return true;
         }
     },
-    FINISHED(1, "已完成") {
+    UNFINISHED(1, "未完成") {
+        @Override
+        public boolean paymentable() {
+            return true;
+        }
+    },
+    FINISHED(2, "已完成") {
 
     },
-    ABANDONED(2, "已废弃");
+    ABANDONED(3, "已废弃");
 
     private int code;
     private String message;

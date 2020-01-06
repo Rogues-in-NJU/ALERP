@@ -24,9 +24,9 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        if (CommonUtils.getUserId() == 0 && !ifAccess(httpServletRequest.getRequestURI())) {
-            throw new NJUException(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口");
-        }
+//        if (CommonUtils.getUserId() == 0 && !ifAccess(httpServletRequest.getRequestURI())) {
+//            throw new NJUException(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口");
+//        }
         filterChain.doFilter(httpServletRequest, servletResponse);
     }
 
