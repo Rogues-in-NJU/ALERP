@@ -57,7 +57,8 @@ export class CustomerService {
     | Observable<ResultVO<TableResultVO<CustomerVO>>> {
     if (queryParams instanceof TableQueryParams) {
       return this.http.get<ResultVO<TableResultVO<CustomerVO>>>(`${AppConfig.BASE_URL}/api/customer/list`, {
-        params: queryParams
+        params: queryParams,
+        withCredentials: true
       });
       // return of({
       //   code: 200,
