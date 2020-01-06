@@ -50,7 +50,9 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplierEditForm = this.fb.group({
       id: [ null, Validators.required ],
       name: [ null, Validators.required ],
-      description: [ null ]
+      description: [ null ],
+      updatedAt: [ null ],
+      updatedById: [ null ]
     });
     this.search();
   }
@@ -95,7 +97,9 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplierEditForm.reset({
       id: null,
       name: null,
-      description: null
+      description: null,
+      updatedAt: null,
+      updatedById: null
     });
     this.supplierEditVisible = false;
     this.search();
@@ -155,7 +159,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
       return;
     }
     this.supplierEditVisible = true;
-    this.supplierEditForm.reset(this.supplierList[index]);
+    this.supplierEditForm.reset(this.supplierList[ index ]);
     console.log('show modal');
   }
 

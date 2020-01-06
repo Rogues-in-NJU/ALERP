@@ -4,6 +4,7 @@ package edu.nju.alerp.common;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -21,7 +22,10 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        if (CommonUtils.getUserId() == 0 && !httpServletRequest.getRequestURI().equals("/api/user/login")) {
+        System.out.println(httpServletRequest.getMethod());
+        if (!HttpMethod.OPTIONS.matches(httpServletRequest.getMethod())
+                && CommonUtils.getUserId() == 0
+                && !"/api/user/login".equals(httpServletRequest.getRequestURI())) {
             throw new NJUException(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口");
         }
         filterChain.doFilter(httpServletRequest, servletResponse);
