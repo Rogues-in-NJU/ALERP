@@ -13,6 +13,7 @@
   <div class="table-wrapper">
     <nz-table #productsAddTable
               nzShowSizeChanger
+              nzShowPagination
               [nzData]="products"
               [(nzPageIndex)]="pageIndex"
               [(nzPageSize)]="pageSize"
@@ -92,7 +93,7 @@
                style="margin-left: 5px;"
                class="delete"
                nzTitle="确认删除?"
-               (nzOnConfirm)="confirmDelete(data._id)">
+               (nzOnConfirm)="confirmDelete(data.id)">
               删除
             </a>
           </ng-container>

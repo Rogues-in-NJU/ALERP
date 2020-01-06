@@ -420,6 +420,7 @@ res:
     name: string,
     shorthand: string,
     type: number,
+    isAway: number,    // 1.6新增。1表示客户跑了；0表示没跑。 客户跑了：距离上次购买超过25天。
     period: number,
     payDate: number,
     description: string,
@@ -576,7 +577,6 @@ body:
 {
   customerId: number,
   salesman: string,
-  
   products: [{
     productId: number,
     specification: string (客户定做的商品规格),
@@ -602,7 +602,9 @@ body:
   specification: string (客户定做的商品规格),
   quantity: number,
   expectedWeight: number
-  processingOrderUpdatedAt: String
+
+  processingOrderUpdatedAt: String        //1.6新增，加工单的更新时间，用于控制版本  
+
 }
 
 res:
@@ -689,6 +691,7 @@ res:
   cash: number,
   floatingCash: number,
   receivableCash: number,
+  totalWeight: number,     //1.6 新增 。本单汇总的重量，用于打印
   status: number,
   createdAt: string,
   createdById: string,
