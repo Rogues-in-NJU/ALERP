@@ -5,6 +5,15 @@
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增出货单
     </button>
+    <div>
+      <e-ngx-print
+        [btnText]="'打印'"
+        [printHTML]="print_div"
+        [printStyle]="printStyle"
+        [printCSS]="printCSS"
+        (printComplete)="printComplete()">
+      </e-ngx-print>
+    </div>
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content">
@@ -96,4 +105,33 @@
       </nz-table>
     </div>
   </div>
+</div>
+
+<div id="print_div" #print_div>
+
+  <p>对账单</p>
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 200px">单号</th>
+      <th style="width: 200px">客户</th>
+      <th style="width: 200px">金额</th>
+      <th style="width: 200px">日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of orderList">
+      <td> {{ data.code }}</td>
+      <td> {{ data.customerName }}</td>
+      <td> {{ data.receivableCash }}</td>
+      <td> {{ data.createdAt }}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>(合计)</td>
+      <td> xxx总金额（前端计算？？）</td>
+    </tr>
+    </tbody>
+  </table>
 </div>
