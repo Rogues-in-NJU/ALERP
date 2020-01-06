@@ -56,11 +56,8 @@ export class ProductService {
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product`, queryParams, {withCredentials: true});
   }
 
-  public deleteProduct(productId: string): ResultVO<any>{
-    return {
-      code: 400,
-      message: '网络错误',
-    }
+  public deleteProduct(productId: number): Observable<ResultVO<any>>{
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product/delete/${productId}`);
   }
 
 }
