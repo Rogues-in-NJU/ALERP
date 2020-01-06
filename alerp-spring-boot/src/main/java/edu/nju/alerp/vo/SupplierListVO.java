@@ -12,11 +12,11 @@ import lombok.Data;
 @Builder
 public class SupplierListVO {
 
-    private int id;
+    private Integer id;
     private String name;
     private String description;
     private String createdAt;
-    private int createdById;
+    private Integer createdById;
     private String createdByName;
-    private String updateTime;
+    private String updateAt;
 }

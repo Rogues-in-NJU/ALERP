@@ -11,13 +11,16 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.TimeUtil;
+import edu.nju.alerp.vo.ProductDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,6 +39,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Autowired
     private Cache<Integer, Object> productNameCache;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -48,7 +55,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     }
 
     @Override
-    public Page<Product> findAllByPage(Pageable pageable, String name, Integer type) {
+    public Page<ProductDetailVO> findAllByPage(Pageable pageable, String name, Integer type) {
 //        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
 //            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
 //            Predicate nameFuzzyMatch = criteriaBuilder.like(root.get("name").as(String.class), CommonUtils.fuzzyStringSplicing(name));
@@ -69,10 +76,16 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
+        Page<Product> productPage;
         if (sp.isEmpty())
-            return productRepository.findAll(pageable);
+            productPage = productRepository.findAll(pageable);
+        else
+            productPage = productRepository.findAll(sp, pageable);
 
-        return productRepository.findAll(sp, pageable);
+        List<ProductDetailVO> result = productPage.getContent().parallelStream()
+                                                            .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(CommonUtils.getUserId()).getName()))
+                                                            .collect(Collectors.toList());
+        return new PageImpl<>(result, pageable, productPage.getTotalElements());
     }
 
     @Override
@@ -83,6 +96,11 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
             productNameCache.put(id, pro);
         }
         return pro;
+    }
+
+    @Override
+    public ProductDetailVO findProductVO(int id) {
+        return ProductDetailVO.buildProductDetailVO(findProductById(id), userService.getUser(CommonUtils.getUserId()).getName());
     }
 
     @Override
