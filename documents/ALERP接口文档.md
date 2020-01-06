@@ -549,6 +549,7 @@ res:
   createdAt: string,
   createdById: string,
   createdByName: string,
+  updatedAt: string
   
   products: [{
     id: number,
@@ -562,6 +563,8 @@ res:
     quantity: number,
     expectedWeight: number
   }]
+  
+  totalWeight: number(新增，打印时需要)
 }
 ```
 
@@ -600,7 +603,7 @@ body:
   quantity: number,
   expectedWeight: number
 
-  updateAt: string         //1.6新增，加工单的更新时间，用于控制版本  
+  processingOrderUpdatedAt: String        //1.6新增，加工单的更新时间，用于控制版本  
 
 }
 

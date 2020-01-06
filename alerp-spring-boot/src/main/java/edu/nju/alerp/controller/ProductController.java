@@ -8,10 +8,12 @@ import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.vo.ProductDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +48,8 @@ public class ProductController {
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name", required = false) String name,
                                                             @RequestParam(value = "type", required = false) Integer type) {
-        Page<Product> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
+        Page<ProductDetailVO> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize,
+                Sort.by(Sort.Direction.DESC, "createAt")), name, type);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
@@ -57,8 +60,8 @@ public class ProductController {
      * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<Product> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(productService.findProductById(id));
+    public ResponseResult<ProductDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        return ResponseResult.ok(productService.findProductVO(id));
     }
 
     /**
