@@ -52,12 +52,13 @@
   <div class="table-wrapper">
     <nz-table #processingOrderTable
               nzShowSizeChanger
+              [nzFrontPagination]="false"
               [nzData]="orderList"
               [(nzPageIndex)]="pageIndex"
               [(nzPageSize)]="pageSize"
               (nzPageIndexChange)="search()"
               (nzPageSizeChange)="search()"
-              [nzTotal]="totalPages"
+              [nzTotal]="totalPages * pageSize"
               [nzLoading]="isLoading"
               [nzScroll]="{ x: '100%'}">
       <thead>
@@ -74,7 +75,7 @@
       <tbody>
       <tr *ngFor="let data of processingOrderTable.data">
         <td nzLeft="0px">
-          <a routerLink="/workspace/processing-order/info/{{ data.code }}">
+          <a routerLink="/workspace/processing-order/info/{{ data.id }}">
             {{ data.code }}
           </a>
         </td>
@@ -96,7 +97,7 @@
           </nz-tag>
         </td>
         <td nzRight="0px">
-          <a routerLink="/workspace/processing-order/info/{{ data.code }}">查看</a>
+          <a routerLink="/workspace/processing-order/info/{{ data.id }}">查看</a>
           <a style="margin-left: 5px"
              class="abandon"
              [class.disabled]="data.status === 2"

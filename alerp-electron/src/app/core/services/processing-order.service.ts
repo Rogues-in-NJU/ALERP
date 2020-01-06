@@ -406,35 +406,38 @@ export class ProcessingOrderService {
   }
 
   public find(id: number): Observable<ResultVO<ProcessingOrderVO>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: {
-        id: 1,
-        code: '00001000',
-        customerId: 1,
-        customerName: 'XXX',
-        shippingOrderId: null,
-        shippingOrderCode: '11111111',
-        salesman: '',
-        status: 1,
-        createdAt: '2019-12-17 12:00',
-        createdByName: 'XXX',
-
-        products: [{
-          id: 1,
-          processingOrderId: 1,
-          productId: 1,
-          productName: '铝棒',
-          type: 1,
-          density: 1.00,
-          productSpecification: '1*1*1',
-          specification: '1*1*1',
-          quantity: 1,
-          expectedWeight: 1
-        }]
-      }
+    return this.http.get<ResultVO<ProcessingOrderVO>>(`${AppConfig.BASE_URL}/api/process-order/${id}`, {
+      withCredentials: true
     });
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: {
+    //     id: 1,
+    //     code: '00001000',
+    //     customerId: 1,
+    //     customerName: 'XXX',
+    //     shippingOrderId: null,
+    //     shippingOrderCode: '11111111',
+    //     salesman: '',
+    //     status: 1,
+    //     createdAt: '2019-12-17 12:00',
+    //     createdByName: 'XXX',
+    //
+    //     products: [{
+    //       id: 1,
+    //       processingOrderId: 1,
+    //       productId: 1,
+    //       productName: '铝棒',
+    //       type: 1,
+    //       density: 1.00,
+    //       productSpecification: '1*1*1',
+    //       specification: '1*1*1',
+    //       quantity: 1,
+    //       expectedWeight: 1
+    //     }]
+    //   }
+    // });
   }
 
   public save(info: ProcessingOrderVO): Observable<ResultVO<any>> {

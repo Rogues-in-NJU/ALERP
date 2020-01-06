@@ -106,7 +106,22 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   confirmDelete(id: number): void {
-
+    this.supplier.delete(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   showAddModal(): void {
