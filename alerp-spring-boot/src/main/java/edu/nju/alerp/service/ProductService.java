@@ -23,4 +23,6 @@ public interface ProductService {
     public String findProductNameById(int id);
 
     public int addOrUpdate(ProductDTO productDTO);
+
+    public int abandonProduct(int id);
 }
