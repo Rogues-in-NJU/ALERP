@@ -116,7 +116,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
                                               .build();
         if (supplierDTO.getId() != null) {
             supplier = supplierRepository.getOne(supplierDTO.getId());
-            if (!supplierDTO.getUpdateTime().equals(supplier.getUpdateAt())) {
+            if (!supplierDTO.getUpdateAt().equals(supplier.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "供货商信息已变更，请重新更新");
             }
             supplier.setDescription(supplierDTO.getDescription());
