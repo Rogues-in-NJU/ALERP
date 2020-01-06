@@ -67,7 +67,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
                                         .createdAt(s.getCreateAt())
                                         .createdById(s.getCreateBy())
                                         .createdByName(userService.getUser(s.getId()).getName())
-                                        .updateTime(s.getUpdateAt())
+                                        .updateAt(s.getUpdateAt())
                                         .build()).collect(Collectors.toList());
     }
 
@@ -93,12 +93,12 @@ public class SupplierImpl implements SupplierService, InitializingBean {
                                                                 .id(s.getId())
                                                                 .name(s.getName())
                                                                 .description(s.getDescription())
-                                                                .updateTime(s.getUpdateAt())
+                                                                .updateAt(s.getUpdateAt())
                                                                 .createdAt(s.getCreateAt())
                                                                 .createdById(s.getCreateBy())
                                                                 .createdByName(userService.getUser(s.getCreateBy()).getName())
                                                                 .build()).collect(Collectors.toList());
-        return new PageImpl<>(queryed, pageable, queryed.size());
+        return new PageImpl<>(queryed, pageable, suppliers.getTotalElements());
     }
 
     @Override

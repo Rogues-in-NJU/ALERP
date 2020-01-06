@@ -87,7 +87,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         List<PurchaseOrderListVO> resultList = res.getContent().parallelStream()
                                             .map(p -> PurchaseOrderListVO.buildVO(p, supplierService.getSupplierName(p.getSupplierId()), userService.getUser(p.getCreateBy()).getName()))
                                             .filter(Objects::nonNull).collect(Collectors.toList());
-        return new PageImpl<>(resultList, pageable, resultList.size());
+        return new PageImpl<>(resultList, pageable, res.getTotalElements());
     }
 
     @Override
