@@ -60,7 +60,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        shippingOrderDTO.getShippingProductDTOList().forEach(p -> {
+        shippingOrderDTO.getProducts().forEach(p -> {
             ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
             BeanUtils.copyProperties(p, shippingOrderProduct);
             shippingOrderProductRepository.save(shippingOrderProduct);

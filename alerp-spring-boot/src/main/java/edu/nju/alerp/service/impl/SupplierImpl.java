@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,17 +76,19 @@ public class SupplierImpl implements SupplierService, InitializingBean {
         String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         QueryContainer<Supplier> sp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.like("name", name));
+            if (name != null)
+                sp.add(ConditionFactory.like("name", name));
             sp.add(ConditionFactory.equal("city", city));
+            sp.add(ConditionFactory.equal("status", SupplierStatus.NORMAL.getCode()));
         }catch (Exception e) {
-            log.error("Value is null.", e);
+            log.error("Value is null.");
         }
-        List<Supplier> suppliers = null;
+        Page<Supplier> suppliers = null;
         if (sp.isEmpty())
-            suppliers = supplierRepository.findAll();
+            suppliers = supplierRepository.findAll(pageable);
         else
-            suppliers = supplierRepository.findAll(sp);
-        List<SupplierListVO> queryed = suppliers.parallelStream()
+            suppliers = supplierRepository.findAll(sp, pageable);
+        List<SupplierListVO> queryed = suppliers.getContent().stream()
                                                         .map(s -> SupplierListVO.builder()
                                                                 .id(s.getId())
                                                                 .name(s.getName())
@@ -101,22 +104,24 @@ public class SupplierImpl implements SupplierService, InitializingBean {
     @Override
     public int addOrUpdateSupplier(SupplierDTO supplierDTO) {
         String city = CityEnum.of(CommonUtils.getCity()).getMessage();
+
         Supplier supplier = Supplier.builder().name(supplierDTO.getName())
                                               .city(city)
+                                              .createAt(DateUtils.getToday())
+                                              .createBy(CommonUtils.getUserId())
                                               .status(SupplierStatus.NORMAL.getCode())
                                               .description(supplierDTO.getDescription())
                                               .updateAt(DateUtils.getToday())
                                               .updateBy(CommonUtils.getUserId())
                                               .build();
         if (supplierDTO.getId() != null) {
-            supplier.setId(supplierDTO.getId());
-            Supplier originSupplier = supplierRepository.getOne(supplierDTO.getId());
-            if (!supplierDTO.getUpdateTime().equals(originSupplier.getUpdateAt())) {
+            supplier = supplierRepository.getOne(supplierDTO.getId());
+            if (!supplierDTO.getUpdateTime().equals(supplier.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "供货商信息已变更，请重新更新");
             }
-        }else {
-            supplier.setCreateAt(DateUtils.getToday());
-            supplier.setCreateBy(CommonUtils.getUserId());
+            supplier.setDescription(supplierDTO.getDescription());
+            supplier.setName(supplierDTO.getName());
+            supplier.setUpdateAt(DateUtils.getToday());
         }
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());
@@ -125,9 +130,10 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
     @Override
     public int deleteSupplier(int id) {
-        Supplier supplier = Supplier.builder().status(SupplierStatus.DELETED.getCode())
-                                              .deleteAt(DateUtils.getToday())
-                                              .deleteBy(CommonUtils.getUserId()).build();
+        Supplier supplier = supplierRepository.getOne(id);
+        supplier.setStatus(SupplierStatus.DELETED.getCode());
+        supplier.setDeleteAt(DateUtils.getToday());
+        supplier.setDeleteBy(CommonUtils.getUserId());
         return supplierRepository.saveAndFlush(supplier).getId();
     }
 

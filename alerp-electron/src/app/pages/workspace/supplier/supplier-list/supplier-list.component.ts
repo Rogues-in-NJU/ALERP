@@ -78,6 +78,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         this.supplierList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isLoading = false;
       }, () => {
         this.isLoading = false;
       });
@@ -134,6 +135,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         this.message.success('添加成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
       }, () => {
         this.refresh();
       });
@@ -178,6 +180,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
       }, () => {
         this.refresh();
       });

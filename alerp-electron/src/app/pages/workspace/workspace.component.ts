@@ -3,6 +3,9 @@ import { LocalStorageService } from "../../core/services/local-storage.service";
 import { UserService } from "../../core/services/user.service";
 import { Router } from "@angular/router";
 import { UserStorageVO } from "../../core/model/user";
+import { ResultVO } from "../../core/model/result-vm";
+import { Objects } from "../../core/services/util.service";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: 'app-workspace',
@@ -32,7 +35,12 @@ export class WorkspaceComponent implements OnInit {
     this.storage.remove('user');
     this.isOpen = false;
     setTimeout(() => {
-      this.route.navigate([ '/passport/login' ]);
+      this.user.logout()
+        .subscribe((res: ResultVO<any>) => {}, (error: HttpErrorResponse) => {
+          this.route.navigate([ '/passport/login' ]);
+        }, () => {
+          this.route.navigate([ '/passport/login' ]);
+        });
     }, 1000);
   }
 

@@ -70,7 +70,7 @@ public class PurchaseOrderController {
      * @param purchaseOrderDTO
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         return ResponseResult.ok(purchaseOrderService.addNewPurchaseOrder(purchaseOrderDTO));
     }

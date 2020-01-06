@@ -23,6 +23,8 @@ import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.PasswordUtil;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 用户服务层实现
@@ -42,7 +45,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, InitializingBean {
 
 
     @Autowired
@@ -52,6 +55,12 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private Cache<Integer, Object> userCache;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        List<User> users = userRepository.findAll();
+        userCache.putAll(users.stream().map(u -> MutablePair.of(u.getId(), u)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
+    }
 
     @Override
     public int saveUser(UserDTO userDTO) {

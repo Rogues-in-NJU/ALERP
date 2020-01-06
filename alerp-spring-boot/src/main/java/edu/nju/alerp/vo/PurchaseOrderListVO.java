@@ -31,16 +31,16 @@ public class PurchaseOrderListVO {
             return null;
         PurchaseOrderListVO purchaseOrderListVO = new PurchaseOrderListVO();
         purchaseOrderListVO.setId(purchaseOrder.getId());
-        purchaseOrder.setCode(purchaseOrder.getCode());
+        purchaseOrderListVO.setCode(purchaseOrder.getCode());
         purchaseOrderListVO.setDescription(purchaseOrder.getDescription());
-        purchaseOrder.setSupplierId(purchaseOrder.getSupplierId());
+        purchaseOrderListVO.setSupplierId(purchaseOrder.getSupplierId());
         purchaseOrderListVO.setSupplierName(supplierName);
         purchaseOrderListVO.setCash(purchaseOrder.getCash());
         purchaseOrderListVO.setSalesman(purchaseOrder.getSalesman());
         purchaseOrderListVO.setStatus(purchaseOrder.getStatus());
-        purchaseOrder.setDoneAt(purchaseOrder.getDoneAt());
-        purchaseOrder.setCreateAt(purchaseOrder.getCreateAt());
-        purchaseOrder.setCreateBy(purchaseOrder.getCreateBy());
+        purchaseOrderListVO.setDoneAt(purchaseOrder.getDoneAt());
+        purchaseOrderListVO.setCreatedAt(purchaseOrder.getCreateAt());
+        purchaseOrderListVO.setCreatedById(purchaseOrder.getCreateBy());
         purchaseOrderListVO.setCreatedByName(createdByName);
         return purchaseOrderListVO;
     }
