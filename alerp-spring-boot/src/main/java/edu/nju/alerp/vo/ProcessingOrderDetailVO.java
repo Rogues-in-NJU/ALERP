@@ -24,6 +24,7 @@ public class ProcessingOrderDetailVO {
     private String createdAt;
     private String createdById;
     private String createdByName;
+    private String updateAt;
     private List<ProcessingOrderProductVO> products;
 
 }

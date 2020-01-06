@@ -548,6 +548,7 @@ res:
   createdAt: string,
   createdById: string,
   createdByName: string,
+  updatedAt: string
   
   products: [{
     id: number,
@@ -601,6 +602,7 @@ body:
   specification: string (客户定做的商品规格),
   quantity: number,
   expectedWeight: number
+  processingOrderUpdatedAt: String
 }
 
 res:

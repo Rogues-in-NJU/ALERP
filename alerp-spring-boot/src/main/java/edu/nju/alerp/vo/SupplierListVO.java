@@ -18,5 +18,5 @@ public class SupplierListVO {
     private String createdAt;
     private Integer createdById;
     private String createdByName;
-    private String updateAt;
+    private String updatedAt;
 }
