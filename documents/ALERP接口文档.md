@@ -562,6 +562,8 @@ res:
     quantity: number,
     expectedWeight: number
   }]
+  
+  totalWeight: number(新增，打印时需要)
 }
 ```
 
