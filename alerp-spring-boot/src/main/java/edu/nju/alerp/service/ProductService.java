@@ -2,6 +2,7 @@ package edu.nju.alerp.service;
 
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.vo.ProductDetailVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,11 +17,15 @@ public interface ProductService {
 
     public List<Product> findAll();
 
-    public Page<Product> findAllByPage(Pageable pageable, String name, Integer type);
+    public Page<ProductDetailVO> findAllByPage(Pageable pageable, String name, Integer type);
 
     public Product findProductById(int id);
 
     public String findProductNameById(int id);
 
     public int addOrUpdate(ProductDTO productDTO);
+
+    public int abandonProduct(int id);
+
+    public ProductDetailVO findProductVO(int id);
 }

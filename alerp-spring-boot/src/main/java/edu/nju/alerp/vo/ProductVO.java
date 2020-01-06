@@ -11,15 +11,15 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductVO {
-    private int id;
-    private int processingOrderId;
-    private int productId;
+    private Integer id;
+    private Integer processingOrderId;
+    private Integer productId;
     private String productName;
-    private int type;
+    private Integer type;
     private String specification;
-    private int quantity;
-    private double expectedWeight;
-    private double price;
-    private double weight;
-    private double cash;
+    private Integer quantity;
+    private Double expectedWeight;
+    private Double price;
+    private Double weight;
+    private Double cash;
 }

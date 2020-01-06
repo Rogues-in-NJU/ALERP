@@ -100,6 +100,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                 .createdAt(processingOrder.getCreateAt())
                                                 .createdById(String.valueOf(processingOrder.getCreateBy()))
                                                 .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
+                                                .updateAt(processingOrder.getUpdateAt())
                                                 .products(productVOS).build();
     }
 
@@ -145,6 +146,10 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
+        ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
+        if (!updateProcessProductDTO.getProcessingOrderUpdateAt().equals(processingOrder.getUpdateAt())) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "加工单信息已变更，请重新更新");
+        }
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
                                                                     .processOrderId(updateProcessProductDTO.getProcessingOrderId())
                                                                     .productId(updateProcessProductDTO.getProductId())
@@ -152,12 +157,18 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                                     .specification(updateProcessProductDTO.getSpecification())
                                                                     .expectedWeight(updateProcessProductDTO.getExpectedWeight())
                                                                     .build();
-        if (updateProcessProductDTO.getId() != null)
-            processOrderProduct.setId(updateProcessProductDTO.getId());
-        ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
-                                                                    .updateAt(DateUtils.getToday())
-                                                                     .updateBy(CommonUtils.getUserId())
-                                                                    .build();
+
+        if (updateProcessProductDTO.getId() != null) {
+            processOrderProduct = processOrderProductRepository.getOne(updateProcessProductDTO.getId());
+            processOrderProduct.setProcessOrderId(updateProcessProductDTO.getProcessingOrderId());
+            processOrderProduct.setProductId(updateProcessProductDTO.getProductId());
+            processOrderProduct.setSpecification(updateProcessProductDTO.getSpecification());
+            processOrderProduct.setQuantity(updateProcessProductDTO.getQuantity());
+            processOrderProduct.setExpectedWeight(updateProcessProductDTO.getExpectedWeight());
+        }
+
+        processingOrder.setUpdateAt(DateUtils.getToday());
+        processingOrder.setUpdateBy(CommonUtils.getUserId());
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
         processingOrderRepository.saveAndFlush(processingOrder);
         return processOrderProduct.getId();

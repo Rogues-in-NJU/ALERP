@@ -3,6 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../model/processing-order";
+import {ProductVO} from "../model/product";
+import {AppConfig} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -378,26 +380,11 @@ export class ProcessingOrderService {
       });
     }
 
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result: [{
-          id: 1,
-          code: '00001000',
-          customerId: 1,
-          customerName: 'XXX',
-          shippingOrderId: null,
-          shippingOrderName: null,
-          salesman: '',
-          status: 1,
-          createdAt: '2019-12-17 12:00'
-        }]
-      }
-    });
+    return this.http.get<ResultVO<TableResultVO<ProcessingOrderVO>>>(`${AppConfig.BASE_URL}/api/process-order/list`,
+      {
+        params: queryParams,
+        withCredentials: true
+      });
   }
 
   public find(id: number): Observable<ResultVO<ProcessingOrderVO>> {

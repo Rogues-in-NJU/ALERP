@@ -114,10 +114,21 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
     //todo 只能出损耗
     const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<ProductVO>>>
+        = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 100000
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const productOptionList$: Observable<ProductVO[]> = this.searchChanges$
       .asObservable()

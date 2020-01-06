@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PurchaseOrderListVO {
 
-    private int id;
+    private Integer id;
     private String code;
     private String description;
-    private int supplierId;
+    private Integer supplierId;
     private String supplierName;
-    private double cash;
+    private Double cash;
     private String salesman;
-    private int status;
+    private Integer status;
     private String doneAt;
     private String createdAt;
-    private int createdById;
+    private Integer createdById;
     private String createdByName;
 
     public static PurchaseOrderListVO buildVO(PurchaseOrder purchaseOrder, String supplierName, String createdByName) {
