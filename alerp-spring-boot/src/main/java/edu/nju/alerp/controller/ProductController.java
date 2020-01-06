@@ -76,4 +76,18 @@ public class ProductController {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
     }
+
+    /**
+     * 废弃商品
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        try {
+            return ResponseResult.ok(productService.abandonProduct(id));
+        }catch (Exception e ) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+    }
 }
