@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +48,8 @@ public class ProductController {
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name", required = false) String name,
                                                             @RequestParam(value = "type", required = false) Integer type) {
-        Page<ProductDetailVO> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
+        Page<ProductDetailVO> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize,
+                Sort.by(Sort.Direction.DESC, "createAt")), name, type);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 

@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
             productPage = productRepository.findAll(sp, pageable);
 
         List<ProductDetailVO> result = productPage.getContent().parallelStream()
-                                                            .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(CommonUtils.getUserId()).getName()))
+                                                            .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(p.getCreateBy()).getName()))
                                                             .collect(Collectors.toList());
         return new PageImpl<>(result, pageable, productPage.getTotalElements());
     }
@@ -100,7 +100,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public ProductDetailVO findProductVO(int id) {
-        return ProductDetailVO.buildProductDetailVO(findProductById(id), userService.getUser(CommonUtils.getUserId()).getName());
+        Product product = findProductById(id);
+        return ProductDetailVO.buildProductDetailVO(product, userService.getUser(product.getCreateBy()).getName());
     }
 
     @Override
