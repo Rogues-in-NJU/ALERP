@@ -25,13 +25,11 @@ import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
+import edu.nju.alerp.vo.ProcessingOrderListVO;
 import edu.nju.alerp.vo.ProcessingOrderProductVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -89,6 +87,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         List<ProcessingOrderProductVO> productVOS = pops.parallelStream().map(this::generateProcessingOrderProductVO)
                                                                         .filter(Objects::nonNull)
                                                                         .collect(Collectors.toList());
+        double totalWeight = productVOS.parallelStream().mapToDouble(ProcessingOrderProductVO::getExpectedWeight).sum();
 
         return ProcessingOrderDetailVO.builder().id(processingOrder.getId())
                                                 .code(processingOrder.getCode())
@@ -100,7 +99,8 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                 .createdAt(processingOrder.getCreateAt())
                                                 .createdById(String.valueOf(processingOrder.getCreateBy()))
                                                 .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
-                                                .updateAt(processingOrder.getUpdateAt())
+                                                .updatedAt(processingOrder.getUpdateAt())
+                                                .totalWeight(totalWeight)
                                                 .products(productVOS).build();
     }
 
@@ -147,7 +147,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
-        if (!updateProcessProductDTO.getProcessingOrderUpdateAt().equals(processingOrder.getUpdateAt())) {
+        if (!updateProcessProductDTO.getProcessingOrderUpdatedAt().equals(processingOrder.getUpdateAt())) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "加工单信息已变更，请重新更新");
         }
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
@@ -215,8 +215,8 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
-    public Page<ProcessingOrder> findAllByPage(Pageable pageable, String id, String customerName,
-                                                   Integer status, String createAtStartTime, String createAtEndTime) {
+    public Page<ProcessingOrderListVO> findAllByPage(Pageable pageable, String id, String customerName,
+                                                     Integer status, String createAtStartTime, String createAtEndTime) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
         String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         List<Integer> customers = new ArrayList<>();
@@ -238,7 +238,14 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
-        return processingOrderRepository.findAll(sp, pageable);
+        Page<ProcessingOrder> processingOrderPage = processingOrderRepository.findAll(sp, pageable);
+
+        List<ProcessingOrderListVO> result = processingOrderPage.getContent()
+                .parallelStream().map(processingOrder ->
+                        ProcessingOrderListVO.buildProcessingOrderListVO(processingOrder,
+                                customerService.getCustomer(processingOrder.getCustomerId()).getName(),userService.getUser(processingOrder.getCreateBy()).getName()))
+                .collect(Collectors.toList());
+        return new PageImpl<>(result, pageable, processingOrderPage.getTotalElements());
     }
 
 
