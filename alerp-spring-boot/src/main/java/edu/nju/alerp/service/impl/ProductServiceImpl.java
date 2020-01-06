@@ -11,13 +11,16 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.TimeUtil;
+import edu.nju.alerp.vo.ProductDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,10 +40,13 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     @Autowired
     private Cache<Integer, Object> productNameCache;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         List<Product> products = findAll();
-        products.forEach(product -> productNameCache.put(product.getId(), product.getName()));
+        products.forEach(product -> productNameCache.put(product.getId(), product));
     }
 
     @Override
@@ -48,7 +55,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     }
 
     @Override
-    public Page<Product> findAllByPage(Pageable pageable, String name, Integer type) {
+    public Page<ProductDetailVO> findAllByPage(Pageable pageable, String name, Integer type) {
 //        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
 //            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
 //            Predicate nameFuzzyMatch = criteriaBuilder.like(root.get("name").as(String.class), CommonUtils.fuzzyStringSplicing(name));
@@ -65,21 +72,35 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 fuzzyMatch.add(ConditionFactory.like("shorthand", name));
                 sp.add(ConditionFactory.or(fuzzyMatch));
             }
+            sp.add(ConditionFactory.isNull("deleteAt"));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
+        Page<Product> productPage;
         if (sp.isEmpty())
-            return productRepository.findAll(pageable);
+            productPage = productRepository.findAll(pageable);
+        else
+            productPage = productRepository.findAll(sp, pageable);
 
-        return productRepository.findAll(sp, pageable);
+        List<ProductDetailVO> result = productPage.getContent().parallelStream()
+                                                            .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(CommonUtils.getUserId()).getName()))
+                                                            .collect(Collectors.toList());
+        return new PageImpl<>(result, pageable, productPage.getTotalElements());
     }
 
     @Override
     public Product findProductById(int id) {
         Product pro = (Product) productNameCache.get(id);
-        if (pro == null)
+        if (pro == null) {
             pro = productRepository.getOne(id);
+            productNameCache.put(id, pro);
+        }
         return pro;
+    }
+
+    @Override
+    public ProductDetailVO findProductVO(int id) {
+        return ProductDetailVO.buildProductDetailVO(findProductById(id), userService.getUser(CommonUtils.getUserId()).getName());
     }
 
     @Override
@@ -101,6 +122,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
         Product product = Product.builder()
+                .createAt(DateUtils.getToday())
+                .createBy(CommonUtils.getUserId())
                 .updateAt(DateUtils.getToday())
                 .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
@@ -109,17 +132,30 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                 .specification(productDTO.getSpecification()).build();
         if (productDTO.getId() != null){
-            product.setId(productDTO.getId());
-            Product originProduct = (Product) productNameCache.get(productDTO.getId());
-            if (!productDTO.getUpdateTime().equals(originProduct.getUpdateAt())) {
+            product = findProductById(productDTO.getId());
+            if (!productDTO.getUpdateAt().equals(product.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "商品信息已变更，请重新更新");
             }
-        }else {
-            product.setCreateAt(DateUtils.getToday());
-            product.setCreateBy(CommonUtils.getUserId());
+            product.setName(productDTO.getName());
+            product.setShorthand(productDTO.getShorthand());
+            product.setType(productDTO.getType());
+            product.setDensity(productDTO.getDensity());
+            product.setSpecification(productDTO.getSpecification());
         }
+
         product = productRepository.saveAndFlush(product);
         productNameCache.put(product.getId(), product);
         return product.getId();
+    }
+
+    @Override
+    public int abandonProduct(int id) {
+        Product product = findProductById(id);
+        if (product == null)
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "商品不存在");
+
+        product.setDeleteAt(DateUtils.getToday());
+        product.setDeleteBy(CommonUtils.getUserId());
+        return productRepository.saveAndFlush(product).getId();
     }
 }

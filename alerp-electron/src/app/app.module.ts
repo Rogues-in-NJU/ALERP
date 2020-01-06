@@ -10,6 +10,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "./app-routing.module";
 import { PassportModule } from "./pages/passport/passport.module";
 import { WorkspaceModule } from "./pages/workspace/workspace.module";
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
+import { SimpleHttpInterceptor } from "./core/interceptor/simple-http-interceptor.service";
 
 registerLocaleData(zh);
 
@@ -27,7 +29,10 @@ registerLocaleData(zh);
   declarations: [
     AppComponent
   ],
-  providers: [ { provide: NZ_I18N, useValue: zh_CN } ],
+  providers: [
+    { provide: NZ_I18N, useValue: zh_CN },
+    { provide: HTTP_INTERCEPTORS, useClass: SimpleHttpInterceptor, multi: true }
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {

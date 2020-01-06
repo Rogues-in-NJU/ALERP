@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum  PurchaseOrderStatus {
 
-    UNFINISHED(0, "未完成") {
+    UNPAID(0, "未付款") {
         @Override
         public boolean abandonable() {
             return true;
@@ -24,10 +24,16 @@ public enum  PurchaseOrderStatus {
             return true;
         }
     },
-    FINISHED(1, "已完成") {
+    UNFINISHED(1, "未完成") {
+        @Override
+        public boolean paymentable() {
+            return true;
+        }
+    },
+    FINISHED(2, "已完成") {
 
     },
-    ABANDONED(2, "已废弃");
+    ABANDONED(3, "已废弃");
 
     private int code;
     private String message;

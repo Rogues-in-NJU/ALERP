@@ -84,21 +84,6 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     this.shippingOrderCode = this.route.snapshot.params['id'];
     this.reload();
-
-    const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
-    };
-    const optionList$: Observable<ProductVO[]> = this.searchChanges$
-      .asObservable()
-      .pipe(debounceTime(500))
-      .pipe(switchMap(getProducts));
-    optionList$.subscribe((data: ProductVO[]) => {
-      this.searchProducts = data;
-      this.isProductsLoading = false;
-    });
   }
 
   addProductRow(): void {

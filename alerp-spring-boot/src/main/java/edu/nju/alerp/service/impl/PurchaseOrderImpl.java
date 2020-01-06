@@ -83,11 +83,11 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
-        List<PurchaseOrder> res = purchaseOrderRepository.findAll(sp);
-        List<PurchaseOrderListVO> resultList = res.parallelStream()
+        Page<PurchaseOrder> res = purchaseOrderRepository.findAll(sp, pageable);
+        List<PurchaseOrderListVO> resultList = res.getContent().parallelStream()
                                             .map(p -> PurchaseOrderListVO.buildVO(p, supplierService.getSupplierName(p.getSupplierId()), userService.getUser(p.getCreateBy()).getName()))
                                             .filter(Objects::nonNull).collect(Collectors.toList());
-        return new PageImpl<>(resultList, pageable, resultList.size());
+        return new PageImpl<>(resultList, pageable, res.getTotalElements());
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         QueryContainer<PurchaseOrderProduct> sp = new QueryContainer<>();
         QueryContainer<PaymentRecord> paySp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("productId", id));
+            sp.add(ConditionFactory.equal("purchaseOrderId", id));
             paySp.add(ConditionFactory.equal("purchaseOrderId", id));
         } catch (Exception e) {
             log.error("Value is null.", e);
@@ -133,7 +133,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .city(city)
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER, CityEnum.of(CommonUtils.getCity())))
-                                                            .status(PurchaseOrderStatus.UNFINISHED.getCode())
+                                                            .status(PurchaseOrderStatus.UNPAID.getCode())
                                                             .createAt(DateUtils.getToday())
                                                             .createBy(CommonUtils.getUserId())
                                                             .updateAt(DateUtils.getToday())
@@ -162,11 +162,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         if (!PurchaseOrderStatus.of(purchaseOrder.getStatus()).paymentable())
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据不能继续支付");
 
-        QueryContainer<PaymentRecord> sp = new QueryContainer<>();
-        sp.add(ConditionFactory.equal("purchaseOrderId", purchaseOrder.getId()));
-        sp.add(ConditionFactory.equal("status", PaymentRecordStatus.CONFIRMED));
-        List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(sp);
-        double payed = paymentRecords.parallelStream().mapToDouble(PaymentRecord::getCash).sum();
+        double payed = getPaid(purchaseOrder.getId());
         if (purchaseOrder.getCash() - payed < addPaymentRecordDTO.getCash())
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "已付超过应收");
 
@@ -198,9 +194,15 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据已被废弃");
 
         paymentRecord.setStatus(PaymentRecordStatus.ABANDONED.getCode());
+        paymentRecord.setDeleteAt(DateUtils.getToday());
+        paymentRecord.setDeleteBy(CommonUtils.getUserId());
         int result = paymentRecordRepository.saveAndFlush(paymentRecord).getId();
 
-        purchaseOrder.setStatus(PurchaseOrderStatus.UNFINISHED.getCode());
+        double paid = getPaid(purchaseOrder.getId());
+        if (paid == 0)
+            purchaseOrder.setStatus(PurchaseOrderStatus.UNPAID.getCode());
+        else
+            purchaseOrder.setStatus(PurchaseOrderStatus.UNFINISHED.getCode());
         purchaseOrderRepository.saveAndFlush(purchaseOrder);
         return result;
     }
@@ -213,5 +215,14 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
 
         purchaseOrder.setStatus(PurchaseOrderStatus.ABANDONED.getCode());
         return purchaseOrderRepository.saveAndFlush(purchaseOrder).getId();
+    }
+
+    private double getPaid(int purchaseOrderId) throws Exception{
+        QueryContainer<PaymentRecord> sp = new QueryContainer<>();
+        sp.add(ConditionFactory.equal("purchaseOrderId", purchaseOrderId));
+        sp.add(ConditionFactory.equal("status", PaymentRecordStatus.CONFIRMED.getCode()));
+        List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(sp);
+        double payed = paymentRecords.parallelStream().mapToDouble(PaymentRecord::getCash).sum();
+        return payed;
     }
 }

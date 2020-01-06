@@ -3,7 +3,7 @@
  */
 import {Component, OnInit} from "@angular/core";
 import {RefreshableTab} from "../../tab/tab.component";
-import {TableQueryParams, ResultVO, TableResultVO} from "../../../../core/model/result-vm";
+import {TableQueryParams, ResultVO, TableResultVO, ResultCode} from "../../../../core/model/result-vm";
 import {ProductService} from "../../../../core/services/product.service";
 import {ProductVO} from "../../../../core/model/product";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -27,8 +27,8 @@ export class ProductListComponent implements RefreshableTab, OnInit{
   isSaving: boolean = false;
   productCountIndex : number = 0;
 
-  query_name : string ="";
-  query_type : number = 0;
+  query_name : string = null;
+  query_type : number = null;
 
   products: ProductVO[] = [];
   searchProducts: ProductVO[];
@@ -36,7 +36,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 
   editCache : {
     _id?: number,
-    data?: TempProductInfoVO,
+    data?: ProductVO,
     isAdd?: boolean
   } = {};
 
@@ -54,6 +54,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 
   }
   refresh(): void {
+    this.search();
   }
 
   ngOnInit(): void {
@@ -66,25 +67,37 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     const queryParams: TableQueryParams = {
       pageIndex : this.pageIndex,
       pageSize : this.pageSize,
-      name : this.query_name,
-      type : this.query_type
+      // name : this.query_name,
+      // type : this.query_type
     };
+
+    if(this.query_name != null){
+      queryParams['name'] = this.query_name;
+    }
+
+    if(this.query_type != null){
+      queryParams['type'] = this.query_type;
+    }
+
+    this.query_name = null;
+    this.query_type = null;
 
     this.product.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProductVO>>) =>{
-        if(!res){
+        console.log(res);
+        if (!Objects.valid(res)) {
           return;
         }
-        if(res.code !== 200){
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
 
         const tableResult: TableResultVO<ProductVO> = res.data;
-        this.pageIndex = tableResult.pageIndex;
+        this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.products = tableResult.result;
-        for(let product in this.products){
+        for(let product of this.products){
           product['_id'] = this.productCountIndex ++;
         }
     }, (error: HttpErrorResponse) => {
@@ -93,39 +106,16 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 
     Object.assign(this.editCache, this.defaultEditCache);
 
-    // this.productForm = this.fb.group({
-    //   name: [null, Validators.required],
-    //   shortHand: [null],
-    //   type: [null, Validators.required],
-    //   density: [null, Validators.required],
-    //   specification: [null]
-    // });
-    // const getProducts: any = (name: string) => {
-    //   return this.product
-    //     .findAll({})
-    //     .pipe(
-    //       map((res: ResultVO<ProductVO[]>) => res.data)
-    //     )
-    // };
-    // const optionList$: Observable<ProductVO[]> = this.searchProductsChange$
-    //   .asObservable()
-    //   .pipe(debounceTime(500))
-    //   .pipe(switchMap(getProducts));
-    // optionList$.subscribe((data: ProductVO[]) => {
-    //   this.searchProducts = data;
-    //   this.isProductLoading = false;
-    // })
     this.isLoading = false;
   }
 
   addRow(){
     if (Objects.valid(this.editCache._id)) {
-      console.log("!!!!!" + this.editCache._id);
       this.message.warning('请先保存商品列表的更改!');
       return;
     }
     let item: ProductVO = {
-      id: 0,
+      id: null,
       name: '',
       shorthand: '',
       type: 0,
@@ -133,7 +123,6 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       specification: ''
     };
     item['_id'] = this.productCountIndex ++;
-    console.log(item);
     this.products = [
       item,
       ...this.products
@@ -176,8 +165,29 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     if (_id !== this.editCache._id) {
       return;
     }
-    const index = this.products.findIndex(item => item['_id'] === _id);
-    Object.assign(this.products[index], this.editCache.data);
+    if (!Objects.valid(this.editCache.data.name)) {
+      this.message.warning('请录入商品名称!');
+      return;
+    }
+    if (!Objects.valid(this.editCache.data.type)) {
+      this.message.warning('请选择商品类型!');
+      return;
+    }
+    this.product.updateOrAddProduct(this.editCache.data)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.warning("失败")
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.warning(res.message);
+          return;
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+        this.refresh();
+      });
     Object.assign(this.editCache, this.defaultEditCache);
   }
 
@@ -200,11 +210,11 @@ export class ProductListComponent implements RefreshableTab, OnInit{
 
 }
 
-interface TempProductInfoVO{
-  id?: number;
-  name?: string;
-  shorthand?: string;
-  type?: number;
-  density?: number;
-  specification?: string;
-}
+// interface TempProductInfoVO{
+//   id?: number;
+//   name?: string;
+//   shorthand?: string;
+//   type?: number;
+//   density?: number;
+//   specification?: string;
+// }

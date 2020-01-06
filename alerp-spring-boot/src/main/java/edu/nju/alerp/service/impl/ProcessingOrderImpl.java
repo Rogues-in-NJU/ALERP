@@ -152,12 +152,19 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                                     .specification(updateProcessProductDTO.getSpecification())
                                                                     .expectedWeight(updateProcessProductDTO.getExpectedWeight())
                                                                     .build();
-        if (updateProcessProductDTO.getId() != null)
-            processOrderProduct.setId(updateProcessProductDTO.getId());
-        ProcessingOrder processingOrder = ProcessingOrder.builder().id(updateProcessProductDTO.getProductId())
-                                                                    .updateAt(DateUtils.getToday())
-                                                                     .updateBy(CommonUtils.getUserId())
-                                                                    .build();
+
+        if (updateProcessProductDTO.getId() != null) {
+            processOrderProduct = processOrderProductRepository.getOne(updateProcessProductDTO.getId());
+            processOrderProduct.setProcessOrderId(updateProcessProductDTO.getProcessingOrderId());
+            processOrderProduct.setProductId(updateProcessProductDTO.getProductId());
+            processOrderProduct.setSpecification(updateProcessProductDTO.getSpecification());
+            processOrderProduct.setQuantity(updateProcessProductDTO.getQuantity());
+            processOrderProduct.setExpectedWeight(updateProcessProductDTO.getExpectedWeight());
+        }
+
+        ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
+        processingOrder.setUpdateAt(DateUtils.getToday());
+        processingOrder.setUpdateBy(CommonUtils.getUserId());
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
         processingOrderRepository.saveAndFlush(processingOrder);
         return processOrderProduct.getId();

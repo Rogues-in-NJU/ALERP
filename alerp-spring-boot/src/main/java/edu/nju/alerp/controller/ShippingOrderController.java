@@ -4,10 +4,7 @@ import edu.nju.alerp.common.*;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.*;
-import edu.nju.alerp.service.ArrearOrderService;
-import edu.nju.alerp.service.ProcessOrderService;
-import edu.nju.alerp.service.ProductService;
-import edu.nju.alerp.service.ShippingOrderService;
+import edu.nju.alerp.service.*;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
@@ -47,6 +44,8 @@ public class ShippingOrderController {
     ProcessOrderService processOrderService;
     @Autowired
     ArrearOrderService arrearOrderService;
+    @Autowired
+    CustomerService customerService;
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
@@ -110,6 +109,10 @@ public class ShippingOrderController {
         try {
             int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
             int userId = CommonUtils.getUserId();
+            Customer customer = customerService.getCustomer(shippingOrderDTO.getCustomerId());
+            if (customer == null) {
+                throw new NJUException(ExceptionEnum.OTHER_ERROR, "出货单客户不存在！");
+            }
             ArrearOrder arrearOrder = ArrearOrder.builder()
                     .createdAt(DateUtils.getToday())
                     .createdBy(userId)
@@ -117,6 +120,7 @@ public class ShippingOrderController {
                     .updatedBy(userId)
                     .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
                     .customerId(shippingOrderDTO.getCustomerId())
+                    .dueDate(DateUtils.getDueDate(customer.getPayDate()))
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(shippingOrderDTO.getCash())
                     .build();

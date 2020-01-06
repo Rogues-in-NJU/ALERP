@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PurchaseOrderListVO {
 
-    private int id;
+    private Integer id;
     private String code;
     private String description;
-    private int supplierId;
+    private Integer supplierId;
     private String supplierName;
-    private double cash;
+    private Double cash;
     private String salesman;
-    private int status;
+    private Integer status;
     private String doneAt;
     private String createdAt;
-    private int createdById;
+    private Integer createdById;
     private String createdByName;
 
     public static PurchaseOrderListVO buildVO(PurchaseOrder purchaseOrder, String supplierName, String createdByName) {
@@ -31,16 +31,16 @@ public class PurchaseOrderListVO {
             return null;
         PurchaseOrderListVO purchaseOrderListVO = new PurchaseOrderListVO();
         purchaseOrderListVO.setId(purchaseOrder.getId());
-        purchaseOrder.setCode(purchaseOrder.getCode());
+        purchaseOrderListVO.setCode(purchaseOrder.getCode());
         purchaseOrderListVO.setDescription(purchaseOrder.getDescription());
-        purchaseOrder.setSupplierId(purchaseOrder.getSupplierId());
+        purchaseOrderListVO.setSupplierId(purchaseOrder.getSupplierId());
         purchaseOrderListVO.setSupplierName(supplierName);
         purchaseOrderListVO.setCash(purchaseOrder.getCash());
         purchaseOrderListVO.setSalesman(purchaseOrder.getSalesman());
         purchaseOrderListVO.setStatus(purchaseOrder.getStatus());
-        purchaseOrder.setDoneAt(purchaseOrder.getDoneAt());
-        purchaseOrder.setCreateAt(purchaseOrder.getCreateAt());
-        purchaseOrder.setCreateBy(purchaseOrder.getCreateBy());
+        purchaseOrderListVO.setDoneAt(purchaseOrder.getDoneAt());
+        purchaseOrderListVO.setCreatedAt(purchaseOrder.getCreateAt());
+        purchaseOrderListVO.setCreatedById(purchaseOrder.getCreateBy());
         purchaseOrderListVO.setCreatedByName(createdByName);
         return purchaseOrderListVO;
     }

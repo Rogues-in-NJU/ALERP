@@ -3,10 +3,10 @@ import { BaseInfo } from "./base-info";
 export interface ProductVO extends BaseInfo {
 
   id?: number;
-  name: string;
+  name?: string;
   shorthand?: string;
-  type: number;
-  density: number;
-  specification: string;
+  type?: number;
+  density?: number;
+  specification?: string;
 
 }

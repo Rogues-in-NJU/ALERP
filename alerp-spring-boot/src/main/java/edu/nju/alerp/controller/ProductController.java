@@ -8,6 +8,7 @@ import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.util.ListResponseUtils;
+import edu.nju.alerp.vo.ProductDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public class ProductController {
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name", required = false) String name,
                                                             @RequestParam(value = "type", required = false) Integer type) {
-        Page<Product> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
+        Page<ProductDetailVO> page = productService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), name, type);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
@@ -57,22 +58,36 @@ public class ProductController {
      * @return
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseResult<Product> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(productService.findProductById(id));
+    public ResponseResult<ProductDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        return ResponseResult.ok(productService.findProductVO(id));
     }
 
     /**
-     * 新增公司支出
+     * 新增或更新商品
      *
      * @param productDTO
      * @return
      */
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
             int res = productService.addOrUpdate(productDTO);
             return ResponseResult.ok(res);
         }catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+    }
+
+    /**
+     * 废弃商品
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        try {
+            return ResponseResult.ok(productService.abandonProduct(id));
+        }catch (Exception e ) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
     }
