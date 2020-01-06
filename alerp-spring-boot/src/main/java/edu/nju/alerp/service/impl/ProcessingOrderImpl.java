@@ -100,6 +100,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                                                 .createdAt(processingOrder.getCreateAt())
                                                 .createdById(String.valueOf(processingOrder.getCreateBy()))
                                                 .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
+                                                .updateAt(processingOrder.getUpdateAt())
                                                 .products(productVOS).build();
     }
 
@@ -145,6 +146,10 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
+        ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
+        if (!updateProcessProductDTO.getProcessingOrderUpdateAt().equals(processingOrder.getUpdateAt())) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "加工单信息已变更，请重新更新");
+        }
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
                                                                     .processOrderId(updateProcessProductDTO.getProcessingOrderId())
                                                                     .productId(updateProcessProductDTO.getProductId())
@@ -162,7 +167,6 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             processOrderProduct.setExpectedWeight(updateProcessProductDTO.getExpectedWeight());
         }
 
-        ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
         processingOrder.setUpdateAt(DateUtils.getToday());
         processingOrder.setUpdateBy(CommonUtils.getUserId());
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);

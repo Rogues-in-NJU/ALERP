@@ -134,7 +134,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 .specification(productDTO.getSpecification()).build();
         if (productDTO.getId() != null){
             product = findProductById(productDTO.getId());
-            if (!productDTO.getUpdateAt().equals(product.getUpdateAt())) {
+            if (!productDTO.getUpdatedAt().equals(product.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "商品信息已变更，请重新更新");
             }
             product.setName(productDTO.getName());
