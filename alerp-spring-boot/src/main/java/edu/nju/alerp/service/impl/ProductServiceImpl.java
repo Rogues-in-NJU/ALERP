@@ -65,6 +65,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 fuzzyMatch.add(ConditionFactory.like("shorthand", name));
                 sp.add(ConditionFactory.or(fuzzyMatch));
             }
+            sp.add(ConditionFactory.isNull("deleteAt"));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
@@ -77,8 +78,10 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     @Override
     public Product findProductById(int id) {
         Product pro = (Product) productNameCache.get(id);
-        if (pro == null)
+        if (pro == null) {
             pro = productRepository.getOne(id);
+            productNameCache.put(id, pro);
+        }
         return pro;
     }
 
@@ -101,6 +104,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
         Product product = Product.builder()
+                .createAt(DateUtils.getToday())
+                .createBy(CommonUtils.getUserId())
                 .updateAt(DateUtils.getToday())
                 .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
@@ -109,17 +114,30 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                 .specification(productDTO.getSpecification()).build();
         if (productDTO.getId() != null){
-            product.setId(productDTO.getId());
-            Product originProduct = (Product) productNameCache.get(productDTO.getId());
-            if (!productDTO.getUpdateTime().equals(originProduct.getUpdateAt())) {
+            product = findProductById(productDTO.getId());
+            if (!productDTO.getUpdateTime().equals(product.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "商品信息已变更，请重新更新");
             }
-        }else {
-            product.setCreateAt(DateUtils.getToday());
-            product.setCreateBy(CommonUtils.getUserId());
+            product.setName(productDTO.getName());
+            product.setShorthand(productDTO.getShorthand());
+            product.setType(productDTO.getType());
+            product.setDensity(productDTO.getDensity());
+            product.setSpecification(productDTO.getSpecification());
         }
+
         product = productRepository.saveAndFlush(product);
         productNameCache.put(product.getId(), product);
         return product.getId();
+    }
+
+    @Override
+    public int abandonProduct(int id) {
+        Product product = findProductById(id);
+        if (product == null)
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "商品不存在");
+
+        product.setDeleteAt(DateUtils.getToday());
+        product.setDeleteBy(CommonUtils.getUserId());
+        return productRepository.saveAndFlush(product).getId();
     }
 }
