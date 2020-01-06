@@ -574,7 +574,6 @@ body:
 {
   customerId: number,
   salesman: string,
-  
   products: [{
     productId: number,
     specification: string (客户定做的商品规格),
@@ -600,6 +599,9 @@ body:
   specification: string (客户定做的商品规格),
   quantity: number,
   expectedWeight: number
+
+  updateAt: string         //1.6新增，加工单的更新时间，用于控制版本  
+
 }
 
 res:

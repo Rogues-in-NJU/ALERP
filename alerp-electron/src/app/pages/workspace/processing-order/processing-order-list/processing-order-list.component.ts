@@ -6,7 +6,7 @@ import { ProcessingOrderService } from "../../../../core/services/processing-ord
 import { RefreshableTab } from "../../tab/tab.component";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Objects } from "../../../../core/services/util.service";
+import {DateUtils, Objects} from "../../../../core/services/util.service";
 import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 
 @Component({
@@ -31,7 +31,7 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     private router: Router,
     private processingOrder: ProcessingOrderService,
     private message: NzMessageService,
-    private tab: TabService
+    private tab: TabService,
   ) {
 
   }
@@ -46,17 +46,31 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    console.log(this.orderCode);
-    console.log(this.selectedStatus);
-    console.log(this.timeRange);
-
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    if (Objects.valid(this.orderCode)) {
+      queryParams['id'] = this.orderCode;
+      this.orderCode = null;
+    }
+    if (Objects.valid(this.selectedStatus)) {
+      queryParams['status'] = this.selectedStatus;
+      this.selectedStatus = null;
+    }
+    if (Objects.valid(this.timeRange)) {
+      queryParams['createAtStartTime'] = DateUtils.format(this.timeRange[0]);
+      queryParams['createAtEndTime'] = DateUtils.format(this.timeRange[1]);
+      this.timeRange = null;
+    }
+
+    console.log(queryParams);
+
     this.isLoading = true;
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res);
+
         if (!Objects.valid(res)) {
           return;
         }
