@@ -25,5 +25,6 @@ public class ShippingOrderVO {
     private String createdAt;
     private int createdById;
     private String createdByName;
+    private double totalWeight;
     private List<ProductVO> productVOList;
 }

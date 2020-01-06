@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 出货单Controller层
@@ -157,9 +158,11 @@ public class ShippingOrderController {
             BeanUtils.copyProperties(s, productVO);
             productVOList.add(productVO);
         });
+        double totalWeight = productVOList.stream().mapToDouble(ProductVO::getWeight).sum();
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
                 .city(CityEnum.of(shippingOrder.getCity()).getMessage())
+                .totalWeight(totalWeight)
                 .productVOList(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
