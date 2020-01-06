@@ -16,14 +16,25 @@ import java.io.IOException;
  * @CreateDate: 2020-01-05 21:29
  */
 @Slf4j
-@WebFilter(filterName = "LoginFilter", urlPatterns = {"/*"})
+@WebFilter(filterName = "LoginFilter", urlPatterns = {"/api/*"})
 public class LoginFilter implements Filter {
+
+    String[] accessUri = {"/api/user/login"};
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        if (CommonUtils.getUserId() == 0 && !httpServletRequest.getRequestURI().equals("/api/user/login")) {
+        if (CommonUtils.getUserId() == 0 && !ifAccess(httpServletRequest.getRequestURI())) {
             throw new NJUException(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口");
         }
         filterChain.doFilter(httpServletRequest, servletResponse);
+    }
+
+    private boolean ifAccess(String uri) {
+        for (String access : accessUri) {
+            if (uri.equals(access))
+                return true;
+        }
+        return false;
     }
 }
