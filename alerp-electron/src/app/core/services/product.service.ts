@@ -20,7 +20,8 @@ export class ProductService {
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ProductVO>>>{
     return this.http.get<ResultVO<TableResultVO<ProductVO>>>(`${AppConfig.BASE_URL}/api/product/list`,
       {
-        params: queryParams
+        params: queryParams,
+        withCredentials: true
       });
     // return of({
       //   code: 10000,
@@ -52,7 +53,7 @@ export class ProductService {
 
   public updateOrAddProduct(queryParams: ProductVO): Observable<ResultVO<any>>{
     console.log(queryParams);
-    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product/`, queryParams);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product`, queryParams, {withCredentials: true});
   }
 
   public deleteProduct(productId: string): ResultVO<any>{
