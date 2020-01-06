@@ -6,7 +6,7 @@ import { ProcessingOrderService } from "../../../../core/services/processing-ord
 import { RefreshableTab } from "../../tab/tab.component";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Objects } from "../../../../core/services/util.service";
+import { DateUtils, Objects, StringUtils } from "../../../../core/services/util.service";
 import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 
 @Component({
@@ -21,7 +21,8 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
   pageIndex: number = 1;
   pageSize: number = 10;
 
-  orderCode: number;
+  orderCode: string;
+  customerName: string;
   selectedStatus: number;
   timeRange: Date[];
 
@@ -54,6 +55,27 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    if (!StringUtils.isEmpty(this.orderCode)) {
+      Object.assign(queryParams, {
+        id: this.orderCode
+      });
+    }
+    if (!StringUtils.isEmpty(this.customerName)) {
+      Object.assign(queryParams, {
+        customerName: this.customerName
+      });
+    }
+    if (Objects.valid(this.selectedStatus)) {
+      Object.assign(queryParams, {
+        statue: this.selectedStatus
+      });
+    }
+    if (Objects.valid(this.timeRange) && this.timeRange.length === 2) {
+      Object.assign(queryParams, {
+        createAtStartTime: DateUtils.format(this.timeRange[0]),
+        createAtEndTime: DateUtils.format(this.timeRange[1])
+      });
+    }
     this.isLoading = true;
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
