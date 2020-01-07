@@ -11,6 +11,8 @@ export interface ProcessingOrderVO extends BaseInfo {
   salesman?: string;
   status: number;
 
+  totalWeight?: number;
+
   products?: ProcessingOrderProductVO[];
 
 }
@@ -20,13 +22,14 @@ export interface ProcessingOrderProductVO {
   id?: number;
   processingOrderId?: number,
   productId: number;
-  productName: string;
-  type: number;
-  density: number;
+  productName?: string;
+  type?: number;
+  density?: number;
   productSpecification?: string;
   specification: string;
   quantity: number;
   expectedWeight: number;
+  processingOrderUpdatedAt?: string;
 
 }
 

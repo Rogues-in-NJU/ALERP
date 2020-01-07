@@ -77,6 +77,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.processingOrderId = this.route.snapshot.params[ 'id' ];
     this.refresh();
 
@@ -207,14 +208,17 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
+        this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
       }, () => {
         this.refresh();
       });
   }
 
   onSpecificationInput(value: string): void {
+    this.calculateExpectedWeight();
     if (!Objects.valid(value)) {
       this.editCacheValidateStatus.specification = 'error';
     }
@@ -226,7 +230,6 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     }
     splits = splits.filter(item => !StringUtils.isEmpty(item));
     splits = splits.map(item => item.trim());
-    console.log(splits);
     if (splits.length === 1) {
       if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
         || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
@@ -316,20 +319,44 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
             // TODO: check
             // item.processingOrderId = this.processingOrderId;
             item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
-          })
+            item.processingOrderUpdatedAt = this.processingOrderData.updatedAt;
+          });
         }
+        console.log(this.processingOrderData);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
   }
 
-  checkModelNotNull(name: string): boolean {
-    if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
-      this.editCacheValidateStatus[name] = null;
-      console.log('here');
+  calculateExpectedWeight(): void {
+    this.editCache.data.expectedWeight
+      = SpecificationUtils.calculateWeight(this.editCache.data.specification,
+      this.editCache.currentProduct.density, this.editCache.data.quantity);
+  }
+
+  onQuantityChange(): void {
+    if (this.checkQuantity()) {
+      this.calculateExpectedWeight();
+    }
+  }
+
+  checkQuantity(): boolean {
+    if (Objects.valid(this.editCache.data.quantity)) {
+      this.editCacheValidateStatus.quantity = null;
+      // 做计算
       return true;
     } else {
-      this.editCacheValidateStatus[name] = 'error';
+      this.editCacheValidateStatus.quantity = 'error';
+      return false;
+    }
+  }
+
+  checkExpectedWeight(): boolean {
+    if (Objects.valid(this.editCache.data.expectedWeight)) {
+      this.editCacheValidateStatus.expectedWeight = null;
+      return true;
+    } else {
+      this.editCacheValidateStatus.expectedWeight = 'error';
       return false;
     }
   }
@@ -343,10 +370,10 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
-    if (!this.checkModelNotNull('quantity')) {
+    if (!this.checkQuantity()) {
       isValid = false;
     }
-    if (!this.checkModelNotNull('expectedWeight')) {
+    if (!this.checkExpectedWeight()) {
       isValid = false;
     }
     // 验证规格格式

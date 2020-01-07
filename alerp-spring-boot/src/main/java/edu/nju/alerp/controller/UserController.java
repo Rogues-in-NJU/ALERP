@@ -142,7 +142,9 @@ public class UserController {
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
-            session.invalidate();
+            if (session != null) {
+                session.invalidate();
+            }
             return ResponseResult.ok(true);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));

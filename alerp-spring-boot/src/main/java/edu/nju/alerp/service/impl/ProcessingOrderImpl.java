@@ -233,8 +233,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
 //            sp.add(ConditionFactory.between("createAt", createAtStartTime, createAtEndTime));
             sp.add(ConditionFactory.equal("city", city));
-            sp.add(ConditionFactory.greatThanEqualTo("createAt", createAtStartTime));
-            sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
+            if (createAtStartTime != null) {
+                sp.add(ConditionFactory.greatThanEqualTo("createAt", createAtStartTime));
+            }
+            if (createAtEndTime != null) {
+                sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
+            }
         }catch (Exception e) {
             log.error("Value is null.", e);
         }

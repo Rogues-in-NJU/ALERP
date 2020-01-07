@@ -7,8 +7,11 @@ export class ProcessingOrderStatusPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 1: return '已完成';
-      default: return '已完成';
+      case 0: return '草稿中';
+      case 1: return '未完成';
+      case 2: return '已完成';
+      case 3: return '已废弃';
+      default: return '已废弃';
     }
   }
 
