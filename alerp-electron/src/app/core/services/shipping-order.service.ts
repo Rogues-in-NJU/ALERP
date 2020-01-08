@@ -5,6 +5,8 @@ import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/re
 import { StringUtils } from "./util.service";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
 import {ProcessingOrderProductVO, ProcessingOrderVO} from "../model/processing-order";
+import {CustomerVO} from "../model/customer";
+import {AppConfig} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -19,28 +21,10 @@ export class ShippingOrderService {
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ShippingOrderInfoVO>>> {
 
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result: [{
-          id: 1,
-          code: '200201912120001',
-          customerId: 1,
-          customerName: '于海强',
-          arrearOrderId: null,
-          status: 1,
-          cash: 165,
-          floatingCash: -5,
-          receivableCash: 160,
-          createdAt: '2019-10-10 12:00',
-        }]
-      }
+    return this.http.get<ResultVO<TableResultVO<ShippingOrderInfoVO>>>(`${AppConfig.BASE_URL}/api/shipping-order/list`, {
+      params: queryParams,
+      withCredentials: true
     });
-
   }
 
   public find(id: string): Observable<ResultVO<ShippingOrderInfoVO>> {

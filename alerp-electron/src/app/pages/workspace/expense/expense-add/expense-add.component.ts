@@ -54,15 +54,15 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
     let expenseAdd: ExpenseInfoVO = {
       title: formData.title,
       description: formData.description,
-      cash: formData.description,
-      doneAt: formData.description,
+      cash: formData.cash,
+      doneAt: formData.doneAt,
     };
     // console.log(formData);
     this.isSaving = true;
     this.expense.save(expenseAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
+        // console.log(res);
         this.message.success('添加成功!');
         this.isSaving = false;
         // TODO: 跳转回列表页面
