@@ -25,8 +25,14 @@ public class Auth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /**
-     * 操作类型
+     * 权限描述
      */
-    private int action;
+    private String description;
+
+    /**
+     * 路由
+     * */
+    private String route;
 }

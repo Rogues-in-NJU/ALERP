@@ -1,0 +1,37 @@
+package edu.nju.alerp.entity;
+
+import lombok.Builder;
+import lombok.Data;
+
+import javax.persistence.*;
+
+/**
+ * @Description: 权限用户关联实体类
+ * @Author: yangguan
+ * @CreateDate: 2020-01-08 16:27
+ */
+@Builder
+@Data
+@Entity
+@Table(name = "auth_user")
+public class AuthUser {
+
+    /**
+     * 自增主键
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    /**
+     * 权限id
+     */
+    @Column(name = "auth_id")
+    private int authId;
+
+    /**
+     * 用户Id
+     */
+    @Column(name = "user_id")
+    private int userId;
+}

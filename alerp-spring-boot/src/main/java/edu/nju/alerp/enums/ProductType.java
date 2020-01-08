@@ -4,6 +4,8 @@ package edu.nju.alerp.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.regex.Pattern;
+
 /**
  * @Description: 商品类别
  * @Author: yangguan
@@ -21,12 +23,24 @@ public enum  ProductType {
                                      String specification) {
             return Math.PI * Math.pow(Double.valueOf(productSpecification), 2) * Double.valueOf(specification);
         }
+
+        @Override
+        public boolean validateSpecification(String specification) {
+            String pattern = "(([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9]))";
+            boolean matches = Pattern.matches(pattern, specification);
+            return matches;
+        }
     },
     LOSS(3, "损耗") {
         @Override
         protected double caculateVolume(String productSpecification,
                                      String specification) {
             return 1;
+        }
+
+        @Override
+        public boolean validateSpecification(String specification) {
+            return true;
         }
     };
 
@@ -57,7 +71,11 @@ public enum  ProductType {
         return result;
     }
 
-//    public boolean validateSpecification(String specification) {
-//
-//    }
+    public boolean validateSpecification(String specification) {
+        String pattern = "(([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9]))"
+                            + "\\*" + "(([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9]))"
+                            + "\\*" + "(([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9]))";
+        boolean matches = Pattern.matches(pattern, specification);
+        return matches;
+    }
 }

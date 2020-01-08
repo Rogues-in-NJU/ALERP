@@ -34,6 +34,11 @@ public class CacheConfiguration {
         return buildObjectCache("userCache", 10000);
     }
 
+    @Bean
+    public Cache<String, Object> authCache() {
+        return buildStringKeyCache("authCache", 1000);
+    }
+
     private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
 //        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
         String cacheFile = "../../mapdb/"+ cacheName;
@@ -78,6 +83,31 @@ public class CacheConfiguration {
         Map<Integer, String> diskCache = db.hashMap(cacheName)
                 .keySerializer(Serializer.INTEGER)
                 .valueSerializer(Serializer.STRING)
+                .createOrOpen();
+//
+        return new RealCache<>(new ConcurrentHashMap<>(), diskCache, heapCacheLimit);
+    }
+
+    private Cache<String, Object>  buildStringKeyCache(String cacheName, long heapCacheLimit) {
+//        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
+        String cacheFile = "../../mapdb/"+ cacheName;
+        //todo 文件路径要配置好
+        mkdir(cacheFile);
+        DB db = DBMaker.fileDB(cacheFile)
+                //.checksumHeaderBypass()
+                //.fileMmapEnableIfSupported()//1
+                //.fileMmapPreclearDisable()//2
+                .cleanerHackEnable()//3
+                .closeOnJvmShutdown()//4
+                //.transactionEnable()//5
+                .concurrencyScale(128)//6
+                .checksumHeaderBypass()
+                .fileChannelEnable()
+                .make();
+
+        Map<String, Object> diskCache = db.hashMap(cacheName)
+                .keySerializer(Serializer.STRING)
+                .valueSerializer(Serializer.JAVA)
                 .createOrOpen();
 //
         return new RealCache<>(new ConcurrentHashMap<>(), diskCache, heapCacheLimit);
