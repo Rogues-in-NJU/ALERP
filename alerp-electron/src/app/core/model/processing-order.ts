@@ -9,7 +9,7 @@ export interface ProcessingOrderVO extends BaseInfo {
   shippingOrderId?: number;
   shippingOrderCode?: string;
   salesman?: string;
-  status: number;
+  status?: number;
 
   totalWeight?: number;
 

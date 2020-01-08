@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { TabService } from "../../../../core/services/tab.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
-import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
 import { ProductVO } from "../../../../core/model/product";
@@ -12,7 +12,6 @@ import { BehaviorSubject, Observable, of } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
-import { CustomerVO } from "../../../../core/model/customer";
 
 @Component({
   selector: 'processing-order-info',
@@ -55,7 +54,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   printStyle: string;
 
   constructor(
-    private closeTab: TabService,
+    private tab: TabService,
     private route: ActivatedRoute,
     private router: Router,
     private processingOrder: ProcessingOrderService,
@@ -110,6 +109,11 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.searchProducts = data;
       this.isProductsLoading = false;
     });
+    this.tab.refreshEvent.subscribe((res: RefreshTabEvent) => {
+      if (res.url === '/workspace/processing-order/list') {
+        this.refresh();
+      }
+    })
   }
 
   addProductRow(): void {

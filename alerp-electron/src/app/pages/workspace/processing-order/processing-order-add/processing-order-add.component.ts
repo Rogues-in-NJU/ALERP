@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ProcessingOrderProductVO } from "../../../../core/model/processing-order";
+import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
 import { ProductVO } from "../../../../core/model/product";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -12,6 +12,8 @@ import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } fr
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { CustomerVO } from "../../../../core/model/customer";
 import { CustomerService } from "../../../../core/services/customer.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { TabService } from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'processing-order-add',
@@ -61,7 +63,8 @@ export class ProcessingOrderAddComponent implements OnInit {
     private processingOrder: ProcessingOrderService,
     private product: ProductService,
     private customer: CustomerService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
@@ -130,6 +133,50 @@ export class ProcessingOrderAddComponent implements OnInit {
       this.searchCustomers = data;
       this.isCustomersLoading = false;
     });
+  }
+
+  saveProcessingOrder(): void {
+    if (!this.processingOrderForm.valid) {
+      Object.values(this.processingOrderForm.controls).forEach(item => {
+        item.markAsDirty();
+        item.updateValueAndValidity();
+      });
+      return;
+    }
+    if (!Objects.valid(this.products) || this.products.length === 0) {
+      this.message.error('至少添加一个加工商品!');
+      return;
+    }
+    const processingOrderData: ProcessingOrderVO = {
+      id: null,
+      customerId: null,
+      salesman: null,
+      products: null
+    };
+    Object.assign(processingOrderData, this.processingOrderForm.getRawValue(), {
+      products: this.products
+    });
+    console.log(processingOrderData);
+    this.processingOrder.save(processingOrderData)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+        this.tab.closeEvent.emit({
+          url: this.router.url,
+          goToUrl: '/workspace/processing-order/list',
+          refreshUrl: '/workspace/processing-order/list',
+          routeConfig: this.route.snapshot.routeConfig
+        });
+      });
   }
 
   addProductRow(): void {
@@ -224,7 +271,6 @@ export class ProcessingOrderAddComponent implements OnInit {
     const index = this.products.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.products[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
-    console.log(this.products[ index ]);
   }
 
   onSpecificationInput(value: string): void {

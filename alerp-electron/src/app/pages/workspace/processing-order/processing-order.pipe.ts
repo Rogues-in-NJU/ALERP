@@ -24,8 +24,11 @@ export class ProcessingOrderStatusColorPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 1: return 'green';
-      default: return 'green';
+      case 0: return 'cyan';
+      case 1: return 'blue';
+      case 2: return 'green';
+      case 3: return '';
+      default: return '';
     }
   }
 

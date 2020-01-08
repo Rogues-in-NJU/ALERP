@@ -2,6 +2,7 @@
   <nz-page-header-title>新增加工单</nz-page-header-title>
   <nz-page-header-extra>
     <button nz-button nzType="primary"
+            (click)="saveProcessingOrder()"
             [nzLoading]="isSaving">
       <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
       保存
