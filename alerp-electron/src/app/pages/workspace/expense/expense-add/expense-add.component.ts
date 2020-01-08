@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {ClosableTab} from "../../tab/tab.component";
 import {TabService} from "../../../../core/services/tab.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ResultVO} from "../../../../core/model/result-vm";
 import {BehaviorSubject, Observable} from "rxjs";
@@ -30,9 +30,11 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
 
   constructor(private closeTab: TabService,
               private expense: ExpenseService,
+              private route: ActivatedRoute,
               private router: Router,
               private fb: FormBuilder,
-              private message: NzMessageService) {
+              private message: NzMessageService,
+              private tab: TabService) {
 
   }
 
@@ -68,6 +70,13 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
         // TODO: 跳转回列表页面
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+      }, () => {
+        this.tab.closeEvent.emit({
+          url: this.router.url,
+          goToUrl: '/workspace/processing-order/list',
+          refreshUrl: '/workspace/processing-order/list',
+          routeConfig: this.route.snapshot.routeConfig
+        });
       });
   }
 
