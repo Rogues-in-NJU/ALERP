@@ -110,7 +110,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.isProductsLoading = false;
     });
     this.tab.refreshEvent.subscribe((res: RefreshTabEvent) => {
-      if (res.url === '/workspace/processing-order/list') {
+      if (res.url === this.router.url) {
         this.refresh();
       }
     })
