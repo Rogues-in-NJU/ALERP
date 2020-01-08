@@ -6,6 +6,7 @@ import edu.nju.alerp.common.auth.AuthRegistry;
 import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.dto.AuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.entity.AuthUser;
 import edu.nju.alerp.repo.AuthRepository;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -37,13 +40,12 @@ public class AuthImpl implements AuthService, InitializingBean {
     @Autowired
     private AuthUserRepository authUserRepository;
 
-    @Resource
-    private Cache<String, Object> authCache;
+    private Map<Integer, Auth> authCache = new ConcurrentHashMap<>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
         List<Auth> auths = findAll();
-        authCache.putAll(auths.parallelStream().map(auth -> MutablePair.of(auth.getRoute(), auth)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
+        authCache.putAll(auths.parallelStream().map(auth -> MutablePair.of(auth.getId(), auth)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
         auths.forEach(auth -> AuthRegistry.register(auth.getRoute(), new AuthParamsSupplier() {
             @Override
             public void consume(AuthContext authContext) {
@@ -58,20 +60,29 @@ public class AuthImpl implements AuthService, InitializingBean {
     }
 
     @Override
-    public int addOrUpdateAuth() {
-        return 0;
+    public int addOrUpdateAuth(AuthDTO authDTO) {
+        Auth auth = Auth.builder().description(authDTO.getDescription())
+                                .route(authDTO.getRoute()).build();
+
+        if (authDTO.getId() != null) {
+            auth = authRepository.getOne(auth.getId());
+            auth.setDescription(authDTO.getDescription());
+            auth.setRoute(authDTO.getRoute());
+        }
+
+        int res = authRepository.saveAndFlush(auth).getId();
+        authCache.put(res, auth);
+        return res;
     }
 
     @Override
     public Auth findAuthByUri(String uri) {
-        Auth auth = (Auth) authCache.get(uri);
-        if (auth == null) {
-            auth = findAuthByUriWithSql(uri);
-            if (auth != null) {
-                authCache.put(auth.getRoute(), auth);
-            }
+        for (Map.Entry<Integer, Auth> authEntry : authCache.entrySet()) {
+            Auth auth = authEntry.getValue();
+            if (Pattern.matches(auth.getRoute(), uri))
+                return auth;
         }
-        return auth;
+        return null;
     }
 
     @Override

@@ -34,11 +34,6 @@ public class CacheConfiguration {
         return buildObjectCache("userCache", 10000);
     }
 
-    @Bean
-    public Cache<String, Object> authCache() {
-        return buildStringKeyCache("authCache", 1000);
-    }
-
     private Cache<Integer, Object>  buildObjectCache(String cacheName, long heapCacheLimit) {
 //        String cacheFile = CacheConfiguration.class.getResource("/").getPath() + "/mapdb/" + cacheName;
         String cacheFile = "../../mapdb/"+ cacheName;

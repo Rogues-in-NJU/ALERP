@@ -27,7 +27,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         authContext.setHttpServletRequest(request);
 
-        HttpServletResponse response = (HttpServletResponse) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
         ResponseWrapper responseWrapper = new ResponseWrapper(response);
         authContext.setHttpServletResponse(responseWrapper);
 

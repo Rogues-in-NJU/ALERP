@@ -8,6 +8,7 @@ import edu.nju.alerp.service.AuthService;
 import edu.nju.alerp.util.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
@@ -28,14 +29,15 @@ public class AuthAspect {
         this.authService = authService;
     }
 
-    private static final String POINT_CUT = "execution(public * edu.nju.alerp.controller..*Controller.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)";
+    private static final String POINT_CUT = "execution(public * edu.nju.alerp..*Controller.*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)";
 
     @Pointcut(POINT_CUT)
     public void pointCut() {
 
     }
 
-    @Pointcut(POINT_CUT)
+//    @Pointcut(POINT_CUT)
+    @Around(POINT_CUT)
     public Object doAroundAdvice(ProceedingJoinPoint pjp) throws Throwable {
         Object[] args = pjp.getArgs();
         AuthContext authContext = AuthRegistry.getOrCreateAuthContext();

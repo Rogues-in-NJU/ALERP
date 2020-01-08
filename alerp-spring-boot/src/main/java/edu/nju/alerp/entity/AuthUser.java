@@ -1,7 +1,9 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,6 +16,8 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "auth_user")
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthUser {
 
     /**
