@@ -232,20 +232,18 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             else
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
 //            sp.add(ConditionFactory.between("createAt", createAtStartTime, createAtEndTime));
-            sp.add(ConditionFactory.equal("city", city));
-            if (createAtStartTime != null) {
+            if (createAtStartTime != null)
                 sp.add(ConditionFactory.greatThanEqualTo("createAt", createAtStartTime));
-            }
-            if (createAtEndTime != null) {
+            if (createAtEndTime != null)
                 sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
-            }
+            sp.add(ConditionFactory.equal("city", city));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }
         Page<ProcessingOrder> processingOrderPage = processingOrderRepository.findAll(sp, pageable);
 
         List<ProcessingOrderListVO> result = processingOrderPage.getContent()
-                .parallelStream().map(processingOrder ->
+                .stream().map(processingOrder ->
                         ProcessingOrderListVO.buildProcessingOrderListVO(processingOrder,
                                 customerService.getCustomer(processingOrder.getCustomerId()).getName(),userService.getUser(processingOrder.getCreateBy()).getName()))
                 .collect(Collectors.toList());

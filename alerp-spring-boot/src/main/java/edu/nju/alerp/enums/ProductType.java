@@ -56,4 +56,8 @@ public enum  ProductType {
         }
         return result;
     }
+
+//    public boolean validateSpecification(String specification) {
+//
+//    }
 }
