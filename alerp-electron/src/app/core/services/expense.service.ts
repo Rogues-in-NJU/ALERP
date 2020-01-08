@@ -24,10 +24,8 @@ export class ExpenseService {
   }
 
   public save(info: ExpenseInfoVO): Observable<ResultVO<any>> {
-    return of({
-      code: 200,
-      message: '',
-      data: null
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/expense`, info, {
+      withCredentials: true
     });
   }
 

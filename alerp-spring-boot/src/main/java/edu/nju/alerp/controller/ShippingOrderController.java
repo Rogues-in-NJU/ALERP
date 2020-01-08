@@ -94,9 +94,9 @@ public class ShippingOrderController {
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
-                                             @RequestParam(value = "status") int status,
-                                             @RequestParam(value = "createAtStartTime") String createAtStartTime,
-                                             @RequestParam(value = "createAtEndTime") String createAtEndTime) {
+                                             @RequestParam(value = "status", required = false) Integer status,
+                                             @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
+                                             @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
         Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, name, status, createAtStartTime, createAtEndTime);
         List<ShippingOrderBriefVO> result = new ArrayList<>();
