@@ -7,6 +7,7 @@ import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
 import {ExpenseService} from "../../../../core/services/expense.service";
 import {ExpenseInfoVO} from "../../../../core/model/expense";
+import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'expense-list',
@@ -58,7 +59,22 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
+    this.Expense.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   refresh(): void {

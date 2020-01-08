@@ -30,7 +30,9 @@ export class ExpenseService {
   }
 
   public abandon(id: string): Observable<ResultVO<any>> {
-    return of(null);
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/expense/delete/${id}`, {
+      withCredentials: true
+    });
   }
 
 }
