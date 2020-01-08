@@ -35,4 +35,8 @@ public class CommonUtils {
         HttpSession session = getHttpSession();
         return session.getAttribute("cityId") == null ? 0 : (int) session.getAttribute("cityId");
     }
+
+//    public static boolean validateSpecification(String pecification) {
+//
+//    }
 }
