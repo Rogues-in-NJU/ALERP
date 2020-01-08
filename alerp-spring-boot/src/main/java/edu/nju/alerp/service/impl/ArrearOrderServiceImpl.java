@@ -45,7 +45,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Override
     public int saveArrearOrder(ArrearOrder arrearOrder) {
-        ArrearOrder result = arrearOrderRepository.save(arrearOrder);
+        ArrearOrder result = arrearOrderRepository.saveAndFlush(arrearOrder);
         return result.getId();
     }
 
