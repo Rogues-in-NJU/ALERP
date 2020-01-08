@@ -39,7 +39,7 @@ public class ProcessOrderController {
                                                                 @RequestParam(value = "id", required = false) String code,
                                                                 @RequestParam(value = "customerName", required = false) String name,
                                                                 @RequestParam(value = "status", required = false) Integer status, // todo 这里的status是不是必须的
-                                                                @RequestParam(value = "createAtStartTime") String startTime,
+                                                                @RequestParam(valgit ue = "createAtStartTime") String startTime,
                                                                 @RequestParam(value = "createAtEndTime") String endTime) {
         Page<ProcessingOrderListVO> processingOrders =
                 processOrderService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), code, name, status, startTime, endTime);
