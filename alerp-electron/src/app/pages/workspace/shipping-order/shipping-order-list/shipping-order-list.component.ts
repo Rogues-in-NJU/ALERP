@@ -77,10 +77,11 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
     };
     this.shippingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ShippingOrderInfoVO>>) => {
+        console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<ShippingOrderInfoVO> = res.data;

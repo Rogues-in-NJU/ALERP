@@ -60,6 +60,7 @@
     <div class="table-wrapper">
       <nz-table #shippingOrderTable
                 nzShowSizeChanger
+                [nzFrontPagination] = "false"
                 [nzData]="orderList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
