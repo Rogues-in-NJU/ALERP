@@ -95,21 +95,29 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, int status, String startTime, String endTime) {
+    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
-        List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
         try {
-            sp.add(ConditionFactory.equal("status", status));
+            if (status != null) {
+                sp.add(ConditionFactory.equal("status", status));
+            }
             sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
-            sp.add(ConditionFactory.In("customerId", customerIdList));
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
+                List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
                 fuzzyMatch.add(ConditionFactory.like("name", name));
                 fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+                sp.add(ConditionFactory.In("customerId", customerIdList));
             }
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
-            sp.add(ConditionFactory.or(fuzzyMatch));
+            if (!"".equals(startTime)) {
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            }
+            if (!"".equals(endTime)) {
+                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
+            }
+            if (!fuzzyMatch.isEmpty()) {
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
         } catch (Exception e) {
             log.error("Value is null", e);
         }
