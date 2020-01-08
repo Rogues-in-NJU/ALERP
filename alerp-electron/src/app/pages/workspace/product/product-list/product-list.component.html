@@ -14,12 +14,13 @@
     <nz-table #productsAddTable
               nzShowSizeChanger
               nzShowPagination
+              [nzFrontPagination]="false"
               [nzData]="products"
               [(nzPageIndex)]="pageIndex"
               [(nzPageSize)]="pageSize"
               (nzPageIndexChange)="search()"
               (nzPageSizeChange)="search()"
-              [nzTotal]="totalPages"
+              [nzTotal]="totalPages * pageSize"
               [nzLoading]="isLoading">
       <thead>
       <tr>
