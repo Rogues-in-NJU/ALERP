@@ -41,7 +41,7 @@ public class ExpenseController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
         return ResponseResult.ok(expenseService.addExpense(expenseDTO));
     }
