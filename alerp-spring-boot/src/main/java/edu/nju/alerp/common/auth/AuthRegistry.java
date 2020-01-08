@@ -30,6 +30,11 @@ public class AuthRegistry {
         authInfos.put(uri, authInfo);
     }
 
+    public static void register(String uri, AuthParamsSupplier verifySupplier) {
+        AuthInfo authInfo = new AuthInfo(verifySupplier, null);
+        authInfos.put(uri, authInfo);
+    }
+
     public static AuthInfo getAuthInfo(HttpServletRequest httpServletRequest) {
         String uri = httpServletRequest.getRequestURI();
         AuthInfo authInfo = authInfos.get(uri);

@@ -1,7 +1,9 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,8 @@ import javax.persistence.Table;
 @Builder
 @Entity
 @Table(name = "auth")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Auth {
     /**
      * 自增主键
@@ -25,8 +29,14 @@ public class Auth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /**
-     * 操作类型
+     * 权限描述
      */
-    private int action;
+    private String description;
+
+    /**
+     * 路由
+     * */
+    private String route;
 }

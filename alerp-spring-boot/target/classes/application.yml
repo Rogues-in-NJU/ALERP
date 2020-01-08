@@ -20,3 +20,7 @@ spring:
     #输出执行sql
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+alerp:
+  auth:
+    enable: true
