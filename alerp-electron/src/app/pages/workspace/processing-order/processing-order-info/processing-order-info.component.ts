@@ -1,18 +1,17 @@
 import { Component, OnInit } from "@angular/core";
-import { TabService } from "../../../../core/services/tab.service";
+import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
-import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
 import { ProductVO } from "../../../../core/model/product";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
-import { CustomerVO } from "../../../../core/model/customer";
 
 @Component({
   selector: 'processing-order-info',
@@ -55,14 +54,14 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   printStyle: string;
 
   constructor(
-    private closeTab: TabService,
+    private tab: TabService,
     private route: ActivatedRoute,
     private router: Router,
     private processingOrder: ProcessingOrderService,
     private product: ProductService,
     private message: NzMessageService,
   ) {
-    this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
+    this.printCSS = [ 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css' ];
 
     this.printStyle =
       `
@@ -77,10 +76,14 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.processingOrderId = this.route.snapshot.params[ 'id' ];
     this.refresh();
 
     const getProducts: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
@@ -106,6 +109,11 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.searchProducts = data;
       this.isProductsLoading = false;
     });
+    this.tab.refreshEvent.subscribe((res: RefreshTabEvent) => {
+      if (res.url === '/workspace/processing-order/list') {
+        this.refresh();
+      }
+    })
   }
 
   addProductRow(): void {
@@ -117,11 +125,11 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       id: null,
       processingOrderId: this.processingOrderData.id,
       productId: null,
-      productName: '',
+      productName: null,
       type: null,
       density: null,
-      productSpecification: '',
-      specification: '',
+      productSpecification: null,
+      specification: null,
       quantity: null,
       expectedWeight: null
     };
@@ -143,6 +151,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     this.editCache.data.productName = event.name;
     this.editCache.data.type = event.type;
     this.editCache.data.density = event.density;
+
+    this.calculateExpectedWeight();
   }
 
   startEditProduct(_id: number, isAdd?: boolean): void {
@@ -176,8 +186,23 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   confirmProductDelete(_id: number): void {
-    // TODO: 提交后端修改
-    this.processingOrderData.products = this.processingOrderData.products.filter(item => item[ '_id' ] !== _id);
+    const index: number = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    this.product.deleteProduct(this.processingOrderData.products[index].productId)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   cancelProductEdit(_id: number): void {
@@ -195,7 +220,6 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     if (!this.checkProcessingOrderProductValid()) {
       return;
     }
-    // TODO: 提交远程刷新
     const index = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.processingOrderData.products[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
@@ -207,14 +231,17 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
+        this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
       }, () => {
         this.refresh();
       });
   }
 
   onSpecificationInput(value: string): void {
+    this.calculateExpectedWeight();
     if (!Objects.valid(value)) {
       this.editCacheValidateStatus.specification = 'error';
     }
@@ -226,7 +253,6 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     }
     splits = splits.filter(item => !StringUtils.isEmpty(item));
     splits = splits.map(item => item.trim());
-    console.log(splits);
     if (splits.length === 1) {
       if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
         || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
@@ -313,23 +339,46 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         this.processingOrderData = res.data;
         if (Objects.valid(this.processingOrderData.products)) {
           this.processingOrderData.products.forEach(item => {
-            // TODO: check
-            // item.processingOrderId = this.processingOrderId;
+            item.processingOrderId = this.processingOrderData.id;
             item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
-          })
+            item.processingOrderUpdatedAt = this.processingOrderData.updatedAt;
+          });
         }
+        console.log(this.processingOrderData);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
   }
 
-  checkModelNotNull(name: string): boolean {
-    if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
-      this.editCacheValidateStatus[name] = null;
-      console.log('here');
+  calculateExpectedWeight(): void {
+    this.editCache.data.expectedWeight
+      = SpecificationUtils.calculateWeight(this.editCache.data.specification,
+      this.editCache.product.density, this.editCache.data.quantity);
+  }
+
+  onQuantityChange(): void {
+    if (this.checkQuantity()) {
+      this.calculateExpectedWeight();
+    }
+  }
+
+  checkQuantity(): boolean {
+    if (Objects.valid(this.editCache.data.quantity)) {
+      this.editCacheValidateStatus.quantity = null;
+      // 做计算
       return true;
     } else {
-      this.editCacheValidateStatus[name] = 'error';
+      this.editCacheValidateStatus.quantity = 'error';
+      return false;
+    }
+  }
+
+  checkExpectedWeight(): boolean {
+    if (Objects.valid(this.editCache.data.expectedWeight)) {
+      this.editCacheValidateStatus.expectedWeight = null;
+      return true;
+    } else {
+      this.editCacheValidateStatus.expectedWeight = 'error';
       return false;
     }
   }
@@ -343,14 +392,13 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
-    if (!this.checkModelNotNull('quantity')) {
+    if (!this.checkQuantity()) {
       isValid = false;
     }
-    if (!this.checkModelNotNull('expectedWeight')) {
+    if (!this.checkExpectedWeight()) {
       isValid = false;
     }
     // 验证规格格式
-    console.log(this.editCache.data.specification);
     if (!SpecificationUtils.valid(this.editCache.data.specification)) {
       this.editCacheValidateStatus.specification = 'error';
       isValid = false;

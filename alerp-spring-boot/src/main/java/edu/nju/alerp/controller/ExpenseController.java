@@ -54,7 +54,7 @@ public class ExpenseController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteExpense(@PathVariable(value = "id") int id) {
         return ResponseResult.ok(expenseService.deleteExpense(id));
     }

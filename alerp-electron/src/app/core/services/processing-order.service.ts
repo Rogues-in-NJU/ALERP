@@ -441,27 +441,40 @@ export class ProcessingOrderService {
   }
 
   public save(info: ProcessingOrderVO): Observable<ResultVO<any>> {
-    return of(null);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order`, info, {
+      withCredentials: true
+    });
+    // return of(null);
   }
 
   public abandon(id: number): Observable<ResultVO<any>> {
-    return of(null);
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/delete/${id}`, {
+      withCredentials: true
+    });
+    // return of(null);
   }
 
   public saveProduct(product: ProcessingOrderProductVO): Observable<ResultVO<any>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
+    console.log(product);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/product`, product, {
+      withCredentials: true
     });
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: null
+    // });
   }
 
   public deleteProduct(id: number): Observable<ResultVO<any>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/product/delete/${id}`, {
+      withCredentials: true
     });
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: null
+    // });
   }
 
 }
