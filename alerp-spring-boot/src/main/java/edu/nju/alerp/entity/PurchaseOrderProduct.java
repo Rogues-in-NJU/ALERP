@@ -55,6 +55,11 @@ public class PurchaseOrderProduct {
     private double price;
 
     /**
+     * 单价类型
+     */
+    private int priceType;
+
+    /**
      * 总金额
      */
     private double cach;
