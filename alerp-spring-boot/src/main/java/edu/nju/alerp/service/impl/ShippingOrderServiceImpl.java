@@ -7,13 +7,12 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ShippingOrderDTO;
+import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
-import edu.nju.alerp.enums.CityEnum;
-import edu.nju.alerp.enums.DocumentsType;
-import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.ShippingOrderStatus;
+import edu.nju.alerp.enums.*;
 import edu.nju.alerp.repo.CustomerRepository;
+import edu.nju.alerp.repo.ProcessingOrderRepository;
 import edu.nju.alerp.repo.ShippingOrderProductRepository;
 import edu.nju.alerp.repo.ShippingOrderRepository;
 import edu.nju.alerp.service.ShippingOrderService;
@@ -47,6 +46,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     CustomerRepository customerRepository;
     @Autowired
     ShippingOrderProductRepository shippingOrderProductRepository;
+    @Autowired
+    ProcessingOrderRepository processingOrderRepository;
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
@@ -63,12 +64,27 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
+        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        List<Integer> processingOrderlist = new ArrayList<>();
         shippingOrderDTO.getProducts().forEach(p -> {
-            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder()
+                    .shippingOrderId(shippingId)
+                    .build();
+            if (!processingOrderlist.contains(p.getProcessingOrderId())) {
+                processingOrderlist.add(p.getProcessingOrderId());
+            }
             BeanUtils.copyProperties(p, shippingOrderProduct);
             shippingOrderProductRepository.save(shippingOrderProduct);
         });
-        return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        processingOrderlist.forEach(p -> {
+            ProcessingOrder processingOrder = processingOrderRepository.getOne(p);
+            processingOrder.setShippingOrderId(shippingId);
+            processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
+            //待优化 可传list一次性更新
+            processingOrderRepository.save(processingOrder);
+        });
+
+        return shippingId;
     }
 
     @Override
@@ -89,6 +105,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
         shippingOrder.setDeletedAt(DateUtils.getToday());
         shippingOrder.setDeletedBy(CommonUtils.getUserId());
+        List<ProcessingOrder> processingOrderList = findProcessingsByShipppingId(shippingOrder.getId());
+        processingOrderList.forEach(p -> {
+            p.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
+            p.setShippingOrderId(0);
+            processingOrderRepository.save(p);
+        });
         return shippingOrderRepository.save(shippingOrder).getId();
     }
 
@@ -98,7 +120,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, Integer status, String startTime, String endTime) {
+    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
         try {
             if (status != null) {
@@ -106,11 +128,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             }
             sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             List<Condition> fuzzyMatch = new ArrayList<>();
+            if (!"".equals(code)) {
+                fuzzyMatch.add(ConditionFactory.like("code", code));
+            }
             if (!"".equals(name)) {
                 List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
-                fuzzyMatch.add(ConditionFactory.like("name", name));
-                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-                sp.add(ConditionFactory.In("customerId", customerIdList));
+                fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
             }
             if (!"".equals(startTime)) {
                 fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
@@ -149,6 +172,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * controller层根据customerService分别查出现金和月结对客户id List,一起调用该方法返回对应均价
+     *
      * @param customerIdList
      * @return
      */
@@ -162,5 +186,15 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         double avg = totalCash / shippingOrderList.size();
         BigDecimal b = new BigDecimal(avg);
         return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    private List<ProcessingOrder> findProcessingsByShipppingId(int id) {
+        QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("shippingOrderId", id));
+        } catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return processingOrderRepository.findAll(sp);
     }
 }

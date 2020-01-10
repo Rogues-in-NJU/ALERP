@@ -297,7 +297,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                     .expectedWeight(processOrderProduct.getExpectedWeight())
                     .isEditable(true)
                     .specialPrice(specialPrice.getPrice())
-                    .specialPriceType(specialPrice.getPriceMethod()).build();
+                    .specialPriceType(specialPrice.getPriceType()).build();
         }
         return processingOrderProductVO;
     }

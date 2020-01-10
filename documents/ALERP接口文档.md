@@ -694,6 +694,7 @@ res:
   customerId: number,
   customerName: string,
   arrearOrderId: number,
+  arrearOrderCode: string,
   cash: number,
   floatingCash: number,
   receivableCash: number,

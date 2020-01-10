@@ -45,6 +45,8 @@ public class ShippingOrderController {
     ArrearOrderService arrearOrderService;
     @Autowired
     CustomerService customerService;
+    @Autowired
+    UserService userService;
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
@@ -88,12 +90,13 @@ public class ShippingOrderController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
+                                             @RequestParam(value = "code", required = false, defaultValue = "") String code,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status,
                                              @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
                                              @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
-        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, name, status, createAtStartTime, createAtEndTime);
+        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, code, name, status, createAtStartTime, createAtEndTime);
         List<ShippingOrderBriefVO> result = new ArrayList<>();
         page.getContent().forEach(s -> {
             ShippingOrderBriefVO shippingOrderBriefVO = ShippingOrderBriefVO.builder()
@@ -155,23 +158,37 @@ public class ShippingOrderController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<ShippingOrderVO> ShippingOrderVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
             ProductVO productVO = ProductVO.builder()
+                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();
             BeanUtils.copyProperties(s, productVO);
             productVOList.add(productVO);
         });
+        List<ProcessingOrder> processingOrderList = processOrderService.findProcessingsByShipppingId(id);
+        List<ProcessOrderIdCodeVO> processOrderIdCodeVOList = new ArrayList<>();
+        processingOrderList.forEach(p -> {
+            ProcessOrderIdCodeVO processOrderIdCodeVO = ProcessOrderIdCodeVO.builder()
+                    .processingOrderId(p.getId())
+                    .processingOrderCode(p.getCode())
+                    .build();
+            processOrderIdCodeVOList.add(processOrderIdCodeVO);
+        });
         double totalWeight = productVOList.stream().mapToDouble(ProductVO::getWeight).sum();
-        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
+                .customerName(customerService.getCustomer(shippingOrder.getCustomerId()).getName())
+                .createdByName(userService.getUser(shippingOrder.getCreatedBy()).getName())
+                .arrearOrderCode(arrearOrderService.getOne(shippingOrder.getArrearOrderId()).getCode())
+                .processingOrderIdsCodes(processOrderIdCodeVOList)
                 .city(CityEnum.of(shippingOrder.getCity()).getMessage())
                 .totalWeight(totalWeight)
-                .productVOList(productVOList)
+                .products(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
 

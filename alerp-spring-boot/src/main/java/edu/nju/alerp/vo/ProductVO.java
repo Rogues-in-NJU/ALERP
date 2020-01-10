@@ -13,10 +13,12 @@ import lombok.Data;
 public class ProductVO {
     private Integer id;
     private Integer processingOrderId;
+    private String processingOrderCode;
     private Integer productId;
     private String productName;
     private Integer type;
     private String specification;
+    private Integer priceType;
     private Integer quantity;
     private Double expectedWeight;
     private Double price;
