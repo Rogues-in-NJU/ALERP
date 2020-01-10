@@ -506,7 +506,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* code                   //1.10从id改为code
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -562,6 +562,11 @@ res:
     specification: string (客户定做的商品规格),
     quantity: number,
     expectedWeight: number
+
+    //1.10 新增
+    isEditable: boolean, //如果该商品属于客户的特价商品，为false；默认为true
+    specialPrice: number, // 特价
+    specialPriceType: number, //特价里的计价方式 ；按件计算/按重量计算
   }]
   
   totalWeight: number(新增，打印时需要)
@@ -647,7 +652,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* code                   //1.10从id改为code
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -696,7 +701,14 @@ res:
   createdAt: string,
   createdById: string,
   createdByName: string,
-  
+   
+  processingOrderIdsCodes: [   //1.10 新增，解决 code和id 的关联问题
+    {
+      processingOrderId: number,
+      processingOrderCode: string,
+    }
+  ],
+
   products: [{
     id: number,
     processingOrderId: number,
@@ -774,7 +786,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* code                   //1.10从id改为code
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * invoiceNumber
 * shippingOrderId

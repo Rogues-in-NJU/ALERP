@@ -30,11 +30,12 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
   //todo 详情跳转至欠款明细
 
+  //todo 输入框内容的核查
 
   isLoading: boolean = true;
   shippingOrderCode: string = "";
   shippingOrderData: ShippingOrderInfoVO = {
-    processingOrderCodes: [],
+    processingOrderIdsCodes: [],
     products: [],
     cash: 0,
     floatingCash: 0,
@@ -54,7 +55,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   addShippingOrder_isLoading: boolean = false;
   addShippingOrder_totalPages: number = 1;
   addShippingOrder_pageIndex: number = 1;
-  addShippingOrder_pageSize: number = 2;
+  addShippingOrder_pageSize: number = 10;
 
   isAllDisplayDataChecked = false;
   isOperating = false;
@@ -396,6 +397,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       pageSize: 1000,
       status: 1, //未完成
     };
+
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
         console.log(res)
@@ -409,7 +411,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
         this.addShippingOrder_totalPages = tableResult.totalPages;
         this.addShippingOrder_pageIndex = tableResult.pageIndex;
-        this.addShippingOrder_pageSize = tableResult.pageSize;
+        // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
@@ -426,7 +428,10 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
       this.shippingOrderData.customerId = processingOrder.customerId;
       this.shippingOrderData.customerName = processingOrder.customerName;
-      this.shippingOrderData.processingOrderCodes.push(processingOrder.code);
+      this.shippingOrderData.processingOrderIdsCodes.push({
+        processingOrderId: processingOrder.id,
+        processingOrderCode: processingOrder.code,
+      });
 
       this.processingOrder.find(processingOrder.id)
         .subscribe((res: ResultVO<ProcessingOrderVO>) => {
@@ -481,11 +486,21 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     const queryParams: TableQueryParams = {
       pageIndex: this.addShippingOrder_pageIndex,
       pageSize: this.addShippingOrder_pageSize,
-      customerName: this.addShippingOrder_customerName,
       status: 1, //未完成
     };
+
+    if (!StringUtils.isEmpty(this.addShippingOrder_customerName)) {
+      Object.assign(queryParams, {
+        customerName: this.addShippingOrder_customerName
+      });
+      this.addShippingOrder_customerName = null;
+    }
+
+    console.log(queryParams);
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res);
+
         if (!Objects.valid(res)) {
           return;
         }
@@ -496,7 +511,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
         this.addShippingOrder_totalPages = tableResult.totalPages;
         this.addShippingOrder_pageIndex = tableResult.pageIndex;
-        this.addShippingOrder_pageSize = tableResult.pageSize;
+        // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
