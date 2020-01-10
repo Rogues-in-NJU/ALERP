@@ -186,7 +186,7 @@ public class ShippingOrderController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/productAvgPriceslist", method = RequestMethod.GET)
     public ResponseResult<ListResponse> findProductPricesByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                  @RequestParam(value = "pageSize") int pageSize,
                                                                  @RequestParam(value = "name", required = false) String name) {
