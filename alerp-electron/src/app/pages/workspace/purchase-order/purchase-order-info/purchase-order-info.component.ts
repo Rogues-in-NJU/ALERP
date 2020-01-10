@@ -14,7 +14,7 @@ import { DateUtils, Objects, StringUtils } from "../../../../core/services/util.
   templateUrl: './purchase-order-info.component.html',
   styleUrls: [ './purchase-order-info.component.less' ]
 })
-export class PurchaseOrderInfoComponent implements RefreshableTab, ClosableTab, OnInit {
+export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
 
   isLoading: boolean = true;
   purchaseOrderId: number;
@@ -126,14 +126,6 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, ClosableTab, 
       });
   }
 
-  tabClose(): void {
-    // this.tab.closeEvent.emit({
-    //   url: this.router.url,
-    //   refreshUrl: null,
-    //   routeConfig: this.route.snapshot.routeConfig
-    // });
-  }
-
   refresh(): void {
     Object.assign(this.editCache, this.defaultEditCache);
     this.purchaseOrder.find(this.purchaseOrderId)
@@ -154,8 +146,7 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, ClosableTab, 
   }
 
   checkCashNotNull(): boolean {
-    console.log(this.editCache.data.cash);
-    if (Objects.valid(this.editCache.data.cash)) {
+    if (!Objects.isNaN(this.editCache.data.cash)) {
       this.editCacheValidateStatus.cash = null;
       return true;
     } else {
@@ -165,7 +156,7 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, ClosableTab, 
   }
 
   checkDoneAtNotNull(): boolean {
-    if (Objects.valid(this.editCache.data.doneAt)) {
+    if (!Objects.isNaN(this.editCache.data.doneAt)) {
       this.editCacheValidateStatus.doneAt = null;
       return true;
     } else {
