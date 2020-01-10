@@ -3,6 +3,7 @@
   <nz-page-header-extra>
     <button nz-button nzType="primary"
             (click)="saveProcessingOrder()"
+            [disabled]="!processingOrderForm.valid"
             [nzLoading]="isSaving">
       <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
       保存

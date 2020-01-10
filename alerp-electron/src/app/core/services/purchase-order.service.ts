@@ -87,10 +87,14 @@ export class PurchaseOrderService {
   }
 
   public save(info: PurchaseOrderVO): Observable<ResultVO<any>> {
-    return of({
-      code: 200,
-      message: '',
-      data: null
+    // return of({
+    //   code: 200,
+    //   message: '',
+    //   data: null
+    // });
+    console.log(JSON.stringify(info));
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order`, info, {
+      withCredentials: true
     });
   }
 
@@ -103,19 +107,25 @@ export class PurchaseOrderService {
   }
 
   public savePaymentRecord(paymentRecord: PurchaseOrderPaymentRecordVO): Observable<ResultVO<any>> {
-    console.log(paymentRecord);
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
+    // console.log(paymentRecord);
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: null
+    // });
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/payment-record`, paymentRecord, {
+      withCredentials: true
     });
   }
 
   public deletePaymentRecord(id: number): Observable<ResultVO<any>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: null
+    // });
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/payment-record/${id}`, {
+      withCredentials: true
     });
   }
 

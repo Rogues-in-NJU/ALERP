@@ -7,10 +7,7 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ProcessingOrderDTO;
 import edu.nju.alerp.dto.UpdateProcessProductDTO;
-import edu.nju.alerp.entity.Customer;
-import edu.nju.alerp.entity.ProcessOrderProduct;
-import edu.nju.alerp.entity.ProcessingOrder;
-import edu.nju.alerp.entity.Product;
+import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.DocumentsType;
 import edu.nju.alerp.enums.ExceptionEnum;
@@ -28,6 +25,7 @@ import edu.nju.alerp.vo.ProcessingOrderDetailVO;
 import edu.nju.alerp.vo.ProcessingOrderListVO;
 import edu.nju.alerp.vo.ProcessingOrderProductVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -84,7 +83,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             log.error("Value is null.", e);
         }
         List<ProcessOrderProduct> pops = processOrderProductRepository.findAll(sp);
-        List<ProcessingOrderProductVO> productVOS = pops.parallelStream().map(this::generateProcessingOrderProductVO)
+        List<SpecialPrice> specialPrices =  customerService.getSpecialPricesListByCustomerId(processingOrder.getCustomerId());
+        Map<Integer, SpecialPrice> specialPriceMap = specialPrices.parallelStream()
+                .map(specialPrice -> MutablePair.of(specialPrice.getProductId(), specialPrice))
+                .collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight));
+
+        List<ProcessingOrderProductVO> productVOS = pops.parallelStream().map(processOrderProduct -> generateProcessingOrderProductVO(processOrderProduct, specialPriceMap))
                                                                         .filter(Objects::nonNull)
                                                                         .collect(Collectors.toList());
         double totalWeight = productVOS.parallelStream().mapToDouble(ProcessingOrderProductVO::getExpectedWeight).sum();
@@ -142,6 +146,17 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         processOrderProductRepository.saveAll(processOrderProducts);
         processOrderProductRepository.flush();
         return entity.getId();
+    }
+
+    @Override
+    public List<ProcessingOrder> findProcessingsByShipppingId(int id) {
+        QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("shippingOrderId", id));
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return processingOrderRepository.findAll(sp);
     }
 
     @Override
@@ -251,18 +266,39 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
 
-    private ProcessingOrderProductVO generateProcessingOrderProductVO(ProcessOrderProduct processOrderProduct) {
+    private ProcessingOrderProductVO generateProcessingOrderProductVO(ProcessOrderProduct processOrderProduct,
+                                                                      Map<Integer, SpecialPrice> specialPriceMap) {
         Product pro = productService.findProductById(processOrderProduct.getProductId());
         if (pro == null)
             return null;
-        return ProcessingOrderProductVO.builder().id(processOrderProduct.getId())
-                .productId(pro.getId())
-                .productName(pro.getName())
-                .type(pro.getType())
-                .density(pro.getDensity())
-                .productSpecification(pro.getSpecification())
-                .specification(processOrderProduct.getSpecification())
-                .quantity(processOrderProduct.getQuantity())
-                .expectedWeight(processOrderProduct.getExpectedWeight()).build();
+
+        SpecialPrice specialPrice = specialPriceMap.get(pro.getId());
+        ProcessingOrderProductVO processingOrderProductVO;
+        if (specialPrice == null) {
+            processingOrderProductVO = ProcessingOrderProductVO.builder().id(processOrderProduct.getId())
+                    .productId(pro.getId())
+                    .productName(pro.getName())
+                    .type(pro.getType())
+                    .density(pro.getDensity())
+                    .productSpecification(pro.getSpecification())
+                    .specification(processOrderProduct.getSpecification())
+                    .quantity(processOrderProduct.getQuantity())
+                    .expectedWeight(processOrderProduct.getExpectedWeight())
+                    .isEditable(false).build();
+        }else {
+            processingOrderProductVO = ProcessingOrderProductVO.builder().id(processOrderProduct.getId())
+                    .productId(pro.getId())
+                    .productName(pro.getName())
+                    .type(pro.getType())
+                    .density(pro.getDensity())
+                    .productSpecification(pro.getSpecification())
+                    .specification(processOrderProduct.getSpecification())
+                    .quantity(processOrderProduct.getQuantity())
+                    .expectedWeight(processOrderProduct.getExpectedWeight())
+                    .isEditable(true)
+                    .specialPrice(specialPrice.getPrice())
+                    .specialPriceType(specialPrice.getPriceMethod()).build();
+        }
+        return processingOrderProductVO;
     }
 }

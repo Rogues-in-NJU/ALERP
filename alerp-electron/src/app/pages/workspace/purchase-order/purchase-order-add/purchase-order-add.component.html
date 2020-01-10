@@ -3,7 +3,8 @@
   <nz-page-header-extra>
     <button nz-button nzType="primary"
             (click)="saveOrder()"
-            [disabled]="!purchaseOrderForm.valid" [nzLoading]="isSaving">
+            [disabled]="!purchaseOrderForm.valid"
+            [nzLoading]="isSaving">
       <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
       保存
     </button>
@@ -112,20 +113,22 @@
           {{ data.name }}
         </ng-container>
         <ng-template #nameSelectTpl>
-          <nz-select [(ngModel)]="editCache.product"
-                     nzShowSearch
-                     nzServerSearch
-                     (nzOnSearch)="onProductSearch($event)"
-                     (ngModelChange)="onChangeProductSelected($event)"
-                     style="width: 100px">
-            <nz-option *ngIf="!isProductLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
-            <ng-container *ngFor="let p of searchProducts">
-              <nz-option *ngIf="!isProductLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
-            </ng-container>
-            <nz-option *ngIf="isProductLoading" nzDisabled nzCustomContent>
-              <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
-            </nz-option>
-          </nz-select>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeProductSelected($event)"
+                       style="width: 100px">
+              <nz-option *ngIf="!isProductLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts">
+                <nz-option *ngIf="!isProductLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>
@@ -133,7 +136,9 @@
           {{ data.quantity }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-input-number [(ngModel)]="editCache.data.quantity" nzMin="1" nzStep="1" class="table-number-input"></nz-input-number>
+          <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.quantity">
+            <nz-input-number [(ngModel)]="editCache.data.quantity" nzMin="1" nzStep="1" class="table-number-input"></nz-input-number>
+          </nz-form-control>
         </ng-container>
       </td>
       <td>
@@ -141,7 +146,9 @@
           {{ data.weight }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-input-number [(ngModel)]="editCache.data.weight" nzMin="0" nzStep="0.001" class="table-number-input"></nz-input-number>
+          <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.weight">
+            <nz-input-number [(ngModel)]="editCache.data.weight" nzMin="0" nzStep="0.001" class="table-number-input"></nz-input-number>
+          </nz-form-control>
         </ng-container>
       </td>
       <td>
@@ -149,7 +156,9 @@
           &yen; {{ data.price | number: '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+          <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.price">
+            <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+          </nz-form-control>
         </ng-container>
       </td>
       <td>
@@ -157,10 +166,12 @@
           {{ data.priceType | purchase_order_price_type }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-select [(ngModel)]="editCache.data.priceType">
-            <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
-            <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
-          </nz-select>
+          <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.priceType">
+            <nz-select [(ngModel)]="editCache.data.priceType" style="width: 90px">
+              <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+            </nz-select>
+          </nz-form-control>
         </ng-container>
       </td>
       <td>
@@ -168,7 +179,9 @@
           &yen; {{ data.cash | number: '1.2-2' }}
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-input-number [(ngModel)]="editCache.data.cash" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+          <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.cash">
+            <nz-input-number [(ngModel)]="editCache.data.cash" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+          </nz-form-control>
         </ng-container>
       </td>
       <td>

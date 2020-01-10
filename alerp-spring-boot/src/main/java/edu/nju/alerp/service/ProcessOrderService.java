@@ -31,6 +31,8 @@ public interface ProcessOrderService {
 
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO);
 
+    public List<ProcessingOrder> findProcessingsByShipppingId(int id);
+
     /**
      * 新增/修改加工单的商品关联
      * */

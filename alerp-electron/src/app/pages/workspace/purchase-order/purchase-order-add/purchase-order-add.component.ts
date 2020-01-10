@@ -2,16 +2,16 @@ import { Component, OnInit } from "@angular/core";
 import { ClosableTab } from "../../tab/tab.component";
 import { TabService } from "../../../../core/services/tab.service";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { PurchaseOrderVO, PurchaseOrderProductVO } from "../../../../core/model/purchase-order";
 import { ProductService } from "../../../../core/services/product.service";
 import { ProductVO } from "../../../../core/model/product";
 import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { NzMessageService } from "ng-zorro-antd";
-import { DateUtils, Objects } from "../../../../core/services/util.service";
+import { DateUtils, Objects, StringUtils } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { SupplierVO } from "../../../../core/model/supplier";
 import { SupplierService } from "../../../../core/services/supplier.service";
@@ -39,6 +39,14 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     currentProduct: null,
     isAdd: false
   };
+  editCacheValidateStatus: any = {
+    productId: null,
+    quantity: null,
+    weight: null,
+    price: null,
+    priceType: null,
+    cash: null
+  };
   productCountIndex: number = 0;
   searchProducts: ProductVO[];
   searchProductsChange$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -61,10 +69,11 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
   };
 
   constructor(
-    private closeTab: TabService,
+    private tab: TabService,
     private purchaseOrder: PurchaseOrderService,
     private supplier: SupplierService,
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private product: ProductService,
     private message: NzMessageService
@@ -82,6 +91,9 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       doneAt: [ null, Validators.required ]
     });
     const getProducts: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
@@ -108,6 +120,9 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       this.isProductLoading = false;
     });
     const getSuppliers: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<SupplierVO>>>
         = <Observable<ResultVO<TableResultVO<SupplierVO>>>>this.supplier
         .findAll(Object.assign(new TableQueryParams(), {
@@ -154,11 +169,21 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
-        this.message.success('添加成功!');
-        this.isSaving = false;
-        // TODO: 跳转回列表页面
+        if (!Objects.valid(res)) {
+          this.message.error('新增失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
+        this.tabClose();
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isSaving = false;
+      }, () => {
+        this.isSaving = false;
       });
   }
 
@@ -168,14 +193,14 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       return;
     }
     let item: PurchaseOrderProductVO = {
-      id: 0,
-      productId: 0,
-      name: '',
-      quantity: 0,
-      weight: 0,
-      price: 0,
+      id: null,
+      productId: null,
+      name: null,
+      quantity: null,
+      weight: null,
+      price: null,
       priceType: 1,
-      cash: 0
+      cash: null
     };
     item['_id'] = this.productCountIndex ++;
     console.log(item);
@@ -239,6 +264,10 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     if (_id !== this.editCache._id) {
       return;
     }
+    console.log(_id);
+    if (!this.checkPurchaseOrderProductValid()) {
+      return;
+    }
     const index = this.products.findIndex(item => item['_id'] === _id);
     Object.assign(this.products[index], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
@@ -248,7 +277,49 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     this.products = this.products.filter(item => item['_id'] !== _id);
   }
 
+  checkPurchaseOrderProductValid(): boolean {
+    if (!Objects.valid(this.editCache.data)) {
+      return false;
+    }
+    let isValid: boolean = true;
+    if (!Objects.valid(this.editCache.data.productId)) {
+      this.editCacheValidateStatus.productId = 'error';
+      isValid = false;
+    }
+    if (Objects.isNaN(this.editCache.data.price)) {
+      this.editCacheValidateStatus.price = 'error';
+      isValid = false;
+    }
+    if (!Objects.valid(this.editCache.data.priceType)) {
+      this.editCacheValidateStatus.priceType = 'error';
+      isValid = false;
+    } else {
+      console.log(this.editCache.data);
+      if (this.editCache.data.priceType === 1 && Objects.isNaN(this.editCache.data.weight)) {
+        this.editCacheValidateStatus.weight = 'error';
+        isValid = false;
+      } else if (this.editCache.data.priceType === 2 && Objects.isNaN(this.editCache.data.quantity)) {
+        this.editCacheValidateStatus.quantity = 'error';
+        isValid = false;
+      } else if (this.editCache.data.priceType > 2 || this.editCache.data.priceType < 1) {
+        this.editCacheValidateStatus.priceType = 'error';
+        isValid = false;
+      }
+    }
+    if (Objects.isNaN(this.editCache.data.cash)) {
+      this.editCacheValidateStatus.cash = 'error';
+      isValid = false;
+    }
+    return isValid;
+  }
+
   tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/purchase-order/list',
+      refreshUrl: '/workspace/purchase-order/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
   }
 
 }

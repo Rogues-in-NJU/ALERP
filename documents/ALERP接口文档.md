@@ -196,6 +196,7 @@ body:
     quantity: number,
     weight: number,
     price: number,
+    priceType: number, // 1是元/千克, 2是元/件
     cash: number
   }]
 }

@@ -3,10 +3,10 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.auth.AuthContext;
 import edu.nju.alerp.common.auth.AuthParamsSupplier;
 import edu.nju.alerp.common.auth.AuthRegistry;
-import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.AuthDTO;
+import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.entity.AuthUser;
 import edu.nju.alerp.repo.AuthRepository;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,10 +42,15 @@ public class AuthImpl implements AuthService, InitializingBean {
 
     private Map<Integer, Auth> authCache = new ConcurrentHashMap<>();
 
+    private Map<AuthUserKey, AuthUser> authUserCache = new ConcurrentHashMap<>();
+
     @Override
     public void afterPropertiesSet() throws Exception {
         List<Auth> auths = findAll();
+        List<AuthUser> authUsers = authUserRepository.findAll();
         authCache.putAll(auths.parallelStream().map(auth -> MutablePair.of(auth.getId(), auth)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
+        authUserCache.putAll(authUsers.parallelStream().map(authUser -> MutablePair.of(new AuthUserKey(authUser.getUserId(), authUser.getAuthId()), authUser))
+        .collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
         auths.forEach(auth -> AuthRegistry.register(auth.getRoute(), new AuthParamsSupplier() {
             @Override
             public void consume(AuthContext authContext) {
@@ -86,7 +91,39 @@ public class AuthImpl implements AuthService, InitializingBean {
     }
 
     @Override
-    public boolean findAuthUser(int userId, int authId) {
+    public AuthUser findAuthUser(int userId, int authId) {
+        AuthUserKey authUserKey = new AuthUserKey(userId, authId);
+        AuthUser authUser = authUserCache.get(authUserKey);
+        if (authUser == null) {
+            authUser = findAuthUserFromSql(userId, authId);
+            if (authUser != null) {
+                authUserCache.put(authUserKey, authUser);
+                return authUser;
+            }
+            return null;
+        }
+        return authUser;
+    }
+
+    @Override
+    public int updateUserAuth(List<UpdateUserAuthDTO> updateAuths) {
+        List<AuthUser> authUsers = new ArrayList<>();
+        for (UpdateUserAuthDTO us : updateAuths) {
+            AuthUser authUser = findAuthUser(us.getUserId(), us.getAuthId());
+            if (authUser != null && authUser.getAction() != us.getActionType()) {
+                authUser.setAction(us.getActionType());
+                authUsers.add(authUser);
+            }else {
+                log.error(us.getUserId()+"_"+us.getAuthId()+"can not find.");
+            }
+        }
+
+        authUserRepository.saveAll(authUsers);
+        authUserRepository.flush();
+        return 0;
+    }
+
+    private AuthUser findAuthUserFromSql(int userId, int authId) {
         QueryContainer<AuthUser> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.equal("userId", userId));
@@ -95,10 +132,11 @@ public class AuthImpl implements AuthService, InitializingBean {
             log.error("error", e);
         }
         List<AuthUser> authUsers = authUserRepository.findAll(sp);
-        if ( authUsers != null && authUsers.size() >0 ) {
-            return true;
-        }
-        return false;
+        if (authUsers == null)
+            return null;
+        if (authUsers.get(0) == null)
+            return null;
+        return authUsers.get(0);
     }
 
     private Auth findAuthByUriWithSql(String uri) {
@@ -113,5 +151,32 @@ public class AuthImpl implements AuthService, InitializingBean {
             return null;
 
         return auths.get(0);
+    }
+
+    class AuthUserKey {
+        private String userId;
+        private String authId;
+
+        public AuthUserKey(int userId, int authId) {
+            this.userId = String.valueOf(userId).intern();
+            this.authId = String.valueOf(authId).intern();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+
+            if (! (obj instanceof AuthUserKey) )
+                return false;
+
+            AuthUserKey other = (AuthUserKey) obj;
+            return (userId.equals(other.userId) && authId.equals(other.authId));
+        }
+
+        @Override
+        public int hashCode() {
+            return userId.hashCode() >>> 4 + authId.hashCode();
+        }
     }
 }
