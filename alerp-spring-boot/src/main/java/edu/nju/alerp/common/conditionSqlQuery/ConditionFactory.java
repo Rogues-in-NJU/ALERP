@@ -1,5 +1,6 @@
 package edu.nju.alerp.common.conditionSqlQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,10 +87,14 @@ public class ConditionFactory {
     /**
      * 存在于
      */
-    public static <T extends Comparable> SimpleCondition In(String fieldName, List<T> value) throws Exception {
+    public static <T extends Comparable> LogicalCondition In(String fieldName, List<T> value) throws Exception {
         if (value == null)
             throw new Exception();
-        return new SimpleCondition(fieldName, value, null, Condition.Operator.IN);
+        List<Condition> cons = new ArrayList<>(value.size());
+        for (T t : value) {
+            cons.add(new SimpleCondition(fieldName, t, null, Condition.Operator.EQ));
+        }
+        return new LogicalCondition(cons, Condition.Operator.OR);
     }
 
     /**
