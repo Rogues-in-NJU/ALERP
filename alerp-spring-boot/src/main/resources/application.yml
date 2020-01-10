@@ -23,4 +23,4 @@ spring:
 
 alerp:
   auth:
-    enable: false
+    enable: true
