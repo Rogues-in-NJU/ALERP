@@ -16,6 +16,7 @@ public class ShippingOrderVO {
     private int id;
     private String code;
     private int customerId;
+    private String customerName;
     private int arrearOrderId;
     private double cash;
     private double floatingCash;
@@ -26,5 +27,6 @@ public class ShippingOrderVO {
     private int createdById;
     private String createdByName;
     private double totalWeight;
-    private List<ProductVO> productVOList;
+    private List<ProcessOrderIdCodeVO> processingOrderIdsCodes;
+    private List<ProductVO> products;
 }

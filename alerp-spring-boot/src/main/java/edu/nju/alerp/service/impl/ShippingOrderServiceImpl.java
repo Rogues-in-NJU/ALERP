@@ -98,7 +98,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, Integer status, String startTime, String endTime) {
+    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
         try {
             if (status != null) {
@@ -106,11 +106,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             }
             sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             List<Condition> fuzzyMatch = new ArrayList<>();
+            if (!"".equals(code)) {
+                fuzzyMatch.add(ConditionFactory.like("code", code));
+            }
             if (!"".equals(name)) {
                 List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
-                fuzzyMatch.add(ConditionFactory.like("name", name));
-                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
-                sp.add(ConditionFactory.In("customerId", customerIdList));
+                fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
             }
             if (!"".equals(startTime)) {
                 fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
@@ -149,6 +150,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * controller层根据customerService分别查出现金和月结对客户id List,一起调用该方法返回对应均价
+     *
      * @param customerIdList
      * @return
      */

@@ -22,7 +22,7 @@ public interface ShippingOrderService {
 
     boolean printShippingOrder(int id);
 
-    Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, Integer status, String startTime, String endTime);
+    Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
 
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
 
