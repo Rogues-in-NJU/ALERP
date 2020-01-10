@@ -1,7 +1,10 @@
 package edu.nju.alerp.common.auth;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import edu.nju.alerp.common.NJUException;
+import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.common.ResponseWrapper;
 import edu.nju.alerp.enums.ExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +38,14 @@ public class AuthFilter implements Filter {
             filterChain.doFilter(request, responseWrapper);
         }catch (Exception e) {
             if (e.getCause() instanceof NJUException) {
-                NJUException njuException = (NJUException) e;
+                NJUException njuException = (NJUException) e.getCause();
                 if (njuException.getExceptionEnum() == ExceptionEnum.AUTH_FAIL) {
-                    throw e;
+                    responseWrapper.setStatus(200);
+                    responseWrapper.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+                    String result = JSON.toJSONString(ResponseResult.fail(ExceptionEnum.AUTH_FAIL, "您没有权限执行该操作."));
+                    responseWrapper.getOutputStream().write(result.getBytes());
+                    responseWrapper.getOutputStream().flush();
                 }
             }
         }finally {

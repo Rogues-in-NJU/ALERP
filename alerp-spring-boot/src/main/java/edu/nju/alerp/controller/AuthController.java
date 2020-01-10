@@ -9,11 +9,9 @@ import edu.nju.alerp.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -50,6 +48,11 @@ public class AuthController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public ResponseResult<Integer> editUserAuth(@RequestBody List<UpdateUserAuthDTO> updateAuths) {
         return ResponseResult.ok(authService.updateUserAuth(updateAuths));
+    }
+
+    @RequestMapping(value = "/initial/{id}", method = RequestMethod.GET)
+    public ResponseResult<Integer> initialUserAuthById(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        return ResponseResult.ok(authService.initialUserAuthByUserId(id));
     }
 
 }

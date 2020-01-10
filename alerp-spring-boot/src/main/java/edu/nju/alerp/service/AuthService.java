@@ -23,4 +23,6 @@ public interface AuthService {
     public AuthUser findAuthUser(int userId, int authId);
 
     public int updateUserAuth(List<UpdateUserAuthDTO> updateAuths);
+
+    public int initialUserAuthByUserId(int id);
 }
