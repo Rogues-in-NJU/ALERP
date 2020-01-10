@@ -25,58 +25,9 @@ export class ShippingOrderService {
     });
   }
 
-  public find(id: string): Observable<ResultVO<ShippingOrderInfoVO>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: {
-        id: 1,
-        code: '200201912120001',
-        customerId: 1,
-        customerName: '小浣熊公司',
-        arrearOrderId: null,
-        arrearOrderCode: '300201912120001',
-        status: 1,
-        cash: 165,
-        floatingCash: -5,
-        receivableCash: 160,
-        createdAt: '2019-12-17 12:00',
-        createdByName: '于海强',
-
-        processingOrderCodes: ['100201912120001', "100201912120002"],
-
-        products: [{
-          id: 1,
-          productId: 1,
-          productName: '铝棒',
-          shippingOrderCode: '00001000',
-          processingOrderCode: '100201912120001',
-          type: 1,
-          density: 1.00,
-          specification: '1*1*1',
-          quantity: 1,
-          expectedWeight: 1,
-          price: 15,
-          priceType: 1,
-          weight: 1.25,
-          cash: 15,
-        },{
-          id: 2,
-          productId: 2,
-          productName: '铝板',
-          shippingOrderCode: '00001000',
-          processingOrderCode: '100201912120002',
-          type: 2,
-          density: 1.00,
-          specification: '12*12*12',
-          quantity: 1,
-          expectedWeight: 1.1,
-          price: 150,
-          priceType: 0,
-          weight: 1,
-          cash: 150,
-        }]
-      }
+  public find(id: number): Observable<ResultVO<ShippingOrderInfoVO>> {
+    return this.http.get<ResultVO<ShippingOrderInfoVO>>(`${AppConfig.BASE_URL}/api/shipping-order/${id}`, {
+      withCredentials: true
     });
   }
 
