@@ -15,5 +15,6 @@ public class PurchaseOrderProductDTO {
     private Integer quantity;
     private Double weight;
     private Double price;
+    private Integer priceType;
     private Double cash;
 }

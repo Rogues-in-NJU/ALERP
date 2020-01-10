@@ -8,6 +8,7 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.AddPaymentRecordDTO;
 import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.entity.PaymentRecord;
+import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.PurchaseOrder;
 import edu.nju.alerp.entity.PurchaseOrderProduct;
 import edu.nju.alerp.enums.*;
@@ -145,14 +146,21 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
 
         List<PurchaseOrderProduct> productList = purchaseOrderDTO.getProducts().parallelStream()
-                                                                    .map(p -> PurchaseOrderProduct.builder()
+                                                                    .map(p -> {
+                                                                        PurchaseOrderProduct product
+                                                                                = PurchaseOrderProduct.builder()
                                                                                 .purchaseOrderId(current.getId())
                                                                                 .productId(p.getProductId())
-                                                                                .quantity(p.getQuantity())
-                                                                                .weight(p.getWeight())
                                                                                 .price(p.getPrice())
                                                                                 .cach(p.getCash())
-                                                                                .build())
+                                                                                .build();
+                                                                        if (p.getPriceType() == 1) { // 元/千克
+                                                                            product.setWeight(p.getWeight());
+                                                                        }else {  // 元/件
+                                                                            product.setQuantity(p.getQuantity());
+                                                                        }
+                                                                        return product;
+                                                                    })
                                                                     .collect(Collectors.toList());
         purchaseOrderProductRepository.saveAll(productList);
         purchaseOrderProductRepository.flush();
