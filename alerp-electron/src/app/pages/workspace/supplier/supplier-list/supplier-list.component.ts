@@ -193,7 +193,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.data !== ResultCode.SUCCESS.code) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         this.message.success('修改成功!');

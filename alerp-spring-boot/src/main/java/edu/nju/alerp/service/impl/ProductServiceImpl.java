@@ -5,6 +5,7 @@ import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.ExceptionEnum;
+import edu.nju.alerp.enums.ProductType;
 import edu.nju.alerp.repo.ProductRepository;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
@@ -122,6 +123,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
+        if (!ProductType.of(productDTO.getType()).validateSpecification(productDTO.getSpecification()))
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "规格格式错误，请重新填写.");
+
         Product product = Product.builder()
                 .createAt(DateUtils.getToday())
                 .createBy(CommonUtils.getUserId())

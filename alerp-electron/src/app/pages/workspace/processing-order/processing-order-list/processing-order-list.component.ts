@@ -91,6 +91,7 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
         this.orderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isLoading = false;
       }, () => {
         this.isLoading = false;
       });

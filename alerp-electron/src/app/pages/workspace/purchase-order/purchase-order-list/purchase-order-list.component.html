@@ -43,6 +43,7 @@
     <div class="table-wrapper">
       <nz-table #purchaseOrderTable
                 nzShowSizeChanger
+                [nzFrontPagination]="false"
                 [nzData]="orderList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
