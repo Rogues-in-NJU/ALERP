@@ -147,4 +147,14 @@ public class CustomerServiceImpl implements CustomerService {
         return sp.isEmpty() ? customerRepository.findAll(pageable) : customerRepository.findAll(sp, pageable);
     }
 
+    @Override
+    public List<Integer> getCustomerListInCash() {
+        return customerRepository.findCustomerListInCash();
+    }
+
+    @Override
+    public List<Integer> getCustomerListInMonth() {
+        return customerRepository.findCustomerListInMonth();
+    }
+
 }

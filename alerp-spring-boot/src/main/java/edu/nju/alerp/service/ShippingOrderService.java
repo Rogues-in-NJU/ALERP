@@ -27,4 +27,10 @@ public interface ShippingOrderService {
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
 
     List<Integer> getProcessingListById(int id);
+
+    Double getTotalCashByProductId(int productId);
+
+    Double getTotalWeightByProductId(int productId);
+
+    Double getCustomerAvgPrice(List<Integer> customerIdList);
 }

@@ -20,4 +20,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer>, Jp
 
     @Query("select c from Customer c where c.name like %:name% or c.shorthand like %:name%")
     List<Customer> findCustomerListByName(@Param("name") String name);
+
+    @Query("select c.id from Customer c where c.type = 1")
+    List<Integer> findCustomerListInCash();
+
+    @Query("select c.id from Customer c where c.type = 2")
+    List<Integer> findCustomerListInMonth();
 }
