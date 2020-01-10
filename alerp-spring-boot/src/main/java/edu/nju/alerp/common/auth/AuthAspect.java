@@ -77,6 +77,9 @@ public class AuthAspect {
 
         int authId = auth.getId();
         AuthUser authUser = authService.findAuthUser(userId, authId);
+        if (authUser == null)
+            return false;
+
         return ActionType.of(authUser.getAction()) == ActionType.ACCESS;
     }
 }

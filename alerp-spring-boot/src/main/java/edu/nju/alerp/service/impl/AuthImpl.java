@@ -1,5 +1,6 @@
 package edu.nju.alerp.service.impl;
 
+import com.google.common.collect.ImmutableSet;
 import edu.nju.alerp.common.auth.AuthContext;
 import edu.nju.alerp.common.auth.AuthParamsSupplier;
 import edu.nju.alerp.common.auth.AuthRegistry;
@@ -16,11 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@EnableScheduling
 public class AuthImpl implements AuthService, InitializingBean {
 
     @Autowired
@@ -44,19 +49,34 @@ public class AuthImpl implements AuthService, InitializingBean {
 
     private Map<AuthUserKey, AuthUser> authUserCache = new ConcurrentHashMap<>();
 
+    private static final Set<String> managerRoute = ImmutableSet.of("/api/product/delete/([1-9]\\d*)?",
+                                                            "/api/product/list");
+
+    private static final int initailDelayTime = 1000 * 30;
+    private static final int fixedDelayTime = 1000 * 30;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         List<Auth> auths = findAll();
-        List<AuthUser> authUsers = authUserRepository.findAll();
         authCache.putAll(auths.parallelStream().map(auth -> MutablePair.of(auth.getId(), auth)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
-        authUserCache.putAll(authUsers.parallelStream().map(authUser -> MutablePair.of(new AuthUserKey(authUser.getUserId(), authUser.getAuthId()), authUser))
-        .collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
+        loadAuthUserCache();
         auths.forEach(auth -> AuthRegistry.register(auth.getRoute(), new AuthParamsSupplier() {
             @Override
             public void consume(AuthContext authContext) {
                 // do something
             }
         }));
+    }
+
+    @Scheduled(initialDelay = initailDelayTime, fixedDelay = fixedDelayTime)
+    private void refreshAuthUserCache() {
+        loadAuthUserCache();
+    }
+
+    private void loadAuthUserCache() {
+        List<AuthUser> authUsers = authUserRepository.findAll();
+        authUserCache.putAll(authUsers.parallelStream().map(authUser -> MutablePair.of(new AuthUserKey(authUser.getUserId(), authUser.getAuthId()), authUser))
+                .collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
     }
 
     @Override
@@ -123,6 +143,26 @@ public class AuthImpl implements AuthService, InitializingBean {
         return 0;
     }
 
+    @Override
+    public int initialUserAuthByUserId(int id) {
+        List<AuthUser> authUsers = authCache.values().parallelStream()
+                                        .map(auth -> {
+                                            AuthUser authUser = AuthUser.builder()
+                                                    .userId(id)
+                                                    .authId(auth.getId()).build();
+                                            if (managerRoute.contains(auth.getRoute()))
+                                                authUser.setAction(1);
+                                            else
+                                                authUser.setAction(0);
+                                            return authUser;
+                                        })
+                                        .collect(Collectors.toList());
+
+        authUserRepository.saveAll(authUsers);
+        authUserRepository.flush();
+        return 0;
+    }
+
     private AuthUser findAuthUserFromSql(int userId, int authId) {
         QueryContainer<AuthUser> sp = new QueryContainer<>();
         try {
@@ -134,7 +174,7 @@ public class AuthImpl implements AuthService, InitializingBean {
         List<AuthUser> authUsers = authUserRepository.findAll(sp);
         if (authUsers == null)
             return null;
-        if (authUsers.get(0) == null)
+        if (authUsers.size() == 0)
             return null;
         return authUsers.get(0);
     }
