@@ -42,7 +42,7 @@ public class SpecialPrice {
     /**
      * 算价方式
      */
-    private int priceMethod;
+    private int priceType;
     /**
      * 创建者id
      */

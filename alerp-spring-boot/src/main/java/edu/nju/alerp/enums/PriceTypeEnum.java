@@ -10,15 +10,15 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum priceMethodEnum {
+public enum PriceTypeEnum {
     WEIGHT(1, "重量"),
     NUM(2, "件数");
     private int code;
     private String message;
 
 
-    public static priceMethodEnum of(int code) {
-        for (priceMethodEnum item : priceMethodEnum.values()) {
+    public static PriceTypeEnum of(int code) {
+        for (PriceTypeEnum item : PriceTypeEnum.values()) {
             if (item.code == code) {
                 return item;
             }

@@ -18,13 +18,14 @@ public class ShippingOrderVO {
     private int customerId;
     private String customerName;
     private int arrearOrderId;
+    private String arrearOrderCode;
     private double cash;
     private double floatingCash;
     private double receivableCash;
     private int status;
     private String city;
     private String createdAt;
-    private int createdById;
+    private int createdBy;
     private String createdByName;
     private double totalWeight;
     private List<ProcessOrderIdCodeVO> processingOrderIdsCodes;

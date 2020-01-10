@@ -158,26 +158,34 @@ public class ShippingOrderController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<ShippingOrderVO> ShippingOrderVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
             ProductVO productVO = ProductVO.builder()
-//                    .priceType()
-//                    .processingOrderCode()
+                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();
             BeanUtils.copyProperties(s, productVO);
             productVOList.add(productVO);
         });
+        List<ProcessingOrder> processingOrderList = processOrderService.findProcessingsByShipppingId(id);
+        List<ProcessOrderIdCodeVO> processOrderIdCodeVOList = new ArrayList<>();
+        processingOrderList.forEach(p -> {
+            ProcessOrderIdCodeVO processOrderIdCodeVO = ProcessOrderIdCodeVO.builder()
+                    .processingOrderId(p.getId())
+                    .processingOrderCode(p.getCode())
+                    .build();
+            processOrderIdCodeVOList.add(processOrderIdCodeVO);
+        });
         double totalWeight = productVOList.stream().mapToDouble(ProductVO::getWeight).sum();
-        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
-//        List<ProcessingOrder> processingOrderList = processOrderService.findAll();
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
                 .customerName(customerService.getCustomer(shippingOrder.getCustomerId()).getName())
                 .createdByName(userService.getUser(shippingOrder.getCreatedBy()).getName())
-//                .processingOrderIdsCodes()
+                .arrearOrderCode(arrearOrderService.getOne(shippingOrder.getArrearOrderId()).getCode())
+                .processingOrderIdsCodes(processOrderIdCodeVOList)
                 .city(CityEnum.of(shippingOrder.getCity()).getMessage())
                 .totalWeight(totalWeight)
                 .products(productVOList)

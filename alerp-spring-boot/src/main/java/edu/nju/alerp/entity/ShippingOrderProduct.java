@@ -58,7 +58,7 @@ public class ShippingOrderProduct {
     /**
      * 算价方式
      */
-    private int priceMethod;
+    private int priceType;
 
     /**
      * 单价

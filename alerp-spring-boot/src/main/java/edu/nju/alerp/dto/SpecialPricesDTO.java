@@ -14,5 +14,5 @@ public class SpecialPricesDTO {
     private Integer id;
     private int productId;
     private double price;
-    private int priceMethod;
+    private int priceType;
 }
