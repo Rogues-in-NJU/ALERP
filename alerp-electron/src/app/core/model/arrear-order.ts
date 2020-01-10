@@ -15,7 +15,7 @@ export interface ArrearOrderInfoVO extends BaseInfo {
   dueDate?: string;
   overDue?: boolean;
 
-  receipts?: ArrearOrderReceiptRecordVO[];
+  receiptRecordList?: ArrearOrderReceiptRecordVO[];
 }
 
 export interface ArrearOrderReceiptRecordVO extends BaseInfo {

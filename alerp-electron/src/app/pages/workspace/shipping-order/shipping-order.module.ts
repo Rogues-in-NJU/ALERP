@@ -29,13 +29,13 @@ const routes: Routes = [
       removable: true
     }
   },
-  { path: 'info/:code',
+  { path: 'info/:id',
     component: ShippingOrderInfoComponent,
     canActivate: [AuthorizationGuard],
     data: {
       title: '出货单{}',
       removable: true,
-      replaceParams: ['code']
+      replaceParams: ['id']
     }
   }
 ];

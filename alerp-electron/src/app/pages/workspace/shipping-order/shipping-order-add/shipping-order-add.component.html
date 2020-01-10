@@ -67,7 +67,7 @@
   <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="客户" [nzSpan]="4">{{ shippingOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="4">
-      <a routerLink="/processing-order/info/" *ngFor="let code of shippingOrderData.processingOrderCodes">{{ code }}<br></a>
+      <a routerLink="/workspace/processing-order/info/{{ data.processingOrderId }}" *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></a>
     </nz-descriptions-item>
   </nz-descriptions>
   <br/>
@@ -107,7 +107,7 @@
     <tr *ngFor="let data of shippingOrderInfoProductsTable.data">
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']">
-          <a routerLink="/processing-order/info/">{{ data.processingOrderCode }}</a>
+          <a routerLink="/workspace/processing-order/info/{{ data.processingOrderId}}">{{ data.processingOrderCode }}</a>
         </ng-container>
       </td>
 
@@ -116,41 +116,12 @@
         <ng-container>
           {{ data.productName }}
         </ng-container>
-<!--        <ng-template #productNameEditTpl>-->
-<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">-->
-<!--            <nz-select [(ngModel)]="editCache.product"-->
-<!--                       nzShowSearch-->
-<!--                       nzServerSearch-->
-<!--                       (nzOnSearch)="onProductSearch($event)"-->
-<!--                       (ngModelChange)="onChangeSelectedProduct($event)"-->
-<!--                       style="width: 150px">-->
-<!--              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>-->
-<!--              <ng-container *ngFor="let p of searchProducts; let i = index;">-->
-<!--                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>-->
-<!--              </ng-container>-->
-<!--              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>-->
-<!--                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...-->
-<!--              </nz-option>-->
-<!--            </nz-select>-->
-<!--          </nz-form-control>-->
-<!--        </ng-template>-->
       </td>
       <td>
         <ng-container>
           {{ data.specification }}
         </ng-container>
-<!--        <ng-template #specificationEditTpl>-->
-<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.specification">-->
-<!--            <input nz-input [(ngModel)]="editCache.data.specification"-->
-<!--                   (ngModelChange)="onSpecificationInput($event)"-->
-<!--                   [nzAutocomplete]="auto"/>-->
-<!--            <nz-autocomplete nzBackfill #auto>-->
-<!--              <nz-auto-option *ngFor="let option of specificationAutoComplete" [nzValue]="option.value">-->
-<!--                {{ option.label }}-->
-<!--              </nz-auto-option>-->
-<!--            </nz-autocomplete>-->
-<!--          </nz-form-control>-->
-<!--        </ng-template>-->
+
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']">

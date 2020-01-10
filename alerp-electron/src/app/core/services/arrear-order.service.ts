@@ -6,6 +6,7 @@ import {PurchaseOrderPaymentRecordVO, PurchaseOrderVO} from "../model/purchase-o
 import {ShippingOrderInfoVO} from "../model/shipping-order";
 import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO, ArrearStatisticsVO} from "../model/arrear-order";
 import {AppConfig} from "../../../environments/environment";
+import {CustomerVO} from "../model/customer";
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +20,6 @@ export class ArrearOrderService {
   }
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<ArrearOrderInfoVO>>> {
-    // // prod
-    // return this.http.post<ResultVO<TableResultVO<PurchaseOrderVO>>>(
-    //   `${AppConfig.BASE_URL}/api/purchase-order/list`,
-    //   queryParams
-    // );
-    // test
     return this.http.get<ResultVO<TableResultVO<ArrearOrderInfoVO>>>(`${AppConfig.BASE_URL}/api/arrear-order/list`, {
       params: queryParams,
       withCredentials: true
@@ -32,47 +27,17 @@ export class ArrearOrderService {
   }
 
   public find(id: number): Observable<ResultVO<ArrearOrderInfoVO>> {
-    // // prod
-    // return this.http.get<ResultVO<PurchaseOrderVO>>(`${AppConfig.BASE_URL}/api/purchase-order/${_id}`);
-    // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        id: 1,
-        code: '300201912240001',
-        shippingOrderId: 1,
-        shippingOrderCode: '200201912230001',
-        status: 1,
-        invoiceNumber: '1234567890',
-        customerId: 1,
-        customerName: '尹子越',
-        receivableCash: 10000,
-        receivedCash: 2000,
-        dueDate: '2019-12-31',
-        overDue: false,
-        createdBy: '于海强',
+    return this.http.get<ResultVO<ArrearOrderInfoVO>>(`${AppConfig.BASE_URL}/api/arrear-order/${id}`);
 
-        receipts: [{
-          id: 1,
-          arrearOrderId: 1,
-          status: 0,
-          cash: 2000,
-          salesman: '殷乾恩',
-          description: '支付宝转账：652387423984720',
-          doneAt: '2019-12-24 12:00'
-        }]
-      }
-    })
   }
 
   public saveReceiptRecord(receiptRecord: ArrearOrderReceiptRecordVO): Observable<ResultVO<any>> {
     console.log(receiptRecord);
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
-    });
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/arrear-order/receipt-record/`, receiptRecord,
+      {
+        withCredentials: true
+      });
+
   }
 
   public getArrearStatistics() : Observable<ResultVO<ArrearStatisticsVO>>{

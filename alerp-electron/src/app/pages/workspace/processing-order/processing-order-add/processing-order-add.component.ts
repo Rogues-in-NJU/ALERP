@@ -14,13 +14,14 @@ import { CustomerVO } from "../../../../core/model/customer";
 import { CustomerService } from "../../../../core/services/customer.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { TabService } from "../../../../core/services/tab.service";
+import { ClosableTab } from "../../tab/tab.component";
 
 @Component({
   selector: 'processing-order-add',
   templateUrl: './processing-order-add.component.html',
   styleUrls: [ './processing-order-add.component.less' ]
 })
-export class ProcessingOrderAddComponent implements OnInit {
+export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
 
   isSaving: boolean = false;
 
@@ -156,7 +157,7 @@ export class ProcessingOrderAddComponent implements OnInit {
     Object.assign(processingOrderData, this.processingOrderForm.getRawValue(), {
       products: this.products
     });
-    console.log(processingOrderData);
+    this.isSaving = true;
     this.processingOrder.save(processingOrderData)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
@@ -167,15 +168,12 @@ export class ProcessingOrderAddComponent implements OnInit {
           return;
         }
         this.message.success('新增成功!');
+        this.tabClose();
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isSaving = false;
       }, () => {
-        this.tab.closeEvent.emit({
-          url: this.router.url,
-          goToUrl: '/workspace/processing-order/list',
-          refreshUrl: '/workspace/processing-order/list',
-          routeConfig: this.route.snapshot.routeConfig
-        });
+        this.isSaving = false;
       });
   }
 
@@ -373,7 +371,7 @@ export class ProcessingOrderAddComponent implements OnInit {
   }
 
   checkQuantity(): boolean {
-    if (Objects.valid(this.editCache.data.quantity)) {
+    if (!Objects.isNaN(this.editCache.data.quantity)) {
       this.editCacheValidateStatus.quantity = null;
       // 做计算
       return true;
@@ -384,7 +382,7 @@ export class ProcessingOrderAddComponent implements OnInit {
   }
 
   checkExpectedWeight(): boolean {
-    if (Objects.valid(this.editCache.data.expectedWeight)) {
+    if (!Objects.isNaN(this.editCache.data.expectedWeight)) {
       this.editCacheValidateStatus.expectedWeight = null;
       return true;
     } else {
@@ -398,7 +396,7 @@ export class ProcessingOrderAddComponent implements OnInit {
       return false;
     }
     let isValid: boolean = true;
-    if (this.editCache.data.productId === 0) {
+    if (!Objects.valid(this.editCache.data.productId)) {
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
@@ -415,6 +413,15 @@ export class ProcessingOrderAddComponent implements OnInit {
       isValid = false;
     }
     return isValid;
+  }
+
+  tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/processing-order/list',
+      refreshUrl: '/workspace/processing-order/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
   }
 
 }

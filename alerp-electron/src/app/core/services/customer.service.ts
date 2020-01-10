@@ -18,33 +18,7 @@ export class CustomerService {
 
   public find(id: number): Observable<ResultVO<CustomerVO>> {
     return this.http.get<ResultVO<CustomerVO>>(`${AppConfig.BASE_URL}/api/customer/${id}`);
-    // return of({
-    //   code: 200,
-    //   message: '',
-    //   data: {
-    //     id: 1,
-    //     name: 'XXX公司',
-    //     shorthand: '',
-    //     type: 1,
-    //     period: 1,
-    //     payDate: 20,
-    //     description: '',
-    //
-    //     specialPrices: [{
-    //       id: 0,
-    //       productId: 0,
-    //       productName: '铝棒',
-    //       price: 1000,
-    //       priceType: 1
-    //     }, {
-    //       id: 2,
-    //       productId: 2,
-    //       productName: '铝条',
-    //       price: 2000,
-    //       priceType: 2
-    //     }]
-    //   }
-    // });
+
   }
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<CustomerVO>>>;
@@ -60,24 +34,6 @@ export class CustomerService {
         params: queryParams,
         withCredentials: true
       });
-      // return of({
-      //   code: 200,
-      //   message: '',
-      //   data: {
-      //     totalPages: 1,
-      //     pageIndex: 1,
-      //     pageSize: 1,
-      //     result: [{
-      //       id: 1,
-      //       name: 'XXX公司',
-      //       shorthand: '',
-      //       type: 1,
-      //       period: 1,
-      //       payDate: 20,
-      //       description: ''
-      //     }]
-      //   }
-      // });
     } else {
       return of({
         code: 200,
