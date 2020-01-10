@@ -15,7 +15,8 @@ import javax.persistence.*;
 @Builder
 @Data
 @Entity
-@Table(name = "auth_user")
+@Table(name = "auth_user",
+uniqueConstraints = {@UniqueConstraint(columnNames = {"auth_id", "user_id"})})
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthUser {
@@ -38,4 +39,9 @@ public class AuthUser {
      */
     @Column(name = "user_id")
     private int userId;
+
+    /**
+     * 有无权限(0:没有， 1:有)
+     */
+    private int action;
 }
