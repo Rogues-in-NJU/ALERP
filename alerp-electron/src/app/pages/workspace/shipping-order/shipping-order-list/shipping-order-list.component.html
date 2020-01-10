@@ -34,6 +34,7 @@
       <nz-form-label>状态</nz-form-label>
       <nz-form-control>
         <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
+          <nz-option nzLabel="已出货" nzValue="0"></nz-option>
           <nz-option nzLabel="已完成" nzValue="1"></nz-option>
           <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
         </nz-select>
@@ -83,7 +84,7 @@
         <tbody>
         <tr *ngFor="let data of shippingOrderTable.data">
           <td nzLeft="0px">
-            <a routerLink="/workspace/shipping-order/info/{{ data.code }}">{{ data.code }}</a>
+            <a routerLink="/workspace/shipping-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
           <td>{{ data.customerName }}</td>
           <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>

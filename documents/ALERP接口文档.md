@@ -506,7 +506,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* code                   //1.10从id改为code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -647,7 +647,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* code                   //1.10从id改为code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -774,7 +774,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* code                   //1.10从id改为code
 * customerName (name 和 shorthand)
 * invoiceNumber
 * shippingOrderId

@@ -2,10 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
-import { StringUtils } from "./util.service";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
 import {ProcessingOrderProductVO, ProcessingOrderVO} from "../model/processing-order";
-import {CustomerVO} from "../model/customer";
 import {AppConfig} from "../../../environments/environment";
 
 @Injectable({
@@ -81,12 +79,15 @@ export class ShippingOrderService {
       }
     });
   }
+
   public save(info: ProcessingOrderVO): Observable<ResultVO<any>> {
     return of(null);
   }
 
   public abandon(id: number): Observable<ResultVO<any>> {
-    return of(null);
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/shipping-order/delete/${id}`, {
+      withCredentials: true
+    });
   }
 
   public saveProduct(product: ShippingOrderInfoVO): Observable<ResultVO<any>> {
