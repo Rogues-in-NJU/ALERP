@@ -8,17 +8,11 @@ import edu.nju.alerp.service.*;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
-import edu.nju.alerp.vo.ProductVO;
-import edu.nju.alerp.vo.ShippingArrearRelationVO;
-import edu.nju.alerp.vo.ShippingOrderBriefVO;
-import edu.nju.alerp.vo.ShippingOrderVO;
+import edu.nju.alerp.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -181,5 +176,39 @@ public class ShippingOrderController {
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
 
         return ResponseResult.ok(shippingOrderVO);
+    }
+
+    /**
+     * 获取商品平均单价列表（分页）
+     *
+     * @param pageIndex
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ResponseResult<ListResponse> findProductPricesByPages(@RequestParam(value = "pageIndex") int pageIndex,
+                                                                 @RequestParam(value = "pageSize") int pageSize,
+                                                                 @RequestParam(value = "name", required = false) String name) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize,
+                Sort.by(Sort.Direction.DESC, "createAt"));
+        Page<ProductDetailVO> page = productService.findAllByPage(pageable, name, null);
+        List<ProductAvgPriceVO> result = new ArrayList<>();
+        page.getContent().forEach(p -> {
+            double totalWeight = shippingOrderService.getTotalWeightByProductId(p.getId());
+            double cash = shippingOrderService.getTotalCashByProductId(p.getId());
+            double avg = cash / totalWeight;
+            BigDecimal b = new BigDecimal(avg);
+            double avg_new = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            ProductAvgPriceVO productAvgPriceVO = ProductAvgPriceVO.builder()
+                    .id(p.getId())
+                    .name(p.getName())
+                    .totalWeight(totalWeight)
+                    .averagePrice(avg_new)
+                    .build();
+            result.add(productAvgPriceVO);
+        });
+
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
     }
 }

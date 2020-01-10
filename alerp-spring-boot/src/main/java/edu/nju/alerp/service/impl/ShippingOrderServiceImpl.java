@@ -25,10 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 出货单服务层接口实现
@@ -132,5 +135,32 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public List<Integer> getProcessingListById(int id) {
         return shippingOrderProductRepository.findProcessingListByShippingId(id);
+    }
+
+    @Override
+    public Double getTotalCashByProductId(int productId) {
+        return shippingOrderProductRepository.getTotalCashByProductId(productId);
+    }
+
+    @Override
+    public Double getTotalWeightByProductId(int productId) {
+        return shippingOrderProductRepository.getTotalWeightByProductId(productId);
+    }
+
+    /**
+     * controller层根据customerService分别查出现金和月结对客户id List,一起调用该方法返回对应均价
+     * @param customerIdList
+     * @return
+     */
+    @Override
+    public Double getCustomerAvgPrice(List<Integer> customerIdList) {
+        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList);
+        if (CollectionUtils.isEmpty(shippingOrderList)) {
+            return (double) 0;
+        }
+        double totalCash = shippingOrderList.stream().mapToDouble(ShippingOrder::getReceivableCash).sum();
+        double avg = totalCash / shippingOrderList.size();
+        BigDecimal b = new BigDecimal(avg);
+        return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 }

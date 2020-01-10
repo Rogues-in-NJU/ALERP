@@ -27,4 +27,8 @@ public interface CustomerService {
     List<Customer> getCustomerList();
 
     Page<Customer> getCustomerListByName(Pageable pageable, String name);
+
+    List<Integer> getCustomerListInCash();
+
+    List<Integer> getCustomerListInMonth();
 }
