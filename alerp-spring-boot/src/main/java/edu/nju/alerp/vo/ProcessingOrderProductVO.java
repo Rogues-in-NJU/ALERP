@@ -21,4 +21,9 @@ public class ProcessingOrderProductVO {
     private String specification;
     private Integer quantity;
     private Double expectedWeight;
+
+    // 1.10新增
+    private Boolean isEditable;
+    private Double specialPrice;
+    private Integer specialPriceType;
 }

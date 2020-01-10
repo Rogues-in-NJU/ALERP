@@ -78,8 +78,11 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                 sp.add(ConditionFactory.equal("status", status));
             else
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "status"));
+            if (doneStartTime != null)
+                sp.add(ConditionFactory.greatThanEqualTo("doneAt", doneStartTime));
+            if (doneEndTime != null)
+                sp.add(ConditionFactory.lessThanEqualTo("doneAt", doneEndTime));
             sp.add(ConditionFactory.equal("city", city));
-            sp.add(ConditionFactory.between("doneAt", doneStartTime, doneEndTime));
         }catch (Exception e) {
             log.error("Value is null.", e);
         }

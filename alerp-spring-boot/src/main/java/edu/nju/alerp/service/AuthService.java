@@ -1,6 +1,7 @@
 package edu.nju.alerp.service;
 
 import edu.nju.alerp.dto.AuthDTO;
+import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.entity.AuthUser;
 
@@ -19,5 +20,7 @@ public interface AuthService {
 
     public Auth findAuthByUri(String uri);
 
-    public boolean findAuthUser(int userId, int authId);
+    public AuthUser findAuthUser(int userId, int authId);
+
+    public int updateUserAuth(List<UpdateUserAuthDTO> updateAuths);
 }

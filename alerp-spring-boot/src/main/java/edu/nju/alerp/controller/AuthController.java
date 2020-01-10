@@ -3,6 +3,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.AuthDTO;
+import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,4 +46,10 @@ public class AuthController {
     public ResponseResult<List<Auth>> queryAuthList() {
         return ResponseResult.ok(authService.findAll());
     }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public ResponseResult<Integer> editUserAuth(@RequestBody List<UpdateUserAuthDTO> updateAuths) {
+        return ResponseResult.ok(authService.updateUserAuth(updateAuths));
+    }
+
 }

@@ -3,6 +3,8 @@ package edu.nju.alerp.common.auth;
 
 import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.entity.Auth;
+import edu.nju.alerp.entity.AuthUser;
+import edu.nju.alerp.enums.ActionType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.AuthService;
 import edu.nju.alerp.util.CommonUtils;
@@ -48,6 +50,7 @@ public class AuthAspect {
             verifyResult = verify(authContext);
         }catch (Exception e) {
             log.warn("Error verifying auth, {}", authContext, e);
+            throw new NJUException(ExceptionEnum.AUTH_FAIL, "No Auth");
         }
 
         if (verifyResult) {
@@ -58,7 +61,7 @@ public class AuthAspect {
         throw new NJUException(ExceptionEnum.AUTH_FAIL, "No Auth");
     }
 
-    private boolean verify(AuthContext authContext) {
+    private boolean verify(AuthContext authContext) throws Exception{
         HttpServletRequest servletRequest = authContext.getHttpServletRequest();
         AuthRegistry.AuthInfo authInfos = AuthRegistry.getAuthInfo(servletRequest);
         if (authInfos == null || authInfos.getVerifySupplier() == null)
@@ -73,7 +76,7 @@ public class AuthAspect {
             return false;
 
         int authId = auth.getId();
-        boolean res = authService.findAuthUser(userId, authId);
-        return res;
+        AuthUser authUser = authService.findAuthUser(userId, authId);
+        return ActionType.of(authUser.getAction()) == ActionType.ACCESS;
     }
 }
