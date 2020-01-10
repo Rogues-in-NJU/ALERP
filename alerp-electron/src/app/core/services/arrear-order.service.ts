@@ -5,6 +5,7 @@ import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/re
 import {PurchaseOrderPaymentRecordVO, PurchaseOrderVO} from "../model/purchase-order";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
 import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO, ArrearStatisticsVO} from "../model/arrear-order";
+import {AppConfig} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -24,43 +25,9 @@ export class ArrearOrderService {
     //   queryParams
     // );
     // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result: [{
-          id: 1,
-          code: '300201912240001',
-          shippingOrderId: 1,
-          shippingOrderCode: '200201912230001',
-          status: 1,
-          invoiceNumber: '1234567890',
-          customerId: 1,
-          customerName: '尹子越',
-          receivableCash: 10000,
-          receivedCash: 2000,
-          dueDate: '2019-12-31',
-          overDue: false,
-          createdBy: '于海强'
-        }, {
-          id: 2,
-          code: '300201912240002',
-          shippingOrderId: 2,
-          shippingOrderCode: '200201912230002',
-          status: 2,
-          invoiceNumber: '1234567890',
-          customerId: 2,
-          customerName: 'xudi',
-          receivableCash: 5600,
-          receivedCash: 5600,
-          dueDate: '2019-12-31',
-          overDue: false,
-          createdBy: '于海强'
-        }]
-      }
+    return this.http.get<ResultVO<TableResultVO<ArrearOrderInfoVO>>>(`${AppConfig.BASE_URL}/api/arrear-order/list`, {
+      params: queryParams,
+      withCredentials: true
     });
   }
 

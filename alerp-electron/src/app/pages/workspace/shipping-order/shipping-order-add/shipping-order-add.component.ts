@@ -36,7 +36,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   shippingOrderData: ShippingOrderInfoVO = {
     processingOrderCodes: [],
     products: [],
-
     cash: 0,
     floatingCash: 0,
     receivableCash: 0,
@@ -49,7 +48,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   //modal
   shippingOrderAddVisible: boolean = false;
   shippingOrderAddOkLoading: boolean = false;
-  addShippingOrder_customerName: string;
+  addShippingOrder_customerName: string = null;
   addShippingOrder_allProcessingOrderList: ProcessingOrderVO[] =[];
 
   addShippingOrder_isLoading: boolean = false;
@@ -399,6 +398,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     };
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
@@ -419,23 +419,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   confirmAdd(): void {
     this.shippingOrderAddOkLoading = true;
 
-    // todo 根据加工单产生出货单
-    // this.shippingOrder.find(this.shippingOrderCode)
-    //   .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
-    //     if (!Objects.valid(res)) {
-    //       return;
-    //     }
-    //     this.isLoading = false;
-    //     this.shippingOrderData = res.data;
-    //     if (Objects.valid(this.shippingOrderData.products)) {
-    //       this.shippingOrderData.products.forEach(item => {
-    //         item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
-    //       })
-    //     }
-    //   }, (error: HttpErrorResponse) => {
-    //     this.message.error(error.message);
-    //   });
-
     for(let processingOrder of this.addShippingOrder_allProcessingOrderList){
       if(!this.mapOfCheckedId[processingOrder.id]){
         continue;
@@ -445,27 +428,44 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.shippingOrderData.customerName = processingOrder.customerName;
       this.shippingOrderData.processingOrderCodes.push(processingOrder.code);
 
-      for(let product of processingOrder.products){
-        let shippingProduct: ShippingOrderProductInfoVO = {};
-        shippingProduct.processingOrderId = processingOrder.id;
-        shippingProduct.processingOrderCode = processingOrder.code;
-        shippingProduct.productId = product.id;
-        shippingProduct.productName = product.productName;
-        shippingProduct.type = product.type;
-        shippingProduct.density = product.density;
-        shippingProduct.specification = product.specification;
-        shippingProduct.quantity = product.quantity;
-        shippingProduct.expectedWeight = product.expectedWeight;
+      this.processingOrder.find(processingOrder.id)
+        .subscribe((res: ResultVO<ProcessingOrderVO>) => {
+          console.log(res);
+          if (!Objects.valid(res)) {
+            return;
+          }
+          let processingOrderInfoVO : ProcessingOrderVO = res.data;
 
-        shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
-        this.shippingOrderData.products.push(shippingProduct);
-      }
+          if (Objects.valid(processingOrderInfoVO.products)) {
+            for(let product of processingOrderInfoVO.products){
+              let shippingProduct: ShippingOrderProductInfoVO = {};
+              shippingProduct.processingOrderId = processingOrder.id;
+              shippingProduct.processingOrderCode = processingOrder.code;
+              shippingProduct.productId = product.id;
+              shippingProduct.productName = product.productName;
+              shippingProduct.type = product.type;
+              shippingProduct.density = product.density;
+              shippingProduct.specification = product.specification;
+              shippingProduct.quantity = product.quantity;
+              shippingProduct.expectedWeight = product.expectedWeight;
 
+              shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
+              this.shippingOrderData.products = [
+                shippingProduct,
+                ...this.shippingOrderData.products
+              ];
+            }
+          }
+        }, (error: HttpErrorResponse) => {
+          this.message.error(error.message);
+        });
     }
+
     this.isLoading = false;
     this.shippingOrderAddOkLoading = false;
     this.shippingOrderAddVisible = false;
     this.message.success('添加成功!');
+    console.log(this.shippingOrderData)
   }
 
   cancelAdd(): void {
