@@ -50,6 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
                     .createdAt(DateUtils.getToday())
                     .createdBy(CommonUtils.getUserId())
                     .updatedAt(DateUtils.getToday())
+                    .updatedBy(CommonUtils.getUserId())
                     .city(CommonUtils.getCity())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);

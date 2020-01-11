@@ -17,7 +17,7 @@ public class CustomerVO {
     private String name;
     private int type;
     private String shorthand;
-    private String city;
+    private int city;
     private int period;
     private int payDate;
     private String description;
