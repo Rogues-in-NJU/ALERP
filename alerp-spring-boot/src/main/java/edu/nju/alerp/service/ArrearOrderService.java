@@ -1,7 +1,11 @@
 package edu.nju.alerp.service;
 
+import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.dto.ArrearOrderQueryConditionsDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.vo.ArrearDetailVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 收款单service层
@@ -21,6 +25,7 @@ public interface ArrearOrderService {
 
     /**
      * 保存收款单
+     *
      * @param arrearOrder
      * @return
      */
@@ -42,4 +47,19 @@ public interface ArrearOrderService {
      * @return
      */
     ArrearDetailVO findArrearDetails(int id);
+
+    /**
+     * 根据查询条件查询收款单列表
+     * @param pageable
+     * @param id
+     * @param customerName 客户姓名或简称
+     * @param status 状态
+     * @param invoiceNumber 发票流水号
+     * @param shippingOrderId 对应出货单id
+     * @param startTime 创建时间：开始时间
+     * @param endTime 创建时间：结束时间
+     * @return
+     */
+    Page<ArrearOrder> getArrearOrderList(Pageable pageable, int id, String customerName, int status, String invoiceNumber,
+        int shippingOrderId, String startTime, String endTime);
 }

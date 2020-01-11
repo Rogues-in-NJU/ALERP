@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * 欠款明细详情VO
+ * 一张收款单的欠款明细详情VO
  * @author luhailong
  * @date 2019/12/29
  */
