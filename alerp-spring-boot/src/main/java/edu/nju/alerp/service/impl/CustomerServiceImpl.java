@@ -48,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
+                    .createdBy(CommonUtils.getUserId())
                     .updatedAt(DateUtils.getToday())
                     .city(CommonUtils.getCity())
                     .build();
@@ -77,8 +78,8 @@ public class CustomerServiceImpl implements CustomerService {
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
-                    SpecialPrice specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
-                    if (specialPrice == null) {
+                    SpecialPrice specialPrice;
+                    if (specialPricesDTO.getId() == null) {
                         specialPrice = SpecialPrice.builder()
                                 .createdAt(DateUtils.getToday())
                                 .createdBy(CommonUtils.getUserId())
@@ -87,6 +88,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .build();
                         BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                     } else {
+                        specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
                         specialPrice.setUpdatedAt(DateUtils.getToday());
                         specialPrice.setUpdatedBy(CommonUtils.getUserId());
                     }
@@ -95,7 +97,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
-        return customerRepository.saveAndFlush(customer).getId();
+        return customerRepository.saveAndFlush(customer).
+
+                getId();
+
     }
 
     @Override
