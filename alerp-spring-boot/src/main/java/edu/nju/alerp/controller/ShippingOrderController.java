@@ -8,14 +8,11 @@ import edu.nju.alerp.service.*;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
-import edu.nju.alerp.vo.ProductVO;
-import edu.nju.alerp.vo.ShippingArrearRelationVO;
-import edu.nju.alerp.vo.ShippingOrderVO;
+import edu.nju.alerp.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 出货单Controller层
@@ -46,6 +45,8 @@ public class ShippingOrderController {
     ArrearOrderService arrearOrderService;
     @Autowired
     CustomerService customerService;
+    @Autowired
+    UserService userService;
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
@@ -89,12 +90,23 @@ public class ShippingOrderController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name", required = false, defaultValue = "") String name,
-                                             @RequestParam(value = "status") int status,
-                                             @RequestParam(value = "createAtStartTime") String createAtStartTime,
-                                             @RequestParam(value = "createAtEndTime") String createAtEndTime) {
-        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(PageRequest.of(pageIndex - 1, pageSize), name, status, createAtStartTime, createAtEndTime);
-        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+                                             @RequestParam(value = "id", required = false, defaultValue = "") String code,
+                                             @RequestParam(value = "customerName", required = false, defaultValue = "") String name,
+                                             @RequestParam(value = "status", required = false) Integer status,
+                                             @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
+                                             @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, code, name, status, createAtStartTime, createAtEndTime);
+        List<ShippingOrderBriefVO> result = new ArrayList<>();
+        page.getContent().forEach(s -> {
+            ShippingOrderBriefVO shippingOrderBriefVO = ShippingOrderBriefVO.builder()
+                    .customerName(customerService.getCustomer(s.getCustomerId()).getName())
+                    .build();
+            BeanUtils.copyProperties(s, shippingOrderBriefVO);
+            result.add(shippingOrderBriefVO);
+        });
+
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
     }
 
     /**
@@ -146,24 +158,74 @@ public class ShippingOrderController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseResult<ShippingOrderVO> ShippingOrderVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
             ProductVO productVO = ProductVO.builder()
+                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();
             BeanUtils.copyProperties(s, productVO);
             productVOList.add(productVO);
         });
-        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
+        List<ProcessingOrder> processingOrderList = processOrderService.findProcessingsByShipppingId(id);
+        List<ProcessOrderIdCodeVO> processOrderIdCodeVOList = new ArrayList<>();
+        processingOrderList.forEach(p -> {
+            ProcessOrderIdCodeVO processOrderIdCodeVO = ProcessOrderIdCodeVO.builder()
+                    .processingOrderId(p.getId())
+                    .processingOrderCode(p.getCode())
+                    .build();
+            processOrderIdCodeVOList.add(processOrderIdCodeVO);
+        });
+        double totalWeight = productVOList.stream().mapToDouble(ProductVO::getWeight).sum();
         ShippingOrderVO shippingOrderVO = ShippingOrderVO.builder()
+                .customerName(customerService.getCustomer(shippingOrder.getCustomerId()).getName())
+                .createdByName(userService.getUser(shippingOrder.getCreatedBy()).getName())
+                .arrearOrderCode(arrearOrderService.getOne(shippingOrder.getArrearOrderId()).getCode())
+                .processingOrderIdsCodes(processOrderIdCodeVOList)
                 .city(CityEnum.of(shippingOrder.getCity()).getMessage())
-                .productVOList(productVOList)
+                .totalWeight(totalWeight)
+                .products(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
 
         return ResponseResult.ok(shippingOrderVO);
+    }
+
+    /**
+     * 获取商品平均单价列表（分页）
+     *
+     * @param pageIndex
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @RequestMapping(value = "/productAvgPriceslist", method = RequestMethod.GET)
+    public ResponseResult<ListResponse> findProductPricesByPages(@RequestParam(value = "pageIndex") int pageIndex,
+                                                                 @RequestParam(value = "pageSize") int pageSize,
+                                                                 @RequestParam(value = "name", required = false) String name) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize,
+                Sort.by(Sort.Direction.DESC, "createAt"));
+        Page<ProductDetailVO> page = productService.findAllByPage(pageable, name, null);
+        List<ProductAvgPriceVO> result = new ArrayList<>();
+        page.getContent().forEach(p -> {
+            double totalWeight = shippingOrderService.getTotalWeightByProductId(p.getId());
+            double cash = shippingOrderService.getTotalCashByProductId(p.getId());
+            double avg = cash / totalWeight;
+            BigDecimal b = new BigDecimal(avg);
+            double avg_new = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            ProductAvgPriceVO productAvgPriceVO = ProductAvgPriceVO.builder()
+                    .id(p.getId())
+                    .name(p.getName())
+                    .totalWeight(totalWeight)
+                    .averagePrice(avg_new)
+                    .build();
+            result.add(productAvgPriceVO);
+        });
+
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
     }
 }

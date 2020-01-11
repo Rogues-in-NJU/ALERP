@@ -49,6 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
                     .updatedAt(DateUtils.getToday())
+                    .city(CommonUtils.getCity())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
@@ -144,6 +145,16 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("Value is null", e);
         }
         return sp.isEmpty() ? customerRepository.findAll(pageable) : customerRepository.findAll(sp, pageable);
+    }
+
+    @Override
+    public List<Integer> getCustomerListInCash() {
+        return customerRepository.findCustomerListInCash();
+    }
+
+    @Override
+    public List<Integer> getCustomerListInMonth() {
+        return customerRepository.findCustomerListInMonth();
     }
 
 }

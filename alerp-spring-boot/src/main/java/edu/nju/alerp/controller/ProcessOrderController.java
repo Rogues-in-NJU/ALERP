@@ -9,6 +9,7 @@ import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
+import edu.nju.alerp.vo.ProcessingOrderListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class ProcessOrderController {
                                                                 @RequestParam(value = "status", required = false) Integer status, // todo 这里的status是不是必须的
                                                                 @RequestParam(value = "createAtStartTime", required = false) String startTime,
                                                                 @RequestParam(value = "createAtEndTime", required = false) String endTime) {
-        Page<ProcessingOrder> processingOrders =
+        Page<ProcessingOrderListVO> processingOrders =
                 processOrderService.findAllByPage(PageRequest.of(pageIndex - 1, pageSize), code, name, status, startTime, endTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(processingOrders, pageIndex, pageSize));
     }
@@ -50,7 +51,7 @@ public class ProcessOrderController {
         return ResponseResult.ok(processOrderService.findProcessingById(id));
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> addNewProcessingOrder(@RequestBody ProcessingOrderDTO processingOrderDTO) {
         return ResponseResult.ok(processOrderService.addProcessingOrder(processingOrderDTO));
     }

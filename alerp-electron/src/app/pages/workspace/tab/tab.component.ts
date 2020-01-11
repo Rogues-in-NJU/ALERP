@@ -77,17 +77,13 @@ export class TabComponent {
     SimpleReuseStrategy.deleteRouteSnapshot(url, event.routeConfig);
 
     // 如果menu空了跳转路由（默认路由/给定路由）
-    if (this.menuList.length == 0) {
+    if (this.menuList.length === 0) {
       if (Objects.valid(goToUrl)) {
         this.router.navigate([ goToUrl ]);
       } else {
         this.router.navigate([ '/workspace' ]);
       }
-      if (Objects.valid(refreshUrl)) {
-        this.tab.refreshEvent.emit({
-          url: refreshUrl
-        });
-      }
+      this.refreshTab(refreshUrl);
       return;
     }
 
@@ -98,6 +94,7 @@ export class TabComponent {
         const goToIndex: number = this.menuList.findIndex(p => p.url === goToUrl);
         if (goToIndex !== -1) {
           this.router.navigate([ this.menuList[ goToIndex ].url ]);
+          this.refreshTab(refreshUrl);
           return;
         }
       }
@@ -109,10 +106,13 @@ export class TabComponent {
       // 跳转路由
       this.router.navigate([ menu.url ]);
     }
-    if (Objects.valid(refreshUrl)) {
-      console.log(refreshUrl);
+    this.refreshTab(refreshUrl);
+  }
+
+  refreshTab(url: string): void {
+    if (Objects.valid(url)) {
       this.tab.refreshEvent.emit({
-        url: refreshUrl
+        url: url
       });
     }
   }

@@ -17,4 +17,5 @@ public class UpdateProcessProductDTO {
     private String specification;
     private Integer quantity;
     private Double expectedWeight;
+    private String processingOrderUpdatedAt;
 }

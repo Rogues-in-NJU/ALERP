@@ -80,6 +80,16 @@ res:
 {}
 ```
 
+#### 删除商品
+```
+GET
+/api/product/delete/:id
+
+
+res:
+{}
+```
+
 ### 采购单模块
 
 #### 获取采购单列表
@@ -186,6 +196,7 @@ body:
     quantity: number,
     weight: number,
     price: number,
+    priceType: number, // 1是元/千克, 2是元/件
     cash: number
   }]
 }
@@ -410,6 +421,7 @@ res:
     name: string,
     shorthand: string,
     type: number,
+    isAway: number,    // 1.6新增。1表示客户跑了；0表示没跑。 客户跑了：距离上次购买超过25天。
     period: number,
     payDate: number,
     description: string,
@@ -495,7 +507,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -538,6 +550,7 @@ res:
   createdAt: string,
   createdById: string,
   createdByName: string,
+  updatedAt: string
   
   products: [{
     id: number,
@@ -550,7 +563,14 @@ res:
     specification: string (客户定做的商品规格),
     quantity: number,
     expectedWeight: number
+
+    //1.10 新增
+    isEditable: boolean, //如果该商品属于客户的特价商品，为false；默认为true
+    specialPrice: number, // 特价
+    specialPriceType: number, //特价里的计价方式 ；按件计算/按重量计算
   }]
+  
+  totalWeight: number(新增，打印时需要)
 }
 ```
 
@@ -563,7 +583,6 @@ body:
 {
   customerId: number,
   salesman: string,
-  
   products: [{
     productId: number,
     specification: string (客户定做的商品规格),
@@ -589,6 +608,9 @@ body:
   specification: string (客户定做的商品规格),
   quantity: number,
   expectedWeight: number
+
+  processingOrderUpdatedAt: String        //1.6新增，加工单的更新时间，用于控制版本  
+
 }
 
 res:
@@ -631,7 +653,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * status
 * createAtStartTime
@@ -672,14 +694,23 @@ res:
   customerId: number,
   customerName: string,
   arrearOrderId: number,
+  arrearOrderCode: string,
   cash: number,
   floatingCash: number,
   receivableCash: number,
+  totalWeight: number,     //1.6 新增 。本单汇总的重量，用于打印
   status: number,
   createdAt: string,
   createdById: string,
   createdByName: string,
-  
+   
+  processingOrderIdsCodes: [   //1.10 新增，解决 code和id 的关联问题
+    {
+      processingOrderId: number,
+      processingOrderCode: string,
+    }
+  ],
+
   products: [{
     id: number,
     processingOrderId: number,
@@ -757,7 +788,7 @@ GET
 params:
 * pageSize
 * pageIndex
-* id
+* id                   //实际上搜索code
 * customerName (name 和 shorthand)
 * invoiceNumber
 * shippingOrderId

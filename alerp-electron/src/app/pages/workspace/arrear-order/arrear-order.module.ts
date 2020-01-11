@@ -21,13 +21,13 @@ const routes: Routes = [
       removable: true
     }
   }, {
-    path: 'info/:code',
+    path: 'info/:id',
     component: ArrearOrderInfoComponent,
     canActivate: [ AuthorizationGuard ],
     data: {
       title: '欠款明细{}',        // title内容将会被显示在tab的标签上，其中通过{}和replaceParams来依次填充route中的特殊内容
       removable: true,
-      replaceParams: [ 'code' ]
+      replaceParams: [ 'id' ]
     }
   },{
     path: 'statistics',

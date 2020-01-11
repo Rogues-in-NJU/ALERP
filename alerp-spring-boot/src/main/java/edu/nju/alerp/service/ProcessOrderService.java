@@ -4,6 +4,7 @@ import edu.nju.alerp.dto.ProcessingOrderDTO;
 import edu.nju.alerp.dto.UpdateProcessProductDTO;
 import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
+import edu.nju.alerp.vo.ProcessingOrderListVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,9 +19,9 @@ public interface ProcessOrderService {
 
     public List<ProcessingOrder> findAll();
 
-    public Page<ProcessingOrder> findAllByPage(Pageable pageable, String id,
-                                                   String customerName, Integer status,
-                                                   String createAtStartTime, String createAtEndTime);
+    public Page<ProcessingOrderListVO> findAllByPage(Pageable pageable, String id,
+                                                     String customerName, Integer status,
+                                                     String createAtStartTime, String createAtEndTime);
 
     public ProcessingOrderDetailVO findProcessingById(int id);
 
@@ -29,6 +30,10 @@ public interface ProcessOrderService {
     public int savaProcessingOrder(ProcessingOrder processingOrder);
 
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO);
+
+    public List<ProcessingOrder> findProcessingsByShipppingId(int id);
+
+    public double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
 
     /**
      * 新增/修改加工单的商品关联

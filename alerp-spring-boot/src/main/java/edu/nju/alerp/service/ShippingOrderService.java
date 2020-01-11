@@ -22,9 +22,17 @@ public interface ShippingOrderService {
 
     boolean printShippingOrder(int id);
 
-    Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, int status, String startTime, String endTime);
+    Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
 
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
 
     List<Integer> getProcessingListById(int id);
+
+    Double getTotalCashByProductId(int productId);
+
+    Double getTotalWeightByProductId(int productId);
+
+    Double getCustomerAvgPrice(List<Integer> customerIdList);
+
+    Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
 }

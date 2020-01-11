@@ -1,12 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { RefreshableTab } from "../../tab/tab.component";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { HttpErrorResponse } from "@angular/common/http";
-import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
-import { ExpenseService } from "../../../../core/services/expense.service";
-import { ExpenseInfoVO } from "../../../../core/model/expense";
+import {Component, OnInit} from "@angular/core";
+import {Router} from "@angular/router";
+import {RefreshableTab} from "../../tab/tab.component";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {HttpErrorResponse} from "@angular/common/http";
+import {NzMessageService} from "ng-zorro-antd";
+import {TabService} from "../../../../core/services/tab.service";
+import {ExpenseService} from "../../../../core/services/expense.service";
+import {ExpenseInfoVO} from "../../../../core/model/expense";
+import { Objects } from "../../../../core/services/util.service";
 
 @Component({
   selector: 'expense-list',
@@ -43,7 +44,7 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
         if (!res) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<ExpenseInfoVO> = res.data;
@@ -54,10 +55,26 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
+
   }
 
   confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
+    this.Expense.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   refresh(): void {

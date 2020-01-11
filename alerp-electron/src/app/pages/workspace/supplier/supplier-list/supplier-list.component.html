@@ -50,12 +50,13 @@
   <div class="table-wrapper">
     <nz-table #supplierTable
               nzShowSizeChanger
+              [nzFrontPagination]="false"
               [nzData]="supplierList"
               [(nzPageIndex)]="pageIndex"
               [(nzPageSize)]="pageSize"
               (nzPageIndexChange)="search()"
               (nzPageSizeChange)="search()"
-              [nzTotal]="totalPages"
+              [nzTotal]="totalPages * pageSize"
               [nzLoading]="isLoading"
               [nzScroll]="{ x: '100%' }">
       <thead>

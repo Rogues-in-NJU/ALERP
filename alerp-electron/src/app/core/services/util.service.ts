@@ -12,6 +12,16 @@ export class Objects {
     return obj !== undefined && obj !== null;
   }
 
+  public static isNaN(value: any): boolean {
+    if(!Objects.valid(value)){
+      return true;
+    }
+    if (value === '') {
+      return true;
+    }
+    return isNaN(value);
+  }
+
 }
 
 export class DateUtils {
@@ -98,8 +108,8 @@ export class SpecificationUtils {
 
   public static calculateWeight(spec: string, density: number, quantity: number): number {
     let specArr: number[] = SpecificationUtils.convert(spec);
-    if (!Object.values(specArr)) {
-      return -1;
+    if (!Objects.valid(specArr) || Objects.isNaN(density) || Objects.isNaN(quantity)) {
+      return 0;
     }
     let volumn: number;
     if (specArr.length === 2) {

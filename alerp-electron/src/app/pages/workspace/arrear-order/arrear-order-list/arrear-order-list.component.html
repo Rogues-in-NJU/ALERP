@@ -67,7 +67,7 @@
         <tbody>
         <tr *ngFor="let data of arrearOrderTable.data">
           <td nzLeft="0px">
-            <a routerLink="/workspace/arrear-order/info/{{ data.code }}">{{ data.code }}</a>
+            <a routerLink="/workspace/arrear-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
           <td>{{ data.customerName }}</td>
           <td>&yen;{{ data.receivableCash | number: '1.2-3' }}</td>
@@ -79,7 +79,7 @@
             </nz-tag>
           </td>
           <td nzRight="0px">
-            <a routerLink="/workspace/arrear-order/info/{{ data.code }}">查看</a>
+            <a routerLink="/workspace/arrear-order/info/{{ data.id }}">查看</a>
           </td>
         </tr>
         </tbody>

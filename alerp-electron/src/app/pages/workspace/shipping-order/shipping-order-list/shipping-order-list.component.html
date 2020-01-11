@@ -5,6 +5,15 @@
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增出货单
     </button>
+    <div>
+      <e-ngx-print
+        [btnText]="'打印'"
+        [printHTML]="print_div"
+        [printStyle]="printStyle"
+        [printCSS]="printCSS"
+        (printComplete)="printComplete()">
+      </e-ngx-print>
+    </div>
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content">
@@ -25,6 +34,7 @@
       <nz-form-label>状态</nz-form-label>
       <nz-form-control>
         <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
+          <nz-option nzLabel="已出货" nzValue="0"></nz-option>
           <nz-option nzLabel="已完成" nzValue="1"></nz-option>
           <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
         </nz-select>
@@ -51,6 +61,7 @@
     <div class="table-wrapper">
       <nz-table #shippingOrderTable
                 nzShowSizeChanger
+                [nzFrontPagination] = "false"
                 [nzData]="orderList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
@@ -73,7 +84,7 @@
         <tbody>
         <tr *ngFor="let data of shippingOrderTable.data">
           <td nzLeft="0px">
-            <a routerLink="/workspace/shipping-order/info/{{ data.code }}">{{ data.code }}</a>
+            <a routerLink="/workspace/shipping-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
           <td>{{ data.customerName }}</td>
           <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
@@ -96,4 +107,33 @@
       </nz-table>
     </div>
   </div>
+</div>
+
+<div id="print_div" #print_div>
+
+  <p>对账单</p>
+  <table>
+    <thead>
+    <tr>
+      <th style="width: 200px">单号</th>
+      <th style="width: 200px">客户</th>
+      <th style="width: 200px">金额</th>
+      <th style="width: 200px">日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of orderList">
+      <td> {{ data.code }}</td>
+      <td> {{ data.customerName }}</td>
+      <td> {{ data.receivableCash }}</td>
+      <td> {{ data.createdAt }}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>(合计)</td>
+      <td> xxx总金额（前端计算？？）</td>
+    </tr>
+    </tbody>
+  </table>
 </div>

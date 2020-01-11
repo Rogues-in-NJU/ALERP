@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ProcessingOrderProductVO } from "../../../../core/model/processing-order";
+import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
 import { ProductVO } from "../../../../core/model/product";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
 import { ProductService } from "../../../../core/services/product.service";
@@ -12,13 +12,16 @@ import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } fr
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { CustomerVO } from "../../../../core/model/customer";
 import { CustomerService } from "../../../../core/services/customer.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { TabService } from "../../../../core/services/tab.service";
+import { ClosableTab } from "../../tab/tab.component";
 
 @Component({
   selector: 'processing-order-add',
   templateUrl: './processing-order-add.component.html',
   styleUrls: [ './processing-order-add.component.less' ]
 })
-export class ProcessingOrderAddComponent implements OnInit {
+export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
 
   isSaving: boolean = false;
 
@@ -61,7 +64,8 @@ export class ProcessingOrderAddComponent implements OnInit {
     private processingOrder: ProcessingOrderService,
     private product: ProductService,
     private customer: CustomerService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
@@ -73,6 +77,9 @@ export class ProcessingOrderAddComponent implements OnInit {
       salesman: [ null ]
     });
     const getProducts: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
@@ -99,6 +106,9 @@ export class ProcessingOrderAddComponent implements OnInit {
       this.isProductsLoading = false;
     });
     const getCustomers: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<CustomerVO>>>
         = <Observable<ResultVO<TableResultVO<CustomerVO>>>>this.customer
         .findAll(Object.assign(new TableQueryParams(), {
@@ -126,21 +136,62 @@ export class ProcessingOrderAddComponent implements OnInit {
     });
   }
 
+  saveProcessingOrder(): void {
+    if (!this.processingOrderForm.valid) {
+      Object.values(this.processingOrderForm.controls).forEach(item => {
+        item.markAsDirty();
+        item.updateValueAndValidity();
+      });
+      return;
+    }
+    if (!Objects.valid(this.products) || this.products.length === 0) {
+      this.message.error('至少添加一个加工商品!');
+      return;
+    }
+    const processingOrderData: ProcessingOrderVO = {
+      id: null,
+      customerId: null,
+      salesman: null,
+      products: null
+    };
+    Object.assign(processingOrderData, this.processingOrderForm.getRawValue(), {
+      products: this.products
+    });
+    this.isSaving = true;
+    this.processingOrder.save(processingOrderData)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
+        this.tabClose();
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.isSaving = false;
+      }, () => {
+        this.isSaving = false;
+      });
+  }
+
   addProductRow(): void {
     if (Objects.valid(this.editCache._id)) {
       this.message.warning('请先保存加工商品列表的更改!');
       return;
     }
     let item: ProcessingOrderProductVO = {
-      id: 0,
-      productId: 0,
-      productName: '',
-      type: 1,
-      density: 1.00,
-      productSpecification: '',
-      specification: '',
-      quantity: 1,
-      expectedWeight: 1
+      id: null,
+      productId: null,
+      productName: null,
+      type: null,
+      density: null,
+      productSpecification: null,
+      specification: null,
+      quantity: null,
+      expectedWeight: null
     };
     item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
     this.products = [
@@ -218,7 +269,6 @@ export class ProcessingOrderAddComponent implements OnInit {
     const index = this.products.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.products[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
-    console.log(this.products[ index ]);
   }
 
   onSpecificationInput(value: string): void {
@@ -308,13 +358,35 @@ export class ProcessingOrderAddComponent implements OnInit {
     }
   }
 
-  checkModelNotNull(name: string): boolean {
-    if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
-      this.editCacheValidateStatus[name] = null;
-      console.log('here');
+  calculateExpectedWeight(): void {
+    this.editCache.data.expectedWeight
+      = SpecificationUtils.calculateWeight(this.editCache.data.specification,
+      this.editCache.product.density, this.editCache.data.quantity);
+  }
+
+  onQuantityChange(): void {
+    if (this.checkQuantity()) {
+      this.calculateExpectedWeight();
+    }
+  }
+
+  checkQuantity(): boolean {
+    if (!Objects.isNaN(this.editCache.data.quantity)) {
+      this.editCacheValidateStatus.quantity = null;
+      // 做计算
       return true;
     } else {
-      this.editCacheValidateStatus[name] = 'error';
+      this.editCacheValidateStatus.quantity = 'error';
+      return false;
+    }
+  }
+
+  checkExpectedWeight(): boolean {
+    if (!Objects.isNaN(this.editCache.data.expectedWeight)) {
+      this.editCacheValidateStatus.expectedWeight = null;
+      return true;
+    } else {
+      this.editCacheValidateStatus.expectedWeight = 'error';
       return false;
     }
   }
@@ -324,14 +396,14 @@ export class ProcessingOrderAddComponent implements OnInit {
       return false;
     }
     let isValid: boolean = true;
-    if (this.editCache.data.productId === 0) {
+    if (!Objects.valid(this.editCache.data.productId)) {
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
-    if (!this.checkModelNotNull('quantity')) {
+    if (!this.checkQuantity()) {
       isValid = false;
     }
-    if (!this.checkModelNotNull('expectedWeight')) {
+    if (!this.checkExpectedWeight()) {
       isValid = false;
     }
     // 验证规格格式
@@ -341,6 +413,15 @@ export class ProcessingOrderAddComponent implements OnInit {
       isValid = false;
     }
     return isValid;
+  }
+
+  tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/processing-order/list',
+      refreshUrl: '/workspace/processing-order/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
   }
 
 }

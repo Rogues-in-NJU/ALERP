@@ -12,13 +12,18 @@ import lombok.Data;
 @Builder
 public class ProcessingOrderProductVO {
 
-    private int id;
-    private int productId;
+    private Integer id;
+    private Integer productId;
     private String productName;
-    private int type;
-    private double density;
+    private Integer type;
+    private Double density;
     private String productSpecification;
     private String specification;
-    private int quantity;
-    private double expectedWeight;
+    private Integer quantity;
+    private Double expectedWeight;
+
+    // 1.10新增
+    private Boolean isEditable;
+    private Double specialPrice;
+    private Integer specialPriceType;
 }

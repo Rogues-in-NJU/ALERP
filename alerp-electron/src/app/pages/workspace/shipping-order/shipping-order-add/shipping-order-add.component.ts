@@ -30,32 +30,28 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
   //todo 详情跳转至欠款明细
 
+  //todo 输入框内容的核查
 
   isLoading: boolean = true;
   shippingOrderCode: string = "";
   shippingOrderData: ShippingOrderInfoVO = {
-    processingOrderCodes: [],
+    processingOrderIdsCodes: [],
     products: [],
-
     cash: 0,
     floatingCash: 0,
     receivableCash: 0,
   };
 
-  cash: number = 0;
-  floatingCash: number = 0;
-  receivableCash: number = 0;
-
   //modal
   shippingOrderAddVisible: boolean = false;
   shippingOrderAddOkLoading: boolean = false;
-  addShippingOrder_customerName: string;
+  addShippingOrder_customerName: string = null;
   addShippingOrder_allProcessingOrderList: ProcessingOrderVO[] =[];
 
   addShippingOrder_isLoading: boolean = false;
   addShippingOrder_totalPages: number = 1;
   addShippingOrder_pageIndex: number = 1;
-  addShippingOrder_pageSize: number = 2;
+  addShippingOrder_pageSize: number = 10;
 
   isAllDisplayDataChecked = false;
   isOperating = false;
@@ -65,6 +61,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   numberOfChecked = 0;
   checkedCustomerId: number = -1;
 
+  //editproduct
   editCache: {
     _id?: number,
     data?: TempShippingOrderProductVO,
@@ -83,9 +80,18 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
   editCacheValidateStatus: any = {
     productId: null,
-    specification: null,
-    quantity: null,
-    expectedWeight: null
+    price: null,
+    weight: null,
+    priceType: null,
+    cash: null,
+  };
+
+  defaultEditCacheValidateStatus: any = {
+    productId: null,
+    price: null,
+    weight: null,
+    priceType: null,
+    cash: null,
   };
 
   shippingOrderInfoProductCountIndex: number = 0;
@@ -114,10 +120,22 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
     //todo 只能出损耗
     const getProducts: any = (name: string) => {
-      const t: Observable<ResultVO<ProductVO[]>>
-        = <Observable<ResultVO<ProductVO[]>>>this.product
-        .findAll(Object.assign(new QueryParams(), {}));
-      return t.pipe(map(res => res.data));
+      const t: Observable<ResultVO<TableResultVO<ProductVO>>>
+        = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
+        .findAll(Object.assign(new TableQueryParams(), {
+          pageIndex: 1,
+          pageSize: 1000,
+          type: 3
+        }));
+      return t.pipe(map(res => {
+        if (!Objects.valid(res)) {
+          return [];
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return [];
+        }
+        return res.data.result;
+      }));
     };
     const productOptionList$: Observable<ProductVO[]> = this.searchChanges$
       .asObservable()
@@ -135,18 +153,21 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       return;
     }
     let item: ShippingOrderProductInfoVO = {
-      id: -1,
+      id: null,
       processingOrderCode: '',
-      productId: -1,
-      productName: '损耗',
-      type: 1,
-      specification: '',
+      productId: null,
+      productName: null,
+      type: null,
+      specification: null,
       quantity: 1,
+      priceType: 2,
       price: null,
       expectedWeight: null,
-      weight: 0,
+      weight: null,
       cash: null,
     };
+    item[ '_isEditable'] = true;
+    item[ '_isSunhao' ] = true;
     item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
     this.shippingOrderData.products = [
       item,
@@ -213,6 +234,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item[ '_id' ] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
+    Object.assign(this.editCacheValidateStatus, this.defaultEditCacheValidateStatus)
     this.isAddSunHao = false;
   }
 
@@ -224,31 +246,50 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     if (!this.checkShippingOrderProductValid()) {
       return;
     }
-    // TODO: 提交远程刷新 -> 不提交了，放到vo里
-    // const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
-    // Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
-    // Object.assign(this.editCache, this.defaultEditCache);
-    // this.shippingOrder.saveProduct(this.shippingOrderData.products[ index ])
-    //   .subscribe((res: ResultVO<any>) => {
-    //     if (!Objects.valid(res)) {
-    //       return;
-    //     }
-    //     if (res.code !== ResultCode.SUCCESS.code) {
-    //       return;
-    //     }
-    //   }, (error: HttpErrorResponse) => {
-    //     this.message.error(error.message);
-    //   }, () => {
-    //     this.refresh();
-    //   });
 
-    //todo 写个累加金额的方法
-    this.shippingOrderData.cash += this.editCache.data.cash;
+    const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
+    Object.assign(this.editCache, this.defaultEditCache);
+    Object.assign(this.editCacheValidateStatus, this.defaultEditCacheValidateStatus)
+
+    this.shippingOrderData.cash = this.shippingOrderData.products
+      .filter(product => Objects.valid(product.cash))
+      .map(product => product.cash)
+      .reduce((pre, cur) => pre + cur);
+    this.shippingOrderData.receivableCash = this.shippingOrderData.cash - this.shippingOrderData.floatingCash;
+
     this.isAddSunHao = false;
   }
 
   confirmAddShippingOrder():void {
-    //todo
+    //todo 输入核验
+
+    // if (!this.processingOrderForm.valid) {
+    //   Object.values(this.processingOrderForm.controls).forEach(item => {
+    //     item.markAsDirty();
+    //     item.updateValueAndValidity();
+    //   });
+    //   return;
+    // }
+
+
+    console.log(this.shippingOrderData);
+    this.shippingOrder.save(this.shippingOrderData)
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
+        this.tabClose();
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+      });
   }
 
   checkShippingOrderProductValid(): boolean {
@@ -260,22 +301,33 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
-    if (!this.checkModelNotNull('quantity')) {
+
+    if (!this.checkModelNotNull('productId')) {
       isValid = false;
     }
-    if (!this.checkModelNotNull('expectedWeight')) {
+    if (!this.checkModelNotNull('price')) {
       isValid = false;
     }
-    // 验证规格格式
-    console.log(this.editCache.data.specification);
-    if (!SpecificationUtils.valid(this.editCache.data.specification)) {
-      this.editCacheValidateStatus.specification = 'error';
+    if (!this.checkModelNotNull('weight')) {
       isValid = false;
     }
+    if (!this.checkModelNotNull('priceType')) {
+      isValid = false;
+    }
+    if (!this.checkModelNotNull('cash')) {
+      isValid = false;
+    }
+
     return isValid;
   }
 
   checkModelNotNull(name: string): boolean {
+    //损耗只需要增加cash
+    if(this.isAddSunHao){
+      if(name !== "cash" && name !== "productId"){
+        return true;
+      }
+    }
     if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
       this.editCacheValidateStatus[name] = null;
       console.log('here');
@@ -286,96 +338,19 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     }
   }
 
-  onSpecificationInput(value: string): void {
-    if (!Objects.valid(value)) {
-      this.editCacheValidateStatus.specification = 'error';
-    }
-    this.editCacheValidateStatus.specification = null;
-    this.specificationAutoComplete = [];
-    let splits: string[] = value.split('*');
-    if (splits.length === 0) {
-      return;
-    }
-    splits = splits.filter(item => !StringUtils.isEmpty(item));
-    splits = splits.map(item => item.trim());
-    console.log(splits);
-    if (splits.length === 1) {
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        } ];
-      } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        }, {
-          label: '' + parseFloat(splits[ 0 ]),
-          value: '' + parseFloat(splits[ 0 ])
-        } ];
-      }
-      return;
-    }
-    if (splits.length === 2) {
-      if (splits[ 1 ].search(SpecificationUtils.NUM_PATT) === -1) {
-        this.editCacheValidateStatus.specification = 'error';
-        return;
-      }
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
-      } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        }, {
-          label: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
-        this.editCacheValidateStatus.specification = 'error';
-      }
-      return;
-    }
-    if (splits.length === 3) {
-      for (const s of splits) {
-        console.log(s);
-        if (s.search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-      }
-      this.specificationAutoComplete = [ {
-        label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
-        value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
-      } ];
-      return;
-    }
-  }
-
   refresh(): void {
   }
+
+  modifyFloatingCash(): void{
+    this.shippingOrderData.floatingCash = this.shippingOrderData.cash - this.shippingOrderData.receivableCash;
+  }
+
+  modifyReceivableCash():void{
+    this.shippingOrderData.receivableCash = this.shippingOrderData.cash - this.shippingOrderData.floatingCash;
+  }
+
+
+  //modal
 
   showAddModal(): void {
     this.shippingOrderAddVisible = true;
@@ -386,8 +361,10 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       pageSize: 1000,
       status: 1, //未完成
     };
+
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
@@ -398,7 +375,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
         this.addShippingOrder_totalPages = tableResult.totalPages;
         this.addShippingOrder_pageIndex = tableResult.pageIndex;
-        this.addShippingOrder_pageSize = tableResult.pageSize;
+        // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
@@ -408,23 +385,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   confirmAdd(): void {
     this.shippingOrderAddOkLoading = true;
 
-    // todo 根据加工单产生出货单
-    // this.shippingOrder.find(this.shippingOrderCode)
-    //   .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
-    //     if (!Objects.valid(res)) {
-    //       return;
-    //     }
-    //     this.isLoading = false;
-    //     this.shippingOrderData = res.data;
-    //     if (Objects.valid(this.shippingOrderData.products)) {
-    //       this.shippingOrderData.products.forEach(item => {
-    //         item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
-    //       })
-    //     }
-    //   }, (error: HttpErrorResponse) => {
-    //     this.message.error(error.message);
-    //   });
-
     for(let processingOrder of this.addShippingOrder_allProcessingOrderList){
       if(!this.mapOfCheckedId[processingOrder.id]){
         continue;
@@ -432,29 +392,54 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
       this.shippingOrderData.customerId = processingOrder.customerId;
       this.shippingOrderData.customerName = processingOrder.customerName;
-      this.shippingOrderData.processingOrderCodes.push(processingOrder.code);
+      this.shippingOrderData.processingOrderIdsCodes.push({
+        processingOrderId: processingOrder.id,
+        processingOrderCode: processingOrder.code,
+      });
 
-      for(let product of processingOrder.products){
-        let shippingProduct: ShippingOrderProductInfoVO = {};
-        shippingProduct.processingOrderId = processingOrder.id;
-        shippingProduct.processingOrderCode = processingOrder.code;
-        shippingProduct.productId = product.id;
-        shippingProduct.productName = product.productName;
-        shippingProduct.type = product.type;
-        shippingProduct.density = product.density;
-        shippingProduct.specification = product.specification;
-        shippingProduct.quantity = product.quantity;
-        shippingProduct.expectedWeight = product.expectedWeight;
+      this.processingOrder.find(processingOrder.id)
+        .subscribe((res: ResultVO<ProcessingOrderVO>) => {
+          console.log(res);
+          if (!Objects.valid(res)) {
+            return;
+          }
+          let processingOrderInfoVO : ProcessingOrderVO = res.data;
 
-        shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
-        this.shippingOrderData.products.push(shippingProduct);
-      }
+          if (Objects.valid(processingOrderInfoVO.products)) {
+            for(let product of processingOrderInfoVO.products){
+              let shippingProduct: ShippingOrderProductInfoVO = {};
+              shippingProduct.processingOrderId = processingOrder.id;
+              shippingProduct.processingOrderCode = processingOrder.code;
+              shippingProduct.productId = product.id;
+              shippingProduct.productName = product.productName;
+              shippingProduct.type = product.type;
+              shippingProduct.density = product.density;
+              shippingProduct.specification = product.specification;
+              shippingProduct.quantity = product.quantity;
+              shippingProduct.expectedWeight = product.expectedWeight;
 
+              if(!product.isEditable){
+                shippingProduct.price = product.specialPrice;
+                shippingProduct.priceType = product.specialPriceType;
+              }
+              shippingProduct['_isEditalbe'] = product.isEditable;
+              shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
+              this.shippingOrderData.products = [
+                shippingProduct,
+                ...this.shippingOrderData.products
+              ];
+            }
+          }
+        }, (error: HttpErrorResponse) => {
+          this.message.error(error.message);
+        });
     }
+
     this.isLoading = false;
     this.shippingOrderAddOkLoading = false;
     this.shippingOrderAddVisible = false;
     this.message.success('添加成功!');
+    console.log(this.shippingOrderData)
   }
 
   cancelAdd(): void {
@@ -470,11 +455,21 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     const queryParams: TableQueryParams = {
       pageIndex: this.addShippingOrder_pageIndex,
       pageSize: this.addShippingOrder_pageSize,
-      customerName: this.addShippingOrder_customerName,
       status: 1, //未完成
     };
+
+    if (!StringUtils.isEmpty(this.addShippingOrder_customerName)) {
+      Object.assign(queryParams, {
+        customerName: this.addShippingOrder_customerName
+      });
+      this.addShippingOrder_customerName = null;
+    }
+
+    console.log(queryParams);
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
+        console.log(res);
+
         if (!Objects.valid(res)) {
           return;
         }
@@ -485,7 +480,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
         this.addShippingOrder_totalPages = tableResult.totalPages;
         this.addShippingOrder_pageIndex = tableResult.pageIndex;
-        this.addShippingOrder_pageSize = tableResult.pageSize;
+        // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);

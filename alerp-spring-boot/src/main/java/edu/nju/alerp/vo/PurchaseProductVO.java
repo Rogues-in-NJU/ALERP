@@ -18,6 +18,7 @@ public class PurchaseProductVO {
     private Integer quantity;
     private Double weight;
     private Double price;
+    private Integer priceType;
     private Double cash;
 
     public static PurchaseProductVO buildVO(PurchaseOrderProduct product, String name) {
@@ -30,6 +31,7 @@ public class PurchaseProductVO {
         purchaseProductVO.setQuantity(product.getQuantity());
         purchaseProductVO.setWeight(product.getWeight());
         purchaseProductVO.setPrice(product.getPrice());
+        purchaseProductVO.setPriceType(product.getPriceType());
         purchaseProductVO.setCash(product.getCach());
         return purchaseProductVO;
     }

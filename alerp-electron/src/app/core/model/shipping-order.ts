@@ -13,7 +13,12 @@ export interface ShippingOrderInfoVO extends BaseInfo{
   receivableCash?: number
 
   products?: ShippingOrderProductInfoVO[];
-  processingOrderCodes?: string[]
+  processingOrderIdsCodes?: ProcessingOrderIdCodeInShippingOrder[];
+}
+
+export interface ProcessingOrderIdCodeInShippingOrder {
+  processingOrderId?: number;
+  processingOrderCode?: string;
 }
 
 export interface ShippingOrderProductInfoVO extends BaseInfo{

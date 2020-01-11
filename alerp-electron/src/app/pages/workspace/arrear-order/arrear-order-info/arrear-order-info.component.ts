@@ -61,6 +61,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
   }
   ngOnInit(): void {
     this.arrearOrderId = this.route.snapshot.params['id'];
+    Object.assign(this.editCache, this.defaultEditCache);
     this.refresh();
 
   }
@@ -69,13 +70,14 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     Object.assign(this.editCache, this.defaultEditCache);
     this.arrearOrder.find(this.arrearOrderId)
       .subscribe((res: ResultVO<ArrearOrderInfoVO>) => {
+        console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
         this.isLoading = false;
         this.arrearOrderData = res.data;
-        if (Objects.valid(this.arrearOrderData.receipts)) {
-          this.arrearOrderData.receipts.forEach(item => {
+        if (Objects.valid(this.arrearOrderData.receiptRecordList)) {
+          this.arrearOrderData.receiptRecordList.forEach(item => {
             item[ '_id' ] = this.arrearOrderReceiptRecordCountIndex++;
           })
         }
@@ -98,9 +100,9 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       doneAt: null
     };
     item[ '_id' ] = this.arrearOrderReceiptRecordCountIndex++;
-    this.arrearOrderData.receipts = [
+    this.arrearOrderData.receiptRecordList = [
       item,
-      ...this.arrearOrderData.receipts
+      ...this.arrearOrderData.receiptRecordList
     ];
     this.editCache._id = item[ '_id' ];
     this.editCache.data = {};
@@ -111,12 +113,12 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
 
   confirmPaymentRecordDelete(_id: number): void {
     // TODO: 提交修改
-    this.arrearOrderData.receipts = this.arrearOrderData.receipts.filter(item => item['_id'] !== _id);
+    this.arrearOrderData.receiptRecordList = this.arrearOrderData.receiptRecordList.filter(item => item['_id'] !== _id);
   }
 
   cancelPaymentRecordDelete(_id: number): void {
     if (Objects.valid(this.editCache.isAdd) && this.editCache.isAdd) {
-      this.arrearOrderData.receipts = this.arrearOrderData.receipts.filter(item => item['_id'] !== _id);
+      this.arrearOrderData.receiptRecordList = this.arrearOrderData.receiptRecordList.filter(item => item['_id'] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
   }
@@ -128,13 +130,15 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     if (!this.checkArrearOrderReceiptRecordValid()) {
       return;
     }
-    const index = this.arrearOrderData.receipts.findIndex(item => item['_id']);
-    Object.assign(this.arrearOrderData.receipts[index], this.editCache.data, {
+    const index = this.arrearOrderData.receiptRecordList.findIndex(item => item['_id']);
+    //todo null
+    Object.assign(this.arrearOrderData.receiptRecordList[index], this.editCache.data, {
       doneAt: DateUtils.format(new Date(this.editCache.data.doneAt))
     });
     Object.assign(this.editCache.data, this.defaultEditCache);
-    this.arrearOrder.saveReceiptRecord(this.arrearOrderData.receipts[index])
+    this.arrearOrder.saveReceiptRecord(this.arrearOrderData.receiptRecordList[index])
       .subscribe((res: ResultVO<any>) => {
+        console.log(res);
         if (!Objects.valid(res)) {
           return;
         }

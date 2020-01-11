@@ -25,7 +25,10 @@
     <nz-tab nzTitle="采购商品列表">
       <nz-table #purchaseOrderProductsTable
                 nzSize="middle"
-                [nzData]="purchaseOrderData.products">
+                nzShowPagination="false"
+                [nzFrontPagination]="false"
+                [nzData]="purchaseOrderData.products"
+                [nzScroll]="{ y: '400px' }">
         <thead>
         <tr>
           <th>商品编号</th>
@@ -63,6 +66,7 @@
                 nzBordered
                 nzShowPagination="false"
                 nzSize="middle"
+                [nzFrontPagination]="false"
                 [nzData]="purchaseOrderData.paymentRecords"
                 [nzScroll]="{ y: '400px' }">
         <thead>

@@ -40,6 +40,10 @@ public class SpecialPrice {
      */
     private double price;
     /**
+     * 算价方式
+     */
+    private int priceType;
+    /**
      * 创建者id
      */
     @Column(name = "created_by")

@@ -7,13 +7,12 @@ import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ShippingOrderDTO;
+import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.entity.ShippingOrderProduct;
-import edu.nju.alerp.enums.CityEnum;
-import edu.nju.alerp.enums.DocumentsType;
-import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.ShippingOrderStatus;
+import edu.nju.alerp.enums.*;
 import edu.nju.alerp.repo.CustomerRepository;
+import edu.nju.alerp.repo.ProcessingOrderRepository;
 import edu.nju.alerp.repo.ShippingOrderProductRepository;
 import edu.nju.alerp.repo.ShippingOrderRepository;
 import edu.nju.alerp.service.ShippingOrderService;
@@ -25,10 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 出货单服务层接口实现
@@ -44,6 +46,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     CustomerRepository customerRepository;
     @Autowired
     ShippingOrderProductRepository shippingOrderProductRepository;
+    @Autowired
+    ProcessingOrderRepository processingOrderRepository;
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
@@ -60,12 +64,35 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
+        List<Integer> processingOrderlist = new ArrayList<>();
+        List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
+
         shippingOrderDTO.getProducts().forEach(p -> {
+            if (PriceTypeEnum.of(p.getPriceType()) == null) {
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST,"计价方式传值错误!");
+            }
             ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+            if (!processingOrderlist.contains(p.getProcessingOrderId())) {
+                processingOrderlist.add(p.getProcessingOrderId());
+            }
             BeanUtils.copyProperties(p, shippingOrderProduct);
-            shippingOrderProductRepository.save(shippingOrderProduct);
+            shippingOrderProductList.add(shippingOrderProduct);
         });
-        return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+
+        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        shippingOrderProductList.forEach(s -> {
+            s.setShippingOrderId(shippingId);
+            shippingOrderProductRepository.save(s);
+        });
+        processingOrderlist.forEach(p -> {
+            ProcessingOrder processingOrder = processingOrderRepository.getOne(p);
+            processingOrder.setShippingOrderId(shippingId);
+            processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
+            //待优化 可传list一次性更新
+            processingOrderRepository.save(processingOrder);
+        });
+
+        return shippingId;
     }
 
     @Override
@@ -86,6 +113,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
         shippingOrder.setDeletedAt(DateUtils.getToday());
         shippingOrder.setDeletedBy(CommonUtils.getUserId());
+        List<ProcessingOrder> processingOrderList = findProcessingsByShipppingId(shippingOrder.getId());
+        processingOrderList.forEach(p -> {
+            p.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
+            p.setShippingOrderId(0);
+            processingOrderRepository.save(p);
+        });
         return shippingOrderRepository.save(shippingOrder).getId();
     }
 
@@ -95,21 +128,30 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String name, int status, String startTime, String endTime) {
+    public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
-        List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
         try {
-            sp.add(ConditionFactory.equal("status", status));
-            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
-            sp.add(ConditionFactory.In("customerId", customerIdList));
-            List<Condition> fuzzyMatch = new ArrayList<>();
-            if (!"".equals(name)) {
-                fuzzyMatch.add(ConditionFactory.like("name", name));
-                fuzzyMatch.add(ConditionFactory.like("shorthand", name));
+            if (status != null) {
+                sp.add(ConditionFactory.equal("status", status));
             }
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
-            sp.add(ConditionFactory.or(fuzzyMatch));
+            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+            List<Condition> fuzzyMatch = new ArrayList<>();
+            if (!"".equals(code)) {
+                fuzzyMatch.add(ConditionFactory.like("code", code));
+            }
+            if (!"".equals(name)) {
+                List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
+                fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
+            }
+            if (!"".equals(startTime)) {
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            }
+            if (!"".equals(endTime)) {
+                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
+            }
+            if (!fuzzyMatch.isEmpty()) {
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
         } catch (Exception e) {
             log.error("Value is null", e);
         }
@@ -124,5 +166,66 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public List<Integer> getProcessingListById(int id) {
         return shippingOrderProductRepository.findProcessingListByShippingId(id);
+    }
+
+    @Override
+    public Double getTotalCashByProductId(int productId) {
+        return shippingOrderProductRepository.getTotalCashByProductId(productId);
+    }
+
+    @Override
+    public Double getTotalWeightByProductId(int productId) {
+        return shippingOrderProductRepository.getTotalWeightByProductId(productId);
+    }
+
+    /**
+     * controller层根据customerService分别查出现金和月结对客户id List,一起调用该方法返回对应均价
+     *
+     * @param customerIdList
+     * @return
+     */
+    @Override
+    public Double getCustomerAvgPrice(List<Integer> customerIdList) {
+        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList);
+        if (CollectionUtils.isEmpty(shippingOrderList)) {
+            return (double) 0;
+        }
+        double totalCash = shippingOrderList.stream().mapToDouble(ShippingOrder::getReceivableCash).sum();
+        double avg = totalCash / shippingOrderList.size();
+        BigDecimal b = new BigDecimal(avg);
+        return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+
+    @Override
+    public Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime) {
+        QueryContainer<ShippingOrder> shippingSp = new QueryContainer<>();
+        QueryContainer<ShippingOrderProduct> productSp = new QueryContainer<>();
+        double totalWeight = 0;
+        try {
+            shippingSp.add(ConditionFactory.greatThanEqualTo("createdAt", createdAtStartTime));
+            shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
+            List<ShippingOrder> shippingOrders = shippingOrderRepository.findAll(shippingSp);
+            List<Integer> shippingOrderIds = shippingOrders.parallelStream()
+                    .map(ShippingOrder::getId)
+                    .collect(Collectors.toList());
+
+            productSp.add(ConditionFactory.In("shippingOrderId", shippingOrderIds));
+            List<ShippingOrderProduct> shippingOrderProducts = shippingOrderProductRepository.findAll(productSp);
+            totalWeight = shippingOrderProducts.parallelStream()
+                    .mapToDouble(ShippingOrderProduct::getWeight).sum();
+        } catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return totalWeight;
+    }
+
+    private List<ProcessingOrder> findProcessingsByShipppingId(int id) {
+        QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("shippingOrderId", id));
+        } catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return processingOrderRepository.findAll(sp);
     }
 }

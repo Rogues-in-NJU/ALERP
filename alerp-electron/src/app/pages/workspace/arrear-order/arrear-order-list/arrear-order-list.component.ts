@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { NzMessageService } from "ng-zorro-antd";
 import { TabService } from "../../../../core/services/tab.service";
 import { ArrearOrderService } from "../../../../core/services/arrear-order.service";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import { Objects } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
 
@@ -53,10 +53,11 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
     this.isLoading = true;
     this.arrearOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ArrearOrderInfoVO>>) => {
+        console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<ArrearOrderInfoVO> = res.data;

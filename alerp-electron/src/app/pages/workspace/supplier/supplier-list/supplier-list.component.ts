@@ -50,7 +50,9 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplierEditForm = this.fb.group({
       id: [ null, Validators.required ],
       name: [ null, Validators.required ],
-      description: [ null ]
+      description: [ null ],
+      updatedAt: [ null ],
+      updatedById: [ null ]
     });
     this.search();
   }
@@ -95,14 +97,31 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplierEditForm.reset({
       id: null,
       name: null,
-      description: null
+      description: null,
+      updatedAt: null,
+      updatedById: null
     });
     this.supplierEditVisible = false;
     this.search();
   }
 
   confirmDelete(id: number): void {
-
+    this.supplier.delete(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   showAddModal(): void {
@@ -155,7 +174,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
       return;
     }
     this.supplierEditVisible = true;
-    this.supplierEditForm.reset(this.supplierList[index]);
+    this.supplierEditForm.reset(this.supplierList[ index ]);
     console.log('show modal');
   }
 
@@ -174,7 +193,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.data !== ResultCode.SUCCESS.code) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         this.message.success('修改成功!');

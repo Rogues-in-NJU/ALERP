@@ -14,16 +14,17 @@ import java.util.List;
 @Builder
 public class ProcessingOrderDetailVO {
 
-    private int id;
+    private Integer id;
     private String code;
-    private int customerId;
+    private Integer customerId;
     private String customerName;
-    private int shippingOrderId;
+    private Integer shippingOrderId;
     private String salesman;
-    private int status;
+    private Integer status;
     private String createdAt;
     private String createdById;
     private String createdByName;
+    private String updatedAt;
     private List<ProcessingOrderProductVO> products;
-
+    private Double totalWeight;
 }
