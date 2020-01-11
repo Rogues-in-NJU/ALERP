@@ -160,6 +160,30 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
+    public double queryTotalWeight(String createdAtStartTime, String createdAtEndTime) {
+        QueryContainer<ProcessingOrder> processSp = new QueryContainer<>();
+        QueryContainer<ProcessOrderProduct> productSp = new QueryContainer<>();
+        double totalWeight = 0;
+        try{
+            processSp.add(ConditionFactory.greatThanEqualTo("createAt", createdAtStartTime));
+            processSp.add(ConditionFactory.lessThanEqualTo("createAt", createdAtEndTime));
+            List<ProcessingOrder> processingOrders = processingOrderRepository.findAll(processSp);
+            List<Integer> processOrderIds = processingOrders.parallelStream()
+                                                        .map(ProcessingOrder::getId)
+                                                        .collect(Collectors.toList());
+
+            productSp.add(ConditionFactory.In("processOrderId", processOrderIds));
+            List<ProcessOrderProduct> processOrderProducts = processOrderProductRepository.findAll(productSp);
+            totalWeight = processOrderProducts.parallelStream()
+                                                .mapToDouble(ProcessOrderProduct::getExpectedWeight)
+                                                .sum();
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return totalWeight;
+    }
+
+    @Override
     public int addOrUpdateProcessProduct(UpdateProcessProductDTO updateProcessProductDTO) {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(updateProcessProductDTO.getProcessingOrderId());
         if (!updateProcessProductDTO.getProcessingOrderUpdatedAt().equals(processingOrder.getUpdateAt())) {
