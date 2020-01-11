@@ -20,7 +20,6 @@ public class CustomerDTO {
     private int type;
     private int period;
     private int pay_date;
-    private int city;
     private String description;
     private String updateTime;
     private List<SpecialPricesDTO> specialPrices;
