@@ -52,8 +52,9 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
 
   private getRouteUrl(route: ActivatedRouteSnapshot): string {
     // return route[ '_routerState' ].url.replace(/\//g, '_');
-    return route['_routerState'].url.replace(/\//g, '_')
+    let r: string = route['_routerState'].url.replace(/\//g, '_')
       + '_' + (route.routeConfig.loadChildren || route.routeConfig.component.toString().split('(')[0].split(' ')[1] );
+    return r;
   }
 
   public static deleteRouteSnapshot(url: string, routeConfig: Route): void {
