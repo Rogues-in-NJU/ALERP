@@ -741,6 +741,13 @@ body:
   floatingCash: number,
   receivableCash: number
   
+  processingOrderIdsCodes: [   //1.11
+    {
+      processingOrderId: number,
+      processingOrderCode: string,
+    }
+  ],
+
   products: [{
     processingOrderId: number,
     productId: number,

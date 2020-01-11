@@ -166,7 +166,6 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
 
     this.isSaving = true;
     this.purchaseOrder.save(purchaseOrderAdd)
-      .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
         if (!Objects.valid(res)) {
