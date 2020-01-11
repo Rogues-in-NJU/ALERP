@@ -74,6 +74,7 @@ public class ShippingOrderController {
 //        根据id获取加工单，修改状态
         processingIdList.forEach(p -> {
             ProcessingOrder processingOrder = processOrderService.getOne(p);
+            processingOrder.setShippingOrderId(0);
             processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             processOrderService.savaProcessingOrder(processingOrder);
         });
@@ -148,7 +149,7 @@ public class ShippingOrderController {
                     .customerId(shippingOrderDTO.getCustomerId())
                     .dueDate(DateUtils.getDueDate(customer.getPayDate()))
                     .receivableCash(shippingOrderDTO.getReceivableCash())
-                    .receivedCash(shippingOrderDTO.getCash())
+                    .receivedCash(0)
                     .build();
             //先生成收款单，返回id 更新出货单
             int arrearOrderId = arrearOrderService.saveArrearOrder(arrearOrder);
@@ -191,8 +192,9 @@ public class ShippingOrderController {
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
+            int processingId = s.getProcessingOrderId();
             ProductVO productVO = ProductVO.builder()
-                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
+                    .processingOrderCode(processingId == 0 ? "" : processOrderService.getOne(processingId).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();
