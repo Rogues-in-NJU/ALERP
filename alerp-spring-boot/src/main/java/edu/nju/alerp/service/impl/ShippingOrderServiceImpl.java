@@ -109,6 +109,10 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             p.setShippingOrderId(0);
             processingOrderRepository.save(p);
         });
+        List<ShippingOrderProduct> shippingOrderProductList = shippingOrderProductRepository.findAllByShippingOrderId(id);
+        shippingOrderProductList.forEach(s -> {
+            shippingOrderProductRepository.delete(s);
+        });
         return shippingOrderRepository.save(shippingOrder).getId();
     }
 
