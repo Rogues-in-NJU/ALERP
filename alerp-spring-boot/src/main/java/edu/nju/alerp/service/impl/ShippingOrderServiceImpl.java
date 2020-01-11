@@ -64,17 +64,25 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
         List<Integer> processingOrderlist = new ArrayList<>();
+        List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
+
         shippingOrderDTO.getProducts().forEach(p -> {
-            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder()
-                    .shippingOrderId(shippingId)
-                    .build();
+            if (PriceTypeEnum.of(p.getPriceType()) == null) {
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST,"计价方式传值错误!");
+            }
+            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
             if (!processingOrderlist.contains(p.getProcessingOrderId())) {
                 processingOrderlist.add(p.getProcessingOrderId());
             }
             BeanUtils.copyProperties(p, shippingOrderProduct);
-            shippingOrderProductRepository.save(shippingOrderProduct);
+            shippingOrderProductList.add(shippingOrderProduct);
+        });
+
+        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        shippingOrderProductList.forEach(s -> {
+            s.setShippingOrderId(shippingId);
+            shippingOrderProductRepository.save(s);
         });
         processingOrderlist.forEach(p -> {
             ProcessingOrder processingOrder = processingOrderRepository.getOne(p);
@@ -198,14 +206,14 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
             List<ShippingOrder> shippingOrders = shippingOrderRepository.findAll(shippingSp);
             List<Integer> shippingOrderIds = shippingOrders.parallelStream()
-                                                    .map(ShippingOrder::getId)
-                                                    .collect(Collectors.toList());
+                    .map(ShippingOrder::getId)
+                    .collect(Collectors.toList());
 
             productSp.add(ConditionFactory.In("shippingOrderId", shippingOrderIds));
             List<ShippingOrderProduct> shippingOrderProducts = shippingOrderProductRepository.findAll(productSp);
             totalWeight = shippingOrderProducts.parallelStream()
-                                .mapToDouble(ShippingOrderProduct::getWeight).sum();
-        }catch (Exception e) {
+                    .mapToDouble(ShippingOrderProduct::getWeight).sum();
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         return totalWeight;
