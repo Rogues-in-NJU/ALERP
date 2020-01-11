@@ -79,6 +79,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   };
 
   editCacheValidateStatus: any = {
+    productId: null,
     price: null,
     weight: null,
     priceType: null,
@@ -86,6 +87,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   };
 
   defaultEditCacheValidateStatus: any = {
+    productId: null,
     price: null,
     weight: null,
     priceType: null,
@@ -164,6 +166,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       weight: null,
       cash: null,
     };
+    item[ '_isEditable'] = true;
     item[ '_isSunhao' ] = true;
     item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
     this.shippingOrderData.products = [
@@ -298,6 +301,10 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
+
+    if (!this.checkModelNotNull('productId')) {
+      isValid = false;
+    }
     if (!this.checkModelNotNull('price')) {
       isValid = false;
     }
@@ -317,7 +324,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   checkModelNotNull(name: string): boolean {
     //损耗只需要增加cash
     if(this.isAddSunHao){
-      if(name !== "cash"){
+      if(name !== "cash" && name !== "productId"){
         return true;
       }
     }
@@ -328,94 +335,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     } else {
       this.editCacheValidateStatus[name] = 'error';
       return false;
-    }
-  }
-
-  onSpecificationInput(value: string): void {
-    if (!Objects.valid(value)) {
-      this.editCacheValidateStatus.specification = 'error';
-    }
-    this.editCacheValidateStatus.specification = null;
-    this.specificationAutoComplete = [];
-    let splits: string[] = value.split('*');
-    if (splits.length === 0) {
-      return;
-    }
-    splits = splits.filter(item => !StringUtils.isEmpty(item));
-    splits = splits.map(item => item.trim());
-    console.log(splits);
-    if (splits.length === 1) {
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        } ];
-      } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        }, {
-          label: '' + parseFloat(splits[ 0 ]),
-          value: '' + parseFloat(splits[ 0 ])
-        } ];
-      }
-      return;
-    }
-    if (splits.length === 2) {
-      if (splits[ 1 ].search(SpecificationUtils.NUM_PATT) === -1) {
-        this.editCacheValidateStatus.specification = 'error';
-        return;
-      }
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
-      } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        }, {
-          label: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
-        this.editCacheValidateStatus.specification = 'error';
-      }
-      return;
-    }
-    if (splits.length === 3) {
-      for (const s of splits) {
-        console.log(s);
-        if (s.search(SpecificationUtils.NUM_PATT) === -1) {
-          this.editCacheValidateStatus.specification = 'error';
-          return;
-        }
-      }
-      this.specificationAutoComplete = [ {
-        label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
-        value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
-      } ];
-      return;
     }
   }
 
@@ -499,6 +418,11 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
               shippingProduct.quantity = product.quantity;
               shippingProduct.expectedWeight = product.expectedWeight;
 
+              if(!product.isEditable){
+                shippingProduct.price = product.specialPrice;
+                shippingProduct.priceType = product.specialPriceType;
+              }
+              shippingProduct['_isEditalbe'] = product.isEditable;
               shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
               this.shippingOrderData.products = [
                 shippingProduct,

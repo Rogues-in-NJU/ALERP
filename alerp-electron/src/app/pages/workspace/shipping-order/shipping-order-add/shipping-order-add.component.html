@@ -154,7 +154,7 @@
         </ng-template>
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']; else priceEditTpl">
+        <ng-container *ngIf="editCache._id !== data['_id'] || !data._isEditable; else priceEditTpl">
           {{ data.price }}
         </ng-container>
         <ng-template #priceEditTpl>
@@ -183,10 +183,10 @@
         </ng-template>
       </td>
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']">
+        <ng-container *ngIf="editCache._id !== data['_id'] || !data._isEditable; else priceTypeEditTpl">
           {{ data.priceType | shipping_order_price_type }}
         </ng-container>
-        <ng-container *ngIf="editCache._id === data['_id']">
+        <ng-template #priceTypeEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.priceType">
             <nz-select [(ngModel)]="editCache.data.priceType"
                        (ngModelChange)="checkModelNotNull('priceType')">
@@ -194,7 +194,7 @@
               <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
             </nz-select>
           </nz-form-control>
-        </ng-container>
+        </ng-template>
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else cashEditTpl">
