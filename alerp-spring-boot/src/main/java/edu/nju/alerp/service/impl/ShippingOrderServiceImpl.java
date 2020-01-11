@@ -52,7 +52,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     private DocumentsIdFactory documentsIdFactory;
 
     @Override
-    public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
+    public ShippingOrder addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
@@ -64,32 +64,30 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
-        List<Integer> processingOrderlist = new ArrayList<>();
-        shippingOrderDTO.getProducts().forEach(p -> {
-            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder()
-                    .shippingOrderId(shippingId)
-                    .build();
-            if (!processingOrderlist.contains(p.getProcessingOrderId())) {
-                processingOrderlist.add(p.getProcessingOrderId());
-            }
-            BeanUtils.copyProperties(p, shippingOrderProduct);
-            shippingOrderProductRepository.save(shippingOrderProduct);
-        });
-        processingOrderlist.forEach(p -> {
-            ProcessingOrder processingOrder = processingOrderRepository.getOne(p);
-            processingOrder.setShippingOrderId(shippingId);
-            processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
-            //待优化 可传list一次性更新
-            processingOrderRepository.save(processingOrder);
-        });
-
-        return shippingId;
+        return shippingOrder;
     }
 
     @Override
     public ShippingOrder getShippingOrder(int id) {
         return shippingOrderRepository.getOne(id);
+    }
+
+    @Override
+    public int saveShippingOrder(ShippingOrder shippingOrder) {
+        if (shippingOrder.getId() == null) {
+            return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        }
+        return shippingOrderRepository.save(shippingOrder).getId();
+
+    }
+
+    @Override
+    public int saveShippingOrderProduct(ShippingOrderProduct shippingOrderProduct) {
+        if (shippingOrderProduct.getId() == null) {
+            return shippingOrderProductRepository.saveAndFlush(shippingOrderProduct).getId();
+        } else {
+            return shippingOrderProductRepository.save(shippingOrderProduct).getId();
+        }
     }
 
     @Override
@@ -110,6 +108,10 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             p.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             p.setShippingOrderId(0);
             processingOrderRepository.save(p);
+        });
+        List<ShippingOrderProduct> shippingOrderProductList = shippingOrderProductRepository.findAllByShippingOrderId(id);
+        shippingOrderProductList.forEach(s -> {
+            shippingOrderProductRepository.delete(s);
         });
         return shippingOrderRepository.save(shippingOrder).getId();
     }
@@ -198,14 +200,14 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
             List<ShippingOrder> shippingOrders = shippingOrderRepository.findAll(shippingSp);
             List<Integer> shippingOrderIds = shippingOrders.parallelStream()
-                                                    .map(ShippingOrder::getId)
-                                                    .collect(Collectors.toList());
+                    .map(ShippingOrder::getId)
+                    .collect(Collectors.toList());
 
             productSp.add(ConditionFactory.In("shippingOrderId", shippingOrderIds));
             List<ShippingOrderProduct> shippingOrderProducts = shippingOrderProductRepository.findAll(productSp);
             totalWeight = shippingOrderProducts.parallelStream()
-                                .mapToDouble(ShippingOrderProduct::getWeight).sum();
-        }catch (Exception e) {
+                    .mapToDouble(ShippingOrderProduct::getWeight).sum();
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         return totalWeight;

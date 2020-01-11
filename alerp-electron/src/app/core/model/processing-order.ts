@@ -30,6 +30,8 @@ export interface ProcessingOrderProductVO {
   quantity: number;
   expectedWeight: number;
   processingOrderUpdatedAt?: string;
-
+  isEditable?: boolean;
+  specialPriceType?: number;
+  specialPrice?: number;
 }
 

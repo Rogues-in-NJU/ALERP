@@ -49,40 +49,43 @@ export class PurchaseOrderService {
     // // prod
     // return this.http.get<ResultVO<PurchaseOrderVO>>(`${AppConfig.BASE_URL}/api/purchase-order/${_id}`);
     // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        id: 1,
-        code: '00001000',
-        supplierId: 1,
-        supplierName: 'ZZZ公司',
-        description: '',
-        cash: 20000,
-        status: 1,
-        doneAt: '2018-04-24 18:00:00',
-        salesman: '',
-
-        products: [{
-          id: 1,
-          productId: 1,
-          name: '铝棒',
-          quantity: 2,
-          weight: 2,
-          price: 200,
-          priceType: 1,
-          cash: 2000
-        }],
-
-        paymentRecords: [{
-          id: 1,
-          purchaseOrderId: 1,
-          cash: 100,
-          description: '',
-          salesman: '',
-          doneAt: '2019-12-20 12:00'
-        }]
-      }
+    // return of({
+    //   code: 200,
+    //   message: '',
+    //   data: {
+    //     id: 1,
+    //     code: '00001000',
+    //     supplierId: 1,
+    //     supplierName: 'ZZZ公司',
+    //     description: '',
+    //     cash: 20000,
+    //     status: 1,
+    //     doneAt: '2018-04-24 18:00:00',
+    //     salesman: '',
+    //
+    //     products: [{
+    //       id: 1,
+    //       productId: 1,
+    //       name: '铝棒',
+    //       quantity: 2,
+    //       weight: 2,
+    //       price: 200,
+    //       priceType: 1,
+    //       cash: 2000
+    //     }],
+    //
+    //     paymentRecords: [{
+    //       id: 1,
+    //       purchaseOrderId: 1,
+    //       cash: 100,
+    //       description: '',
+    //       salesman: '',
+    //       doneAt: '2019-12-20 12:00'
+    //     }]
+    //   }
+    // });
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/${id}`, {
+      withCredentials: true
     });
   }
 
@@ -124,7 +127,7 @@ export class PurchaseOrderService {
     //   message: '',
     //   data: null
     // });
-    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/payment-record/${id}`, {
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/payment-record/delete/${id}`, {
       withCredentials: true
     });
   }

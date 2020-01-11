@@ -24,7 +24,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   isLoading: boolean = true;
   shippingOrderCode: string;
   shippingOrderId: number;
-  shippingOrderData: ShippingOrderInfoVO;
+  shippingOrderData: ShippingOrderInfoVO = {};
 
   processingOrderInfoProductCountIndex: number = 0;
 
@@ -56,7 +56,6 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
 
   ngOnInit(): void {
     this.shippingOrderId = this.route.snapshot.params['id'];
-    console.log("....." + this.route.snapshot.params['id'])
     this.reload();
   }
 

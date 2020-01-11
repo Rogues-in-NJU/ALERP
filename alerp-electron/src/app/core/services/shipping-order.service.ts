@@ -31,8 +31,10 @@ export class ShippingOrderService {
     });
   }
 
-  public save(info: ProcessingOrderVO): Observable<ResultVO<any>> {
-    return of(null);
+  public save(info: ShippingOrderInfoVO): Observable<ResultVO<any>> {
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/shipping-order`, info, {
+      withCredentials: true
+    });
   }
 
   public abandon(id: number): Observable<ResultVO<any>> {

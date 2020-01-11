@@ -15,6 +15,7 @@ public class ShippingProductDTO {
     private int productId;
     private String specification;
     private int quantity;
+    private int priceType;
     private double price;
     private double expectedWeight;
     private double weight;

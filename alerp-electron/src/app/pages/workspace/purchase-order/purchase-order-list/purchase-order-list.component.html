@@ -49,7 +49,7 @@
                 [(nzPageSize)]="pageSize"
                 (nzPageIndexChange)="search()"
                 (nzPageSizeChange)="search()"
-                [nzTotal]="totalPages"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
@@ -79,7 +79,8 @@
           </td>
           <td nzRight="0px">
             <a routerLink="/workspace/purchase-order/info/{{ data.id }}">查看</a>
-            <a style="margin-left: 5px"
+            <a *ngIf="data.status !== 3"
+               style="margin-left: 5px"
                class="abandon"
                [class.disabled]="false"
                nz-popconfirm

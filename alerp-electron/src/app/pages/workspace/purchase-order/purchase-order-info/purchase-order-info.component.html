@@ -11,7 +11,7 @@
     <nz-descriptions-item nzTitle="采购公司" [nzSpan]="2">{{ purchaseOrderData.supplierName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="描述" [nzSpan]="2">{{ purchaseOrderData.description }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
-      <nz-badge nzStatus="success" nzText="已完成" *ngIf="purchaseOrderData.status === 1"></nz-badge>
+      <nz-badge nzColor="{{ purchaseOrderData.status | purchase_order_status_color }}" nzText="{{ purchaseOrderData.status | purchase_order_status }}"></nz-badge>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="已付金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
@@ -25,17 +25,19 @@
     <nz-tab nzTitle="采购商品列表">
       <nz-table #purchaseOrderProductsTable
                 nzSize="middle"
+                nzBordered
                 nzShowPagination="false"
                 [nzFrontPagination]="false"
                 [nzData]="purchaseOrderData.products"
                 [nzScroll]="{ y: '400px' }">
         <thead>
         <tr>
-          <th>商品编号</th>
-          <th>商品名称</th>
-          <th>数量</th>
-          <th>重量(kg)</th>
-          <th>单价</th>
+          <th nzWidth="100px">商品编号</th>
+          <th nzWidth="150px">商品名称</th>
+          <th nzWidth="120px">数量</th>
+          <th nzWidth="120px">重量(kg)</th>
+          <th nzWidth="120px">单价</th>
+          <th nzWidth="120px">单位</th>
           <th>总价</th>
         </tr>
         </thead>
@@ -46,6 +48,7 @@
           <td>{{ data.quantity }}</td>
           <td>{{ data.weight }}</td>
           <td>{{ data.price }}</td>
+          <td>{{ data.priceType | purchase_order_price_type }}</td>
           <td>&yen;{{ data.cash | number: '1.2-2' }}</td>
         </tr>
         </tbody>
@@ -127,14 +130,18 @@
             </ng-template>
           </td>
           <td>
-            {{ data.status }}
+            <ng-container *ngIf="editCache._id !== data['_id']">
+              <nz-tag nzColor="{{ data.status | purchase_order_payment_record_color }}">
+                {{ data.status | purchase_order_payment_record }}
+              </nz-tag>
+            </ng-container>
           </td>
           <td>
-            <ng-container *ngIf="editCache._id === null">
+            <ng-container *ngIf="editCache._id === null && data.status !== 0">
               <a nz-popconfirm
                  class="delete"
                  nzTitle="确认删除?"
-                 (nzOnConfirm)="confirmPaymentRecordDelete(data._id)">
+                 (nzOnConfirm)="confirmPaymentRecordDelete(data.id)">
                 删除
               </a>
             </ng-container>
@@ -142,10 +149,10 @@
 
             </ng-container>
             <ng-template #saveTpl>
-              <a (click)="savePaymentEdit(data._id)">保存</a>
+              <a (click)="savePaymentEdit(data['_id'])">保存</a>
               <a nz-popconfirm
                  nzTitle="确认取消?"
-                 (nzOnConfirm)="cancelPaymentRecordDelete(data._id)"
+                 (nzOnConfirm)="cancelPaymentRecordDelete(data['_id'])"
                  style="margin-left: 5px;">
                 取消
               </a>

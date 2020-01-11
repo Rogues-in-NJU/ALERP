@@ -70,7 +70,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
     }
     if (Objects.valid(this.selectedStatus)) {
       Object.assign(queryParams, {
-        statue: this.selectedStatus
+        status: this.selectedStatus
       });
       this.selectedStatus = null;
     }
