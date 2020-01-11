@@ -44,9 +44,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public int saveCustomer(CustomerDTO customerDTO) {
-        Customer customer;
         if (customerDTO.getId() == null) {
-            customer = Customer.builder()
+            Customer customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
                     .createdBy(CommonUtils.getUserId())
                     .updatedAt(DateUtils.getToday())
@@ -67,17 +66,15 @@ public class CustomerServiceImpl implements CustomerService {
                     specialPricesRepository.save(specialPrice);
                 }
             }
+            return customerRepository.saveAndFlush(customer).getId();
         } else {
             Customer nowCustomer = getCustomer(customerDTO.getId());
             if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdateTime())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
             }
-            customer = Customer.builder()
-                    .updatedAt(DateUtils.getToday())
-                    .updatedBy(CommonUtils.getUserId())
-                    .city(CommonUtils.getCity())
-                    .build();
-            BeanUtils.copyProperties(customerDTO, customer);
+            nowCustomer.setUpdatedBy(CommonUtils.getUserId());
+            nowCustomer.setUpdatedAt(DateUtils.getToday());
+            BeanUtils.copyProperties(customerDTO, nowCustomer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
@@ -98,12 +95,8 @@ public class CustomerServiceImpl implements CustomerService {
                     specialPricesRepository.save(specialPrice);
                 }
             }
+            return customerRepository.save(nowCustomer).getId();
         }
-
-        return customerRepository.saveAndFlush(customer).
-
-                getId();
-
     }
 
     @Override
