@@ -33,6 +33,8 @@ public interface ProcessOrderService {
 
     public List<ProcessingOrder> findProcessingsByShipppingId(int id);
 
+    public double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
+
     /**
      * 新增/修改加工单的商品关联
      * */

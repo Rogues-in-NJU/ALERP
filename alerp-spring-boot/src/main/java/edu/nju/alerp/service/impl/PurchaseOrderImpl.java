@@ -168,6 +168,36 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
     }
 
     @Override
+    public double queryUnPaidCash(String doneAtStartTime, String doneAtEndTime) {
+        QueryContainer<PurchaseOrder> purchaseSp = new QueryContainer<>();
+        QueryContainer<PaymentRecord> paymentSp = new QueryContainer<>();
+        double upPaidCash = 0;
+        double totalCash = 0;
+        double paidCash = 0;
+        try {
+            purchaseSp.add(ConditionFactory.greatThanEqualTo("doneAt", doneAtStartTime));
+            purchaseSp.add(ConditionFactory.lessThanEqualTo("doneAt", doneAtEndTime));
+            List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll(purchaseSp);
+            totalCash = purchaseOrders.parallelStream()
+                                    .mapToDouble(PurchaseOrder::getCash)
+                                    .sum();
+            List<Integer> purcaseIds = purchaseOrders.parallelStream()
+                                                    .map(PurchaseOrder::getId)
+                                                    .collect(Collectors.toList());
+
+            paymentSp.add(ConditionFactory.In("purchaseOrderId", purcaseIds));
+            List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(paymentSp);
+            paidCash = paymentRecords.parallelStream()
+                                    .mapToDouble(PaymentRecord::getCash)
+                                    .sum();
+            upPaidCash = totalCash - paidCash;
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return upPaidCash;
+    }
+
+    @Override
     public int addNewPaymentRecord(AddPaymentRecordDTO addPaymentRecordDTO) throws Exception{
         PurchaseOrder purchaseOrder = purchaseOrderRepository.getOne(addPaymentRecordDTO.getPurchaseOrderId());
         if (!PurchaseOrderStatus.of(purchaseOrder.getStatus()).paymentable())

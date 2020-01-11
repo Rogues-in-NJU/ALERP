@@ -33,4 +33,6 @@ public interface ShippingOrderService {
     Double getTotalWeightByProductId(int productId);
 
     Double getCustomerAvgPrice(List<Integer> customerIdList);
+
+    Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
 }
