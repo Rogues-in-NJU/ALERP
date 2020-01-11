@@ -131,7 +131,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       return;
     }
     const index = this.arrearOrderData.receiptRecordList.findIndex(item => item['_id']);
-    //todo
+    //todo null
     Object.assign(this.arrearOrderData.receiptRecordList[index], this.editCache.data, {
       doneAt: DateUtils.format(new Date(this.editCache.data.doneAt))
     });
