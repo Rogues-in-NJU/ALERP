@@ -308,7 +308,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                     .specification(processOrderProduct.getSpecification())
                     .quantity(processOrderProduct.getQuantity())
                     .expectedWeight(processOrderProduct.getExpectedWeight())
-                    .isEditable(false).build();
+                    .isEditable(true).build();
         }else {
             processingOrderProductVO = ProcessingOrderProductVO.builder().id(processOrderProduct.getId())
                     .productId(pro.getId())
@@ -319,7 +319,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                     .specification(processOrderProduct.getSpecification())
                     .quantity(processOrderProduct.getQuantity())
                     .expectedWeight(processOrderProduct.getExpectedWeight())
-                    .isEditable(true)
+                    .isEditable(false)
                     .specialPrice(specialPrice.getPrice())
                     .specialPriceType(specialPrice.getPriceType()).build();
         }
