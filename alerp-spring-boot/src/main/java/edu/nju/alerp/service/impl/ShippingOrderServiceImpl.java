@@ -188,6 +188,29 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
+    @Override
+    public Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime) {
+        QueryContainer<ShippingOrder> shippingSp = new QueryContainer<>();
+        QueryContainer<ShippingOrderProduct> productSp = new QueryContainer<>();
+        double totalWeight = 0;
+        try {
+            shippingSp.add(ConditionFactory.greatThanEqualTo("createdAt", createdAtStartTime));
+            shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
+            List<ShippingOrder> shippingOrders = shippingOrderRepository.findAll(shippingSp);
+            List<Integer> shippingOrderIds = shippingOrders.parallelStream()
+                                                    .map(ShippingOrder::getId)
+                                                    .collect(Collectors.toList());
+
+            productSp.add(ConditionFactory.In("shippingOrderId", shippingOrderIds));
+            List<ShippingOrderProduct> shippingOrderProducts = shippingOrderProductRepository.findAll(productSp);
+            totalWeight = shippingOrderProducts.parallelStream()
+                                .mapToDouble(ShippingOrderProduct::getWeight).sum();
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return totalWeight;
+    }
+
     private List<ProcessingOrder> findProcessingsByShipppingId(int id) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
         try {

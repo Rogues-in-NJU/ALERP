@@ -8,6 +8,7 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.AddPaymentRecordDTO;
 import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.entity.PaymentRecord;
+import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.PurchaseOrder;
 import edu.nju.alerp.entity.PurchaseOrderProduct;
 import edu.nju.alerp.enums.*;
@@ -145,18 +146,55 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
 
         List<PurchaseOrderProduct> productList = purchaseOrderDTO.getProducts().parallelStream()
-                                                                    .map(p -> PurchaseOrderProduct.builder()
+                                                                    .map(p -> {
+                                                                        PurchaseOrderProduct product
+                                                                                = PurchaseOrderProduct.builder()
                                                                                 .purchaseOrderId(current.getId())
                                                                                 .productId(p.getProductId())
-                                                                                .quantity(p.getQuantity())
-                                                                                .weight(p.getWeight())
                                                                                 .price(p.getPrice())
                                                                                 .cach(p.getCash())
-                                                                                .build())
+                                                                                .build();
+                                                                        if (p.getPriceType() == 1) { // 元/千克
+                                                                            product.setWeight(p.getWeight());
+                                                                        }else {  // 元/件
+                                                                            product.setQuantity(p.getQuantity());
+                                                                        }
+                                                                        return product;
+                                                                    })
                                                                     .collect(Collectors.toList());
         purchaseOrderProductRepository.saveAll(productList);
         purchaseOrderProductRepository.flush();
         return current.getId();
+    }
+
+    @Override
+    public double queryUnPaidCash(String doneAtStartTime, String doneAtEndTime) {
+        QueryContainer<PurchaseOrder> purchaseSp = new QueryContainer<>();
+        QueryContainer<PaymentRecord> paymentSp = new QueryContainer<>();
+        double upPaidCash = 0;
+        double totalCash = 0;
+        double paidCash = 0;
+        try {
+            purchaseSp.add(ConditionFactory.greatThanEqualTo("doneAt", doneAtStartTime));
+            purchaseSp.add(ConditionFactory.lessThanEqualTo("doneAt", doneAtEndTime));
+            List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll(purchaseSp);
+            totalCash = purchaseOrders.parallelStream()
+                                    .mapToDouble(PurchaseOrder::getCash)
+                                    .sum();
+            List<Integer> purcaseIds = purchaseOrders.parallelStream()
+                                                    .map(PurchaseOrder::getId)
+                                                    .collect(Collectors.toList());
+
+            paymentSp.add(ConditionFactory.In("purchaseOrderId", purcaseIds));
+            List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(paymentSp);
+            paidCash = paymentRecords.parallelStream()
+                                    .mapToDouble(PaymentRecord::getCash)
+                                    .sum();
+            upPaidCash = totalCash - paidCash;
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return upPaidCash;
     }
 
     @Override

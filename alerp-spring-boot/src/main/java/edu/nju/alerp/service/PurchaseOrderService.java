@@ -28,6 +28,8 @@ public interface PurchaseOrderService {
 
     public int addNewPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO);
 
+    public double queryUnPaidCash(String doneAtStartTime, String doneAtEndTime);
+
     public int addNewPaymentRecord(AddPaymentRecordDTO addPaymentRecordDTO) throws Exception;
 
     public int deletePaymentReport(int id) throws Exception;
