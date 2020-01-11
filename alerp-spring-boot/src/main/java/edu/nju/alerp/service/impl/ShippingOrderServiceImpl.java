@@ -52,7 +52,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     private DocumentsIdFactory documentsIdFactory;
 
     @Override
-    public int addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
+    public ShippingOrder addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
@@ -64,40 +64,30 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
-        List<Integer> processingOrderlist = new ArrayList<>();
-        List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
-
-        shippingOrderDTO.getProducts().forEach(p -> {
-            if (PriceTypeEnum.of(p.getPriceType()) == null) {
-                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST,"计价方式传值错误!");
-            }
-            ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
-            if (!processingOrderlist.contains(p.getProcessingOrderId())) {
-                processingOrderlist.add(p.getProcessingOrderId());
-            }
-            BeanUtils.copyProperties(p, shippingOrderProduct);
-            shippingOrderProductList.add(shippingOrderProduct);
-        });
-
-        int shippingId = shippingOrderRepository.saveAndFlush(shippingOrder).getId();
-        shippingOrderProductList.forEach(s -> {
-            s.setShippingOrderId(shippingId);
-            shippingOrderProductRepository.save(s);
-        });
-        processingOrderlist.forEach(p -> {
-            ProcessingOrder processingOrder = processingOrderRepository.getOne(p);
-            processingOrder.setShippingOrderId(shippingId);
-            processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
-            //待优化 可传list一次性更新
-            processingOrderRepository.save(processingOrder);
-        });
-
-        return shippingId;
+        return shippingOrder;
     }
 
     @Override
     public ShippingOrder getShippingOrder(int id) {
         return shippingOrderRepository.getOne(id);
+    }
+
+    @Override
+    public int saveShippingOrder(ShippingOrder shippingOrder) {
+        if (shippingOrder.getId() == null) {
+            return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
+        }
+        return shippingOrderRepository.save(shippingOrder).getId();
+
+    }
+
+    @Override
+    public int saveShippingOrderProduct(ShippingOrderProduct shippingOrderProduct) {
+        if (shippingOrderProduct.getId() == null) {
+            return shippingOrderProductRepository.saveAndFlush(shippingOrderProduct).getId();
+        } else {
+            return shippingOrderProductRepository.save(shippingOrderProduct).getId();
+        }
     }
 
     @Override

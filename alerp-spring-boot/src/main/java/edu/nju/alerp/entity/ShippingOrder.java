@@ -24,7 +24,7 @@ public class ShippingOrder {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     /**
      * 单据编码
      */
