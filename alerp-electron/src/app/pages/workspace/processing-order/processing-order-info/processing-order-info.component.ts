@@ -253,6 +253,12 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     }
     splits = splits.filter(item => !StringUtils.isEmpty(item));
     splits = splits.map(item => item.trim());
+    if (this.editCache.product.type !== 2
+      && (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
+        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L))) { // 不是铝棒
+      this.editCacheValidateStatus.specification = 'error';
+      return;
+    }
     if (splits.length === 1) {
       if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
         || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
@@ -313,6 +319,10 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       return;
     }
     if (splits.length === 3) {
+      if (this.editCache.product.type === 2) {
+        this.editCacheValidateStatus.specification = 'error';
+        return;
+      }
       for (const s of splits) {
         console.log(s);
         if (s.search(SpecificationUtils.NUM_PATT) === -1) {

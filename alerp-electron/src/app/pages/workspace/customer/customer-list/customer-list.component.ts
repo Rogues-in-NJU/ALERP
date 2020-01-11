@@ -63,6 +63,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.customerAddForm = this.fb.group({
       name: [ null, Validators.required ],
       shorthand: [ null ],
+      type: [ 2, Validators.required ],
       description: [ null ],
       period: [ 1, Validators.required ],
       payDate: [ 20, Validators.required ]
@@ -108,6 +109,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.customerAddForm.reset({
       name: null,
       shorthand: null,
+      type: 2,
       description: null,
       period: 1,
       payDate: 20
@@ -144,6 +146,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.customerAddForm.reset({
       name: null,
       shorthand: null,
+      type: 2,
       description: null,
       period: 1,
       payDate: 20
@@ -183,6 +186,7 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.customerAddForm.reset({
       name: null,
       shorthand: null,
+      type: 2,
       description: null,
       period: 1,
       payDate: 20

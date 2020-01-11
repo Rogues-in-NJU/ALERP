@@ -99,6 +99,23 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
 
   confirmAbandon(id: number): void {
     console.log('confirm abandon: ' + id);
+    this.processingOrder.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('废弃失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('废弃成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   refresh(): void {
