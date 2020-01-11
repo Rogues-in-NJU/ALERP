@@ -81,5 +81,11 @@ public class ShippingOrderProduct {
      */
     private double cash;
 
+    /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
+
 
 }

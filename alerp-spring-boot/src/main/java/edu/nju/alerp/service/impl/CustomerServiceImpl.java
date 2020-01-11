@@ -48,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerDTO.getId() == null) {
             customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
+                    .createdBy(CommonUtils.getUserId())
                     .updatedAt(DateUtils.getToday())
                     .city(CommonUtils.getCity())
                     .build();
