@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { RefreshableTab } from "../../tab/tab.component";
 import { PurchaseOrderVO } from "../../../../core/model/purchase-order";
 import { PurchaseOrderService } from "../../../../core/services/purchase-order.service";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
 import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
@@ -72,7 +72,7 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
         if (!Objects.valid(res)) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<PurchaseOrderVO> = res.data;
