@@ -11,6 +11,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ShippingArrearRelationVO {
-    private int shippingOrderId;
-    private int arrearOrderId;
+    private Integer shippingOrderId;
+    private Integer arrearOrderId;
 }

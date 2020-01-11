@@ -11,6 +11,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ProcessOrderIdCodeVO {
-    private int processingOrderId;
+    private Integer processingOrderId;
     private String processingOrderCode;
 }

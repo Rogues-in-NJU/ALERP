@@ -13,18 +13,18 @@ import lombok.Data;
 public class ShippingOrderBriefVO {
     private int id;
     private String code;
-    private int customerId;
+    private Integer customerId;
     private String customerName;
-    private int arrearOrderId;
-    private int status;
+    private Integer arrearOrderId;
+    private Integer status;
     private double cash;
-    private int city;
+    private Integer city;
     private double floatingCash;
     private double receivableCash;
     private int createdBy;
     private String createdAt;
-    private int deletedBy;
+    private Integer deletedBy;
     private String deletedAt;
-    private int updatedBy;
+    private Integer updatedBy;
     private String updatedAt;
 }
