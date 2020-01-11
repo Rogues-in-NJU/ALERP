@@ -11,6 +11,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ProcessingOrderVO} from "../../../../core/model/processing-order";
 import {ProcessingOrderService} from "../../../../core/services/processing-order.service";
+import {PurchaseOrderVO} from "../../../../core/model/purchase-order";
 
 
 @Component({
@@ -106,9 +107,24 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
 
   confirmAbandon(id: number): void {
     console.log('confirm abandon: ' + id);
-    this.shippingOrder.abandon(id);
+    this.shippingOrder.abandon(id)
+    .subscribe((res: ResultVO<any>) => {
+      console.log(res);
+      if (!Objects.valid(res)) {
+        return;
+      }
+      if (res.code !== ResultCode.SUCCESS.code) {
+        return;
+      }
+    }, (error: HttpErrorResponse) => {
+      this.message.error(error.message);
+    }, () => {
+    });
+
+    // this.refresh();
   }
 
   refresh(): void {
+    this.search();
   }
 }
