@@ -1,6 +1,7 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.*;
+import edu.nju.alerp.dto.ProcessingOrderIdCodeDTO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.*;
@@ -119,7 +120,20 @@ public class ShippingOrderController {
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
-            int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
+            ShippingOrder shippingOrder = shippingOrderService.addShippingOrder(shippingOrderDTO);
+            List<Integer> processingOrderList = shippingOrderDTO.getProcessingOrderIdsCodes().stream().map(ProcessingOrderIdCodeDTO::getProcessingOrderId).collect(Collectors.toList());
+            List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
+
+            //校验计价方式，遍历商品获取所有加工单
+            shippingOrderDTO.getProducts().forEach(p -> {
+                if (PriceTypeEnum.of(p.getPriceType()) == null) {
+                    throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "计价方式传值错误!");
+                }
+                ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+                BeanUtils.copyProperties(p, shippingOrderProduct);
+                shippingOrderProductList.add(shippingOrderProduct);
+            });
+
             int userId = CommonUtils.getUserId();
             Customer customer = customerService.getCustomer(shippingOrderDTO.getCustomerId());
             if (customer == null) {
@@ -136,9 +150,23 @@ public class ShippingOrderController {
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(shippingOrderDTO.getCash())
                     .build();
+            //先生成收款单，返回id 更新出货单
             int arrearOrderId = arrearOrderService.saveArrearOrder(arrearOrder);
+            shippingOrder.setArrearOrderId(arrearOrderId);
+            int shippingId = shippingOrderService.saveShippingOrder(shippingOrder);
+            shippingOrderProductList.forEach(s -> {
+                s.setShippingOrderId(shippingId);
+                shippingOrderService.saveShippingOrderProduct(s);
+            });
+            processingOrderList.forEach(p -> {
+                ProcessingOrder processingOrder = processOrderService.getOne(p);
+                processingOrder.setShippingOrderId(shippingId);
+                processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
+                //待优化 可传list一次性更新
+                processOrderService.savaProcessingOrder(processingOrder);
+            });
             ShippingArrearRelationVO shippingArrearRelationVO = ShippingArrearRelationVO.builder()
-                    .shippingOrderId(result)
+                    .shippingOrderId(shippingId)
                     .arrearOrderId(arrearOrderId)
                     .build();
             return ResponseResult.ok(shippingArrearRelationVO);

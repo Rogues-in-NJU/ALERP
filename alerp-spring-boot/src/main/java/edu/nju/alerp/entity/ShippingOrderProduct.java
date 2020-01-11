@@ -25,7 +25,7 @@ public class ShippingOrderProduct {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     /**
      * 出货单id
