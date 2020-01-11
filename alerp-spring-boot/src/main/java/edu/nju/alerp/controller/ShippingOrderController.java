@@ -192,8 +192,9 @@ public class ShippingOrderController {
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
+            int processingId = s.getProcessingOrderId();
             ProductVO productVO = ProductVO.builder()
-                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
+                    .processingOrderCode(processingId == 0 ? "" : processOrderService.getOne(processingId).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();
