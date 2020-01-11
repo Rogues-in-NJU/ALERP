@@ -67,7 +67,7 @@
   <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="客户" [nzSpan]="4">{{ shippingOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="4">
-      <a routerLink="/workspace/processing-order/info/{{ data.processingOrderId }}" *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></a>
+      <p  *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></p>
     </nz-descriptions-item>
   </nz-descriptions>
   <br/>
@@ -94,11 +94,11 @@
       <th nzWidth="150px">加工单编号</th>
       <th nzWidth="100px">商品</th>
       <th nzWidth="160px">加工规格</th>
-      <th nzWidth="75px">计价方式</th>
       <th nzWidth="75px">数量(件)</th>
       <th nzWidth="75px">单价</th>
       <th nzWidth="100px">预计重量</th>
       <th nzWidth="100px">实际重量</th>
+      <th nzWidth="125px">计价方式</th>
       <th nzWidth="100px">金额</th>
       <th>操作</th>
     </tr>
@@ -106,16 +106,34 @@
     <tbody>
     <tr *ngFor="let data of shippingOrderInfoProductsTable.data">
       <td>
-        <ng-container *ngIf="editCache._id !== data['_id']">
-          <a routerLink="/workspace/processing-order/info/{{ data.processingOrderId}}">{{ data.processingOrderCode }}</a>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao">
+          {{ data.processingOrderCode }}
         </ng-container>
       </td>
 
 <!--      productName-->
       <td>
-        <ng-container>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao; else productNameEditTpl">
           {{ data.productName }}
         </ng-container>
+        <ng-template #productNameEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeSelectedProduct($event)"
+                       style="width: 100px">
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts; let i = index;">
+                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </ng-template>
       </td>
       <td>
         <ng-container>
@@ -123,26 +141,15 @@
         </ng-container>
 
       </td>
-      <td>
-        <ng-container *ngIf="editCache._id !== data['_id']">
-          {{ data.priceType | shipping_order_price_type }}
-        </ng-container>
-        <ng-container *ngIf="editCache._id === data['_id']">
-          <nz-select [(ngModel)]="editCache.data.priceType">
-            <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
-            <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
-          </nz-select>
-        </ng-container>
-      </td>
+
       <td>
         <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao ; else quantityEditTpl">
           {{ data.quantity }}
         </ng-container>
         <ng-template #quantityEditTpl>
-          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.quantity">
+          <nz-form-control>
             <nz-input-number nzMin="1" nzStep="1"
-                             [(ngModel)]="editCache.data.quantity"
-                             (ngModelChange)="checkModelNotNull('quantity')"></nz-input-number>
+                             [(ngModel)]="editCache.data.quantity"></nz-input-number>
           </nz-form-control>
         </ng-template>
       </td>
@@ -162,20 +169,13 @@
         <ng-container>
           {{ data.expectedWeight }}
         </ng-container>
-<!--        <ng-template #expectedWeightEditTpl>-->
-<!--          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">-->
-<!--            <nz-input-number nzMin="0" nzStep="0.0001"-->
-<!--                             [(ngModel)]="editCache.data.expectedWeight"-->
-<!--                             (ngModelChange)="checkModelNotNull('expectedWeight')"></nz-input-number>-->
-<!--          </nz-form-control>-->
-<!--        </ng-template>-->
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else weightEditTpl">
           {{ data.weight }}
         </ng-container>
         <ng-template #weightEditTpl>
-          <nz-form-control >
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
             <nz-input-number nzMin="0" nzStep="0.0001"
                              [(ngModel)]="editCache.data.weight"
                              (ngModelChange)="checkModelNotNull('weight')"></nz-input-number>
@@ -183,11 +183,25 @@
         </ng-template>
       </td>
       <td>
+        <ng-container *ngIf="editCache._id !== data['_id']">
+          {{ data.priceType | shipping_order_price_type }}
+        </ng-container>
+        <ng-container *ngIf="editCache._id === data['_id']">
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.priceType">
+            <nz-select [(ngModel)]="editCache.data.priceType"
+                       (ngModelChange)="checkModelNotNull('priceType')">
+              <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </ng-container>
+      </td>
+      <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else cashEditTpl">
           {{ data.cash }}
         </ng-container>
         <ng-template #cashEditTpl>
-          <nz-form-control >
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
             <nz-input-number nzMin="0" nzStep="0.0001"
                              [(ngModel)]="editCache.data.cash"
                              (ngModelChange)="checkModelNotNull('cash')"></nz-input-number>
@@ -197,6 +211,8 @@
       <td>
         <ng-container *ngIf="editCache._id === null">
           <a (click)="startEditProduct(data._id)">编辑</a>
+        </ng-container>
+        <ng-container *ngIf="editCache._id === null && data._isSunhao">
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"
@@ -239,7 +255,8 @@
       <nz-form-label>浮动金额</nz-form-label>
       <nz-form-control>
         <nz-input-group nzPrefix="-" nzSuffix="元">
-          <input nz-input type="text" [(ngModel)]="shippingOrderData.floatingCash"/>
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.floatingCash"
+                 (ngModelChange)="modifyReceivableCash()"/>
         </nz-input-group>
 
       </nz-form-control>
@@ -248,7 +265,8 @@
       <nz-form-label>应收金额</nz-form-label>
       <nz-form-control>
         <nz-input-group nzSuffix="元">
-          <input nz-input type="text" [(ngModel)]="shippingOrderData.receivableCash"/>
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.receivableCash"
+                 (ngModelChange)="modifyFloatingCash()"/>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>

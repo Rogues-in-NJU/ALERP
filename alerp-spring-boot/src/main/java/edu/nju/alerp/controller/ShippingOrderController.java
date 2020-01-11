@@ -90,8 +90,8 @@ public class ShippingOrderController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "code", required = false, defaultValue = "") String code,
-                                             @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                             @RequestParam(value = "id", required = false, defaultValue = "") String code,
+                                             @RequestParam(value = "customerName", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status,
                                              @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
                                              @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {

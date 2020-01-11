@@ -42,10 +42,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     receivableCash: 0,
   };
 
-  cash: number = 0;
-  floatingCash: number = 0;
-  receivableCash: number = 0;
-
   //modal
   shippingOrderAddVisible: boolean = false;
   shippingOrderAddOkLoading: boolean = false;
@@ -65,6 +61,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   numberOfChecked = 0;
   checkedCustomerId: number = -1;
 
+  //editproduct
   editCache: {
     _id?: number,
     data?: TempShippingOrderProductVO,
@@ -82,10 +79,17 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   };
 
   editCacheValidateStatus: any = {
-    productId: null,
-    specification: null,
-    quantity: null,
-    expectedWeight: null
+    price: null,
+    weight: null,
+    priceType: null,
+    cash: null,
+  };
+
+  defaultEditCacheValidateStatus: any = {
+    price: null,
+    weight: null,
+    priceType: null,
+    cash: null,
   };
 
   shippingOrderInfoProductCountIndex: number = 0;
@@ -118,7 +122,8 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
           pageIndex: 1,
-          pageSize: 100000
+          pageSize: 1000,
+          type: 3
         }));
       return t.pipe(map(res => {
         if (!Objects.valid(res)) {
@@ -146,18 +151,20 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       return;
     }
     let item: ShippingOrderProductInfoVO = {
-      id: -1,
+      id: null,
       processingOrderCode: '',
-      productId: -1,
-      productName: '损耗',
-      type: 1,
-      specification: '',
+      productId: null,
+      productName: null,
+      type: null,
+      specification: null,
       quantity: 1,
+      priceType: 2,
       price: null,
       expectedWeight: null,
-      weight: 0,
+      weight: null,
       cash: null,
     };
+    item[ '_isSunhao' ] = true;
     item[ '_id' ] = this.shippingOrderInfoProductCountIndex++;
     this.shippingOrderData.products = [
       item,
@@ -224,6 +231,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.shippingOrderData.products = this.shippingOrderData.products.filter(item => item[ '_id' ] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
+    Object.assign(this.editCacheValidateStatus, this.defaultEditCacheValidateStatus)
     this.isAddSunHao = false;
   }
 
@@ -235,31 +243,50 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     if (!this.checkShippingOrderProductValid()) {
       return;
     }
-    // TODO: 提交远程刷新 -> 不提交了，放到vo里
-    // const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
-    // Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
-    // Object.assign(this.editCache, this.defaultEditCache);
-    // this.shippingOrder.saveProduct(this.shippingOrderData.products[ index ])
-    //   .subscribe((res: ResultVO<any>) => {
-    //     if (!Objects.valid(res)) {
-    //       return;
-    //     }
-    //     if (res.code !== ResultCode.SUCCESS.code) {
-    //       return;
-    //     }
-    //   }, (error: HttpErrorResponse) => {
-    //     this.message.error(error.message);
-    //   }, () => {
-    //     this.refresh();
-    //   });
 
-    //todo 写个累加金额的方法
-    this.shippingOrderData.cash += this.editCache.data.cash;
+    const index = this.shippingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    Object.assign(this.shippingOrderData.products[ index ], this.editCache.data);
+    Object.assign(this.editCache, this.defaultEditCache);
+    Object.assign(this.editCacheValidateStatus, this.defaultEditCacheValidateStatus)
+
+    this.shippingOrderData.cash = this.shippingOrderData.products
+      .filter(product => Objects.valid(product.cash))
+      .map(product => product.cash)
+      .reduce((pre, cur) => pre + cur);
+    this.shippingOrderData.receivableCash = this.shippingOrderData.cash - this.shippingOrderData.floatingCash;
+
     this.isAddSunHao = false;
   }
 
   confirmAddShippingOrder():void {
-    //todo
+    //todo 输入核验
+
+    // if (!this.processingOrderForm.valid) {
+    //   Object.values(this.processingOrderForm.controls).forEach(item => {
+    //     item.markAsDirty();
+    //     item.updateValueAndValidity();
+    //   });
+    //   return;
+    // }
+
+
+    console.log(this.shippingOrderData);
+    this.shippingOrder.save(this.shippingOrderData)
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
+        this.tabClose();
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+      });
   }
 
   checkShippingOrderProductValid(): boolean {
@@ -271,22 +298,29 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       this.editCacheValidateStatus.productId = 'error';
       isValid = false;
     }
-    if (!this.checkModelNotNull('quantity')) {
+    if (!this.checkModelNotNull('price')) {
       isValid = false;
     }
-    if (!this.checkModelNotNull('expectedWeight')) {
+    if (!this.checkModelNotNull('weight')) {
       isValid = false;
     }
-    // 验证规格格式
-    console.log(this.editCache.data.specification);
-    if (!SpecificationUtils.valid(this.editCache.data.specification)) {
-      this.editCacheValidateStatus.specification = 'error';
+    if (!this.checkModelNotNull('priceType')) {
       isValid = false;
     }
+    if (!this.checkModelNotNull('cash')) {
+      isValid = false;
+    }
+
     return isValid;
   }
 
   checkModelNotNull(name: string): boolean {
+    //损耗只需要增加cash
+    if(this.isAddSunHao){
+      if(name !== "cash"){
+        return true;
+      }
+    }
     if (Objects.valid(this.editCache.data[name]) && !StringUtils.isEmpty(this.editCache.data[name])) {
       this.editCacheValidateStatus[name] = null;
       console.log('here');
@@ -387,6 +421,17 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
 
   refresh(): void {
   }
+
+  modifyFloatingCash(): void{
+    this.shippingOrderData.floatingCash = this.shippingOrderData.cash - this.shippingOrderData.receivableCash;
+  }
+
+  modifyReceivableCash():void{
+    this.shippingOrderData.receivableCash = this.shippingOrderData.cash - this.shippingOrderData.floatingCash;
+  }
+
+
+  //modal
 
   showAddModal(): void {
     this.shippingOrderAddVisible = true;
