@@ -43,7 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     private SpecialPricesRepository specialPricesRepository;
 
     @Override
-    public int saveCustomer(CustomerDTO customerDTO) {
+    public int saveCustomer(CustomerDTO customerDTO) throws Exception{
         if (customerDTO.getId() == null) {
             Customer customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
             return customerRepository.saveAndFlush(customer).getId();
         } else {
             Customer nowCustomer = getCustomer(customerDTO.getId());
-            if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdateAt())) {
+            if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
             }
             nowCustomer.setUpdatedBy(CommonUtils.getUserId());
@@ -110,7 +110,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public int deleteCustomer(int id) {
+    public int deleteCustomer(int id) throws Exception{
         Customer customer = getCustomer(id);
         if (customer == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");

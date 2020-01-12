@@ -1050,3 +1050,71 @@ res:
 }
 
 ```
+
+### 权限模块
+
+#### 获取所有权限列表
+
+```
+GET
+/api/auth/list
+
+res:
+{
+  result: [{
+    id: number,
+    description: string,
+    route: number
+  }]
+}
+```
+
+#### 获取某个用户对所有路由的权限情况
+
+```
+GET
+/api/auth/userId/:id
+
+res:
+{
+  result: [{
+    id: number,
+    authId:number
+    description: string,
+    userId:number,
+    action:number
+  }]
+}
+```
+
+#### 更新某个用户的权限
+
+```
+POST
+/api/auth/update
+
+body:
+{ [
+	{
+        userId:number,
+        authId:number,
+        action:number
+	},
+    ....
+  ]
+}
+
+res: 
+{}
+```
+
+#### 初始化某个用户的权限
+
+```
+GET
+/api/auth/initial/:id
+
+res:
+{}
+```
+

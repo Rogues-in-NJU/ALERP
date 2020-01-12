@@ -91,7 +91,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public int deleteShippingOrder(int id) {
+    public int deleteShippingOrder(int id) throws Exception {
         ShippingOrder shippingOrder = shippingOrderRepository.getOne(id);
         if (shippingOrder == null) {
             log.error("shippingOrder is null");
