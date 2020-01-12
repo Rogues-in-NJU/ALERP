@@ -454,6 +454,7 @@ res:
     productId: string,
     productName: string,
     price: number,
+    priceType: number, // 单位 1重量 2件数
     createdAt: string,
     createdById: string,
     createdByName: string

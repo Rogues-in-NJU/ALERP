@@ -55,6 +55,15 @@ export class DateUtils {
     return fmt;
   }
 
+  public static now() {
+    return DateUtils.format(new Date());
+  }
+
+  public static of(year: number, month: number, date?: number, hours?: number, minutes?: number, seconds?: number) {
+    const d: Date = new Date(year, month, date ? date : 1, hours ? hours : 0, minutes ? minutes : 0, seconds ? seconds : 0);
+    return DateUtils.format(d);
+  }
+
 }
 
 export class SpecificationUtils {

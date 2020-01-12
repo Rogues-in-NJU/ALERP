@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SummaryService } from "../../../core/services/summary.service";
-import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../core/model/result-vm";
+import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../core/model/result-vm";
 import { SummaryProductVO, SummaryVO } from "../../../core/model/summary";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
-import { Objects } from "../../../core/services/util.service";
+import { DateUtils, Objects } from "../../../core/services/util.service";
 
 @Component({
   selector: 'workspace-dashboard',
@@ -19,6 +19,9 @@ export class DashboardComponent implements OnInit {
 
   summaryData: SummaryVO;
   summaryProducts: SummaryProductVO[];
+
+
+  timeRange: Date[];
 
   pageIndex: number = 1;
   pageSize: number = 10;
@@ -34,23 +37,11 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isSummaryDataLoading = true;
-    this.summary.getSummary()
-      .subscribe((res: ResultVO<SummaryVO>) => {
-      if (!Objects.valid(res)) {
-        return;
-      }
-      if (res.code !== ResultCode.SUCCESS.code) {
-        return;
-      }
-      this.summaryData = res.data;
-      this.isSummaryDataLoading = false;
-    }, (error: HttpErrorResponse) => {
-      this.message.error(error.message);
-    }, () => {
+    this.refresh();
+  }
 
-    });
-    this.search();
+  onTimeRangeChange(): void {
+    this.refresh();
   }
 
   search(): void {
@@ -62,9 +53,11 @@ export class DashboardComponent implements OnInit {
     this.summary.getSummaryProducts(queryParams)
       .subscribe((res: ResultVO<TableResultVO<SummaryProductVO>>) => {
         if (!Objects.valid(res)) {
+          this.message.error('获取失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResults: TableResultVO<SummaryProductVO> = res.data;
@@ -78,6 +71,33 @@ export class DashboardComponent implements OnInit {
       }, () => {
 
       });
+  }
+
+  refresh(): void {
+    this.isSummaryDataLoading = true;
+    const now: Date = new Date();
+    const queryParams: QueryParams = Object.assign(new QueryParams(), {
+      startTime: DateUtils.of(now.getFullYear(), now.getMonth(), now.getDate()),
+      endTime: DateUtils.format(now)
+    });
+    this.summary.getSummary(queryParams)
+      .subscribe((res: ResultVO<SummaryVO>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('获取失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.summaryData = res.data;
+        this.isSummaryDataLoading = false;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+
+      });
+    this.search();
   }
 
 }
