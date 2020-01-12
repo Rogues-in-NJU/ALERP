@@ -21,7 +21,7 @@ import java.io.IOException;
  * @CreateDate: 2020-01-08 16:37
  */
 @Slf4j
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/*"})
+//@WebFilter(filterName = "AuthFilter", urlPatterns = {"/*"})
 public class AuthFilter implements Filter {
 
     @Override

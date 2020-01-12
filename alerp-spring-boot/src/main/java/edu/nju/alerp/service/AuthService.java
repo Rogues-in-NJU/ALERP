@@ -4,6 +4,7 @@ import edu.nju.alerp.dto.AuthDTO;
 import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.entity.AuthUser;
+import edu.nju.alerp.vo.AuthUserVO;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface AuthService {
     public int updateUserAuth(List<UpdateUserAuthDTO> updateAuths);
 
     public int initialUserAuthByUserId(int id);
+
+    public List<AuthUserVO> queryAuthUserByUserId(int userId);
 }

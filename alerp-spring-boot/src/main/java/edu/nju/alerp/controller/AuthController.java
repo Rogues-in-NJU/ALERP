@@ -6,6 +6,7 @@ import edu.nju.alerp.dto.AuthDTO;
 import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.service.AuthService;
+import edu.nju.alerp.vo.AuthUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -55,4 +56,8 @@ public class AuthController {
         return ResponseResult.ok(authService.initialUserAuthByUserId(id));
     }
 
+    @RequestMapping(value = "/userId/{id}", method = RequestMethod.GET)
+    public ResponseResult<List<AuthUserVO>> queryUserAuthByUserId(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+        return ResponseResult.ok(authService.queryAuthUserByUserId(id));
+    }
 }
