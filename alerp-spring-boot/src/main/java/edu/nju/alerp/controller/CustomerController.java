@@ -107,9 +107,8 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseResult<List<Customer>> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        customerService.saveCustomer(customerDTO);
-        List<Customer> customerList = customerService.getCustomerList();
-        return ResponseResult.ok(customerList);
+    public ResponseResult<Integer> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+        int res = customerService.saveCustomer(customerDTO);
+        return ResponseResult.ok(res);
     }
 }
