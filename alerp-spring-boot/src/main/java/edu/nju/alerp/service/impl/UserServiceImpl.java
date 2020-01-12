@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
                     .build();
         } else {
             user = getUser(userDTO.getId());
-            if (!userDTO.getUpdateTime().equals(user.getUpdatedAt())) {
+            if (!userDTO.getUpdateAt().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
             user.setName(userDTO.getName());
