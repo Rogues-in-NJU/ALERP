@@ -4,6 +4,7 @@ import {Observable, of} from "rxjs";
 import {ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
 import {StringUtils} from "./util.service";
 import {UserManagementInfoVO} from "../model/user-management";
+import {AppConfig} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -15,32 +16,12 @@ export class UserManagementService {
   }
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<UserManagementInfoVO>>> {
-    // // prod
-    // return this.http.post<ResultVO<TableResultVO<UserManagementInfoVO>>>(
-    //   `${AppConfig.BASE_URL}/api/user-management/list`,
-    //   queryParams
-    // );
-    // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        totalPages: 1,
-        pageIndex: 1,
-        pageSize: 10,
-        result: [{
-          id: 1,
-          name: '殷乾恩',
-          phone_number: '13821378223',
-          status: 1
-        },{
-          id: 2,
-          name: '杨关',
-          phone_number: '13822038223',
-          status: 2
-        }]
+    return this.http.get<ResultVO<TableResultVO<UserManagementInfoVO>>>(
+      `${AppConfig.BASE_URL}/api/user/list`, {
+        params: queryParams,
+        withCredentials: true
       }
-    });
+    );
   }
 
   public find(id: string): Observable<ResultVO<UserManagementInfoVO>> {

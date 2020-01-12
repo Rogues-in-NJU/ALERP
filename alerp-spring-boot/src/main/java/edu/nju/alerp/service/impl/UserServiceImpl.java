@@ -135,17 +135,22 @@ public class UserServiceImpl implements UserService, InitializingBean {
     }
 
     @Override
-    public Page<User> getUserList(Pageable pageable, String name, int status) {
+    public Page<User> getUserList(Pageable pageable, String name, Integer status) {
         QueryContainer<User> sp = new QueryContainer<>();
         try {
-            sp.add(ConditionFactory.equal("status", status));
-            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+            if (status != null) {
+                sp.add(ConditionFactory.equal("status", status));
+            }
+//            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+            //todo
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
                 fuzzyMatch.add(ConditionFactory.like("phoneNumber", name));
             }
-            sp.add(ConditionFactory.or(fuzzyMatch));
+            if (!fuzzyMatch.isEmpty()) {
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
         } catch (Exception e) {
             log.error("Value is null", e);
         }

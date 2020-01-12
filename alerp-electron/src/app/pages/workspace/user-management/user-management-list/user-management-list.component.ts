@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { RefreshableTab } from "../../tab/tab.component";
-import { UserManagementService } from "../../../../core/services/user-management.service";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { HttpErrorResponse } from "@angular/common/http";
-import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
-import { UserManagementInfoVO } from "../../../../core/model/user-management";
+import {Component, OnInit} from "@angular/core";
+import {Router} from "@angular/router";
+import {RefreshableTab} from "../../tab/tab.component";
+import {UserManagementService} from "../../../../core/services/user-management.service";
+import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {HttpErrorResponse} from "@angular/common/http";
+import {NzMessageService} from "ng-zorro-antd";
+import {TabService} from "../../../../core/services/tab.service";
+import {UserManagementInfoVO} from "../../../../core/model/user-management";
 
 @Component({
   selector: 'user-management-list',
