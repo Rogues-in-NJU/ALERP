@@ -7,6 +7,8 @@ import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
+import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
+import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
 import edu.nju.alerp.dto.ReceiptRecordForArrearDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ReceiptRecord;
@@ -65,12 +67,16 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     }
 
     @Override
-    public int updateDueDate(int arrearOrderId, String dueDate) {
-        ArrearOrder arrearOrder = arrearOrderRepository.getOne(arrearOrderId);
+    public int updateDueDate(ArrearOrderDueDateDTO dto) {
+        ArrearOrder arrearOrder = arrearOrderRepository.getOne(dto.getId());
         if (arrearOrder == null || arrearOrder.getStatus() == ArrearOrderStatus.ABANDONED.getCode()) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到收款单或单据已废弃");
         }
-        arrearOrder.setDueDate(dueDate);
+        // 乐观锁控制修改版本
+        if (!arrearOrder.getUpdatedAt().equals(dto.getUpdatedAt())) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
+        }
+        arrearOrder.setDueDate(dto.getDueDate());
         arrearOrder.setUpdatedAt(DateUtils.getToday());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
@@ -78,13 +84,17 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     }
 
     @Override
-    public int updateInvoiceNumber(int arrearOrderId, String invoiceNumber) {
+    public int updateInvoiceNumber(ArrearOrderInvoiceNumberDTO dto) {
         // todo:之后有时间把修改XXX改成一个通用方法，用反射去修改值就可以了
-        ArrearOrder arrearOrder = arrearOrderRepository.getOne(arrearOrderId);
+        ArrearOrder arrearOrder = arrearOrderRepository.getOne(dto.getId());
         if (arrearOrder == null || arrearOrder.getStatus() == ArrearOrderStatus.ABANDONED.getCode()) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到收款单或单据已废弃");
         }
-        arrearOrder.setInvoiceNumber(invoiceNumber);
+        // 乐观锁控制修改版本
+        if (!arrearOrder.getUpdatedAt().equals(dto.getUpdatedAt())) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
+        }
+        arrearOrder.setInvoiceNumber(dto.getInvoiceNumber());
         arrearOrder.setUpdatedAt(DateUtils.getToday());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);

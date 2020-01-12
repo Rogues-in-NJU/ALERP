@@ -71,7 +71,6 @@ public class ExpenseController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public ResponseResult<ListResponse> getExpenseList(@RequestParam(value = "pageIndex") int pageIndex,
         @RequestParam(value = "pageSize") int pageSize) {
-        ListResponse listResponse = expenseService.getExpenseList(pageIndex, pageSize);
-        return ResponseResult.ok(listResponse);
+        return ResponseResult.ok(expenseService.getExpenseList(pageIndex, pageSize));
     }
 }

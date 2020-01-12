@@ -70,7 +70,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         // 只返回未删除的公司支出
         List<Expense> targetList = Lists.newArrayList();
         for (Expense expense : expenseList) {
-            if (expense.getDeletedAt() == null) {
+            if (expense.getDeletedAt() == null&&expense.getCity()==CommonUtils.getCity()) {
                 targetList.add(expense);
             }
         }

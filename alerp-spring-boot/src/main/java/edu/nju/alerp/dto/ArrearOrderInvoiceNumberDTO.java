@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * 修改收款单发票流水号DTO
+ *
  * @author luhailong
  * @date 2020/01/12
  */
@@ -22,4 +23,8 @@ public class ArrearOrderInvoiceNumberDTO {
      */
     private String invoiceNumber;
 
+    /**
+     * 上次更新时间：作为乐观锁的版本号
+     */
+    private String UpdatedAt;
 }

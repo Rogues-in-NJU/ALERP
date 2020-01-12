@@ -81,7 +81,7 @@ public class ArrearOrderController {
     @ResponseBody
     @RequestMapping(value = "/due-date", method = RequestMethod.POST)
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
-        return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
+        return ResponseResult.ok(arrearOrderService.updateDueDate(dto));
     }
 
     /**
@@ -94,7 +94,7 @@ public class ArrearOrderController {
     @ResponseBody
     @RequestMapping(value = "/invoice-number", method = RequestMethod.POST)
     public ResponseResult<Integer> updateInvoiceNumber(@RequestBody ArrearOrderInvoiceNumberDTO dto) {
-        return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto.getId(), dto.getInvoiceNumber()));
+        return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto));
     }
 
 
