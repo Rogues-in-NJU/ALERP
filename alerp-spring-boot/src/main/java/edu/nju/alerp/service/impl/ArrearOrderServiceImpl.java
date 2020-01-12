@@ -24,6 +24,7 @@ import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ArrearDetailVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -125,31 +126,43 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     }
 
     @Override
-    public Page<ArrearOrder> getArrearOrderList(Pageable pageable, int id, String customerName, int status,
-        String invoiceNumber, int shippingOrderId, String startTime, String endTime) {
-        QueryContainer<ArrearOrder> container = new QueryContainer<>();
-        List<Integer> customerIdlist = customerRepository.findCustomerIdByNameAndShorthand(customerName);
+    public Page<ArrearOrder> getArrearOrderList(Pageable pageable, String code, String customerName, Integer status,
+        String invoiceNumber, Integer shippingOrderId, String startTime, String endTime) {
+        QueryContainer<ArrearOrder> sp = new QueryContainer<>();
         try {
-            container.add(ConditionFactory.equal("id", id));
-            container.add(ConditionFactory.equal("city", CommonUtils.getCity()));
-            container.add(ConditionFactory.In("customerId", customerIdlist));
-            container.add(ConditionFactory.equal("status", status));
-            container.add(ConditionFactory.equal("invoiceNumber", invoiceNumber));
-            container.add(ConditionFactory.equal("shippingOrderId", shippingOrderId));
+            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
 
-            List<Condition> fuzzyMatch = Lists.newArrayList();
-            if (!"".equals(customerName)) {
-                fuzzyMatch.add(ConditionFactory.like("name", customerName));
-                fuzzyMatch.add(ConditionFactory.like("shorthand", customerName));
+            if (status != null) {
+                sp.add(ConditionFactory.equal("status", status));
+            }
+            if (shippingOrderId != null) {
+                sp.add(ConditionFactory.equal("shippingOrderId", shippingOrderId));
             }
 
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
-            container.add(ConditionFactory.or(fuzzyMatch));
+            List<Condition> fuzzyMatch = Lists.newArrayList();
+            if (Strings.isNotBlank(code)) {
+                fuzzyMatch.add(ConditionFactory.like("code", code));
+            }
+            if (Strings.isNotBlank(customerName)) {
+                List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(customerName);
+                fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
+            }
+            if (Strings.isNotBlank(invoiceNumber)) {
+                fuzzyMatch.add(ConditionFactory.like("invoiceNumber", invoiceNumber));
+            }
+            if (Strings.isNotBlank(startTime)) {
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            }
+            if (Strings.isNotBlank(endTime)) {
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
+            }
+            if (!fuzzyMatch.isEmpty()) {
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
         } catch (Exception e) {
             log.error("value is null", e);
         }
-        return arrearOrderRepository.findAll(container, pageable);
+        return arrearOrderRepository.findAll(sp, pageable);
     }
 
 }
