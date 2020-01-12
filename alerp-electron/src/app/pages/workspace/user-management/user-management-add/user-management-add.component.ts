@@ -11,7 +11,7 @@ import {DateUtils} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {AuthVO} from "../../../../core/model/auth";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 
 @Component({
   selector: 'user-management-add',
@@ -27,9 +27,15 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   isSaving: boolean = false;
   cityTmp: number[];
 
+  authsTmp: userAuthVO[] = [
+    <userAuthVO>{description: "查看商品列表", action: 0},
+    <userAuthVO>{description: "新增或者编辑商品", action: 0},
+    <userAuthVO>{description: "查看商品详情", action: 0},
+    <userAuthVO>{description: "废弃商品", action: 0}];
+
   saveCityTmp(value: string[]): void {
     if (value.length === 1) {
-      if (value[0] == "苏州") {
+      if (value[0] == "1") {
         this.cityTmp = [1];
       } else {
         this.cityTmp = [2];
@@ -66,11 +72,11 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       name: formData.name,
       phoneNumber: formData.phoneNumber,
       password: formData.password,
-      city: this.cityTmp
+      city: this.cityTmp,
+      authList: this.authsTmp
     };
     // private Integer id;
     // private String updateAt;
-    // private List<Integer> city;
     // private List<Auth> authList;
     console.log(userManagementAdd);
     this.isSaving = true;

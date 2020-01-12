@@ -15,9 +15,9 @@ export interface UserManagementInfoVO extends BaseInfo {
 export interface userAuthVO {
 
   id?: 3
-  authId: number;
+  authId?: number;
   description: string;
   action: number;
-  userId: number;
+  userId?: number;
 }
 
