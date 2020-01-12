@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {RefreshableTab} from "../../tab/tab.component";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
@@ -42,10 +42,11 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
     };
     this.Operation.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<OperationInfoVO>>) => {
+        console.log(res);
         if (!res) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<OperationInfoVO> = res.data;
