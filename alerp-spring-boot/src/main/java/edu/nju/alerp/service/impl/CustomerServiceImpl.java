@@ -61,8 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
                             .createdBy(CommonUtils.getUserId())
                             .updatedAt(DateUtils.getToday())
                             .updatedBy(CommonUtils.getUserId())
+                            .productId(specialPricesDTO.getProductId())
+                            .price(specialPricesDTO.getPrice())
+                            .priceType(specialPricesDTO.getPriceType())
                             .build();
-                    BeanUtils.copyProperties(specialPricesDTO, specialPrice);
                     specialPricesRepository.save(specialPrice);
                 }
             }
@@ -85,14 +87,18 @@ public class CustomerServiceImpl implements CustomerService {
                                 .createdBy(CommonUtils.getUserId())
                                 .updatedAt(DateUtils.getToday())
                                 .updatedBy(CommonUtils.getUserId())
+                                .productId(specialPricesDTO.getProductId())
+                                .price(specialPricesDTO.getPrice())
+                                .priceType(specialPricesDTO.getPriceType())
                                 .build();
-                        BeanUtils.copyProperties(specialPricesDTO, specialPrice);
+                        specialPricesRepository.saveAndFlush(specialPrice);
                     } else {
                         specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
                         specialPrice.setUpdatedAt(DateUtils.getToday());
                         specialPrice.setUpdatedBy(CommonUtils.getUserId());
+                        specialPricesRepository.save(specialPrice);
                     }
-                    specialPricesRepository.save(specialPrice);
+
                 }
             }
             return customerRepository.save(nowCustomer).getId();
