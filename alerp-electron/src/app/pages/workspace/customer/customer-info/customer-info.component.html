@@ -144,7 +144,7 @@
                      nzServerSearch
                      (nzOnSearch)="onProductSearch($event)"
                      (ngModelChange)="onChangeSelectedProduct($event)"
-                     style="width: 100px">
+                     style="width: 150px">
             <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
             <ng-container *ngFor="let p of searchProducts">
               <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
@@ -168,7 +168,7 @@
           {{ data.priceType | customer_price_type_pipe }}
         </ng-container>
         <ng-template #priceTypeEditTpl>
-          <nz-select [(ngModel)]="editCache.data.priceType">
+          <nz-select [(ngModel)]="editCache.data.priceType" style="width: 80px">
             <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
             <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
           </nz-select>

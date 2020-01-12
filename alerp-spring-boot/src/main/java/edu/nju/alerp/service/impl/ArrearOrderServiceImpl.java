@@ -2,30 +2,38 @@ package edu.nju.alerp.service.impl;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import com.google.common.collect.Lists;
 import edu.nju.alerp.common.NJUException;
+import edu.nju.alerp.common.conditionSqlQuery.Condition;
+import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
+import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ReceiptRecordForArrearDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ReceiptRecord;
+import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.enums.ArrearOrderStatus;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ReceiptRecordStatus;
 import edu.nju.alerp.repo.ArrearOrderRepository;
+import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ReceiptRecordService;
+import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ArrearDetailVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
  * @author luhailong
  * @date 2019/12/28
  */
+@Slf4j
 @Service
 public class ArrearOrderServiceImpl implements ArrearOrderService {
 
@@ -37,6 +45,12 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Autowired
     private ReceiptRecordService receiptRecordService;
+
+    @Autowired
+    private ShippingOrderService shippingOrderService;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public ArrearOrder getOne(int id) {
@@ -83,8 +97,11 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             createdById(createdBy).build();
         arrearDetailVO.setCustomerName(userService.getUser(customerId).getName());
         arrearDetailVO.setCreatedByName(userService.getUser(createdBy).getName());
-        // todo:shippingOrderService中提供根据arrearOrderId查询shippingOrderID的方法，然后填到VO中
         arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getToday()) > 0);
+        // 根据arrearOrderId查询出货单
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrderByArrearOrderId(id);
+        arrearDetailVO.setShippingOrderId(shippingOrder.getId());
+        arrearDetailVO.setShippingOrderCode(shippingOrder.getCode());
 
         // 获取收款单中的收款记录列表：(只显示已确认的收款记录，已废弃的不显示)
         List<ReceiptRecordForArrearDTO> targetDTOList = Lists.newArrayList();
@@ -106,4 +123,33 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         arrearDetailVO.setReceiptRecordList(targetDTOList);
         return arrearDetailVO;
     }
+
+    @Override
+    public Page<ArrearOrder> getArrearOrderList(Pageable pageable, int id, String customerName, int status,
+        String invoiceNumber, int shippingOrderId, String startTime, String endTime) {
+        QueryContainer<ArrearOrder> container = new QueryContainer<>();
+        List<Integer> customerIdlist = customerRepository.findCustomerIdByNameAndShorthand(customerName);
+        try {
+            container.add(ConditionFactory.equal("id", id));
+            container.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+            container.add(ConditionFactory.In("customerId", customerIdlist));
+            container.add(ConditionFactory.equal("status", status));
+            container.add(ConditionFactory.equal("invoiceNumber", invoiceNumber));
+            container.add(ConditionFactory.equal("shippingOrderId", shippingOrderId));
+
+            List<Condition> fuzzyMatch = Lists.newArrayList();
+            if (!"".equals(customerName)) {
+                fuzzyMatch.add(ConditionFactory.like("name", customerName));
+                fuzzyMatch.add(ConditionFactory.like("shorthand", customerName));
+            }
+
+            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
+            container.add(ConditionFactory.or(fuzzyMatch));
+        } catch (Exception e) {
+            log.error("value is null", e);
+        }
+        return arrearOrderRepository.findAll(container, pageable);
+    }
+
 }

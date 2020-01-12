@@ -2,8 +2,7 @@ package edu.nju.alerp.service.impl;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
+import com.google.common.collect.Lists;
 import edu.nju.alerp.common.DocumentsIdFactory;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.NJUException;
@@ -63,8 +62,16 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public ListResponse getExpenseList(int pageIndex, int pageSize) {
+        // 先查询出所有支出（数据量较小，暂时不需要考虑内存容量问题）
         List<Expense> expenseList = expenseRepository.findAll();
-        return ListResponseUtils.getListResponse(expenseList, pageIndex, pageSize);
+        // 只返回未删除的公司支出
+        List<Expense> targetList = Lists.newArrayList();
+        for (Expense expense:expenseList){
+            if (expense.getDeletedAt()==null){
+                targetList.add(expense);
+            }
+        }
+        return ListResponseUtils.getListResponse(targetList, pageIndex, pageSize);
     }
 
 }

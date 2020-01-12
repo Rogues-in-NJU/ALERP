@@ -14,7 +14,7 @@ public class ArrearOrderDueDateDTO {
     /**
      * 收款单id
      */
-    private int id;
+    private Integer id;
     /**
      * 截止时间
      */
