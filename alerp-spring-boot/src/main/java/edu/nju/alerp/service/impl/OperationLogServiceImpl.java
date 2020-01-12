@@ -36,13 +36,21 @@ public class OperationLogServiceImpl implements OperationLogService {
         QueryContainer<OperationLog> sp = new QueryContainer<>();
         try {
             List<Condition> fuzzyMatch = new ArrayList<>();
-            fuzzyMatch.add(ConditionFactory.like("userName", userName));
-            fuzzyMatch.add(ConditionFactory.greatThanEqualTo("operationStartTime", operationStartTime));
-            fuzzyMatch.add(ConditionFactory.lessThanEqualTo("operationEndTime", operationEndTime));
-            sp.add(ConditionFactory.or(fuzzyMatch));
+            if (!"".equals(userName)) {
+                fuzzyMatch.add(ConditionFactory.like("userName", userName));
+            }
+            if (!"".equals(operationStartTime)) {
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("operationStartTime", operationStartTime));
+            }
+            if (!"".equals(operationEndTime)) {
+                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("operationEndTime", operationEndTime));
+            }
+            if (!fuzzyMatch.isEmpty()) {
+                sp.add(ConditionFactory.or(fuzzyMatch));
+            }
         } catch (Exception e) {
             log.error("Value is null", e);
         }
-        return operationLogRepository.findAll(sp, pageable);
+        return sp.isEmpty() ? operationLogRepository.findAll(pageable) : operationLogRepository.findAll(sp, pageable);
     }
 }

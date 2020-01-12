@@ -76,8 +76,8 @@ public class UserController {
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status) {
-//        List<UserCityRelation> userCityRelationList = userService.
-        Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
+        List<Integer> userCityRelationList = userService.getUserListByCityId(CommonUtils.getCity());
+        Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status, userCityRelationList);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
@@ -91,8 +91,8 @@ public class UserController {
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
                                                          @RequestParam(value = "pageSize") int pageSize,
                                                          @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
-                                                         @RequestParam(value = "operationStartTime") String operationStartTime,
-                                                         @RequestParam(value = "operationEndTime") String operationEndTime) {
+                                                         @RequestParam(value = "operationStartTime", required = false, defaultValue = "") String operationStartTime,
+                                                         @RequestParam(value = "operationEndTime", required = false, defaultValue = "") String operationEndTime) {
 
         Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize), userName, operationStartTime, operationEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));

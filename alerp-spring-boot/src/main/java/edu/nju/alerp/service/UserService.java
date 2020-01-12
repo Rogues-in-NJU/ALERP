@@ -29,7 +29,7 @@ public interface UserService {
 
     List<User> getUserList();
 
-    Page<User> getUserList(Pageable pageable, String name, Integer status);
+    Page<User> getUserList(Pageable pageable, String name, Integer status,List<Integer> userList);
 
     /**
      * 通过用户的姓名获取id
@@ -40,6 +40,8 @@ public interface UserService {
     int getIdFromName(String name);
 
     List<Integer> getCitiesByUserId(int userId);
+
+    List<Integer> getUserListByCityId(int cityId);
 
     LoginResultDTO checkLogin(LoginDTO loginDTO);
 

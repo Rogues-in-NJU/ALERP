@@ -135,14 +135,13 @@ public class UserServiceImpl implements UserService, InitializingBean {
     }
 
     @Override
-    public Page<User> getUserList(Pageable pageable, String name, Integer status) {
+    public Page<User> getUserList(Pageable pageable, String name, Integer status, List<Integer> userList) {
         QueryContainer<User> sp = new QueryContainer<>();
         try {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
             }
-//            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
-            //todo
+            sp.add(ConditionFactory.In("id", userList));
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
@@ -214,5 +213,10 @@ public class UserServiceImpl implements UserService, InitializingBean {
         List<Integer> cityList = userCityRelationRepository.findCitiesByUserId(userId);
         log.info("userId:{}, cityList:{}", userId, cityList);
         return cityList;
+    }
+
+    @Override
+    public List<Integer> getUserListByCityId(int cityId) {
+        return userCityRelationRepository.getUserListByCityId(cityId);
     }
 }
