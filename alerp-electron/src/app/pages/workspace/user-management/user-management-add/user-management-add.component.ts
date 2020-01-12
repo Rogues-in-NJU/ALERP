@@ -65,6 +65,7 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       // radioValue2: formData.radioValue2
     };
 
+    console.log(userManagementAdd);
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
