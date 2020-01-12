@@ -46,7 +46,7 @@ public class OperationLogServiceImpl implements OperationLogService {
                 fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", operationEndTime));
             }
             if (!fuzzyMatch.isEmpty()) {
-                sp.add(ConditionFactory.or(fuzzyMatch));
+                sp.add(ConditionFactory.and(fuzzyMatch));
             }
         } catch (Exception e) {
             log.error("Value is null", e);
