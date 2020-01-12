@@ -114,7 +114,7 @@ public class CustomerController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseResult<Integer> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         try {
-            return ResponseResult.ok(customerService.deleteCustomer(customerService.saveCustomer(customerDTO)));
+            return ResponseResult.ok(customerService.saveCustomer(customerDTO));
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }

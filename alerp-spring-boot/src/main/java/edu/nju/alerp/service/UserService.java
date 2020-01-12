@@ -29,7 +29,7 @@ public interface UserService {
 
     List<User> getUserList();
 
-    Page<User> getUserList(Pageable pageable, String name, int status);
+    Page<User> getUserList(Pageable pageable, String name, Integer status);
 
     /**
      * 通过用户的姓名获取id
