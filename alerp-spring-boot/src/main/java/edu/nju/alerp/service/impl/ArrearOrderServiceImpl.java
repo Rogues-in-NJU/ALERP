@@ -18,6 +18,7 @@ import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ReceiptRecordStatus;
 import edu.nju.alerp.repo.ArrearOrderRepository;
 import edu.nju.alerp.repo.CustomerRepository;
+import edu.nju.alerp.repo.ReceiptRecordRepository;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ReceiptRecordService;
 import edu.nju.alerp.service.ShippingOrderService;
@@ -54,6 +55,9 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private ReceiptRecordRepository receiptRecordRepository;
 
     @Override
     public ArrearOrder getOne(int id) {
@@ -187,6 +191,56 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             log.error("value is null", e);
         }
         return arrearOrderRepository.findAll(sp, pageable);
+    }
+
+    @Override
+    public double queryTotalReceivedCash(String startTime, String endTime) {
+        QueryContainer<ArrearOrder> arrearOrderSp = new QueryContainer<>();
+        double totalReceivedCash = 0.0;
+        try {
+            // 根据时间范围查询出所有的收款单
+            if (Strings.isNotBlank(startTime)) {
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+            }
+            if (Strings.isNotBlank(endTime)) {
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+            }
+            // 已废弃的单据不认为参与了金钱交易
+            arrearOrderSp.add(ConditionFactory.notEqual("status",ArrearOrderStatus.ABANDONED.getCode()));
+            List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
+            totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
+        } catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return totalReceivedCash;
+    }
+
+    @Override
+    public double queryTotalOverdueCash(String startTime, String endTime) {
+        QueryContainer<ArrearOrder> arrearOrderSp = new QueryContainer<>();
+        double totalReceivedCash = 0.0;
+        double totalReceivableCash = 0.0;
+        double totalOverdueCash = 0.0;
+        try {
+            // 根据时间范围查询出所有的收款单
+            if (Strings.isNotBlank(startTime)) {
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+            }
+            if (Strings.isNotBlank(endTime)) {
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+            }
+            // 已废弃的单据不认为参与了金钱交易
+            arrearOrderSp.add(ConditionFactory.notEqual("status",ArrearOrderStatus.ABANDONED.getCode()));
+            // 查询所有逾期的收款单
+            arrearOrderSp.add(ConditionFactory.greatThanEqualTo("dueDate",DateUtils.getToday()));
+            List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
+            totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
+            totalReceivableCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivableCash).sum();
+            totalOverdueCash = totalReceivableCash - totalReceivedCash;
+        } catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return totalOverdueCash;
     }
 
 }
