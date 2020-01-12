@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
             return customerRepository.saveAndFlush(customer).getId();
         } else {
             Customer nowCustomer = getCustomer(customerDTO.getId());
-            if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdateTime())) {
+            if (!nowCustomer.getUpdatedAt().equals(customerDTO.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
             }
             nowCustomer.setUpdatedBy(CommonUtils.getUserId());
