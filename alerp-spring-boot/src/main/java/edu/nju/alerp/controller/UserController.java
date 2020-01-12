@@ -6,20 +6,21 @@ import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.dto.UserDTO;
-import edu.nju.alerp.entity.OperationLog;
-import edu.nju.alerp.entity.Product;
-import edu.nju.alerp.entity.User;
-import edu.nju.alerp.entity.UserCityRelation;
+import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.enums.UserStatus;
+import edu.nju.alerp.service.AuthService;
 import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.util.PasswordUtil;
+import edu.nju.alerp.vo.AuthUserVO;
+import edu.nju.alerp.vo.UserInfoVO;
 import edu.nju.alerp.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +49,8 @@ public class UserController {
     UserService userService;
     @Autowired
     OperationLogService operationLogService;
+    @Autowired
+    AuthService authService;
 
     /**
      * 删除用户
@@ -80,6 +83,23 @@ public class UserController {
         List<Integer> userCityRelationList = userService.getUserListByCityId(CommonUtils.getCity());
         Page<UserVO> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status, userCityRelationList);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+    }
+
+    /**
+     * 获取用户详细信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
+        User user = userService.getUser(id);
+        List<AuthUserVO> authList = authService.queryAuthUserByUserId(id);
+        UserInfoVO userInfoVO = UserInfoVO.builder()
+                .authList(authList)
+                .build();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return ResponseResult.ok(userInfoVO);
     }
 
     /**

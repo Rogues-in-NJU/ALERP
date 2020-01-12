@@ -345,7 +345,10 @@ res:
   password: string
   
   auth: [{
-    id: string,
+    id: number,
+    authId: number,
+    description: String,
+    userId: number,(可不取)
     action: number(0不可读 1只读 2可读写)
   }]
 }
