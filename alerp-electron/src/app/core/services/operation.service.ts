@@ -25,8 +25,5 @@ export class OperationService {
     );
   }
 
-  public abandon(id: string): Observable<ResultVO<any>> {
-    return of(null);
-  }
 
 }

@@ -42,7 +42,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
     };
     this.Operation.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<OperationInfoVO>>) => {
-        console.log(res);
         if (!res) {
           return;
         }
