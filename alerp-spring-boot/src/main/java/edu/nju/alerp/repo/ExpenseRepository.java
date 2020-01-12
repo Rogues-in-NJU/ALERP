@@ -9,5 +9,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author luhailong
  * @date 2019/12/21
  */
-public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
-}
+public interface ExpenseRepository extends JpaRepository<Expense, Integer> {}

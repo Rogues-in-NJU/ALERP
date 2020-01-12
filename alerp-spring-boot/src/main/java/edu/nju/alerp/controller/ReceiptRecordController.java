@@ -50,7 +50,7 @@ public class ReceiptRecordController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> deleteReceiptRecord(@PathVariable(value = "id") int id) {
         return ResponseResult.ok(receiptRecordService.deleteReceiptRecord(id));
     }

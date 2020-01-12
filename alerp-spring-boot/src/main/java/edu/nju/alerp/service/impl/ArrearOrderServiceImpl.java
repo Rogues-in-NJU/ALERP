@@ -10,6 +10,7 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.ReceiptRecordForArrearDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ReceiptRecord;
+import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.enums.ArrearOrderStatus;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ReceiptRecordStatus;
@@ -17,6 +18,7 @@ import edu.nju.alerp.repo.ArrearOrderRepository;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.service.ArrearOrderService;
 import edu.nju.alerp.service.ReceiptRecordService;
+import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
@@ -43,6 +45,9 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Autowired
     private ReceiptRecordService receiptRecordService;
+
+    @Autowired
+    private ShippingOrderService shippingOrderService;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -92,8 +97,11 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             createdById(createdBy).build();
         arrearDetailVO.setCustomerName(userService.getUser(customerId).getName());
         arrearDetailVO.setCreatedByName(userService.getUser(createdBy).getName());
-        // todo:shippingOrderService中提供根据arrearOrderId查询shippingOrderID的方法，然后填到VO中
         arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getToday()) > 0);
+        // 根据arrearOrderId查询出货单
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrderByArrearOrderId(id);
+        arrearDetailVO.setShippingOrderId(shippingOrder.getId());
+        arrearDetailVO.setShippingOrderCode(shippingOrder.getCode());
 
         // 获取收款单中的收款记录列表：(只显示已确认的收款记录，已废弃的不显示)
         List<ReceiptRecordForArrearDTO> targetDTOList = Lists.newArrayList();
