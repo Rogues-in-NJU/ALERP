@@ -1,5 +1,7 @@
 package edu.nju.alerp.service;
 
+import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
+import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.vo.ArrearDetailVO;
 import org.springframework.data.domain.Page;
@@ -31,20 +33,17 @@ public interface ArrearOrderService {
 
     /**
      * 修改收款单过期时间
-     *
-     * @param arrearOrderId
-     * @param dueDate
+     * @param dto
      * @return
      */
-    int updateDueDate(int arrearOrderId, String dueDate);
+    int updateDueDate(ArrearOrderDueDateDTO dto);
 
     /**
      * 修改收款单发票流水号
-     * @param arrearOrderId
-     * @param invoiceNumber
+     * @param dto
      * @return
      */
-    int updateInvoiceNumber(int arrearOrderId, String invoiceNumber);
+    int updateInvoiceNumber(ArrearOrderInvoiceNumberDTO dto);
 
     /**
      * 获取收款单详情(包括所有收款记录)

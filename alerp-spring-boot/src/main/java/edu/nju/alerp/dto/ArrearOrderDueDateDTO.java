@@ -19,4 +19,10 @@ public class ArrearOrderDueDateDTO {
      * 截止时间
      */
     private String dueDate;
+
+    /**
+     * 上次更新时间：作为乐观锁的版本号
+     */
+    private String updatedAt;
+
 }
