@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { RefreshableTab } from "../../tab/tab.component";
-import { ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { HttpErrorResponse } from "@angular/common/http";
-import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
-import { OperationInfoVO } from "../../../../core/model/operation";
-import { OperationService } from "../../../../core/services/operation.service";
+import {Component, OnInit} from "@angular/core";
+import {Router} from "@angular/router";
+import {RefreshableTab} from "../../tab/tab.component";
+import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {HttpErrorResponse} from "@angular/common/http";
+import {NzMessageService} from "ng-zorro-antd";
+import {TabService} from "../../../../core/services/tab.service";
+import {OperationInfoVO} from "../../../../core/model/operation";
+import {OperationService} from "../../../../core/services/operation.service";
 
 @Component({
   selector: 'user-management-operation',
@@ -36,7 +36,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
   }
 
   search(): void {
-    // console.log(this.userName);
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -57,10 +56,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
-  }
-
-  confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
   }
 
   refresh(): void {
