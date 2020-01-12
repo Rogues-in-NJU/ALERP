@@ -38,6 +38,11 @@ public class ArrearOrder {
     private String code;
 
     /**
+     * 所属城市
+     */
+    private int city;
+
+    /**
      * 收款单状态：未收款，部分收款，已完成，已废弃
      */
     private int status;

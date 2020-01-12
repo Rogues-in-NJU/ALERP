@@ -816,13 +816,13 @@ res:
     id: number,
     code: string,
     customerId: number,
-    customerName: string,
-    shippingOrderId： number;            //12.24新增
-    shippingOrderCode: string;           //12.24新增
+    **customerName: string,
+    **shippingOrderId： number;            //12.24新增
+    **shippingOrdSerCode: string;           //12.24新增
     receivableCash: number,
     receivedCash: number,
     dueDate: string,
-    overDue: boolean (是否逾期),
+    **overDue: boolean (是否逾期),
     status: number,
     createdAt: string,
     createdById: string,

@@ -35,9 +35,12 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public int addExpense(ExpenseDTO expenseDTO) {
-        Expense expense = Expense.builder().createdAt(DateUtils.getToday()).createdBy(CommonUtils.getUserId()).
-            code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
-            .build();
+        Expense expense = Expense.builder().
+            createdAt(DateUtils.getToday()).
+            createdBy(CommonUtils.getUserId()).
+            code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity()))).
+            city(CommonUtils.getCity()).
+            build();
         BeanUtils.copyProperties(expenseDTO, expense);
         Expense result = expenseRepository.save(expense);
         return result.getId();
@@ -66,8 +69,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         List<Expense> expenseList = expenseRepository.findAll();
         // 只返回未删除的公司支出
         List<Expense> targetList = Lists.newArrayList();
-        for (Expense expense:expenseList){
-            if (expense.getDeletedAt()==null){
+        for (Expense expense : expenseList) {
+            if (expense.getDeletedAt() == null) {
                 targetList.add(expense);
             }
         }

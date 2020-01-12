@@ -158,6 +158,7 @@ public class ShippingOrderController {
                     .dueDate(DateUtils.getDueDate(customer.getPayDate()))
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(0)
+                    .city(CommonUtils.getCity())
                     .build();
             //先生成收款单，返回id 更新出货单
             int arrearOrderId = arrearOrderService.saveArrearOrder(arrearOrder);
