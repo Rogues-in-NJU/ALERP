@@ -22,7 +22,7 @@ public interface ShippingOrderService {
 
     int saveShippingOrderProduct(ShippingOrderProduct shippingOrderProduct);
 
-    int deleteShippingOrder(int id);
+    int deleteShippingOrder(int id) throws Exception;
 
     boolean printShippingOrder(int id);
 

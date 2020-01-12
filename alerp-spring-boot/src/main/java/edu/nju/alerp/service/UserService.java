@@ -19,13 +19,13 @@ import java.util.List;
  */
 public interface UserService {
 
-    int saveUser(UserDTO userDTO);
+    int saveUser(UserDTO userDTO) throws Exception;
 
     User getUser(int id);
 
     User getUserByPhoneNumber(String phoneNumber);
 
-    int deleteUser(int id);
+    int deleteUser(int id) throws Exception;
 
     List<User> getUserList();
 

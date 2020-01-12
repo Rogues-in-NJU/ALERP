@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
     }
 
     @Override
-    public int saveUser(UserDTO userDTO) {
+    public int saveUser(UserDTO userDTO) throws Exception {
         User user;
         if (userDTO.getId() == null) {
             user = User.builder()
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
     }
 
     @Override
-    public int deleteUser(int id) {
+    public int deleteUser(int id) throws Exception {
         User user = getUser(id);
         if (user == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户id不存在！");

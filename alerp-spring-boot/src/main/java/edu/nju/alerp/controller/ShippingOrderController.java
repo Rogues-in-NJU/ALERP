@@ -66,9 +66,14 @@ public class ShippingOrderController {
         ArrearOrder arrearOrder = arrearOrderService.getOne(arrearOrderId);
         if (arrearOrder.getReceivedCash() > 0) {
             //如果已收金额大于0，则不能被出货单不能被废弃。
-            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃");
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃")));
         }
-        int res = shippingOrderService.deleteShippingOrder(id);
+        int res = 0;
+        try {
+            res = shippingOrderService.deleteShippingOrder(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
 //        根据id获取加工单，修改状态
@@ -126,19 +131,22 @@ public class ShippingOrderController {
             List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
 
             //校验计价方式，遍历商品获取所有加工单
-            shippingOrderDTO.getProducts().forEach(p -> {
-                if (PriceTypeEnum.of(p.getPriceType()) == null) {
-                    throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "计价方式传值错误!");
-                }
-                ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
-                BeanUtils.copyProperties(p, shippingOrderProduct);
-                shippingOrderProductList.add(shippingOrderProduct);
-            });
-
+            try {
+                shippingOrderDTO.getProducts().forEach(p -> {
+                    if (PriceTypeEnum.of(p.getPriceType()) == null) {
+                        throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "计价方式错误！");
+                    }
+                    ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+                    BeanUtils.copyProperties(p, shippingOrderProduct);
+                    shippingOrderProductList.add(shippingOrderProduct);
+                });
+            } catch (Exception e) {
+                return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+            }
             int userId = CommonUtils.getUserId();
             Customer customer = customerService.getCustomer(shippingOrderDTO.getCustomerId());
             if (customer == null) {
-                throw new NJUException(ExceptionEnum.OTHER_ERROR, "出货单客户不存在！");
+                return ResponseResult.fail(ExceptionWrapper.customExceptionWrapper(ExceptionEnum.ILLEGAL_REQUEST, "出货单客户不存在"));
             }
             ArrearOrder arrearOrder = ArrearOrder.builder()
                     .createdAt(DateUtils.getToday())

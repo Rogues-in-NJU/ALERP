@@ -58,7 +58,13 @@ public class UserController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(userService.deleteUser(id));
+        int res = 0;
+        try {
+            res = userService.deleteUser(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseResult.ok(res);
     }
 
     /**
