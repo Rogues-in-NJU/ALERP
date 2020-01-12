@@ -76,6 +76,7 @@ public class UserController {
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status) {
+//        List<UserCityRelation> userCityRelationList = userService.
         Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }

@@ -57,6 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice = SpecialPrice.builder()
+                            .customerId(customerDTO.getId())
                             .createdAt(DateUtils.getToday())
                             .createdBy(CommonUtils.getUserId())
                             .updatedAt(DateUtils.getToday())
@@ -90,6 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .productId(specialPricesDTO.getProductId())
                                 .price(specialPricesDTO.getPrice())
                                 .priceType(specialPricesDTO.getPriceType())
+                                .customerId(customerDTO.getId())
                                 .build();
                         specialPricesRepository.saveAndFlush(specialPrice);
                     } else {
