@@ -62,6 +62,19 @@ public class ArrearOrderController {
         return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
     }
 
+    /**
+     * 根据如下搜索条件来搜索收款单，返回收款单列表
+     * @param pageIndex
+     * @param pageSize
+     * @param id
+     * @param customerName
+     * @param status
+     * @param invoiceNumber
+     * @param shippingOrderId
+     * @param createAtStartTime
+     * @param createAtEndTime
+     * @return
+     */
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
