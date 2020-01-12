@@ -66,7 +66,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取收款单详情")
     public ResponseResult<ArrearDetailVO> findArrearDetails(@PathVariable int id) {
         return ResponseResult.ok(arrearOrderService.findArrearDetails(id));
     }
@@ -79,7 +79,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/due-date", method = RequestMethod.POST)
+    @RequestMapping(value = "/due-date", method = RequestMethod.POST, name = "修改收款单截止日期")
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateDueDate(dto));
     }
@@ -92,12 +92,10 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/invoice-number", method = RequestMethod.POST)
+    @RequestMapping(value = "/invoice-number", method = RequestMethod.POST, name = "修改发票流水号")
     public ResponseResult<Integer> updateInvoiceNumber(@RequestBody ArrearOrderInvoiceNumberDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto));
     }
-
-
 
     /**
      * 根据如下搜索条件来搜索收款单，返回收款单列表
@@ -116,7 +114,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "根据搜索条件来搜索收款单")
     public ResponseResult<ListResponse> getArrearOrderList(@RequestParam(value = "pageIndex") int pageIndex,
         @RequestParam(value = "pageSize") int pageSize,
         @RequestParam(value = "id", required = false, defaultValue = "") String code,
