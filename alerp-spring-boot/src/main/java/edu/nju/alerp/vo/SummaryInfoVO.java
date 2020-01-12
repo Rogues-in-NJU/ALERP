@@ -1,10 +1,15 @@
 package edu.nju.alerp.vo;
 
+import lombok.Builder;
+import lombok.Data;
+
 /**
  * 汇总信息VO
  * @author luhailong
  * @date 2020/01/12
  */
+@Data
+@Builder
 public class SummaryInfoVO {
     /**
      * 加工单铝材总重量
