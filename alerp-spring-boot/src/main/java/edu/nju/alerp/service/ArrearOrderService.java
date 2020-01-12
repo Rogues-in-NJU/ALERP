@@ -39,6 +39,14 @@ public interface ArrearOrderService {
     int updateDueDate(int arrearOrderId, String dueDate);
 
     /**
+     * 修改收款单发票流水号
+     * @param arrearOrderId
+     * @param invoiceNumber
+     * @return
+     */
+    int updateInvoiceNumber(int arrearOrderId, String invoiceNumber);
+
+    /**
      * 获取收款单详情(包括所有收款记录)
      *
      * @param id

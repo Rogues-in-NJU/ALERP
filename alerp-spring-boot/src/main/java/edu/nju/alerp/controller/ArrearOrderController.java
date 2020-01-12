@@ -7,6 +7,7 @@ import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
+import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.service.ArrearOrderService;
@@ -82,6 +83,21 @@ public class ArrearOrderController {
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateDueDate(dto.getId(), dto.getDueDate()));
     }
+
+    /**
+     * 修改发票流水号
+     *
+     * @param dto
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/invoice-number", method = RequestMethod.POST)
+    public ResponseResult<Integer> updateInvoiceNumber(@RequestBody ArrearOrderInvoiceNumberDTO dto) {
+        return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto.getId(), dto.getInvoiceNumber()));
+    }
+
+
 
     /**
      * 根据如下搜索条件来搜索收款单，返回收款单列表

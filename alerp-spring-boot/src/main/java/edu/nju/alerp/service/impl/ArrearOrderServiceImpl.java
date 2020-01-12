@@ -78,6 +78,20 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     }
 
     @Override
+    public int updateInvoiceNumber(int arrearOrderId, String invoiceNumber) {
+        // todo:之后有时间把修改XXX改成一个通用方法，用反射去修改值就可以了
+        ArrearOrder arrearOrder = arrearOrderRepository.getOne(arrearOrderId);
+        if (arrearOrder == null || arrearOrder.getStatus() == ArrearOrderStatus.ABANDONED.getCode()) {
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到收款单或单据已废弃");
+        }
+        arrearOrder.setInvoiceNumber(invoiceNumber);
+        arrearOrder.setUpdatedAt(DateUtils.getToday());
+        arrearOrder.setUpdatedBy(CommonUtils.getUserId());
+        ArrearOrder result = arrearOrderRepository.save(arrearOrder);
+        return result.getId();
+    }
+
+    @Override
     public ArrearDetailVO findArrearDetails(int id) {
         ArrearOrder arrearOrder = arrearOrderRepository.getOne(id);
         if (arrearOrder == null) {
