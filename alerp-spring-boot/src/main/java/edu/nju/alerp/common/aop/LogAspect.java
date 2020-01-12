@@ -10,14 +10,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,11 +45,13 @@ public class LogAspect {
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
-        int userId =  CommonUtils.getUserId();
+        int userId = CommonUtils.getUserId();
         log.info("[Controller-Log] time:", System.currentTimeMillis());
         String methodInvokeLog = buildMethodInvokeLog(joinPoint, userId);
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
         try {
-            logOperate(request, userId);
+            logOperate(userId, name);
             Object result = joinPoint.proceed();
             log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
@@ -57,18 +63,17 @@ public class LogAspect {
         }
     }
 
-    private void logOperate(HttpServletRequest request, Integer userId) {
-        EXECUTOR_SERVICE.submit(() -> doLogOperate(request, userId));
+    private void logOperate(Integer userId, String name) {
+        EXECUTOR_SERVICE.submit(() -> doLogOperate(userId, name));
     }
 
-    private void doLogOperate(HttpServletRequest request, Integer userId) {
+    private void doLogOperate(Integer userId, String name) {
         try {
-            String description = request.getRequestURL().toString() + " Method:" + request.getMethod();
             OperationLog operationLog = OperationLog.builder()
                     .createdAt(TimeUtil.dateFormat(new Date()))
                     .userId(userId)
                     .userName(userService.getUser(userId).getName())
-                    .description(description)
+                    .description(name)
                     .build();
             operationLogService.addOperationLog(operationLog);
         } catch (Exception e) {

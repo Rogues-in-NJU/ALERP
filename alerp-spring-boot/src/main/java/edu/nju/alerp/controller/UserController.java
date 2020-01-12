@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +60,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除用户")
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
@@ -75,7 +76,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取用户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
@@ -91,7 +92,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取用户详细信息")
     public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
         User user = userService.getUser(id);
         List<AuthUserVO> authList = authService.queryAuthUserByUserId(id);
@@ -108,7 +109,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET, name = "用户操作日志查询")
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
                                                          @RequestParam(value = "pageSize") int pageSize,
                                                          @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
@@ -125,7 +126,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增用户/修改用户信息")
     public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
         try {
             int result = userService.saveUser(userDTO);
@@ -142,7 +143,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, name = "用户登录")
     public ResponseResult<LoginResultDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
@@ -164,7 +165,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET, name = "用户登出")
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
