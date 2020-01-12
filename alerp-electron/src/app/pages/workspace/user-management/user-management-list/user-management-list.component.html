@@ -10,15 +10,9 @@
 <div class="content">
   <div nz-form nzLayout="inline">
     <nz-form-item>
-      <nz-form-label>姓名</nz-form-label>
+      <nz-form-label>姓名/手机号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="userName"/>
-      </nz-form-control>
-    </nz-form-item>
-    <nz-form-item>
-      <nz-form-label>手机号</nz-form-label>
-      <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="userPhoneNumber"/>
+        <input nz-input type="text" [(ngModel)]="name"/>
       </nz-form-control>
     </nz-form-item>
 
@@ -30,10 +24,13 @@
     <div class="table-wrapper">
       <nz-table #userManagementTable
                 nzShowSizeChanger
+                [nzFrontPagination]="false"
                 [nzData]="userList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
-                [nzTotal]="totalPages"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
@@ -49,7 +46,7 @@
           <td nzLeft="0px">
             <a routerLink="/workspace/user-management/info/{{ data.id }}">{{ data.name }}</a>
           </td>
-          <td>{{ data.phone_number}}</td>
+          <td>{{ data.phoneNumber}}</td>
           <td>
             <nz-tag nzColor="{{ data.status | user_management_status_color }}">{{ data.status | user_management_status
               }}
@@ -63,7 +60,7 @@
                nz-popconfirm
                nzPopconfirmTitle="确认删除?"
                nzPopconfirmPlacement="top"
-               (nzOnConfirm)="confirmAbandon(data.id)">
+               (nzOnConfirm)="confirmAbandon(data.id)" *ngIf="data.status===1">
               删除
             </a>
           </td>

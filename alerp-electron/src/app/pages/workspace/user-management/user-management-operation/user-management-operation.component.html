@@ -10,6 +10,16 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
+      <nz-form-label>操作时间</nz-form-label>
+      <nz-form-control>
+        <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                         nzFormat="yyyy-MM-dd HH:mm"
+                         [nzPlaceHolder]="['开始时间', '结束时间']"
+                         [(ngModel)]="timeRange">
+        </nz-range-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
       <nz-form-control>
         <button nz-button nzType="primary" (click)="search()">搜索</button>
       </nz-form-control>
@@ -17,10 +27,13 @@
     <div class="table-wrapper">
       <nz-table #userManagementTable
                 nzShowSizeChanger
+                [nzFrontPagination]="false"
                 [nzData]="operationList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
-                [nzTotal]="totalPages"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
@@ -32,9 +45,9 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of userManagementTable.data">
-          <td nzLeft="0px">{{ data.user_name }}</td>
+          <td nzLeft="0px">{{ data.userName }}</td>
           <td>{{ data.description}}</td>
-          <td>{{ data.created_at}}</td>
+          <td>{{ data.createdAt}}</td>
         </tr>
         </tbody>
       </nz-table>

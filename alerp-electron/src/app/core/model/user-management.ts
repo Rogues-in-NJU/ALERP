@@ -4,7 +4,7 @@ export interface UserManagementInfoVO extends BaseInfo {
 
   id?: number;
   name?: string;
-  phone_number?: string;
+  phoneNumber?: string;
   status?: number;
 
 }

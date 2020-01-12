@@ -7,6 +7,7 @@ import edu.nju.alerp.entity.OperationLog;
 import edu.nju.alerp.entity.User;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.entity.UserCityRelation;
+import edu.nju.alerp.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -29,7 +30,7 @@ public interface UserService {
 
     List<User> getUserList();
 
-    Page<User> getUserList(Pageable pageable, String name, Integer status);
+    Page<UserVO> getUserList(Pageable pageable, String name, Integer status, List<Integer> userList);
 
     /**
      * 通过用户的姓名获取id
@@ -40,6 +41,8 @@ public interface UserService {
     int getIdFromName(String name);
 
     List<Integer> getCitiesByUserId(int userId);
+
+    List<Integer> getUserListByCityId(int cityId);
 
     LoginResultDTO checkLogin(LoginDTO loginDTO);
 

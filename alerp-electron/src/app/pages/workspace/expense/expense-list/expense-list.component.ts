@@ -7,7 +7,7 @@ import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
 import {ExpenseService} from "../../../../core/services/expense.service";
 import {ExpenseInfoVO} from "../../../../core/model/expense";
-import { Objects } from "../../../../core/services/util.service";
+import {Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'expense-list',

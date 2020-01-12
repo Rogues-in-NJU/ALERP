@@ -1,7 +1,9 @@
 package edu.nju.alerp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,6 +16,8 @@ import javax.persistence.*;
 @Builder
 @Entity
 @Table(name = "operation_log")
+@AllArgsConstructor
+@NoArgsConstructor
 public class OperationLog {
     /**
      * 自增主键

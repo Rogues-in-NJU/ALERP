@@ -2,6 +2,8 @@ package edu.nju.alerp.repo;
 
 import edu.nju.alerp.entity.SpecialPrice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,5 +14,6 @@ import java.util.List;
  */
 public interface SpecialPricesRepository extends JpaRepository<SpecialPrice, Integer> {
 
-    List<SpecialPrice> findByCustomerId(int customerId);
+    @Query("select s from SpecialPrice s where s.customerId = :customerId and s.deletedAt = null")
+    List<SpecialPrice> findByCustomerId(@Param("customerId") int customerId);
 }

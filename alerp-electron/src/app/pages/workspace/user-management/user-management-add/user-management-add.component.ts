@@ -46,7 +46,7 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     this.userManagementForm = this.fb.group({
       name: [ null, Validators.required ],
-      phone_number: [ null, Validators.required ],
+      phoneNumber: [ null, Validators.required ],
       radioValue1: [ 0, Validators.required ],
       radioValue2: [ null, Validators.required ]
     });
@@ -60,7 +60,7 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     let formData: any = this.userManagementForm.getRawValue();
     let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
-      phone_number: formData.phone_number,
+      phoneNumber: formData.phoneNumber,
       // radioValue1: formData.radioValue1,
       // radioValue2: formData.radioValue2
     };

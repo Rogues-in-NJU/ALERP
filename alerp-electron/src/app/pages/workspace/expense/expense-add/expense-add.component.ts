@@ -57,7 +57,7 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
       title: formData.title,
       description: formData.description,
       cash: formData.cash,
-      doneAt: formData.doneAt,
+      doneAt: DateUtils.format(formData.doneAt),
     };
     // console.log(formData);
     this.isSaving = true;
