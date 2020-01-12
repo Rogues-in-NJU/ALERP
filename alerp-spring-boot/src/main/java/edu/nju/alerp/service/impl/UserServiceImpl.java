@@ -141,7 +141,8 @@ public class UserServiceImpl implements UserService, InitializingBean {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
             }
-            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+//            sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
+            //todo
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
