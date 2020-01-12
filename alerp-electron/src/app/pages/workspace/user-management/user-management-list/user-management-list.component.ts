@@ -7,7 +7,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
 import {UserManagementInfoVO} from "../../../../core/model/user-management";
-import {StringUtils} from "../../../../core/services/util.service";
+import {StringUtils, Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-management-list',
@@ -67,6 +67,19 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
 
   confirmAbandon(id: string): void {
     console.log('confirm abandon: ' + id);
+    this.UserManagement.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+      });
   }
 
   refresh(): void {
