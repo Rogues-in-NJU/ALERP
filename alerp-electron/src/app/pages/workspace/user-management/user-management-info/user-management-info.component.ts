@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {CloseTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 import {ClosableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {ResultVO} from "../../../../core/model/result-vm";
@@ -22,6 +22,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   userManagementId: string;
   userManagementData: UserManagementInfoVO;
   isSaving: boolean = false;
+  // auths: userAuthVO[];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -47,6 +48,8 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         }
         this.isLoading = false;
         this.userManagementData = res.data;
+        // this.auths =
+        console.log(this.userManagementData)
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });

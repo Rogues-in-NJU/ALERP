@@ -21,7 +21,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzSpan="8">N
+      <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
           <nz-form-label nzRequired nzSpan="6">电话号码</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
@@ -31,25 +31,22 @@
       </div>
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">权限1</nz-form-label>
+          <nz-form-label nzRequired nzSpan="6">初始密码</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <nz-radio-group formControlName="radioValue1">
-              <label nz-radio nzValue="0">不可读</label>
-              <label nz-radio nzValue="1">只读</label>
-              <label nz-radio nzValue="2">读写</label>
-            </nz-radio-group>
+            <input nz-input formControlName="password" class="info-input"/>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">权限2</nz-form-label>
+          <nz-form-label nzRequired nzSpan="6">城市</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <nz-radio-group formControlName="radioValue2">
-              <label nz-radio nzValue="0">不可读</label>
-              <label nz-radio nzValue="1">只读</label>
-              <label nz-radio nzValue="2">读写</label>
-            </nz-radio-group>
+            <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="saveCityTmp($event)">
+              <div nz-row>
+                <div nz-col nzSpan="8"><label nz-checkbox nzValue="苏州">苏州</label></div>
+                <div nz-col nzSpan="8"><label nz-checkbox nzValue="昆山">昆山</label></div>
+              </div>
+            </nz-checkbox-wrapper>
           </nz-form-control>
         </nz-form-item>
       </div>
