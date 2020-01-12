@@ -18,6 +18,7 @@ import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.util.PasswordUtil;
+import edu.nju.alerp.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -77,7 +78,7 @@ public class UserController {
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status) {
         List<Integer> userCityRelationList = userService.getUserListByCityId(CommonUtils.getCity());
-        Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status, userCityRelationList);
+        Page<UserVO> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status, userCityRelationList);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 

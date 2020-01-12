@@ -21,12 +21,15 @@ import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.PasswordUtil;
+import edu.nju.alerp.vo.UserVO;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -135,7 +138,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
     }
 
     @Override
-    public Page<User> getUserList(Pageable pageable, String name, Integer status, List<Integer> userList) {
+    public Page<UserVO> getUserList(Pageable pageable, String name, Integer status, List<Integer> userList) {
         QueryContainer<User> sp = new QueryContainer<>();
         try {
             if (status != null) {
@@ -153,7 +156,14 @@ public class UserServiceImpl implements UserService, InitializingBean {
         } catch (Exception e) {
             log.error("Value is null", e);
         }
-        return sp.isEmpty() ? userRepository.findAll(pageable) : userRepository.findAll(sp, pageable);
+        Page<User> ans = sp.isEmpty() ? userRepository.findAll(pageable) : userRepository.findAll(sp, pageable);
+        List<UserVO> userVOList = new ArrayList<>();
+        ans.getContent().forEach(u -> {
+            UserVO userVO = UserVO.builder().build();
+            BeanUtils.copyProperties(u, userVO);
+            userVOList.add(userVO);
+        });
+        return new PageImpl<>(userVOList, pageable, ans.getTotalElements());
     }
 
     @Override
