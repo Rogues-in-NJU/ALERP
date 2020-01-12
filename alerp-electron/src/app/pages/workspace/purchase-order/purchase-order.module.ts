@@ -7,6 +7,8 @@ import { CoreModule } from "../../../core/core.module";
 import { SharedModule } from "../../../shared/shared.module";
 import { PurchaseOrderInfoComponent } from "./purchase-order-info/purchase-order-info.component";
 import {
+  PurchaseOrderPaymentRecordColorPipe,
+  PurchaseOrderPaymentRecordPipe,
   PurchaseOrderPriceTypePipe,
   PurchaseOrderStatusColorPipe,
   PurchaseOrderStatusPipe
@@ -58,7 +60,9 @@ const routes: Routes = [
     PurchaseOrderInfoComponent,
     PurchaseOrderStatusPipe,
     PurchaseOrderStatusColorPipe,
-    PurchaseOrderPriceTypePipe
+    PurchaseOrderPriceTypePipe,
+    PurchaseOrderPaymentRecordPipe,
+    PurchaseOrderPaymentRecordColorPipe
   ],
   exports: [ RouterModule ]
 })

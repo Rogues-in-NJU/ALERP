@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 @Builder
 public class SpecialPricesVO {
-    private int id;
-    private int productId;
+    private Integer id;
+    private Integer productId;
     private String productName;
     private double price;
     private String createdAt;
-    private int createdById;
+    private Integer createdById;
     private String createdByName;
 }

@@ -38,4 +38,8 @@ export interface ShippingOrderProductInfoVO extends BaseInfo{
   expectedWeight?: number
   weight?: number
   cash?: number
+
+  isEditable?: boolean;
+  specialPriceType?: number;
+  specialPrice?: number;
 }

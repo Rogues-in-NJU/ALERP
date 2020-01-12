@@ -13,19 +13,18 @@ import java.util.List;
 @Data
 @Builder
 public class CustomerVO {
-    private int id;
+    private Integer id;
     private String name;
-    private int type;
+    private Integer type;
     private String shorthand;
-    private String city;
-    private int period;
-    private int payDate;
+    private Integer period;
+    private Integer payDate;
     private String description;
-    private int createdBy;
+    private Integer createdBy;
     private String createdAt;
-    private int deletedBy;
+    private Integer deletedBy;
     private String deletedAt;
-    private int updatedBy;
+    private Integer updatedBy;
     private String updatedAt;
     private List<SpecialPricesVO> specialPrices;
 }

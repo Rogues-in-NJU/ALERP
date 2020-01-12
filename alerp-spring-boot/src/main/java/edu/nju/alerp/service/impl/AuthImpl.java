@@ -13,6 +13,7 @@ import edu.nju.alerp.entity.AuthUser;
 import edu.nju.alerp.repo.AuthRepository;
 import edu.nju.alerp.repo.AuthUserRepository;
 import edu.nju.alerp.service.AuthService;
+import edu.nju.alerp.vo.AuthUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.InitializingBean;
@@ -161,6 +162,28 @@ public class AuthImpl implements AuthService, InitializingBean {
         authUserRepository.saveAll(authUsers);
         authUserRepository.flush();
         return 0;
+    }
+
+    @Override
+    public List<AuthUserVO> queryAuthUserByUserId(int userId) {
+        QueryContainer<AuthUser> authUserSp = new QueryContainer<>();
+        try {
+            authUserSp.add(ConditionFactory.equal("userId", userId));
+        }catch (Exception e) {
+            log.error("error", e);
+        }
+        List<AuthUser> authUsers = authUserRepository.findAll(authUserSp);
+        List<AuthUserVO> result = authUsers.parallelStream()
+                                            .map(authUser -> {
+                                                AuthUserVO authUserVO = new AuthUserVO();
+                                                authUserVO.setId(authUser.getId());
+                                                authUserVO.setAuthId(authUser.getAuthId());
+                                                authUserVO.setDescription(authCache.get(authUser.getAuthId()).getDescription());
+                                                authUserVO.setUserId(authUser.getUserId());
+                                                authUserVO.setAction(authUser.getAction());
+                                                return authUserVO;
+                                            }).collect(Collectors.toList());
+        return result;
     }
 
     private AuthUser findAuthUserFromSql(int userId, int authId) {

@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ProductAvgPriceVO {
-    private int id;
+    private Integer id;
     private String name;
     private double totalWeight;
     private double averagePrice;

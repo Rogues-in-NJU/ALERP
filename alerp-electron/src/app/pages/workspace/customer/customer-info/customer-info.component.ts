@@ -1,13 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { CustomerService } from "../../../../core/services/customer.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { CustomerSpecialPriceVO, CustomerVO } from "../../../../core/model/customer";
 import { Objects, StringUtils } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
 import { ProductVO } from "../../../../core/model/product";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
@@ -89,11 +89,15 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     this.refresh();
 
     const getProducts: any = (name: string) => {
+      if (StringUtils.isEmpty(name)) {
+        return of([]);
+      }
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
           pageIndex: 1,
-          pageSize: 100000
+          pageSize: 100000,
+          name: name
         }));
       return t.pipe(map(res => {
         if (!Objects.valid(res)) {
@@ -122,10 +126,10 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
       this.customerDataValidate[ k ] = null;
     }
     this.customerDataCache = {
-      name: '',
-      type: 1,
-      period: 1,
-      payDate: 20
+      name: null,
+      type: null,
+      period: null,
+      payDate: null
     };
     Object.assign(this.customerDataCache, this.customerData);
     console.log(this.customerDataCache);
@@ -156,22 +160,9 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     if (!valid) {
       return;
     }
+    Object.assign(this.customerData, this.customerDataCache);
     this.isInfoSaving = true;
-    this.customer.save(this.customerDataCache)
-      .subscribe((res: ResultVO<any>) => {
-        if (!Objects.valid(res)) {
-          return;
-        }
-        if (res.code !== 200) {
-          return;
-        }
-      }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
-      }, () => {
-        this.refresh();
-        this.isInfoSaving = false;
-        this.isInfoEditing = false;
-      });
+    this.saveCustomer(this.customerData);
   }
 
   cancelInfoEdit(): void {
@@ -240,6 +231,7 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
 
   confirmSpecialPriceDelete(_id: number): void {
     this.customerData.specialPrices = this.customerData.specialPrices.filter(item => item[ '_id' ] !== _id);
+    this.saveCustomer(this.customerData);
   }
 
   cancelSpecialPriceEdit(_id: number): void {
@@ -256,11 +248,12 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     const index = this.customerData.specialPrices.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.customerData.specialPrices[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
-    // TODO: 提交远程
+    this.saveCustomer(this.customerData);
   }
 
   refresh(): void {
     this.isLoading = true;
+    this.isInfoEditing = false;
     Object.assign(this.editCache, this.defaultEditCache);
     this.customer.find(this.customerId)
       .subscribe((res: ResultVO<CustomerVO>) => {
@@ -276,6 +269,29 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
         }
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+      });
+  }
+
+  saveCustomer(customer: CustomerVO): void {
+    this.isInfoSaving = true;
+    this.customer.save(customer)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('保存失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('保存成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+        this.isInfoSaving = false;
+        this.isInfoEditing = false;
       });
   }
 

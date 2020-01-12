@@ -19,9 +19,8 @@ public class CustomerDTO {
     private String shorthand;
     private int type;
     private int period;
-    private int pay_date;
-    private int city;
+    private int payDate;
     private String description;
-    private String updateTime;
+    private String updatedAt;
     private List<SpecialPricesDTO> specialPrices;
 }

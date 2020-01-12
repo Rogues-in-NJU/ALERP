@@ -2,7 +2,7 @@
   <nz-page-header-title>客户详情</nz-page-header-title>
   <nz-page-header-extra>
     <ng-container *ngIf="!isInfoEditing">
-      <button nz-button nzType="primary" (click)="startInfoEdit()">
+      <button nz-button nzType="primary" (click)="startInfoEdit()" [disabled]="editCache._id !== null">
         <i nz-icon nzType="edit" nzTheme="outline"></i>
         编辑
       </button>
@@ -104,7 +104,7 @@
             style="display: inline-block; margin-left: 20px"
             (click)="addSpecialPriceRow()"
             nzSize="small"
-            [disabled]="editCache._id !== null">
+            [disabled]="editCache._id !== null || isInfoEditing">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增
     </button>
@@ -175,7 +175,7 @@
         </ng-template>
       </td>
       <td>
-        <ng-container *ngIf="editCache._id === null">
+        <ng-container *ngIf="editCache._id === null || isInfoEditing">
           <a (click)="startEditSpecialPrice(data._id)">编辑</a>
           <a nz-popconfirm
              style="margin-left: 5px"

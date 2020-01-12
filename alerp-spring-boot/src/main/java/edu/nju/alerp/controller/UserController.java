@@ -58,7 +58,11 @@ public class UserController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(userService.deleteUser(id));
+        try {
+            return ResponseResult.ok(userService.deleteUser(id));
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
     }
 
     /**
@@ -71,7 +75,8 @@ public class UserController {
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
-                                             @RequestParam(value = "status") int status) {
+                                             @RequestParam(value = "status", required = false) Integer status) {
+//        List<UserCityRelation> userCityRelationList = userService.
         Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }

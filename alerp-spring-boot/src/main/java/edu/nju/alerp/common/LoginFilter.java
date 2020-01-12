@@ -17,7 +17,7 @@ import java.io.IOException;
  * @CreateDate: 2020-01-05 21:29
  */
 @Slf4j
-@WebFilter(filterName = "LoginFilter", urlPatterns = {"/api/*"})
+//@WebFilter(filterName = "LoginFilter", urlPatterns = {"/api/*"})
 public class LoginFilter implements Filter {
 
     String[] accessUri = {"/api/user/login"};

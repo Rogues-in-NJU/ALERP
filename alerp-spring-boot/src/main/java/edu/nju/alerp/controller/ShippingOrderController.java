@@ -1,6 +1,7 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.*;
+import edu.nju.alerp.dto.ProcessingOrderIdCodeDTO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.*;
@@ -65,14 +66,20 @@ public class ShippingOrderController {
         ArrearOrder arrearOrder = arrearOrderService.getOne(arrearOrderId);
         if (arrearOrder.getReceivedCash() > 0) {
             //如果已收金额大于0，则不能被出货单不能被废弃。
-            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃");
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "收款单已收款，无法废弃")));
         }
-        int res = shippingOrderService.deleteShippingOrder(id);
+        int res = 0;
+        try {
+            res = shippingOrderService.deleteShippingOrder(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //修改所有对应加工单的状态为"未完成"
         List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
 //        根据id获取加工单，修改状态
         processingIdList.forEach(p -> {
             ProcessingOrder processingOrder = processOrderService.getOne(p);
+            processingOrder.setShippingOrderId(0);
             processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             processOrderService.savaProcessingOrder(processingOrder);
         });
@@ -119,11 +126,27 @@ public class ShippingOrderController {
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
-            int result = shippingOrderService.addShippingOrder(shippingOrderDTO);
+            ShippingOrder shippingOrder = shippingOrderService.addShippingOrder(shippingOrderDTO);
+            List<Integer> processingOrderList = shippingOrderDTO.getProcessingOrderIdsCodes().stream().map(ProcessingOrderIdCodeDTO::getProcessingOrderId).collect(Collectors.toList());
+            List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
+
+            //校验计价方式，遍历商品获取所有加工单
+            try {
+                shippingOrderDTO.getProducts().forEach(p -> {
+                    if (PriceTypeEnum.of(p.getPriceType()) == null) {
+                        throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "计价方式错误！");
+                    }
+                    ShippingOrderProduct shippingOrderProduct = ShippingOrderProduct.builder().build();
+                    BeanUtils.copyProperties(p, shippingOrderProduct);
+                    shippingOrderProductList.add(shippingOrderProduct);
+                });
+            } catch (Exception e) {
+                return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+            }
             int userId = CommonUtils.getUserId();
             Customer customer = customerService.getCustomer(shippingOrderDTO.getCustomerId());
             if (customer == null) {
-                throw new NJUException(ExceptionEnum.OTHER_ERROR, "出货单客户不存在！");
+                return ResponseResult.fail(ExceptionWrapper.customExceptionWrapper(ExceptionEnum.ILLEGAL_REQUEST, "出货单客户不存在"));
             }
             ArrearOrder arrearOrder = ArrearOrder.builder()
                     .createdAt(DateUtils.getToday())
@@ -134,11 +157,25 @@ public class ShippingOrderController {
                     .customerId(shippingOrderDTO.getCustomerId())
                     .dueDate(DateUtils.getDueDate(customer.getPayDate()))
                     .receivableCash(shippingOrderDTO.getReceivableCash())
-                    .receivedCash(shippingOrderDTO.getCash())
+                    .receivedCash(0)
                     .build();
+            //先生成收款单，返回id 更新出货单
             int arrearOrderId = arrearOrderService.saveArrearOrder(arrearOrder);
+            shippingOrder.setArrearOrderId(arrearOrderId);
+            int shippingId = shippingOrderService.saveShippingOrder(shippingOrder);
+            shippingOrderProductList.forEach(s -> {
+                s.setShippingOrderId(shippingId);
+                shippingOrderService.saveShippingOrderProduct(s);
+            });
+            processingOrderList.forEach(p -> {
+                ProcessingOrder processingOrder = processOrderService.getOne(p);
+                processingOrder.setShippingOrderId(shippingId);
+                processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
+                //待优化 可传list一次性更新
+                processOrderService.savaProcessingOrder(processingOrder);
+            });
             ShippingArrearRelationVO shippingArrearRelationVO = ShippingArrearRelationVO.builder()
-                    .shippingOrderId(result)
+                    .shippingOrderId(shippingId)
                     .arrearOrderId(arrearOrderId)
                     .build();
             return ResponseResult.ok(shippingArrearRelationVO);
@@ -163,8 +200,9 @@ public class ShippingOrderController {
         List<ProductVO> productVOList = new ArrayList<>();
         shippingOrderProductList.forEach(s -> {
             Product product = productService.findProductById(s.getProductId());
+            int processingId = s.getProcessingOrderId();
             ProductVO productVO = ProductVO.builder()
-                    .processingOrderCode(processOrderService.findProcessingById(s.getProcessingOrderId()).getCode())
+                    .processingOrderCode(processingId == 0 ? "" : processOrderService.getOne(processingId).getCode())
                     .productName(product.getName())
                     .type(product.getType())
                     .build();

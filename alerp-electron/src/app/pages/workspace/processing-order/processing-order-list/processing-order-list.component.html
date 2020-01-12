@@ -98,7 +98,8 @@
         </td>
         <td nzRight="0px">
           <a routerLink="/workspace/processing-order/info/{{ data.id }}">查看</a>
-          <a style="margin-left: 5px"
+          <a *ngIf="data.status !== 3"
+             style="margin-left: 5px"
              class="abandon"
              [class.disabled]="data.status === 2"
              nz-popconfirm

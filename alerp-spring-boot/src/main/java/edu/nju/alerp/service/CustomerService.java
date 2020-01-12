@@ -16,13 +16,13 @@ import java.util.List;
  */
 public interface CustomerService {
 
-    int saveCustomer(CustomerDTO customerDTO);
+    int saveCustomer(CustomerDTO customerDTO) throws Exception;
 
     Customer getCustomer(int id);
 
     List<SpecialPrice> getSpecialPricesListByCustomerId(int id);
 
-    int deleteCustomer(int id);
+    int deleteCustomer(int id) throws Exception;
 
     List<Customer> getCustomerList();
 

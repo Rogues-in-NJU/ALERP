@@ -14,11 +14,15 @@ import java.util.List;
  * @CreateDate: 2019-12-17 20:42
  */
 public interface ShippingOrderService {
-    int addShippingOrder(ShippingOrderDTO shippingOrderDTO);
+    ShippingOrder addShippingOrder(ShippingOrderDTO shippingOrderDTO);
 
     ShippingOrder getShippingOrder(int id);
 
-    int deleteShippingOrder(int id);
+    int saveShippingOrder(ShippingOrder shippingOrder);
+
+    int saveShippingOrderProduct(ShippingOrderProduct shippingOrderProduct);
+
+    int deleteShippingOrder(int id) throws Exception;
 
     boolean printShippingOrder(int id);
 

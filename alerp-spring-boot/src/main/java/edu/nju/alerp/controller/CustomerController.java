@@ -1,5 +1,6 @@
 package edu.nju.alerp.controller;
 
+import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.vo.CustomerVO;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.service.ProductService;
@@ -83,7 +84,11 @@ public class CustomerController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(customerService.deleteCustomer(id));
+        try {
+            return ResponseResult.ok(customerService.deleteCustomer(id));
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
     }
 
     /**
@@ -107,9 +112,11 @@ public class CustomerController {
      */
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseResult<List<Customer>> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        customerService.saveCustomer(customerDTO);
-        List<Customer> customerList = customerService.getCustomerList();
-        return ResponseResult.ok(customerList);
+    public ResponseResult<Integer> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+        try {
+            return ResponseResult.ok(customerService.saveCustomer(customerDTO));
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
     }
 }

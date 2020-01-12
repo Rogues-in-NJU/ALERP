@@ -1,16 +1,16 @@
-package edu.nju.alerp.vo;
+package edu.nju.alerp.dto;
 
 import lombok.Builder;
 import lombok.Data;
 
 /**
- * @Description: 加工单id code关联VO
+ * @Description: 出货单id和code DTO
  * @Author: qianen.yin
- * @CreateDate: 2020-01-10 17:55
+ * @CreateDate: 2020-01-11 22:02
  */
 @Data
 @Builder
-public class ProcessOrderIdCodeVO {
+public class ProcessingOrderIdCodeDTO {
     private Integer processingOrderId;
     private String processingOrderCode;
 }

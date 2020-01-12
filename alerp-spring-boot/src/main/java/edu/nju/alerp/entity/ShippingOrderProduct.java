@@ -25,7 +25,7 @@ public class ShippingOrderProduct {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     /**
      * 出货单id
@@ -80,6 +80,12 @@ public class ShippingOrderProduct {
      * 总金额
      */
     private double cash;
+
+    /**
+     * 删除时间
+     */
+    @Column(name = "deleted_at")
+    private String deletedAt;
 
 
 }

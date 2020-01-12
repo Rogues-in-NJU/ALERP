@@ -422,7 +422,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
                 shippingProduct.price = product.specialPrice;
                 shippingProduct.priceType = product.specialPriceType;
               }
-              shippingProduct['_isEditalbe'] = product.isEditable;
+              shippingProduct.isEditable = product.isEditable;
               shippingProduct['_id'] = this.shippingOrderInfoProductCountIndex++;
               this.shippingOrderData.products = [
                 shippingProduct,

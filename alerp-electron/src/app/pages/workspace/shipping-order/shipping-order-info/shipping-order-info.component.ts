@@ -68,6 +68,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   reload(): void {
+    console.log(this.shippingOrderId);
     this.shippingOrder.find(this.shippingOrderId)
       .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
         console.log(res);
