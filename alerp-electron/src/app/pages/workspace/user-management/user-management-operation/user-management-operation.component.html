@@ -17,10 +17,13 @@
     <div class="table-wrapper">
       <nz-table #userManagementTable
                 nzShowSizeChanger
+                [nzFrontPagination]="false"
                 [nzData]="operationList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
-                [nzTotal]="totalPages"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
