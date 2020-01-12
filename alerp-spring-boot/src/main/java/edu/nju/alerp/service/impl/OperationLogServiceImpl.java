@@ -40,10 +40,10 @@ public class OperationLogServiceImpl implements OperationLogService {
                 fuzzyMatch.add(ConditionFactory.like("userName", userName));
             }
             if (!"".equals(operationStartTime)) {
-                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("operationStartTime", operationStartTime));
+                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", operationStartTime));
             }
             if (!"".equals(operationEndTime)) {
-                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("operationEndTime", operationEndTime));
+                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", operationEndTime));
             }
             if (!fuzzyMatch.isEmpty()) {
                 sp.add(ConditionFactory.or(fuzzyMatch));
