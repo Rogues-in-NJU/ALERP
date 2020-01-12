@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
-import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
+import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { SummaryProductVO, SummaryVO } from "../model/summary";
 
 @Injectable({
@@ -15,7 +15,7 @@ export class SummaryService {
 
   }
 
-  public getSummary(): Observable<ResultVO<SummaryVO>> {
+  public getSummary(queryParams: QueryParams): Observable<ResultVO<SummaryVO>> {
     return of({
       code: ResultCode.SUCCESS.code,
       message: '',

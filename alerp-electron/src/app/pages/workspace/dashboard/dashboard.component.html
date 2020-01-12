@@ -1,5 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>汇总信息</nz-page-header-title>
+  <nz-page-header-extra>
+    <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                     nzFormat="yyyy-MM-dd"
+                     [nzPlaceHolder]="['开始时间', '结束时间']"
+                     [(ngModel)]="timeRange" (ngModelChange)="onTimeRangeChange()">
+
+    </nz-range-picker>
+  </nz-page-header-extra>
 </nz-page-header>
 <div class="content">
   <div class="summary-data-wrapper">
