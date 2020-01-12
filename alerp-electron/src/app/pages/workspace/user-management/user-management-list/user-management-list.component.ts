@@ -7,6 +7,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
 import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {StringUtils} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-management-list',
@@ -20,9 +21,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   pageIndex: number = 1;
   pageSize: number = 10;
 
-  userName: string;
-  userPhoneNumber: string;
-  // selectedStatus: number;
+  name: string;
 
   userList: UserManagementInfoVO[] = [];
 
@@ -38,13 +37,16 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    // console.log(this.userName);
-    // console.log(this.userPhoneNumber);
-    // console.log(this.selectedStatus);
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     };
+    if (!StringUtils.isEmpty(this.name)) {
+      Object.assign(queryParams, {
+        name: this.name
+      });
+      this.name = null;
+    }
     this.UserManagement.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<UserManagementInfoVO>>) => {
         if (!res) {
