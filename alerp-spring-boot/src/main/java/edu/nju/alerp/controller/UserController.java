@@ -5,9 +5,11 @@ import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
+import edu.nju.alerp.dto.PasswordDTO;
 import edu.nju.alerp.dto.UserDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.CityEnum;
+import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.service.AuthService;
@@ -96,6 +98,23 @@ public class UserController {
     public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
         User user = userService.getUser(id);
         return ResponseResult.ok(generateUserInfo(user));
+    }
+
+    /**
+     * 用户修改密码
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST, name = "修改当前用户密码")
+    public ResponseResult<String> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+        User user = userService.getUser(CommonUtils.getUserId());
+        if (user.getPassword().equals(PasswordUtil.getMD5(passwordDTO.getOldPassword()))) {
+            user.setPassword(PasswordUtil.getMD5(passwordDTO.getNewPassword()));
+            userService.updateUser(user);
+            return ResponseResult.ok("修改密码成功!");
+        }
+        return ResponseResult.ok("原密码错误!");
     }
 
     /**

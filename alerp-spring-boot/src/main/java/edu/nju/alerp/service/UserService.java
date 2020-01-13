@@ -46,4 +46,6 @@ public interface UserService {
 
     LoginResultDTO checkLogin(LoginDTO loginDTO);
 
+    int updateUser(User user);
+
 }
