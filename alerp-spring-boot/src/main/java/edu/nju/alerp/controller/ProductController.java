@@ -43,7 +43,7 @@ public class ProductController {
      * @param type
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取商品列表（分页）")
     public ResponseResult<ListResponse> findProductsByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                             @RequestParam(value = "pageSize") int pageSize,
                                                             @RequestParam(value = "name", required = false) String name,
@@ -59,7 +59,7 @@ public class ProductController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取商品详情")
     public ResponseResult<ProductDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(productService.findProductVO(id));
     }
@@ -70,7 +70,7 @@ public class ProductController {
      * @param productDTO
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或更新商品")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
             int res = productService.addOrUpdate(productDTO);
@@ -85,7 +85,7 @@ public class ProductController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "废弃商品")
     public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(productService.abandonProduct(id));
