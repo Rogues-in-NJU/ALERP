@@ -15,11 +15,18 @@ import java.util.List;
  */
 public interface ShippingOrderRepository extends JpaRepository<ShippingOrder, Integer>, JpaSpecificationExecutor<ShippingOrder> {
 
-    @Query("select s from ShippingOrder s where s.customerId in :customerIdList")
-    List<ShippingOrder> findByCustomerList(@Param("customerIdList") List<Integer> customerIdList);
+    @Query("select s from ShippingOrder s where s.customerId in :customerIdList and s.createdAt >= :startDate and s.createdAt <= :endDate and s.status <> 2")
+    List<ShippingOrder> findByCustomerList(@Param("customerIdList") List<Integer> customerIdList, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    @Query("select count(s) from ShippingOrder s where s.createdAt >= :startDate and s.createdAt <= :endDate and s.status <> 2")
+    Integer findTotalNum(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    @Query("select sum(s.receivableCash) from ShippingOrder s where s.createdAt >= :startDate and s.createdAt <= :endDate and s.status <> 2")
+    Integer findTotalInCome(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**
      * 根据收款单id找到一条出货单记录
+     *
      * @param arrearOrderId
      * @return
      */

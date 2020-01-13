@@ -36,12 +36,17 @@ public interface ShippingOrderService {
 
     Double getTotalWeightByProductId(int productId);
 
-    Double getCustomerAvgPrice(List<Integer> customerIdList);
+    Double getCustomerAvgPrice(List<Integer> customerIdList, String startDate, String endDate);
 
     Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
 
+    Integer findTotalNum(String startDate, String endDate);
+
+    Integer findTotalInCome(String startDate, String endDate);
+
     /**
      * 根据收款单id找到一条出货单记录
+     *
      * @param arrearOrderId
      * @return
      */

@@ -180,8 +180,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
      * @return
      */
     @Override
-    public Double getCustomerAvgPrice(List<Integer> customerIdList) {
-        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList);
+    public Double getCustomerAvgPrice(List<Integer> customerIdList, String startDate, String endDate) {
+        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList, "", "");
         if (CollectionUtils.isEmpty(shippingOrderList)) {
             return (double) 0;
         }
@@ -219,9 +219,19 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
+    public Integer findTotalNum(String startDate, String endDate) {
+        return shippingOrderRepository.findTotalNum(startDate, endDate);
+    }
+
+    @Override
+    public Integer findTotalInCome(String startDate, String endDate) {
+        return shippingOrderRepository.findTotalInCome(startDate, endDate);
+    }
+
+    @Override
     public ShippingOrder getShippingOrderByArrearOrderId(int arrearOrderId) {
         ShippingOrder record = shippingOrderRepository.findShippingOrderByArrearOrderId(arrearOrderId);
-        if (record == null){
+        if (record == null) {
             log.error("根据收款单id没找到对应的出货单");
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "根据收款单id没找到对应的出货单");
         }
