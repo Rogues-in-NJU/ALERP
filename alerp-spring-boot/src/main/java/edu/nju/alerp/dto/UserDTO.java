@@ -20,5 +20,5 @@ public class UserDTO {
     private String password;
     private String updateAt;
     private List<Integer> city;
-    private List<Auth> authList;
+    private List<UpdateUserAuthDTO> authList;
 }

@@ -7,14 +7,12 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
-import edu.nju.alerp.entity.OperationLog;
-import edu.nju.alerp.entity.Product;
-import edu.nju.alerp.entity.UserCityRelation;
+import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.repo.UserCityRelationRepository;
+import edu.nju.alerp.service.AuthService;
 import edu.nju.alerp.service.UserService;
-import edu.nju.alerp.entity.User;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
@@ -55,6 +53,8 @@ public class UserServiceImpl implements UserService, InitializingBean {
     UserRepository userRepository;
     @Autowired
     UserCityRelationRepository userCityRelationRepository;
+    @Autowired
+    AuthService authService;
 
     @Resource
     private Cache<Integer, Object> userCache;
@@ -67,9 +67,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
 
     @Override
     public int saveUser(UserDTO userDTO) throws Exception {
-        User user;
+        User res;
         if (userDTO.getId() == null) {
-            user = User.builder()
+            User user = User.builder()
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5("00000000"))
                     .updatedAt(DateUtils.getToday())
@@ -77,16 +77,20 @@ public class UserServiceImpl implements UserService, InitializingBean {
                     .createdAt(DateUtils.getToday())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
+            res = userRepository.saveAndFlush(user);
+            //新增用户初始化权限
+            authService.initialUserAuthByUserId(res.getId());
         } else {
-            user = getUser(userDTO.getId());
+            User user = getUser(userDTO.getId());
             if (!userDTO.getUpdateAt().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
             user.setName(userDTO.getName());
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
+            res = userRepository.save(user);
+            authService.updateUserAuth(userDTO.getAuthList());
         }
-        User res = userRepository.saveAndFlush(user);
         List<Integer> cities = userCityRelationRepository.findCitiesByUserId(res.getId());
         userDTO.getCity().forEach(c -> {
             if (!cities.contains(c)) {
