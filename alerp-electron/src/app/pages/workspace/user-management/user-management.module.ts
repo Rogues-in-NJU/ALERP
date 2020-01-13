@@ -7,7 +7,12 @@ import {SharedModule} from "../../../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {UserManagementInfoComponent} from "./user-management-info/user-management-info.component";
 import {UserManagementAddComponent} from "./user-management-add/user-management-add.component";
-import {UserManagementStatusPipe, UserManagementStatusColorPipe} from "./user-management.pipe";
+import {
+  UserManagementStatusPipe,
+  UserManagementStatusColorPipe,
+  UserManagementAuthPipe,
+  UserManagementAuthColorPipe
+} from "./user-management.pipe";
 import {UserManagementOperationComponent} from "./user-management-operation/user-management-operation.component";
 
 const routes: Routes = [
@@ -30,7 +35,7 @@ const routes: Routes = [
       title: '新增用户',
       removable: true
     }
-  },{
+  }, {
     path: 'operation',
     pathMatch: 'full',
     component: UserManagementOperationComponent,
@@ -64,7 +69,9 @@ const routes: Routes = [
     UserManagementInfoComponent,
     UserManagementOperationComponent,
     UserManagementStatusPipe,
-    UserManagementStatusColorPipe
+    UserManagementStatusColorPipe,
+    UserManagementAuthPipe,
+    UserManagementAuthColorPipe
   ],
   exports: [RouterModule]
 })

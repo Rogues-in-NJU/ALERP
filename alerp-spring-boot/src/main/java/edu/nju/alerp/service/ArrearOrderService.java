@@ -1,5 +1,7 @@
 package edu.nju.alerp.service;
 
+import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
+import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.vo.ArrearDetailVO;
 import org.springframework.data.domain.Page;
@@ -32,19 +34,18 @@ public interface ArrearOrderService {
     /**
      * 修改收款单过期时间
      *
-     * @param arrearOrderId
-     * @param dueDate
+     * @param dto
      * @return
      */
-    int updateDueDate(int arrearOrderId, String dueDate);
+    int updateDueDate(ArrearOrderDueDateDTO dto);
 
     /**
      * 修改收款单发票流水号
-     * @param arrearOrderId
-     * @param invoiceNumber
+     *
+     * @param dto
      * @return
      */
-    int updateInvoiceNumber(int arrearOrderId, String invoiceNumber);
+    int updateInvoiceNumber(ArrearOrderInvoiceNumberDTO dto);
 
     /**
      * 获取收款单详情(包括所有收款记录)
@@ -56,16 +57,35 @@ public interface ArrearOrderService {
 
     /**
      * 根据查询条件查询收款单列表
+     *
      * @param pageable
      * @param code
-     * @param customerName 客户姓名或简称
-     * @param status 状态
-     * @param invoiceNumber 发票流水号
+     * @param customerName    客户姓名或简称
+     * @param status          状态
+     * @param invoiceNumber   发票流水号
      * @param shippingOrderId 对应出货单id
-     * @param startTime 创建时间：开始时间
-     * @param endTime 创建时间：结束时间
+     * @param startTime       创建时间：开始时间
+     * @param endTime         创建时间：结束时间
      * @return
      */
-    Page<ArrearOrder> getArrearOrderList(Pageable pageable, String code, String customerName, Integer status, String invoiceNumber,
+    Page<ArrearOrder> getArrearOrderList(Pageable pageable, String code, String customerName, Integer status,
+        String invoiceNumber,
         Integer shippingOrderId, String startTime, String endTime);
+
+    /**
+     * 查询某一时间范围内的总收款金额
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    double queryTotalReceivedCash(String startTime, String endTime);
+
+    /**
+     * 查询某一时间范围内的总逾期金额
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    double queryTotalOverdueCash(String startTime, String endTime);
 }

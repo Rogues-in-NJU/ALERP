@@ -43,7 +43,7 @@ public class PurchaseOrderController {
      * @param doneEndTime
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取采购单列表（分页）")
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
                                                                   @RequestParam(value = "id", required = false) String id,
@@ -59,7 +59,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取采购单详情")
     public ResponseResult<PurchaseOrderDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(purchaseOrderService.findPurchaseById(id));
     }
@@ -70,7 +70,7 @@ public class PurchaseOrderController {
      * @param purchaseOrderDTO
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增采购单")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         return ResponseResult.ok(purchaseOrderService.addNewPurchaseOrder(purchaseOrderDTO));
     }
@@ -81,7 +81,7 @@ public class PurchaseOrderController {
      * @param addPaymentRecordDTO
      * @return
      */
-    @RequestMapping(value = "/payment-record", method = RequestMethod.POST)
+    @RequestMapping(value = "/payment-record", method = RequestMethod.POST, name = "新增采购单付款记录")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody AddPaymentRecordDTO addPaymentRecordDTO) {
         try {
             return ResponseResult.ok(purchaseOrderService.addNewPaymentRecord(addPaymentRecordDTO));
@@ -95,7 +95,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/payment-record/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/payment-record/delete/{id}", method = RequestMethod.GET, name = "废弃采购单付款记录")
     public ResponseResult<Integer> deletePaymentRecord(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(purchaseOrderService.deletePaymentReport(id));
@@ -109,7 +109,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET, name = "废弃采购单")
     public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(purchaseOrderService.abandonPurchaseOrder(id));

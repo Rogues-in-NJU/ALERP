@@ -1,17 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { ClosableTab } from "../../tab/tab.component";
-import { TabService } from "../../../../core/services/tab.service";
-import { Router } from "@angular/router";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ResultVO } from "../../../../core/model/result-vm";
-import { BehaviorSubject } from "rxjs";
-import { debounceTime } from "rxjs/operators";
-import { NzMessageService } from "ng-zorro-antd";
-import { DateUtils } from "../../../../core/services/util.service";
-import { HttpErrorResponse } from "@angular/common/http";
-import { UserManagementService } from "../../../../core/services/user-management.service";
-import { AuthVO } from "../../../../core/model/auth";
-import { UserManagementInfoVO } from "../../../../core/model/user-management";
+import {Component, OnInit} from "@angular/core";
+import {ClosableTab} from "../../tab/tab.component";
+import {TabService} from "../../../../core/services/tab.service";
+import {Router} from "@angular/router";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ResultVO} from "../../../../core/model/result-vm";
+import {BehaviorSubject} from "rxjs";
+import {debounceTime} from "rxjs/operators";
+import {NzMessageService} from "ng-zorro-antd";
+import {DateUtils} from "../../../../core/services/util.service";
+import {HttpErrorResponse} from "@angular/common/http";
+import {UserManagementService} from "../../../../core/services/user-management.service";
+import {AuthVO} from "../../../../core/model/auth";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 
 @Component({
   selector: 'user-management-add',
@@ -22,18 +22,29 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
 
   userManagementForm: FormGroup;
   editCache: {_id?: number, data?: TempPurchaseOrderProductInfoVO, product?: TempProductVO, isAdd?: boolean} = {};
-  userCountIndex: number = 0;
-  searchAuths: AuthVO[];
-  searchChange$: BehaviorSubject<string> = new BehaviorSubject('');
   isLoading: boolean = false;
 
   isSaving: boolean = false;
-  radioValue1 = '0';
-  radioValue2 = '0';
+  cityTmp: number[];
 
-  disabledDate: any = (current: Date): boolean => {
-    return DateUtils.compare(current, new Date()) > 0;
-  };
+  authsTmp: userAuthVO[] = [
+    <userAuthVO>{description: "查看商品列表", action: 0},
+    <userAuthVO>{description: "新增或者编辑商品", action: 0},
+    <userAuthVO>{description: "查看商品详情", action: 0},
+    <userAuthVO>{description: "废弃商品", action: 0}];
+
+  saveCityTmp(value: string[]): void {
+    if (value.length === 1) {
+      if (value[0] == "1") {
+        this.cityTmp = [1];
+      } else {
+        this.cityTmp = [2];
+      }
+    }
+    if (value.length === 2) {
+      this.cityTmp = [1, 2];
+    }
+  }
 
   constructor(private closeTab: TabService,
               private userManagement: UserManagementService,
@@ -45,10 +56,9 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
 
   ngOnInit(): void {
     this.userManagementForm = this.fb.group({
-      name: [ null, Validators.required ],
-      phoneNumber: [ null, Validators.required ],
-      radioValue1: [ 0, Validators.required ],
-      radioValue2: [ null, Validators.required ]
+      name: [null, Validators.required],
+      phoneNumber: [null, Validators.required],
+      password: [null, Validators.required],
     });
 
   }
@@ -61,10 +71,14 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
       phoneNumber: formData.phoneNumber,
-      // radioValue1: formData.radioValue1,
-      // radioValue2: formData.radioValue2
+      password: formData.password,
+      city: this.cityTmp,
+      authList: this.authsTmp
     };
-
+    // private Integer id;
+    // private String updateAt;
+    // private List<Auth> authList;
+    console.log(userManagementAdd);
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))

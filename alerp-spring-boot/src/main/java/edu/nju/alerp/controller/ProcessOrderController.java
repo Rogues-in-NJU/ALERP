@@ -33,7 +33,7 @@ public class ProcessOrderController {
     @Autowired
     private ProcessOrderService processOrderService;
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "加工单列表")
     public ResponseResult<ListResponse> findProcessOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                 @RequestParam(value = "pageSize") int pageSize,
                                                                 @RequestParam(value = "id", required = false) String code,
@@ -46,22 +46,22 @@ public class ProcessOrderController {
         return ResponseResult.ok(ListResponseUtils.generateResponse(processingOrders, pageIndex, pageSize));
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "查询加工单详情")
     public ResponseResult<ProcessingOrderDetailVO> findProcessingOrderDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(processOrderService.findProcessingById(id));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或者更新加工单")
     public ResponseResult<Integer> addNewProcessingOrder(@RequestBody ProcessingOrderDTO processingOrderDTO) {
         return ResponseResult.ok(processOrderService.addProcessingOrder(processingOrderDTO));
     }
 
-    @RequestMapping(value = "/product", method = RequestMethod.POST)
+    @RequestMapping(value = "/product", method = RequestMethod.POST, name = "新增或者更新加工单商品")
     public ResponseResult<Integer> addOrUpdateProcessingProduct(@RequestBody UpdateProcessProductDTO updateProcessProductDTO) {
         return ResponseResult.ok(processOrderService.addOrUpdateProcessProduct(updateProcessProductDTO));
     }
 
-    @RequestMapping(value = "/product/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/delete/{id}", method = RequestMethod.GET, name = "删除加工单商品")
     public ResponseResult<Integer> deleteProcessingProduct(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.deleteProcessProduct(id));
@@ -70,7 +70,7 @@ public class ProcessOrderController {
         }
     }
 
-    @RequestMapping(value = "/print/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/print/{id}", method = RequestMethod.GET, name = "打印加工单")
     public ResponseResult<Integer> printProcessingOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.printProcessingOrder(id));
@@ -79,7 +79,7 @@ public class ProcessOrderController {
         }
     }
 
-    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET, name = "废弃加工单")
     public ResponseResult<Integer> abandonProcessingOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
             return ResponseResult.ok(processOrderService.abandonProcessingOrder(id));

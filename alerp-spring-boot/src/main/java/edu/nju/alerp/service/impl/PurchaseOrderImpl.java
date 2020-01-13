@@ -175,8 +175,10 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
         double totalCash = 0;
         double paidCash = 0;
         try {
-            purchaseSp.add(ConditionFactory.greatThanEqualTo("doneAt", doneAtStartTime));
-            purchaseSp.add(ConditionFactory.lessThanEqualTo("doneAt", doneAtEndTime));
+            if (doneAtStartTime != null)
+                purchaseSp.add(ConditionFactory.greatThanEqualTo("doneAt", doneAtStartTime));
+            if (doneAtEndTime != null)
+                purchaseSp.add(ConditionFactory.lessThanEqualTo("doneAt", doneAtEndTime));
             List<PurchaseOrder> purchaseOrders = purchaseOrderRepository.findAll(purchaseSp);
             totalCash = purchaseOrders.parallelStream()
                                     .mapToDouble(PurchaseOrder::getCash)
@@ -184,8 +186,8 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             List<Integer> purcaseIds = purchaseOrders.parallelStream()
                                                     .map(PurchaseOrder::getId)
                                                     .collect(Collectors.toList());
-
             paymentSp.add(ConditionFactory.In("purchaseOrderId", purcaseIds));
+            paymentSp.add(ConditionFactory.notEqual("status", PaymentRecordStatus.ABANDONED.getCode()));
             List<PaymentRecord> paymentRecords = paymentRecordRepository.findAll(paymentSp);
             paidCash = paymentRecords.parallelStream()
                                     .mapToDouble(PaymentRecord::getCash)
