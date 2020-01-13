@@ -55,8 +55,7 @@ export class UserCenterPasswordComponent implements ClosableTab, OnInit {
     this.userManagement.updatePassword(passwordUpdate)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
-        this.message.success('添加成功!');
+        this.message.success(res.data);
         this.isSaving = false;
         // TODO: 跳转回列表页面
       }, (error: HttpErrorResponse) => {
