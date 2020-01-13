@@ -5,6 +5,7 @@ import {ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
 import {StringUtils} from "./util.service";
 import {UserManagementInfoVO} from "../model/user-management";
 import {AppConfig} from "../../../environments/environment";
+import {PasswordInfoVO} from "../model/password";
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,18 @@ export class UserManagementService {
     return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user/${id}`);
   }
 
+  public findSelf(): Observable<ResultVO<UserManagementInfoVO>> {
+    return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user/self`);
+  }
+
   public save(info: UserManagementInfoVO): Observable<ResultVO<any>> {
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user`, info, {
+      withCredentials: true
+    });
+  }
+
+  public updatePassword(info: PasswordInfoVO): Observable<ResultVO<any>> {
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/updatePassword`, info, {
       withCredentials: true
     });
   }

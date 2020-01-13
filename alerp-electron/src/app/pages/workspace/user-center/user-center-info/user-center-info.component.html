@@ -1,1 +1,50 @@
-<p>user center info works</p>
+<nz-page-header>
+  <nz-page-header-title>用户详情</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary"
+            (click)="saveUser()"
+            [disabled]="!userManagementForm.valid || isSaving">
+      <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
+      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>
+      保存
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content" *ngIf="isLoading">
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+</div>
+<div class="content" *ngIf="!isLoading">
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="姓名" [nzSpan]="2">{{ userManagementData.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="电话号码" [nzSpan]="3">{{ userManagementData.phoneNumber }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
+      <nz-badge nzStatus="success" nzText="在职" *ngIf="userManagementData.status === 1"></nz-badge>
+    </nz-descriptions-item>
+  </nz-descriptions>
+  <br/>
+  <h3>权限列表</h3>
+  <nz-table #userAuthTable
+            nzBordered
+            nzShowPagination="false"
+            nzSize="middle"
+            [nzData]="userManagementData.authList">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_center_auth_color }}">{{ data.action | user_center_auth
+          }}
+        </nz-tag>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+
