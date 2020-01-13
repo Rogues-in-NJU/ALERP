@@ -31,3 +31,35 @@ export class UserManagementStatusColorPipe implements PipeTransform {
   }
 
 }
+
+@Pipe({
+  name: 'user_management_auth'
+})
+export class UserManagementAuthPipe implements PipeTransform {
+
+  transform(value: number, ...args: any[]): any {
+    switch (value) {
+      case 1:
+        return '拥有';
+      default:
+        return '未拥有';
+    }
+  }
+
+}
+
+@Pipe({
+  name: 'user_management_auth_color'
+})
+export class UserManagementAuthColorPipe implements PipeTransform {
+
+  transform(value: number, ...args: any[]): any {
+    switch (value) {
+      case 1:
+        return 'green';
+      default:
+        return 'red';
+    }
+  }
+
+}

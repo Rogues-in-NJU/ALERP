@@ -5,6 +5,7 @@ import {ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
 import {StringUtils} from "./util.service";
 import {UserManagementInfoVO} from "../model/user-management";
 import {AppConfig} from "../../../environments/environment";
+import {PasswordInfoVO} from "../model/password";
 
 @Injectable({
   providedIn: 'root'
@@ -28,26 +29,22 @@ export class UserManagementService {
     if (StringUtils.isEmpty(id)) {
       return of(null);
     }
-    // // prod
-    // return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user-management/${_id}`);
-    // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        id: 1,
-        name: '殷乾恩',
-        phone_number: '13821378223',
-        status: 1
-      }
-    });
+    return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user/${id}`);
+  }
+
+  public findSelf(): Observable<ResultVO<UserManagementInfoVO>> {
+    return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user/self`);
   }
 
   public save(info: UserManagementInfoVO): Observable<ResultVO<any>> {
-    return of({
-      code: 200,
-      message: '',
-      data: null
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user`, info, {
+      withCredentials: true
+    });
+  }
+
+  public updatePassword(info: PasswordInfoVO): Observable<ResultVO<any>> {
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/updatePassword`, info, {
+      withCredentials: true
     });
   }
 

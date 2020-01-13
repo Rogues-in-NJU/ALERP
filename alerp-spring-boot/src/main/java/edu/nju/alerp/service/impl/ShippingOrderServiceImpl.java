@@ -197,14 +197,18 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         QueryContainer<ShippingOrderProduct> productSp = new QueryContainer<>();
         double totalWeight = 0;
         try {
-            shippingSp.add(ConditionFactory.greatThanEqualTo("createdAt", createdAtStartTime));
-            shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
+            if (createdAtStartTime != null)
+                shippingSp.add(ConditionFactory.greatThanEqualTo("createdAt", createdAtStartTime));
+            if (createdAtEndTime != null)
+                shippingSp.add(ConditionFactory.lessThanEqualTo("createdAt", createdAtEndTime));
+            shippingSp.add(ConditionFactory.notEqual("status", ShippingOrderStatus.ABANDONED.getCode()));
             List<ShippingOrder> shippingOrders = shippingOrderRepository.findAll(shippingSp);
             List<Integer> shippingOrderIds = shippingOrders.parallelStream()
                     .map(ShippingOrder::getId)
                     .collect(Collectors.toList());
 
             productSp.add(ConditionFactory.In("shippingOrderId", shippingOrderIds));
+            productSp.add(ConditionFactory.isNull("deletedAt"));
             List<ShippingOrderProduct> shippingOrderProducts = shippingOrderProductRepository.findAll(productSp);
             totalWeight = shippingOrderProducts.parallelStream()
                     .mapToDouble(ShippingOrderProduct::getWeight).sum();

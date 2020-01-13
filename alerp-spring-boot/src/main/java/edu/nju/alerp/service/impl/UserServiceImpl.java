@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
         if (userDTO.getId() == null) {
             user = User.builder()
                     .name(userDTO.getName())
-                    .password(PasswordUtil.getMD5(userDTO.getPassword()))
+                    .password(PasswordUtil.getMD5("00000000"))
                     .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
@@ -83,7 +83,6 @@ public class UserServiceImpl implements UserService, InitializingBean {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
             user.setName(userDTO.getName());
-            user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }
@@ -206,6 +205,11 @@ public class UserServiceImpl implements UserService, InitializingBean {
                 .result(LoginResult.INCORRECT.getMessage())
                 .build();
         return loginResultDTO;
+    }
+
+    @Override
+    public int updateUser(User user) {
+        return userRepository.save(user).getId();
     }
 
     @Override
