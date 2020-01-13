@@ -18,9 +18,41 @@
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="应收金额" [nzSpan]="2">&yen;{{ arrearOrderData.receivableCash | number:'1.2-2' }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="已收金额" [nzSpan]="2">&yen;{{ arrearOrderData.receivedCash | number:'1.2-2' }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="截至时间" [nzSpan]="4">{{ arrearOrderData.dueDate }}</nz-descriptions-item>
 
-    <nz-descriptions-item nzTitle="发票流水号" [nzSpan]="4">{{ arrearOrderData.invoiceNumber }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="截至时间" [nzSpan]="4">
+      <nz-form-control *ngIf="!isChangeDueDate">
+        {{ arrearOrderData.dueDate }}
+        <button nz-button [nzType]="'primary'"  (click)="changeDueDate()">编辑</button>
+      </nz-form-control>
+
+      <nz-form-control *ngIf="isChangeDueDate">
+        <nz-form-control>
+          <nz-date-picker nzShowTime
+                          [(ngModel)]="duedate"
+                          [nzDisabledDate]="disabledDate"
+                          nzFormat="yyyy-MM-dd HH:mm"
+                          nzPlaceHolder="选择时间">
+
+          </nz-date-picker>
+        </nz-form-control>
+        <button nz-button [nzType]="'primary'"  (click)="confirmChangeDueDate()">确认</button>
+        <button nz-button [nzType]="'primary'"  (click)="cancelChangeDueDate()">取消</button>
+      </nz-form-control>
+    </nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="发票流水号" [nzSpan]="4">
+      <nz-form-control *ngIf="!isChangeInvoiceNumber">
+        {{ arrearOrderData.invoiceNumber }}
+        <button nz-button [nzType]="'primary'"  (click)="changeInvoiceNumber()">编辑</button>
+      </nz-form-control>
+
+      <nz-form-control *ngIf="isChangeInvoiceNumber">
+        <input nz-input type="text" [(ngModel)]="invoiceNumber"/>
+        <button nz-button [nzType]="'primary'"  (click)="confirmChangeInvoiceNumber()">确认</button>
+        <button nz-button [nzType]="'primary'"  (click)="cancelChangeInvoiceNumber()">取消</button>
+      </nz-form-control>
+    </nz-descriptions-item>
+
     <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ arrearOrderData.createdAt }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="创建者" [nzSpan]="2">{{ arrearOrderData.createdByName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="最近更新时间" [nzSpan]="2">{{ arrearOrderData.updatedAt }}</nz-descriptions-item>

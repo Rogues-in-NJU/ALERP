@@ -51,6 +51,7 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
       pageSize: this.pageSize
     });
     this.isLoading = true;
+
     this.arrearOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ArrearOrderInfoVO>>) => {
         console.log(res)

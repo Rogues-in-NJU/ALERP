@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
-import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
+import {QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../model/result-vm";
 import {PurchaseOrderPaymentRecordVO, PurchaseOrderVO} from "../model/purchase-order";
 import {ShippingOrderInfoVO} from "../model/shipping-order";
 import {ArrearOrderInfoVO, ArrearOrderReceiptRecordVO, ArrearStatisticsVO} from "../model/arrear-order";
@@ -106,5 +106,21 @@ export class ArrearOrderService {
       }
     });
   }
+
+  public changeInvoiceNumber(params: QueryParams): Observable<ResultVO<any>> {
+    console.log(params);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/arrear-order/invoice-number`, params,
+      {
+        withCredentials: true
+      });
+  }
+  public changeDueDate(params: QueryParams): Observable<ResultVO<any>> {
+    console.log(params);
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/arrear-order/due-date`, params,
+      {
+        withCredentials: true
+      });
+  }
+
 
 }

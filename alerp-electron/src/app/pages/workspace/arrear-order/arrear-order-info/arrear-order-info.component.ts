@@ -7,8 +7,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PurchaseOrderService} from "../../../../core/services/purchase-order.service";
 import {NzMessageService} from "ng-zorro-antd";
 import {ArrearOrderService} from "../../../../core/services/arrear-order.service";
-import {ResultCode, ResultVO} from "../../../../core/model/result-vm";
+import {QueryParams, ResultCode, ResultVO, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
+import {ProcessingOrderVO} from "../../../../core/model/processing-order";
 
 @Component({
   selector: 'arrear-order-info',
@@ -22,6 +23,12 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
   isLoading: boolean = true;
   arrearOrderId: number;
   arrearOrderData: ArrearOrderInfoVO;
+
+  //修改
+  duedate: string;
+  isChangeDueDate: boolean = false;
+  invoiceNumber: string;
+  isChangeInvoiceNumber: boolean = false;
 
   editCache: {
     _id?: number,
@@ -68,14 +75,20 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
 
   refresh(): void {
     Object.assign(this.editCache, this.defaultEditCache);
+    console.log(this.arrearOrderId);
     this.arrearOrder.find(this.arrearOrderId)
       .subscribe((res: ResultVO<ArrearOrderInfoVO>) => {
         console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
         this.isLoading = false;
         this.arrearOrderData = res.data;
+        this.invoiceNumber = res.data.invoiceNumber;
+        this.duedate = res.data.dueDate;
         if (Objects.valid(this.arrearOrderData.receiptRecordList)) {
           this.arrearOrderData.receiptRecordList.forEach(item => {
             item[ '_id' ] = this.arrearOrderReceiptRecordCountIndex++;
@@ -93,7 +106,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     }
     let item: ArrearOrderReceiptRecordVO = {
       id: null,
-      arrearOrderId: null,
+      arrearOrderId: this.arrearOrderId,
       cash: null,
       description: null,
       salesman: null,
@@ -130,12 +143,13 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     if (!this.checkArrearOrderReceiptRecordValid()) {
       return;
     }
-    const index = this.arrearOrderData.receiptRecordList.findIndex(item => item['_id']);
+    const index = this.arrearOrderData.receiptRecordList.findIndex(item => item['_id']=== _id);
     //todo null
     Object.assign(this.arrearOrderData.receiptRecordList[index], this.editCache.data, {
       doneAt: DateUtils.format(new Date(this.editCache.data.doneAt))
     });
     Object.assign(this.editCache.data, this.defaultEditCache);
+    console.log(this.arrearOrderData.receiptRecordList[index]);
     this.arrearOrder.saveReceiptRecord(this.arrearOrderData.receiptRecordList[index])
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
@@ -145,7 +159,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
-        this.message.success('修改成功!');
+        this.message.success('新增成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
@@ -170,7 +184,6 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   checkCashNotNull(): boolean {
-    console.log(this.editCache.data.cash);
     if (Objects.valid(this.editCache.data.cash)) {
       this.editCacheValidateStatus.cash = null;
       return true;
@@ -190,6 +203,75 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     }
   }
 
+  changeDueDate(): void{
+    this.isChangeDueDate = true;
+  }
+
+  confirmChangeDueDate(): void{
+    let queryParams: QueryParams = {};
+    queryParams['id'] = this.arrearOrderId;
+    queryParams['dueDate'] = DateUtils.format(new Date(this.duedate));
+    queryParams['updatedAt'] = this.arrearOrderData.updatedAt;
+
+    this.arrearOrder.changeDueDate(queryParams)
+      .subscribe((res: ResultVO<TableResultVO<any>>) => {
+        console.log(res);
+
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success("修改成功");
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      },()=>{
+        this.isChangeInvoiceNumber = false;
+        this.refresh();
+      });
+  }
+
+  cancelChangeDueDate(): void{
+    this.duedate = null;
+    this.isChangeDueDate = false;
+  }
+
+  changeInvoiceNumber(): void{
+    this.isChangeInvoiceNumber = true;
+  }
+
+  confirmChangeInvoiceNumber(): void{
+    let queryParams: QueryParams = {};
+    queryParams['id'] = this.arrearOrderId;
+    queryParams['invoiceNumber'] = this.invoiceNumber;
+    queryParams['updatedAt'] = this.arrearOrderData.updatedAt;
+
+    this.arrearOrder.changeInvoiceNumber(queryParams)
+      .subscribe((res: ResultVO<TableResultVO<any>>) => {
+        console.log(res);
+
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success("修改成功");
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      },()=>{
+        this.isChangeInvoiceNumber = false;
+        this.refresh();
+    });
+  }
+
+  cancelChangeInvoiceNumber(): void{
+    this.invoiceNumber = null;
+    this.isChangeInvoiceNumber = false;
+  }
 
 }
 
