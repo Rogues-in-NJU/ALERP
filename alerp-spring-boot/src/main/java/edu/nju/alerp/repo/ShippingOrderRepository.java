@@ -17,4 +17,11 @@ public interface ShippingOrderRepository extends JpaRepository<ShippingOrder, In
 
     @Query("select s from ShippingOrder s where s.customerId in :customerIdList")
     List<ShippingOrder> findByCustomerList(@Param("customerIdList") List<Integer> customerIdList);
+
+    /**
+     * 根据收款单id找到一条出货单记录
+     * @param arrearOrderId
+     * @return
+     */
+    ShippingOrder findShippingOrderByArrearOrderId(int arrearOrderId);
 }

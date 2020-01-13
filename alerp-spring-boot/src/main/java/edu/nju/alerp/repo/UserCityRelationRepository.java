@@ -18,5 +18,6 @@ public interface UserCityRelationRepository extends JpaRepository<UserCityRelati
     @Query("select u.cityId from UserCityRelation u where u.userId = :userId")
     List<Integer> findCitiesByUserId(@Param("userId") int userId);
 
-
+    @Query("select u.userId from UserCityRelation u where u.cityId = :cityid")
+    List<Integer> getUserListByCityId(@Param("cityid") int cityid);
 }

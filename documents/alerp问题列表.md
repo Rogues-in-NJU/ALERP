@@ -45,22 +45,22 @@
   
 - [x] session抽到工具类里，另：session还是cookie？
 
-  - [ ] 就用session
-  - [ ] session里把city放进去
+  - [x] 就用session
+  - [x] session里把city放进去
 
 - [ ] 单测
 
 - [x] 使用wagger测试
 
-- [ ] controller上注解method方法value
+- [x] controller上注解method方法value
 
 - [ ] @validated注解
 
-- [ ] 分页查询，查询条件，ConditionFactory
+- [x] 分页查询，查询条件，ConditionFactory
 
 - [ ] queryContent为空的时候，查出来的也是空
 
-- [ ] ConditionFactory.like（）的第一个参数是entity的名字不是表的字段名
+- [x] ConditionFactory.like（）的第一个参数是entity的名字不是表的字段名
 
 - [x] 联调前保证service之间每个接口可以调通。
 
@@ -72,6 +72,16 @@
 
 - [ ] 收款单的截止日期字段在哪里填进去的？
 
+- [ ] 出货单和收款单的状态关联是怎么样的？
+
 - [ ] 收款单、公司支出、收款记录要不要“城市”字段？
 
 - [ ] 收款单、公司支出、收款记录添加处理并发操作
+
+- [ ] 营业额的新增出货单是指当月的还是当天的？
+
+- [ ] 汇总信息的前端是谁？接口字段定义一下？所有汇总信息是一个接口还是多个接口？
+
+- [x] 安全问题：如果直接调用api的话，要先check一下登陆状态。没登录的话不允许访问（鉴权，前后端都要加）
+
+- [ ] "查看出货单列表"的筛选条件里有id的，要加上

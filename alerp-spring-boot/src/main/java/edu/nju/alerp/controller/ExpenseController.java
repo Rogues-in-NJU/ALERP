@@ -41,7 +41,7 @@ public class ExpenseController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增公司支出")
     public ResponseResult<Integer> addExpense(@Valid @RequestBody ExpenseDTO expenseDTO) {
         return ResponseResult.ok(expenseService.addExpense(expenseDTO));
     }
@@ -54,7 +54,7 @@ public class ExpenseController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除公司支出")
     public ResponseResult<Integer> deleteExpense(@PathVariable(value = "id") int id) {
         return ResponseResult.ok(expenseService.deleteExpense(id));
     }
@@ -68,10 +68,9 @@ public class ExpenseController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取公司支出列表")
     public ResponseResult<ListResponse> getExpenseList(@RequestParam(value = "pageIndex") int pageIndex,
         @RequestParam(value = "pageSize") int pageSize) {
-        ListResponse listResponse = expenseService.getExpenseList(pageIndex, pageSize);
-        return ResponseResult.ok(listResponse);
+        return ResponseResult.ok(expenseService.getExpenseList(pageIndex, pageSize));
     }
 }

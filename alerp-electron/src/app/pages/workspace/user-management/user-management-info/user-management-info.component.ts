@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {CloseTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 import {ClosableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {ResultVO} from "../../../../core/model/result-vm";
@@ -35,7 +35,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     this.userManagementForm = this.fb.group({
       name: [null],
-      phone_number: [null],
+      phoneNumber: [null],
       radioValue1: [0, Validators.required],
       radioValue2: [null, Validators.required]
     });
@@ -47,6 +47,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         }
         this.isLoading = false;
         this.userManagementData = res.data;
+        console.log(this.userManagementData)
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
@@ -59,9 +60,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     let formData: any = this.userManagementForm.getRawValue();
     let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
-      phone_number: formData.phone_number,
-      // radioValue1: formData.radioValue1,
-      // radioValue2: formData.radioValue2
+      phoneNumber: formData.phoneNumber,
     };
 
     this.isSaving = true;
@@ -69,7 +68,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
-        this.message.success('添加成功!');
+        this.message.success('修改成功!');
         this.isSaving = false;
         // TODO: 跳转回列表页面
       }, (error: HttpErrorResponse) => {

@@ -214,6 +214,16 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return totalWeight;
     }
 
+    @Override
+    public ShippingOrder getShippingOrderByArrearOrderId(int arrearOrderId) {
+        ShippingOrder record = shippingOrderRepository.findShippingOrderByArrearOrderId(arrearOrderId);
+        if (record == null){
+            log.error("根据收款单id没找到对应的出货单");
+            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "根据收款单id没找到对应的出货单");
+        }
+        return record;
+    }
+
     private List<ProcessingOrder> findProcessingsByShipppingId(int id) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
         try {

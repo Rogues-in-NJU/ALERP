@@ -38,6 +38,11 @@ public class Expense {
     private String code;
 
     /**
+     * 所属城市
+     */
+    private int city;
+
+    /**
      * 单据名称
      */
     private String title;

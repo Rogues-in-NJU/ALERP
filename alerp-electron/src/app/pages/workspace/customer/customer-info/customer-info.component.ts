@@ -217,6 +217,7 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     this.editCache.data = {};
     const t: CustomerSpecialPriceVO = this.customerData.specialPrices[ index ];
     Object.assign(this.editCache.data, t);
+    console.log(this.editCache.data);
     this.editCache.currentProduct = {
       id: t.productId,
       name: t.productName
@@ -248,6 +249,10 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     const index = this.customerData.specialPrices.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.customerData.specialPrices[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
+    if (!Objects.valid(this.customerData.specialPrices[index].id)) {
+      delete this.customerData.specialPrices[index].id;
+    }
+    delete this.customerData.specialPrices[index]['_id'];
     this.saveCustomer(this.customerData);
   }
 

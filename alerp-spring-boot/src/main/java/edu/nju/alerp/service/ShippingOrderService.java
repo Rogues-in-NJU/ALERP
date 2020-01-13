@@ -39,4 +39,11 @@ public interface ShippingOrderService {
     Double getCustomerAvgPrice(List<Integer> customerIdList);
 
     Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
+
+    /**
+     * 根据收款单id找到一条出货单记录
+     * @param arrearOrderId
+     * @return
+     */
+    ShippingOrder getShippingOrderByArrearOrderId(int arrearOrderId);
 }

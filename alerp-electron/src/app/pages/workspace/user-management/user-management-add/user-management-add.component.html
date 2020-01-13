@@ -25,36 +25,77 @@
         <nz-form-item nzFlex>
           <nz-form-label nzRequired nzSpan="6">电话号码</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <input nz-input formControlName="phone_number" class="info-input"/>
+            <input nz-input formControlName="phoneNumber" class="info-input"/>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">权限1</nz-form-label>
+          <nz-form-label nzRequired nzSpan="6">初始密码</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <nz-radio-group formControlName="radioValue1">
-              <label nz-radio nzValue="0">不可读</label>
-              <label nz-radio nzValue="1">只读</label>
-              <label nz-radio nzValue="2">读写</label>
-            </nz-radio-group>
+            <input nz-input formControlName="password" class="info-input"/>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">权限2</nz-form-label>
+          <nz-form-label nzRequired nzSpan="6">城市</nz-form-label>
           <nz-form-control nzHasFeedback nzSpan="14">
-            <nz-radio-group formControlName="radioValue2">
-              <label nz-radio nzValue="0">不可读</label>
-              <label nz-radio nzValue="1">只读</label>
-              <label nz-radio nzValue="2">读写</label>
-            </nz-radio-group>
+            <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="saveCityTmp($event)">
+              <div nz-row>
+                <div nz-col nzSpan="12"><label nz-checkbox nzValue="1">苏州</label></div>
+                <div nz-col nzSpan="12"><label nz-checkbox nzValue="2">昆山</label></div>
+              </div>
+            </nz-checkbox-wrapper>
           </nz-form-control>
         </nz-form-item>
       </div>
     </div>
   </form>
+  <h3>权限列表</h3>
+  <nz-table #userAuthTable
+            nzBordered
+            nzShowPagination="false"
+            nzSize="middle"
+            [nzData]="authsTmp">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="false"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.id)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="false"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.id)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
   <br/>
   <div class="operate">
 

@@ -27,6 +27,7 @@ import sun.misc.Unsafe;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 客户服务层接口实现
@@ -43,7 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
     private SpecialPricesRepository specialPricesRepository;
 
     @Override
-    public int saveCustomer(CustomerDTO customerDTO) throws Exception{
+    public int saveCustomer(CustomerDTO customerDTO) throws Exception {
         if (customerDTO.getId() == null) {
             Customer customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
@@ -57,6 +58,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice = SpecialPrice.builder()
+                            .customerId(customerDTO.getId())
                             .createdAt(DateUtils.getToday())
                             .createdBy(CommonUtils.getUserId())
                             .updatedAt(DateUtils.getToday())
@@ -78,6 +80,8 @@ public class CustomerServiceImpl implements CustomerService {
             nowCustomer.setUpdatedAt(DateUtils.getToday());
             BeanUtils.copyProperties(customerDTO, nowCustomer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
+            //取出customerid现有的特价商品
+            List<Integer> origin = getSpecialPricesListByCustomerId(customerDTO.getId()).stream().map(SpecialPrice::getId).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice;
@@ -90,6 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .productId(specialPricesDTO.getProductId())
                                 .price(specialPricesDTO.getPrice())
                                 .priceType(specialPricesDTO.getPriceType())
+                                .customerId(customerDTO.getId())
                                 .build();
                         specialPricesRepository.saveAndFlush(specialPrice);
                     } else {
@@ -98,7 +103,16 @@ public class CustomerServiceImpl implements CustomerService {
                         specialPrice.setUpdatedBy(CommonUtils.getUserId());
                         specialPricesRepository.save(specialPrice);
                     }
-
+                    List<SpecialPricesDTO> nowDTOList = specialPricesList.stream().filter(n -> n.getId() != null).collect(Collectors.toList());
+                    List<Integer> nowIdList = nowDTOList.stream().map(SpecialPricesDTO::getId).collect(Collectors.toList());
+                    //比较
+                    origin.forEach(o -> {
+                        if (!nowIdList.contains(o)) {
+                            SpecialPrice s = specialPricesRepository.getOne(o);
+                            s.setDeletedAt(DateUtils.getToday());
+                            specialPricesRepository.save(s);
+                        }
+                    });
                 }
             }
             return customerRepository.save(nowCustomer).getId();
@@ -116,7 +130,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public int deleteCustomer(int id) throws Exception{
+    public int deleteCustomer(int id) throws Exception {
         Customer customer = getCustomer(id);
         if (customer == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户id不存在！");

@@ -6,22 +6,25 @@ import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.dto.UserDTO;
-import edu.nju.alerp.entity.OperationLog;
-import edu.nju.alerp.entity.Product;
-import edu.nju.alerp.entity.User;
-import edu.nju.alerp.entity.UserCityRelation;
+import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.LoginResult;
 import edu.nju.alerp.enums.UserStatus;
+import edu.nju.alerp.service.AuthService;
 import edu.nju.alerp.service.OperationLogService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.util.PasswordUtil;
+import edu.nju.alerp.vo.AuthUserVO;
+import edu.nju.alerp.vo.UserInfoVO;
+import edu.nju.alerp.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +50,8 @@ public class UserController {
     UserService userService;
     @Autowired
     OperationLogService operationLogService;
+    @Autowired
+    AuthService authService;
 
     /**
      * 删除用户
@@ -55,7 +60,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除用户")
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
@@ -71,13 +76,31 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取用户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name,
                                              @RequestParam(value = "status", required = false) Integer status) {
-        Page<User> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status);
+        List<Integer> userCityRelationList = userService.getUserListByCityId(CommonUtils.getCity());
+        Page<UserVO> page = userService.getUserList(PageRequest.of(pageIndex - 1, pageSize), name, status, userCityRelationList);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+    }
+
+    /**
+     * 获取用户详细信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取用户详细信息")
+    public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
+        User user = userService.getUser(id);
+        List<AuthUserVO> authList = authService.queryAuthUserByUserId(id);
+        UserInfoVO userInfoVO = UserInfoVO.builder()
+                .authList(authList)
+                .build();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return ResponseResult.ok(userInfoVO);
     }
 
     /**
@@ -86,12 +109,12 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET, name = "用户操作日志查询")
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
                                                          @RequestParam(value = "pageSize") int pageSize,
                                                          @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
-                                                         @RequestParam(value = "operationStartTime") String operationStartTime,
-                                                         @RequestParam(value = "operationEndTime") String operationEndTime) {
+                                                         @RequestParam(value = "operationStartTime", required = false, defaultValue = "") String operationStartTime,
+                                                         @RequestParam(value = "operationEndTime", required = false, defaultValue = "") String operationEndTime) {
 
         Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize), userName, operationStartTime, operationEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
@@ -103,7 +126,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增用户/修改用户信息")
     public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
         try {
             int result = userService.saveUser(userDTO);
@@ -120,7 +143,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST, name = "用户登录")
     public ResponseResult<LoginResultDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             HttpSession session = CommonUtils.getHttpSession();
@@ -142,7 +165,7 @@ public class UserController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET, name = "用户登出")
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();

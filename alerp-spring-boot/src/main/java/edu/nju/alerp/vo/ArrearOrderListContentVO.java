@@ -1,91 +1,70 @@
 package edu.nju.alerp.vo;
 
-import java.util.List;
-
-import edu.nju.alerp.dto.ReceiptRecordForArrearDTO;
 import lombok.Builder;
 import lombok.Data;
 
 /**
- * 一张收款单的欠款明细详情VO
+ * 条件搜索得到的收款单列表里的VO
  * @author luhailong
- * @date 2019/12/29
+ * @date 2020/01/12
  */
 @Data
 @Builder
-public class ArrearDetailVO {
+public class ArrearOrderListContentVO {
     /**
      * 收款单id
      */
-    private int id;
-
+    private Integer id;
     /**
      * 收款单编码
      */
     private String code;
-
     /**
      * 客户id
      */
-    private int customerId;
-
+    private Integer customerId;
     /**
-     * 客户姓名
+     * 客户名称
      */
     private String customerName;
-
     /**
-     * 出货单id
+     * 对应的出货单id
      */
-    private int shippingOrderId;
-
+    private Integer shippingOrderId;
     /**
-     * 出货单编码
+     * 对应的出货单编码
      */
     private String shippingOrderCode;
-
     /**
      * 应收金额
      */
-    private double receivableCash;
-
+    private Double receivableCash;
     /**
      * 实收金额
      */
-    private double receivedCash;
-
+    private Double receivedCash;
     /**
      * 截止日期
      */
     private String dueDate;
-
     /**
      * 是否逾期
      */
-    private boolean overDue;
-
+    private Boolean overDue;
     /**
-     * 收款单状态，
+     * 收款单状态：ArrearOrderStatus
      */
-    private int status;
-
+    private Integer status;
     /**
      * 创建时间
      */
     private String createdAt;
-
     /**
      * 创建者id
      */
-    private int createdById;
-
+    private Integer createdById;
     /**
      * 创建者姓名
      */
     private String createdByName;
-
-    /**
-     * 收款单所含收款记录列表
-     */
-    private List<ReceiptRecordForArrearDTO> receiptRecordList;
 }

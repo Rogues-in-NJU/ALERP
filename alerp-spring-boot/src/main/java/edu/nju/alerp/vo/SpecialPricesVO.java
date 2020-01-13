@@ -15,6 +15,7 @@ public class SpecialPricesVO {
     private Integer productId;
     private String productName;
     private double price;
+    private Integer priceType;
     private String createdAt;
     private Integer createdById;
     private String createdByName;

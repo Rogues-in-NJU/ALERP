@@ -2,11 +2,12 @@ import {Component, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {RefreshableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
-import {ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
 import {TabService} from "../../../../core/services/tab.service";
 import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {StringUtils, Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-management-list',
@@ -20,9 +21,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   pageIndex: number = 1;
   pageSize: number = 10;
 
-  userName: string;
-  userPhoneNumber: string;
-  // selectedStatus: number;
+  name: string;
 
   userList: UserManagementInfoVO[] = [];
 
@@ -38,19 +37,22 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    // console.log(this.userName);
-    // console.log(this.userPhoneNumber);
-    // console.log(this.selectedStatus);
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     };
+    if (!StringUtils.isEmpty(this.name)) {
+      Object.assign(queryParams, {
+        name: this.name
+      });
+      this.name = null;
+    }
     this.UserManagement.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<UserManagementInfoVO>>) => {
         if (!res) {
           return;
         }
-        if (res.code !== 200) {
+        if (res.code !== ResultCode.SUCCESS.code) {
           return;
         }
         const tableResult: TableResultVO<UserManagementInfoVO> = res.data;
@@ -65,6 +67,19 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
 
   confirmAbandon(id: string): void {
     console.log('confirm abandon: ' + id);
+    this.UserManagement.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          return;
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+      });
   }
 
   refresh(): void {

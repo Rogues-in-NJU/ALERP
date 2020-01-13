@@ -28,31 +28,19 @@ export class UserManagementService {
     if (StringUtils.isEmpty(id)) {
       return of(null);
     }
-    // // prod
-    // return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user-management/${_id}`);
-    // test
-    return of({
-      code: 200,
-      message: '',
-      data: {
-        id: 1,
-        name: '殷乾恩',
-        phone_number: '13821378223',
-        status: 1
-      }
-    });
+    return this.http.get<ResultVO<UserManagementInfoVO>>(`${AppConfig.BASE_URL}/api/user/${id}`);
   }
 
   public save(info: UserManagementInfoVO): Observable<ResultVO<any>> {
-    return of({
-      code: 200,
-      message: '',
-      data: null
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user`, info, {
+      withCredentials: true
     });
   }
 
   public abandon(id: string): Observable<ResultVO<any>> {
-    return of(null);
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/delete/${id}`, {
+      withCredentials: true
+    });
   }
 
 }

@@ -37,7 +37,7 @@ public class ReceiptRecordController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST,name = "增加收款记录")
     public ResponseResult<Integer> addReceiptRecord(@RequestBody ReceiptRecordDTO receiptRecordDTO) {
         return ResponseResult.ok(receiptRecordService.addReceiptRecord(receiptRecordDTO));
     }
@@ -50,7 +50,7 @@ public class ReceiptRecordController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET,name = "删除收款记录")
     public ResponseResult<Integer> deleteReceiptRecord(@PathVariable(value = "id") int id) {
         return ResponseResult.ok(receiptRecordService.deleteReceiptRecord(id));
     }
