@@ -365,7 +365,7 @@ body:
   id: number | null,
   name: string,
   phoneNumber: string(在职的员工手机号唯一),
-  password: string
+  password: string // 创建用户时不传入，后端默认为 00000000 ， 用户自行登录修改
   
   auth: [{
     id: string,
