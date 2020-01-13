@@ -26,5 +26,5 @@ public class ArrearOrderInvoiceNumberDTO {
     /**
      * 上次更新时间：作为乐观锁的版本号
      */
-    private String UpdatedAt;
+    private String updatedAt;
 }
