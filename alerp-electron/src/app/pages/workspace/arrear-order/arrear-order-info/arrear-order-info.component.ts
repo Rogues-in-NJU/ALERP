@@ -124,9 +124,24 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
 
-  confirmPaymentRecordDelete(_id: number): void {
-    // TODO: 提交修改
-    this.arrearOrderData.receiptRecordList = this.arrearOrderData.receiptRecordList.filter(item => item['_id'] !== _id);
+  confirmPaymentRecordDelete(id: number): void {
+    this.arrearOrder.deleteReceiptRecord(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('修改失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('修改成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   cancelPaymentRecordDelete(_id: number): void {

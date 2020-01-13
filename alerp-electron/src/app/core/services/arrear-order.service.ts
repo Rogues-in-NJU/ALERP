@@ -122,5 +122,12 @@ export class ArrearOrderService {
       });
   }
 
+  public deleteReceiptRecord(id: number): Observable<ResultVO<any>> {
+
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/arrear-order/receipt-record/delete/${id}`, {
+      withCredentials: true
+    });
+  }
+
 
 }
