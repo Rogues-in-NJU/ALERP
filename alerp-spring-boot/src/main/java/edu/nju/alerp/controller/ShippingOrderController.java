@@ -75,7 +75,8 @@ public class ShippingOrderController {
             e.printStackTrace();
         }
         //修改所有对应加工单的状态为"未完成"
-        List<Integer> processingIdList = shippingOrderService.getProcessingListById(id);
+        //针对损耗导致的加工单id为0的情况 去除
+        List<Integer> processingIdList = shippingOrderService.getProcessingListById(id).stream().filter(p -> p != 0).collect(Collectors.toList());
 //        根据id获取加工单，修改状态
         processingIdList.forEach(p -> {
             ProcessingOrder processingOrder = processOrderService.getOne(p);
