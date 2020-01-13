@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
         if (userDTO.getId() == null) {
             user = User.builder()
                     .name(userDTO.getName())
-                    .password(PasswordUtil.getMD5(userDTO.getPassword()))
+                    .password(PasswordUtil.getMD5("00000000"))
                     .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())

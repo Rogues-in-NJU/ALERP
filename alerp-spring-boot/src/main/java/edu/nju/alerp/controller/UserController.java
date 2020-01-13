@@ -104,6 +104,24 @@ public class UserController {
     }
 
     /**
+     * 获取当前登录用户详细信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/self", method = RequestMethod.GET, name = "获取登录用户详细信息")
+    public ResponseResult<UserInfoVO> self() {
+        int userId = CommonUtils.getUserId();
+        User user = userService.getUser(userId);
+        List<AuthUserVO> authList = authService.queryAuthUserByUserId(userId);
+        UserInfoVO userInfoVO = UserInfoVO.builder()
+                .authList(authList)
+                .build();
+        BeanUtils.copyProperties(user, userInfoVO);
+        return ResponseResult.ok(userInfoVO);
+    }
+
+    /**
      * 用户操作日志查询
      *
      * @return
