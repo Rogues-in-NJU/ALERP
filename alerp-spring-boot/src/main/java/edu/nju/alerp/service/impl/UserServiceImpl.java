@@ -83,7 +83,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
             user.setName(userDTO.getName());
-            user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
+            if(!userDTO.getPassword().equals(user.getPassword())){
+                user.setPassword(PasswordUtil.getMD5(userDTO.getPassword()));
+            }
             user.setPhoneNumber(userDTO.getPhoneNumber());
             user.setUpdatedAt(DateUtils.getToday());
         }

@@ -95,12 +95,7 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取用户详细信息")
     public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
         User user = userService.getUser(id);
-        List<AuthUserVO> authList = authService.queryAuthUserByUserId(id);
-        UserInfoVO userInfoVO = UserInfoVO.builder()
-                .authList(authList)
-                .build();
-        BeanUtils.copyProperties(user, userInfoVO);
-        return ResponseResult.ok(userInfoVO);
+        return ResponseResult.ok(generateUserInfo(user));
     }
 
     /**
@@ -111,14 +106,18 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/self", method = RequestMethod.GET, name = "获取登录用户详细信息")
     public ResponseResult<UserInfoVO> self() {
-        int userId = CommonUtils.getUserId();
-        User user = userService.getUser(userId);
-        List<AuthUserVO> authList = authService.queryAuthUserByUserId(userId);
+        User user = userService.getUser(CommonUtils.getUserId());
+        return ResponseResult.ok(generateUserInfo(user));
+    }
+
+    private UserInfoVO generateUserInfo(User user) {
+        List<AuthUserVO> authList = authService.queryAuthUserByUserId(user.getId());
         UserInfoVO userInfoVO = UserInfoVO.builder()
+                .cities(userService.getCitiesByUserId(user.getId()))
                 .authList(authList)
                 .build();
         BeanUtils.copyProperties(user, userInfoVO);
-        return ResponseResult.ok(userInfoVO);
+        return userInfoVO;
     }
 
     /**
