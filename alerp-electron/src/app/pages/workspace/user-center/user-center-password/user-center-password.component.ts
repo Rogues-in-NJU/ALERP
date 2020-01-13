@@ -45,12 +45,14 @@ export class UserCenterPasswordComponent implements ClosableTab, OnInit {
       return;
     }
     let formData: any = this.userCenterPasswordForm.getRawValue();
+    if(formData.password1!=formData.password2){
+      this.message.success("两次密码不一致");
+      return;
+    }
     let passwordUpdate: PasswordInfoVO = {
       oldPassword: formData.oldPassword,
       newPassword: formData.password1
     };
-
-    console.log(passwordUpdate);
     this.isSaving = true;
     this.userManagement.updatePassword(passwordUpdate)
       .pipe(debounceTime(3000))
