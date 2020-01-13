@@ -224,7 +224,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Integer findTotalInCome(String startDate, String endDate) {
+    public Double findTotalInCome(String startDate, String endDate) {
         return shippingOrderRepository.findTotalInCome(startDate, endDate);
     }
 
