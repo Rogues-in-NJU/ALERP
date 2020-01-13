@@ -36,27 +36,27 @@ public class AuthController {
      * @param authDTO
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或者更新权限资源")
     public ResponseResult<Integer> addOrUpdateAuth(@RequestBody AuthDTO authDTO) {
         return ResponseResult.ok(authService.addOrUpdateAuth(authDTO));
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "查询权限资源列表")
     public ResponseResult<List<Auth>> queryAuthList() {
         return ResponseResult.ok(authService.findAll());
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit", method = RequestMethod.POST, name = "编辑某个用户的权限")
     public ResponseResult<Integer> editUserAuth(@RequestBody List<UpdateUserAuthDTO> updateAuths) {
         return ResponseResult.ok(authService.updateUserAuth(updateAuths));
     }
 
-    @RequestMapping(value = "/initial/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/initial/{id}", method = RequestMethod.GET, name = "初始化某个用户权限")
     public ResponseResult<Integer> initialUserAuthById(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(authService.initialUserAuthByUserId(id));
     }
 
-    @RequestMapping(value = "/userId/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/userId/{id}", method = RequestMethod.GET, name = "查询某个用户的权限")
     public ResponseResult<List<AuthUserVO>> queryUserAuthByUserId(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(authService.queryAuthUserByUserId(id));
     }

@@ -33,19 +33,19 @@ public class SupplierController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取供货商列表（分页）")
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
                                                                   @RequestParam(value = "name", required = false) String name){
         return ResponseResult.ok(ListResponseUtils.generateResponse(supplierService.findSuppliersByPage(PageRequest.of(pageIndex - 1, pageSize), name),pageIndex,pageSize));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或者更新供货商")
     public ResponseResult<Integer> addOrUpdateProcessingProduct(@RequestBody SupplierDTO supplierDTO) {
         return ResponseResult.ok(supplierService.addOrUpdateSupplier(supplierDTO));
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除供货商")
     public ResponseResult<Integer> deleteProcessingProduct(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
             return ResponseResult.ok(supplierService.deleteSupplier(id));
     }
