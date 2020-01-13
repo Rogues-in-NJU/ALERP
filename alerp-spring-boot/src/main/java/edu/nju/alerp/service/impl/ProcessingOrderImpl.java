@@ -165,8 +165,11 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         QueryContainer<ProcessOrderProduct> productSp = new QueryContainer<>();
         double totalWeight = 0;
         try{
-            processSp.add(ConditionFactory.greatThanEqualTo("createAt", createdAtStartTime));
-            processSp.add(ConditionFactory.lessThanEqualTo("createAt", createdAtEndTime));
+            if (createdAtStartTime != null)
+                processSp.add(ConditionFactory.greatThanEqualTo("createAt", createdAtStartTime));
+            if (createdAtEndTime != null)
+                processSp.add(ConditionFactory.lessThanEqualTo("createAt", createdAtEndTime));
+            processSp.add(ConditionFactory.notEqual("status", ProcessingOrderStatus.ABANDONED.getCode()));
             List<ProcessingOrder> processingOrders = processingOrderRepository.findAll(processSp);
             List<Integer> processOrderIds = processingOrders.parallelStream()
                                                         .map(ProcessingOrder::getId)
