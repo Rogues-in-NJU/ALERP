@@ -88,12 +88,12 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       city: this.cityTmp,
       authList: this.authsTmp
     };
-    console.log(JSON.stringify(userManagementAdd));
+    // console.log(JSON.stringify(userManagementAdd));
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
+        // console.log(res);
         this.message.success('添加成功!');
         this.isSaving = false;
         // TODO: 跳转回列表页面
