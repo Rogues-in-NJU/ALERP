@@ -1,22 +1,23 @@
-import { Component, OnInit } from "@angular/core";
-import { RefreshTabEvent, TabService } from "../../../../core/services/tab.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { ProcessingOrderService } from "../../../../core/services/processing-order.service";
-import { NzMessageService } from "ng-zorro-antd";
-import { ProcessingOrderProductVO, ProcessingOrderVO } from "../../../../core/model/processing-order";
-import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { HttpErrorResponse } from "@angular/common/http";
-import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
-import { ProductVO } from "../../../../core/model/product";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { ProductService } from "../../../../core/services/product.service";
-import { debounceTime, map, switchMap } from "rxjs/operators";
-import { RefreshableTab } from "../../tab/tab.component";
+import {Component, OnInit, ViewChild, ElementRef} from "@angular/core";
+import {RefreshTabEvent, TabService} from "../../../../core/services/tab.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {ProcessingOrderService} from "../../../../core/services/processing-order.service";
+import {NzMessageService} from "ng-zorro-antd";
+import {ProcessingOrderProductVO, ProcessingOrderVO} from "../../../../core/model/processing-order";
+import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
+import {HttpErrorResponse} from "@angular/common/http";
+import {Objects, SpecificationUtils, StringUtils} from "../../../../core/services/util.service";
+import {ProductVO} from "../../../../core/model/product";
+import {BehaviorSubject, Observable, of} from "rxjs";
+import {ProductService} from "../../../../core/services/product.service";
+import {debounceTime, map, switchMap} from "rxjs/operators";
+import {RefreshableTab} from "../../tab/tab.component";
+import {ENgxPrintComponent} from "e-ngx-print";
 
 @Component({
   selector: 'processing-order-info',
   templateUrl: './processing-order-info.component.html',
-  styleUrls: [ './processing-order-info.component.less' ]
+  styleUrls: ['./processing-order-info.component.less']
 })
 export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
 
@@ -48,20 +49,19 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   searchProducts: ProductVO[];
   searchChanges$: BehaviorSubject<string> = new BehaviorSubject('');
   isProductsLoading: boolean = false;
-  specificationAutoComplete: { label: string, value: string }[] = [];
+  specificationAutoComplete: {label: string, value: string}[] = [];
 
   printCSS: string[];
   printStyle: string;
 
-  constructor(
-    private tab: TabService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private processingOrder: ProcessingOrderService,
-    private product: ProductService,
-    private message: NzMessageService,
-  ) {
-    this.printCSS = [ 'http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css' ];
+  constructor(private tab: TabService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private processingOrder: ProcessingOrderService,
+              private product: ProductService,
+              private message: NzMessageService,
+              private elRef: ElementRef) {
+    this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
 
     this.printStyle =
       `
@@ -71,13 +71,9 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         `;
   }
 
-  printComplete() {
-    console.log('打印完成！');
-  }
-
   ngOnInit(): void {
     this.isLoading = true;
-    this.processingOrderId = this.route.snapshot.params[ 'id' ];
+    this.processingOrderId = this.route.snapshot.params['id'];
     this.refresh();
 
     const getProducts: any = (name: string) => {
@@ -133,12 +129,12 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       quantity: null,
       expectedWeight: null
     };
-    item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+    item['_id'] = this.processingOrderInfoProductCountIndex++;
     this.processingOrderData.products = [
       item,
       ...this.processingOrderData.products
     ];
-    this.startEditProduct(item[ '_id' ], true);
+    this.startEditProduct(item['_id'], true);
   }
 
   onProductSearch(value: string): void {
@@ -160,14 +156,14 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       this.message.warning('请先保存加工商品列表的更改!');
       return;
     }
-    const index = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    const index = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
     if (index === -1) {
       this.message.error('没有该加工商品条目!');
       return;
     }
     this.editCache._id = _id;
     this.editCache.data = {};
-    const t: ProcessingOrderProductVO = this.processingOrderData.products[ index ];
+    const t: ProcessingOrderProductVO = this.processingOrderData.products[index];
     Object.assign(this.editCache.data, t);
     this.editCache.currentProduct = {
       id: t.productId,
@@ -186,7 +182,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   confirmProductDelete(_id: number): void {
-    const index: number = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    const index: number = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
     this.product.deleteProduct(this.processingOrderData.products[index].productId)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
@@ -207,7 +203,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
 
   cancelProductEdit(_id: number): void {
     if (Objects.valid(this.editCache.isAdd) && this.editCache.isAdd) {
-      this.processingOrderData.products = this.processingOrderData.products.filter(item => item[ '_id' ] !== _id);
+      this.processingOrderData.products = this.processingOrderData.products.filter(item => item['_id'] !== _id);
     }
     Object.assign(this.editCache, this.defaultEditCache);
   }
@@ -220,10 +216,10 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     if (!this.checkProcessingOrderProductValid()) {
       return;
     }
-    const index = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
-    Object.assign(this.processingOrderData.products[ index ], this.editCache.data);
+    const index = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
+    Object.assign(this.processingOrderData.products[index], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
-    this.processingOrder.saveProduct(this.processingOrderData.products[ index ])
+    this.processingOrder.saveProduct(this.processingOrderData.products[index])
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
           return;
@@ -254,66 +250,66 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     splits = splits.filter(item => !StringUtils.isEmpty(item));
     splits = splits.map(item => item.trim());
     if (this.editCache.product.type !== 2
-      && (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L))) { // 不是铝棒
+      && (splits[0].startsWith(SpecificationUtils.FAI_U)
+      || splits[0].startsWith(SpecificationUtils.FAI_L))) { // 不是铝棒
       this.editCacheValidateStatus.specification = 'error';
       return;
     }
     if (splits.length === 1) {
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[0].startsWith(SpecificationUtils.FAI_U)
+        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
+        splits[0] = splits[0].substring(1);
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
-        } ];
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
+        }];
       } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ])
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0])
         }, {
-          label: '' + parseFloat(splits[ 0 ]),
-          value: '' + parseFloat(splits[ 0 ])
-        } ];
+          label: '' + parseFloat(splits[0]),
+          value: '' + parseFloat(splits[0])
+        }];
       }
       return;
     }
     if (splits.length === 2) {
-      if (splits[ 1 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[1].search(SpecificationUtils.NUM_PATT) === -1) {
         this.editCacheValidateStatus.specification = 'error';
         return;
       }
-      if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
-        || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
-        splits[ 0 ] = splits[ 0 ].substring(1);
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+      if (splits[0].startsWith(SpecificationUtils.FAI_U)
+        || splits[0].startsWith(SpecificationUtils.FAI_L)) {
+        splits[0] = splits[0].substring(1);
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
+        }];
       } else {
-        if (splits[ 0 ].search(SpecificationUtils.NUM_PATT) === -1) {
+        if (splits[0].search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
         }
-        this.specificationAutoComplete = [ {
-          label: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: SpecificationUtils.FAI_U + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
+        this.specificationAutoComplete = [{
+          label: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: SpecificationUtils.FAI_U + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
         }, {
-          label: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ]),
-          value: '' + parseFloat(splits[ 0 ]) + '*' + parseFloat(splits[ 1 ])
-        } ];
+          label: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1]),
+          value: '' + parseFloat(splits[0]) + '*' + parseFloat(splits[1])
+        }];
         this.editCacheValidateStatus.specification = 'error';
       }
       return;
@@ -330,12 +326,26 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
           return;
         }
       }
-      this.specificationAutoComplete = [ {
-        label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
-        value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
-      } ];
+      this.specificationAutoComplete = [{
+        label: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`,
+        value: `${parseFloat(splits[0])}*${parseFloat(splits[1])}*${parseFloat(splits[2])}`
+      }];
       return;
     }
+  }
+
+  @ViewChild('print1') printComponent: ENgxPrintComponent;
+  showPrint: boolean = false;
+
+  printComplete() {
+    console.log('打印完成！');
+    this.showPrint = false;
+  }
+
+  customPrint(print: string) {
+    this.showPrint = true;
+    const printHTML: any = this.elRef.nativeElement.childNodes[4];
+    this.printComponent.print(printHTML);
   }
 
   refresh(): void {
@@ -350,7 +360,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         if (Objects.valid(this.processingOrderData.products)) {
           this.processingOrderData.products.forEach(item => {
             item.processingOrderId = this.processingOrderData.id;
-            item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+            item['_id'] = this.processingOrderInfoProductCountIndex++;
             item.processingOrderUpdatedAt = this.processingOrderData.updatedAt;
           });
         }
