@@ -58,7 +58,7 @@ public class ShippingOrderController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除出货单")
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
@@ -95,7 +95,7 @@ public class ShippingOrderController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取出货单列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "id", required = false, defaultValue = "") String code,
@@ -123,7 +123,7 @@ public class ShippingOrderController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增出货单")
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<ShippingArrearRelationVO> saveShippingOrder(@Valid @RequestBody ShippingOrderDTO shippingOrderDTO) {
         try {
@@ -194,7 +194,7 @@ public class ShippingOrderController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "查看出货单详情")
     public ResponseResult<ShippingOrderVO> ShippingOrderVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
@@ -243,7 +243,7 @@ public class ShippingOrderController {
      * @param name
      * @return
      */
-    @RequestMapping(value = "/productAvgPriceslist", method = RequestMethod.GET)
+    @RequestMapping(value = "/productAvgPriceslist", method = RequestMethod.GET, name = "获取商品平均单价列表（分页）")
     public ResponseResult<ListResponse> findProductPricesByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                  @RequestParam(value = "pageSize") int pageSize,
                                                                  @RequestParam(value = "name", required = false) String name) {
