@@ -80,6 +80,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
             res = userRepository.saveAndFlush(user);
             //新增用户初始化权限
             authService.initialUserAuthByUserId(res.getId());
+            userDTO.getAuthList().forEach(a ->{
+                a.setUserId(res.getId());
+            });
             authService.updateUserAuth(userDTO.getAuthList());
         } else {
             User user = getUser(userDTO.getId());
