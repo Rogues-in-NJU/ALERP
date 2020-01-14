@@ -54,7 +54,7 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
         operationEndTime: DateUtils.format(this.timeRange[1])
       });
     }
-
+    // console.log(JSON.stringify(queryParams));
     this.Operation.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<OperationInfoVO>>) => {
         if (!res) {
@@ -68,7 +68,7 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.operationList = tableResult.result;
-        console.log(this.operationList);
+        // console.log(this.operationList);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
