@@ -243,7 +243,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       },()=>{
-        this.isChangeInvoiceNumber = false;
+        this.isChangeDueDate = false;
         this.refresh();
       });
   }

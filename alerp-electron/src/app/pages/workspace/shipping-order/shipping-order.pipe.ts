@@ -22,8 +22,10 @@ export class ShippingOrderStatusColorPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
+      case 0: return 'blue';
       case 1: return 'green';
-      default: return 'green';
+      case 2: return '';
+      default: return '';
     }
   }
 

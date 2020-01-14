@@ -67,7 +67,7 @@
                 [(nzPageSize)]="pageSize"
                 (nzPageIndexChange)="search()"
                 (nzPageSizeChange)="search()"
-                [nzTotal]="totalPages"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
@@ -94,7 +94,7 @@
             <a routerLink="/workspace/shipping-order/info/{{ data.id }}">查看</a>
             <a style="margin-left: 5px"
                class="abandon"
-               [class.disabled]="false"
+               [class.disabled]="data.status !== 0"
                nz-popconfirm
                nzPopconfirmTitle="确认废弃?"
                nzPopconfirmPlacement="top"
