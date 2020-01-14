@@ -21,19 +21,23 @@
     <nz-form-item>
       <nz-form-label>出货单编号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="orderCode"/>
+        <input nz-input type="text" [(ngModel)]="orderCode"
+        (ngModelChange)="resetIndex()" />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label>客户</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="customerName"/>
+        <input nz-input type="text" [(ngModel)]="customerName"
+               (ngModelChange)="resetIndex()"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label>状态</nz-form-label>
       <nz-form-control>
-        <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
+        <nz-select [(ngModel)]="selectedStatus"
+                   (ngModelChange)="resetIndex()"
+                   nzAllowClear="true" style="width: 7em">
           <nz-option nzLabel="已出货" nzValue="0"></nz-option>
           <nz-option nzLabel="已完成" nzValue="1"></nz-option>
           <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
@@ -46,14 +50,16 @@
         <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
                          nzFormat="yyyy-MM-dd HH:mm"
                          [nzPlaceHolder]="['开始时间', '结束时间']"
-                         [(ngModel)]="timeRange">
+                         [(ngModel)]="timeRange"
+                         (ngModelChange)="resetIndex()">
 
         </nz-range-picker>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-control>
-        <button nz-button nzType="primary" (click)="search()">搜索</button>
+        <button class="queryButton" nz-button nzType="primary" (click)="search()">搜索</button>
+        <button class="queryButton" nz-button nzType="primary" (click)="resetQueryParams()">重置</button>
       </nz-form-control>
     </nz-form-item>
 
