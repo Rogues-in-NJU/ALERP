@@ -79,10 +79,9 @@
           </td>
           <td nzRight="0px">
             <a routerLink="/workspace/purchase-order/info/{{ data.id }}">查看</a>
-            <a *ngIf="data.status !== 3"
-               style="margin-left: 5px"
+            <a style="margin-left: 5px"
                class="abandon"
-               [class.disabled]="false"
+               [class.disabled]="data.status === 3"
                nz-popconfirm
                nzPopconfirmTitle="确认废弃?"
                nzPopconfirmPlacement="top"

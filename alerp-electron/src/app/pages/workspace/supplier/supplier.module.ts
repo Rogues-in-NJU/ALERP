@@ -7,7 +7,7 @@ import { SupplierListComponent } from "./supplier-list/supplier-list.component";
 import { ReactiveFormsModule } from "@angular/forms";
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'list' },
+  // { path: '', pathMatch: 'full', redirectTo: 'list' },
   {
     path: 'list',
     pathMatch: 'full',

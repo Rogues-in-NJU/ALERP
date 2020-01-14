@@ -89,7 +89,23 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
+    this.purchaseOrder.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('删除失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   refresh(): void {

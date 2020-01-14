@@ -85,6 +85,7 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    console.log('init customer info');
     this.customerId = this.route.snapshot.params[ 'id' ];
     this.refresh();
 
@@ -282,14 +283,14 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     this.customer.save(customer)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
-          this.message.error('保存失败!');
+          this.message.error('修改失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
           this.message.error(res.message);
           return;
         }
-        this.message.success('保存成功!');
+        this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
         this.refresh();
