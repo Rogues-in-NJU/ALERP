@@ -27,7 +27,10 @@ export class ArrearOrderService {
   }
 
   public find(id: number): Observable<ResultVO<ArrearOrderInfoVO>> {
-    return this.http.get<ResultVO<ArrearOrderInfoVO>>(`${AppConfig.BASE_URL}/api/arrear-order/${id}`);
+    return this.http.get<ResultVO<ArrearOrderInfoVO>>(
+      `${AppConfig.BASE_URL}/api/arrear-order/${id}`,{
+        withCredentials: true
+      });
 
   }
 
@@ -41,70 +44,10 @@ export class ArrearOrderService {
   }
 
   public getArrearStatistics() : Observable<ResultVO<ArrearStatisticsVO>>{
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: {
-        customers: [
-          {
-            customerId: 1,
-            customerName: '于海强1',
-            overdues: [{
-                month: '七月',
-                cash: 10000,
-              },{
-                month: '八月',
-                cash: 10000,
-              },{
-                month: '九月',
-                cash: 10000,
-            }],
-            total: 30000
-          },{
-            customerId: 2,
-            customerName: '于海强2',
-            overdues: [{
-              month: '七月',
-              cash: 10000,
-            },{
-              month: '八月',
-              cash: 10000,
-            },{
-              month: '九月',
-              cash: 10000,
-            }],
-            total: 30000
-          },{
-            customerId: 3,
-            customerName: '于海强3',
-            overdues: [{
-              month: '七月',
-              cash: 10000,
-            },{
-              month: '八月',
-              cash: 10000,
-            },{
-              month: '九月',
-              cash: 10000,
-            }],
-            total: 30000
-          }
-        ],
-        statistics:{
-          overdues: [{
-            month: '七月',
-            cash: 30000,
-          },{
-            month: '八月',
-            cash: 30000,
-          },{
-            month: '九月',
-            cash: 30000,
-          }],
-          total: 90000
-        }
-      }
+    return this.http.get<ResultVO<ArrearStatisticsVO>>(`${AppConfig.BASE_URL}/api/overdue-warning`,{
+      withCredentials: true
     });
+
   }
 
   public changeInvoiceNumber(params: QueryParams): Observable<ResultVO<any>> {

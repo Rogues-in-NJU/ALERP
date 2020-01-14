@@ -22,9 +22,9 @@ import {CustomerVO} from "../../../../core/model/customer";
 })
 export class ArrearOrderStatisticsComponent implements RefreshableTab, OnInit {
 
-  arrearStatisticsData : ArrearStatisticsVO;
+  arrearStatisticsData : ArrearStatisticsVO = {};
   customers: CustomerOverduesVO[];
-  statistics: AllOverDuesVO;
+  statistics: AllOverDuesVO = {};
   isLoading : boolean = false;
 
   constructor(

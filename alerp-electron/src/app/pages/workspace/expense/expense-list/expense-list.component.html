@@ -12,10 +12,11 @@
     <div class="table-wrapper">
       <nz-table #userManagementTable
                 nzShowSizeChanger
+                [nzFrontPagination]="false"
                 [nzData]="expenseList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
-                [nzTotal]="totalPages"
+                [nzTotal]="totalPages * pageSize"
                 [nzLoading]="isLoading"
                 [nzScroll]="{ x: '100%'}">
         <thead>
