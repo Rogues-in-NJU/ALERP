@@ -2,13 +2,13 @@
   <nz-page-header-title>加工单详情</nz-page-header-title>
   <nz-page-header-extra>
     <div>
-      <e-ngx-print
-        [btnText]="'打印'"
-        [printHTML]="print_div"
-        [printStyle]="printStyle"
-        [printCSS]="printCSS"
-        (printComplete)="printComplete()">
+      <e-ngx-print #print1
+                   [showBtn]="false"
+                   [printStyle]="printStyle"
+                   [printCSS]="printCSS"
+                   (printComplete)="printComplete()">
       </e-ngx-print>
+      <button (click)="customPrint('print1')">打印</button>
     </div>
   </nz-page-header-extra>
 </nz-page-header>
@@ -170,8 +170,8 @@
   <br/>
   <br/>
   <br/>
-  <p>(购货单位:){{ processingOrderData.customerName }}</p>
-  <table>
+  <p *ngIf="showPrint">(购货单位:){{ processingOrderData.customerName }}</p>
+  <table *ngIf="showPrint">
     <thead>
     <tr>
       <th style="width: 200px">(型号)</th>
