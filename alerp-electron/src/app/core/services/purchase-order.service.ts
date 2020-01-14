@@ -102,10 +102,13 @@ export class PurchaseOrderService {
   }
 
   public abandon(id: string): Observable<ResultVO<any>> {
-    return of({
-      code: ResultCode.SUCCESS.code,
-      message: '',
-      data: null
+    // return of({
+    //   code: ResultCode.SUCCESS.code,
+    //   message: '',
+    //   data: null
+    // });
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/purchase-order/abandon/${id}`, {
+      withCredentials: true
     });
   }
 

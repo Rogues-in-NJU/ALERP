@@ -1014,6 +1014,9 @@ res:
 GET
 /api/summary/info
 
+* startTime
+* endTime
+
 res:
 {
   processingOrderTotalWeight: number, // 加工单铝材总重量
@@ -1039,6 +1042,8 @@ params:
 * pageIndex
 * pageSize
 * name
+* startTime
+* endTime
 
 res:
 {

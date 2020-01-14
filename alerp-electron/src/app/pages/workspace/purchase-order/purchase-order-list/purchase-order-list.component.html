@@ -12,15 +12,19 @@
     <nz-form-item>
       <nz-form-label>采购单编号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="orderCode"/>
+        <input nz-input type="text" [(ngModel)]="orderCode" (ngModelChange)="resetPageIndex()"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
       <nz-form-label>状态</nz-form-label>
       <nz-form-control>
-        <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true" style="width: 7em">
-          <nz-option nzLabel="已完成" nzValue="1"></nz-option>
-          <nz-option nzLabel="已废弃" nzValue="2"></nz-option>
+        <nz-select [(ngModel)]="selectedStatus" nzAllowClear="true"
+                   (ngModelChange)="resetPageIndex()"
+                   style="width: 7em">
+          <nz-option nzLabel="未付款" nzValue="0"></nz-option>
+          <nz-option nzLabel="未完成" nzValue="1"></nz-option>
+          <nz-option nzLabel="已完成" nzValue="2"></nz-option>
+          <nz-option nzLabel="已废弃" nzValue="3"></nz-option>
         </nz-select>
       </nz-form-control>
     </nz-form-item>
@@ -28,6 +32,7 @@
       <nz-form-label>采购时间</nz-form-label>
       <nz-form-control>
         <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                         (ngModelChange)="resetPageIndex()"
                          nzFormat="yyyy-MM-dd HH:mm"
                          [nzPlaceHolder]="['开始时间', '结束时间']"
                          [(ngModel)]="timeRange">
@@ -79,10 +84,9 @@
           </td>
           <td nzRight="0px">
             <a routerLink="/workspace/purchase-order/info/{{ data.id }}">查看</a>
-            <a *ngIf="data.status !== 3"
-               style="margin-left: 5px"
+            <a style="margin-left: 5px"
                class="abandon"
-               [class.disabled]="false"
+               [class.disabled]="data.status === 3"
                nz-popconfirm
                nzPopconfirmTitle="确认废弃?"
                nzPopconfirmPlacement="top"

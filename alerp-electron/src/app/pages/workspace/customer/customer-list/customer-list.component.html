@@ -73,7 +73,7 @@
     <nz-form-item>
       <nz-form-label>客户名称/速记编号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="customerName" (keypress)="($event.which === 13) ? search() : 0"/>
+        <input nz-input type="text" [(ngModel)]="customerName" (keypress)="($event.which === 13) ? search() : 0" (ngModelChange)="resetPageIndex()"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -101,6 +101,7 @@
         <th>速记编号</th>
         <th>客户类型</th>
         <th>账期</th>
+        <th>流失预警</th>
         <th nzRight="0px" nzWidth="150px">操作</th>
       </tr>
       </thead>
@@ -115,6 +116,10 @@
         <td>{{ data.shorthand }}</td>
         <td>{{ data.type | customer_type_pipe }}</td>
         <td>{{ data.period }}个月</td>
+        <td>
+          <nz-tag nzColor="red" *ngIf="data.isAway">警告</nz-tag>
+          <nz-tag nzColor="green" *ngIf="!data.isAway">安全</nz-tag>
+        </td>
         <td nzRight="0px">
           <a routerLink="/workspace/customer/info/{{ data.id }}">查看</a>
           <a style="max-resolution: 5px;"

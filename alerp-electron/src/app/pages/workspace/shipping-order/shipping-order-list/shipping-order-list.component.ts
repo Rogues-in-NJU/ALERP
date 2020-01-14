@@ -32,6 +32,8 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
   customerName: string;
   selectedStatus: number;
   timeRange: Date[];
+  //更改查询条件时，页数重置为1
+  shouldResetIndex: boolean = false;
 
   orderList: ShippingOrderInfoVO[] = [];
 
@@ -52,6 +54,10 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
 
   search(): void {
     this.isLoading = true;
+
+    if(this.shouldResetIndex){
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -61,26 +67,22 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
       Object.assign(queryParams, {
         id: this.orderCode
       });
-      this.orderCode = null;
     }
     if (!StringUtils.isEmpty(this.customerName)) {
       Object.assign(queryParams, {
         customerName: this.customerName
       });
-      this.customerName = null;
     }
     if (Objects.valid(this.selectedStatus)) {
       Object.assign(queryParams, {
         status: this.selectedStatus
       });
-      this.selectedStatus = null;
     }
     if (Objects.valid(this.timeRange) && this.timeRange.length === 2) {
       Object.assign(queryParams, {
         createAtStartTime: DateUtils.format(this.timeRange[0]),
         createAtEndTime: DateUtils.format(this.timeRange[1])
       });
-      this.timeRange = [];
     }
     console.log(queryParams);
 
@@ -126,5 +128,17 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit{
 
   refresh(): void {
     this.search();
+  }
+
+  resetQueryParams(): void{
+    this.orderCode = null;
+    this.customerName = null;
+    this.selectedStatus = null;
+    this.timeRange = [];
+    this.refresh();
+  }
+
+  resetIndex(): void{
+    this.shouldResetIndex = true;
   }
 }
