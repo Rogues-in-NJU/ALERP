@@ -22,7 +22,7 @@ public interface ShippingOrderRepository extends JpaRepository<ShippingOrder, In
     Integer findTotalNum(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     @Query("select sum(s.receivableCash) from ShippingOrder s where s.createdAt >= :startDate and s.createdAt <= :endDate and s.status <> 2")
-    Integer findTotalInCome(@Param("startDate") String startDate, @Param("endDate") String endDate);
+    Double findTotalInCome(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**
      * 根据收款单id找到一条出货单记录

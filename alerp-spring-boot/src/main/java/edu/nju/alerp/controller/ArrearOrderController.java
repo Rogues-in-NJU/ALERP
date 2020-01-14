@@ -18,6 +18,7 @@ import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.ListResponseUtils;
 import edu.nju.alerp.vo.ArrearDetailVO;
 import edu.nju.alerp.vo.ArrearOrderListContentVO;
+import edu.nju.alerp.vo.OverdueCashVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @Validated
-@RequestMapping(value = "/api/arrear-order")
+@RequestMapping(value = "/api")
 public class ArrearOrderController {
 
     @Autowired
@@ -66,7 +67,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取收款单详情")
+    @RequestMapping(value = "/arrear-order/{id}", method = RequestMethod.GET, name = "获取收款单详情")
     public ResponseResult<ArrearDetailVO> findArrearDetails(@PathVariable int id) {
         return ResponseResult.ok(arrearOrderService.findArrearDetails(id));
     }
@@ -79,7 +80,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/due-date", method = RequestMethod.POST, name = "修改收款单截止日期")
+    @RequestMapping(value = "/arrear-order/due-date", method = RequestMethod.POST, name = "修改收款单截止日期")
     public ResponseResult<Integer> updateDueDate(@RequestBody ArrearOrderDueDateDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateDueDate(dto));
     }
@@ -92,7 +93,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/invoice-number", method = RequestMethod.POST, name = "修改发票流水号")
+    @RequestMapping(value = "/arrear-order/invoice-number", method = RequestMethod.POST, name = "修改发票流水号")
     public ResponseResult<Integer> updateInvoiceNumber(@RequestBody ArrearOrderInvoiceNumberDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto));
     }
@@ -114,7 +115,7 @@ public class ArrearOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "根据搜索条件来搜索收款单")
+    @RequestMapping(value = "/arrear-order/list", method = RequestMethod.GET, name = "根据搜索条件来搜索收款单")
     public ResponseResult<ListResponse> getArrearOrderList(@RequestParam(value = "pageIndex") int pageIndex,
         @RequestParam(value = "pageSize") int pageSize,
         @RequestParam(value = "id", required = false, defaultValue = "") String code,
@@ -155,6 +156,18 @@ public class ArrearOrderController {
 
         return ResponseResult.ok(ListResponseUtils
             .generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
+    }
+
+    /**
+     * 获取欠款统计列表
+     *
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/overdue-warning", method = RequestMethod.GET, name = "获取欠款统计列表")
+    public ResponseResult<OverdueCashVO> getOverdueCash() {
+        return ResponseResult.ok(arrearOrderService.getOverdueCash());
     }
 
 }
