@@ -90,7 +90,7 @@ public class ArrearDetailVO {
     private String createdByName;
 
     /**
-     * 上次更新时间：作为乐观锁的版本号
+     * 上次更新时间：作为乐观锁的版本号w
      */
     private String updatedAt;
 

@@ -252,12 +252,13 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Override
     public OverdueCashVO getOverdueCash() {
-        List<Map<String, Object>> recordList = arrearOrderRepository.getOverdueCash();
+        // 按人、按月统计
+        List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth();
         OverdueCashVO targetVo = new OverdueCashVO();
         Map<String, Object> statistics = Maps.newHashMap();
         // customerList里的一个元素
         Map<String, Object> customerMap = Maps.newHashMap();
-        for (Map<String, Object> record : recordList) {
+        for (Map<String, Object> record : recordSbMonthList) {
             // 读取数据库返回结果的非第一行
             if (customerMap.get("customerId") != null) {
                 // 如果是同一个客户的欠款统计，就把月份放置到overdues列表里
@@ -283,6 +284,11 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         }
         customerMap.put("total", getTotalOverduesForSB(customerMap));
         targetVo.getCustomers().add(customerMap);
+
+        //按照月份统计
+        List<Map<String, Object>> recordMonthList = arrearOrderRepository.getOverdueCashByMonth();
+        targetVo.getStatistics().put("overdues", recordMonthList);
+        targetVo.getStatistics().put("total",getTotalOverdues(recordMonthList));
         return targetVo;
     }
 
@@ -305,6 +311,20 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         }});
         customerMap.put("overdues", overdueList);
         return customerMap;
+    }
+
+    /**
+     * 获取欠款总额
+     *
+     * @param recordMonthList
+     * @return
+     */
+    public Double getTotalOverdues(List<Map<String, Object>> recordMonthList) {
+        Double result = 0.0;
+        for (Map<String, Object> overdueMap : recordMonthList) {
+            result += (Double)overdueMap.get("cash");
+        }
+        return result;
     }
 
     /**
