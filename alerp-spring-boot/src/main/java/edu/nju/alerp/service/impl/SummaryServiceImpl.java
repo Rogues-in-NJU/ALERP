@@ -33,23 +33,31 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public SummaryInfoVO getSummaryInfo() {
         // fixme:前端接口目前还没修改，之后会有startTime和endTime
+        // todo: 还缺少"processingOrderTotalNum"生成加工单数
         String startDate = "";
         String endDate = "";
-        SummaryInfoVO summaryInfoVO = SummaryInfoVO.builder().
-                totalReceivedCash(arrearOrderService.queryTotalReceivedCash(null, null)).
-                totalOverdueCash(arrearOrderService.queryTotalOverdueCash(null, null)).
-                processingOrderTotalWeight(processOrderService.queryTotalWeight(null, null)).
-                purchaseOrderTotalUnpaidCash(purchaseOrderService.queryUnPaidCash(null, null)).
-                shippingOrderTotalWeight(shippingOrderService.queryTotalWeight(null, null)).
-                build();
-        int processingOrderTotalNum = shippingOrderService.findTotalNum(startDate, endDate);
-        int shippingOrderTotalCash = shippingOrderService.findTotalInCome(startDate, endDate);
+        // 生成出货单数
+        int shippingOrderTotalNum = shippingOrderService.findTotalNum(startDate, endDate);
+        // 新增出货单金额
+        Double shippingOrderTotalCash = shippingOrderService.findTotalInCome(startDate, endDate);
         List<Integer> customerInMonthList = customerService.getCustomerListInMonth();
         List<Integer> customerInCashList = customerService.getCustomerListInCash();
         //月结客户平均单价
         double averagePriceMonthly = shippingOrderService.getCustomerAvgPrice(customerInMonthList, startDate, endDate);
         //现金客户平均单价
         double averagePriceCash = shippingOrderService.getCustomerAvgPrice(customerInCashList, startDate, endDate);
+
+        SummaryInfoVO summaryInfoVO = SummaryInfoVO.builder().
+            totalReceivedCash(arrearOrderService.queryTotalReceivedCash(startDate, endDate)).
+            totalOverdueCash(arrearOrderService.queryTotalOverdueCash(startDate, endDate)).
+            processingOrderTotalWeight(processOrderService.queryTotalWeight(startDate, endDate)).
+            purchaseOrderTotalUnpaidCash(purchaseOrderService.queryUnPaidCash(startDate, endDate)).
+            shippingOrderTotalWeight(shippingOrderService.queryTotalWeight(startDate, endDate)).
+            shippingOrderTotalNum(shippingOrderTotalNum).
+            shippingOrderTotalCash(shippingOrderTotalCash).
+            averagePriceMonthly(averagePriceMonthly).
+            averagePriceCash(averagePriceCash).
+            build();
 
         return summaryInfoVO;
     }

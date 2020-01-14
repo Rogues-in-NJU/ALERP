@@ -23,37 +23,13 @@ export class ProductService {
         params: queryParams,
         withCredentials: true
       });
-    // return of({
-      //   code: 10000,
-      //   message: '',
-      //   data: {
-      //     totalPages: 1,
-      //     pageIndex: 1,
-      //     pageSize: 10,
-      //     result:  [{
-      //       id: 1,
-      //       name: 'XX商品',
-      //       shorthand: 'XX',
-      //       type: 1,
-      //       density: 1,
-      //       specification: '2*2*2'
-      //     },
-      //       {
-      //         id: 2,
-      //         name: 'YY商品',
-      //         shorthand: 'XX',
-      //         type: 1,
-      //         density: 1,
-      //         specification: '2*2*2'
-      //       }
-      //     ]
-      //   }
-      // });
   };
 
   public updateOrAddProduct(queryParams: ProductVO): Observable<ResultVO<any>>{
     console.log(queryParams);
-    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product`, queryParams, {withCredentials: true});
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/product`, queryParams, {
+      withCredentials: true
+    });
   }
 
   public deleteProduct(productId: number): Observable<ResultVO<any>>{

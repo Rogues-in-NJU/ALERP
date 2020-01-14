@@ -4,6 +4,7 @@ import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
 import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.vo.ArrearDetailVO;
+import edu.nju.alerp.vo.OverdueCashVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -88,4 +89,11 @@ public interface ArrearOrderService {
      * @return
      */
     double queryTotalOverdueCash(String startTime, String endTime);
+
+    /**
+     * 获取欠款统计列表：
+     * 两部分：一是按人按月统计，二是按月统计总量
+     * @return
+     */
+    OverdueCashVO getOverdueCash();
 }

@@ -3,12 +3,13 @@ import {ClosableTab} from "../../tab/tab.component";
 import {TabService} from "../../../../core/services/tab.service";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ResultVO} from "../../../../core/model/result-vm";
+import {ResultVO, TableResultVO, ResultCode} from "../../../../core/model/result-vm";
 import {debounceTime} from "rxjs/operators";
 import {NzMessageService} from "ng-zorro-antd";
 import {HttpErrorResponse} from "@angular/common/http";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
+import {AuthVO} from "../../../../core/model/auth";
 
 @Component({
   selector: 'user-management-add',
@@ -25,10 +26,12 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   cityTmp: number[];
 
   authsTmp: userAuthVO[] = [
-    <userAuthVO>{description: "查看商品列表", action: 0},
-    <userAuthVO>{description: "新增或者编辑商品", action: 0},
-    <userAuthVO>{description: "查看商品详情", action: 0},
-    <userAuthVO>{description: "废弃商品", action: 0}];
+    <userAuthVO>{id: 0, authId: 1, description: "查看商品列表", action: 0},
+    <userAuthVO>{id: 1, authId: 2, description: "新增或者编辑商品", action: 0},
+    <userAuthVO>{id: 2, authId: 3, description: "查看商品详情", action: 0},
+    <userAuthVO>{id: 3, authId: 4, description: "废弃商品", action: 0}];
+
+  // auths: AuthVO[];
 
   saveCityTmp(value: string[]): void {
     if (value.length === 1) {
@@ -57,7 +60,20 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       phoneNumber: [null, Validators.required],
       password: [null, Validators.required],
     });
-
+    // this.userManagement.getAuthList()
+    //   .subscribe((res: ResultVO<TableResultVO<AuthVO>>) => {
+    //     if (!res) {
+    //       return;
+    //     }
+    //     if (res.code !== ResultCode.SUCCESS.code) {
+    //       return;
+    //     }
+    //     const tableResult: TableResultVO<AuthVO> = res.data;
+    //     this.auths = tableResult.result;
+    //     console.log(this.auths);
+    //   }, (error: HttpErrorResponse) => {
+    //     this.message.error(error.message);
+    //   });
   }
 
   saveUser(): void {
@@ -72,16 +88,12 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
       city: this.cityTmp,
       authList: this.authsTmp
     };
-
-    // private Integer id;
-    // private String updateAt;
-    // private List<Auth> authList;
-    console.log(userManagementAdd);
+    // console.log(JSON.stringify(userManagementAdd));
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
+        // console.log(res);
         this.message.success('添加成功!');
         this.isSaving = false;
         // TODO: 跳转回列表页面
@@ -93,6 +105,13 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   tabClose(): void {
   }
 
+  confirmAdd(id: number): void {
+    this.authsTmp[id].action = 1;
+  }
+
+  confirmAbandon(id: number): void {
+    this.authsTmp[id].action = 0;
+  }
 }
 
 interface TempProductVO {

@@ -42,7 +42,7 @@ public interface ShippingOrderService {
 
     Integer findTotalNum(String startDate, String endDate);
 
-    Integer findTotalInCome(String startDate, String endDate);
+    Double findTotalInCome(String startDate, String endDate);
 
     /**
      * 根据收款单id找到一条出货单记录

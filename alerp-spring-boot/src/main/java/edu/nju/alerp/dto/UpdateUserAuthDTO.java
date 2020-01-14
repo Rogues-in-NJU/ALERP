@@ -7,6 +7,6 @@ public class UpdateUserAuthDTO {
 
     private Integer userId;
     private Integer authId;
-    private Integer actionType;
+    private Integer action;
 
 }

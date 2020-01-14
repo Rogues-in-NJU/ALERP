@@ -6,7 +6,7 @@ import { NzMessageService } from "ng-zorro-antd";
 import { TabService } from "../../../../core/services/tab.service";
 import { ArrearOrderService } from "../../../../core/services/arrear-order.service";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
-import { Objects } from "../../../../core/services/util.service";
+import {DateUtils, Objects, StringUtils} from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
@@ -25,6 +25,8 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
   query_invoiceNumber: string;
   query_selectedStatus: number;
   query_timeRange: Date[];
+//更改查询条件时，页数重置为1
+  shouldResetIndex: boolean = false;
 
   orderList: ArrearOrderInfoVO[];
 
@@ -46,11 +48,38 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void{
+    this.isLoading = true;
+
+    if(this.shouldResetIndex){
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
-    this.isLoading = true;
+
+    if (!StringUtils.isEmpty(this.query_customerName)) {
+      Object.assign(queryParams, {
+        customerName: this.query_customerName
+      });
+    }
+    if (!StringUtils.isEmpty(this.query_invoiceNumber)) {
+      Object.assign(queryParams, {
+        invoiceNumber: this.query_invoiceNumber
+      });
+    }
+    if (Objects.valid(this.query_selectedStatus)) {
+      Object.assign(queryParams, {
+        status: this.query_selectedStatus
+      });
+    }
+    if (Objects.valid(this.query_timeRange) && this.query_timeRange.length === 2) {
+      Object.assign(queryParams, {
+        createAtStartTime: DateUtils.format(this.query_timeRange[0]),
+        createAtEndTime: DateUtils.format(this.query_timeRange[1])
+      });
+    }
+    console.log(queryParams);
 
     this.arrearOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ArrearOrderInfoVO>>) => {
@@ -71,5 +100,17 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
       }, () => {
         this.isLoading = false;
       });
+  }
+
+  resetQueryParams(): void{
+    this.query_customerName = null;
+    this.query_invoiceNumber = null;
+    this.query_selectedStatus = null;
+    this.query_timeRange = [];
+    this.refresh();
+  }
+
+  resetIndex(): void{
+    this.shouldResetIndex = true;
   }
 }

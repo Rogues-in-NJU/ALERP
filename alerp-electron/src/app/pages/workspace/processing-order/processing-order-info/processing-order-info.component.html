@@ -24,7 +24,8 @@
     <nz-descriptions-item nzTitle="客户" [nzSpan]="3">{{ processingOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ processingOrderData.salesman }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
-      <nz-badge nzColor="{{ processingOrderData.status | processing_order_status_color }}" nzText="{{ processingOrderData.status | processing_order_status }}"></nz-badge>
+      <nz-badge nzColor="{{ processingOrderData.status | processing_order_status_color }}"
+                nzText="{{ processingOrderData.status | processing_order_status }}"></nz-badge>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ processingOrderData.createdAt }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="创建者" [nzSpan]="2">{{ processingOrderData.createdByName }}</nz-descriptions-item>
@@ -164,7 +165,7 @@
   </nz-table>
 </div>
 
-<div id="print_div" #print_div *ngIf="!isLoading">
+<div id="print_div" #print_div>
   <br/>
   <br/>
   <br/>
@@ -190,9 +191,8 @@
       <td></td>
       <td></td>
       <td> (重量汇总)</td>
-      <td> xxx(数据库加字段)</td>
+      <td> {{ processingOrderData.products.totalWeight }}</td>
     </tr>
     </tbody>
   </table>
-  <p>注* ()中的最后会去除</p>
 </div>

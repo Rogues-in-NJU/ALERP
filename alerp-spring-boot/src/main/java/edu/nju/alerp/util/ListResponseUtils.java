@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
  */
 public class ListResponseUtils {
 
-    public static <T> ListResponse getListResponse(List<T> responseList ,int pageIndex, int pageSize){
+    public static <T> ListResponse getListResponse(List<T> responseList, int pageIndex, int pageSize) {
         ListResponse res = new ListResponse();
-        // fixme:如果responseList.size()恰好是pageSize的整数倍，之类返回的totalPage就多了1
-        int totalPage = responseList.size() / pageSize + 1;
+        int extra = responseList.size() % pageSize == 0 ? 0 : 1;
+        int totalPage = responseList.size() / pageSize + extra;
         res.setPageIndex(pageIndex);
         res.setPageSize(pageSize);
         res.setTotalPages(totalPage);

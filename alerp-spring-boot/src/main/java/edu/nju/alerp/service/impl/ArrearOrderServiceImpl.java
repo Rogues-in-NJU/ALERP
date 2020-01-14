@@ -1,8 +1,11 @@
 package edu.nju.alerp.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.conditionSqlQuery.Condition;
 import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
@@ -26,6 +29,7 @@ import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ArrearDetailVO;
+import edu.nju.alerp.vo.OverdueCashVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,13 +121,16 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         ArrearDetailVO arrearDetailVO = ArrearDetailVO.builder().
             id(arrearOrder.getId()).
             code(arrearOrder.getCode()).
+            invoiceNumber(arrearOrder.getInvoiceNumber()).
             customerId(customerId).
             receivableCash(arrearOrder.getReceivableCash()).
             receivedCash(arrearOrder.getReceivedCash()).
             dueDate(arrearOrder.getDueDate()).
             status(arrearOrder.getStatus()).
             createdAt(arrearOrder.getCreatedAt()).
-            createdById(createdBy).build();
+            createdById(createdBy).
+            updatedAt(arrearOrder.getUpdatedAt()).
+            build();
         arrearDetailVO.setCustomerName(userService.getUser(customerId).getName());
         arrearDetailVO.setCreatedByName(userService.getUser(createdBy).getName());
         arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getToday()) > 0);
@@ -206,7 +213,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
                 arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
-            arrearOrderSp.add(ConditionFactory.notEqual("status",ArrearOrderStatus.ABANDONED.getCode()));
+            arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
             List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
             totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
         } catch (Exception e) {
@@ -230,9 +237,9 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
                 arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
-            arrearOrderSp.add(ConditionFactory.notEqual("status",ArrearOrderStatus.ABANDONED.getCode()));
+            arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
             // 查询所有逾期的收款单
-            arrearOrderSp.add(ConditionFactory.greatThanEqualTo("dueDate",DateUtils.getToday()));
+            arrearOrderSp.add(ConditionFactory.greatThanEqualTo("dueDate", DateUtils.getToday()));
             List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
             totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
             totalReceivableCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivableCash).sum();
@@ -241,6 +248,98 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             log.error("Value is null.", e);
         }
         return totalOverdueCash;
+    }
+
+    @Override
+    public OverdueCashVO getOverdueCash() {
+        // 按人、按月统计
+        List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth();
+        OverdueCashVO targetVo = new OverdueCashVO();
+        Map<String, Object> statistics = Maps.newHashMap();
+        // customerList里的一个元素
+        Map<String, Object> customerMap = Maps.newHashMap();
+        for (Map<String, Object> record : recordSbMonthList) {
+            // 读取数据库返回结果的非第一行
+            if (customerMap.get("customerId") != null) {
+                // 如果是同一个客户的欠款统计，就把月份放置到overdues列表里
+                if ((int)customerMap.get("customerId") == ((int)record.get("customerId"))) {
+                    List<Map<String, Object>> overdueList = (List<Map<String, Object>>)customerMap.get("overdues");
+                    overdueList.add(new HashMap<String, Object>(2) {{
+                        put("month", record.get("month"));
+                        put("cash", record.get("cash"));
+                    }});
+                    customerMap.put("overdues", overdueList);
+                } else {
+                    // 如果是不同客户的欠款统计，就先把整理好的customerMap放到targetVo里，再重新生成一张customerMap
+                    customerMap.put("total", getTotalOverduesForSB(customerMap));
+                    targetVo.getCustomers().add(customerMap);
+                    // 重新生成一张map
+                    customerMap = Maps.newHashMap();
+                    customerMap.putAll(buildCustomerMap(record));
+                }
+            } else {
+                // 读取数据库返回结果的第一行
+                customerMap.putAll(buildCustomerMap(record));
+            }
+        }
+        customerMap.put("total", getTotalOverduesForSB(customerMap));
+        targetVo.getCustomers().add(customerMap);
+
+        //按照月份统计
+        List<Map<String, Object>> recordMonthList = arrearOrderRepository.getOverdueCashByMonth();
+        targetVo.getStatistics().put("overdues", recordMonthList);
+        targetVo.getStatistics().put("total",getTotalOverdues(recordMonthList));
+        return targetVo;
+    }
+
+    /**
+     * 构建customerMap，放到customerList中
+     *
+     * @param record
+     * @return
+     */
+    private Map<String, Object> buildCustomerMap(Map<String, Object> record) {
+        Map<String, Object> customerMap = Maps.newHashMap();
+        int customerId = (int)record.get("customerId");
+        customerMap.put("customerId", customerId);
+        customerMap.put("customerName", customerRepository.getOne(customerId).getName());
+
+        List<Map<String, Object>> overdueList = Lists.newArrayList();
+        overdueList.add(new HashMap<String, Object>(2) {{
+            put("month", record.get("month"));
+            put("cash", record.get("cash"));
+        }});
+        customerMap.put("overdues", overdueList);
+        return customerMap;
+    }
+
+    /**
+     * 获取欠款总额
+     *
+     * @param recordMonthList
+     * @return
+     */
+    public Double getTotalOverdues(List<Map<String, Object>> recordMonthList) {
+        Double result = 0.0;
+        for (Map<String, Object> overdueMap : recordMonthList) {
+            result += (Double)overdueMap.get("cash");
+        }
+        return result;
+    }
+
+    /**
+     * 获取某一个人的欠款总额
+     *
+     * @param customerMap
+     * @return
+     */
+    public Double getTotalOverduesForSB(Map<String, Object> customerMap) {
+        Double result = 0.0;
+        List<Map<String, Object>> overdueList = (List<Map<String, Object>>)customerMap.get("overdues");
+        for (Map<String, Object> overdueMap : overdueList) {
+            result += (Double)overdueMap.get("cash");
+        }
+        return result;
     }
 
 }

@@ -25,6 +25,11 @@ public class ArrearDetailVO {
     private String code;
 
     /**
+     * 发票流水号
+     */
+    private String invoiceNumber;
+
+    /**
      * 客户id
      */
     private int customerId;
@@ -83,6 +88,11 @@ public class ArrearDetailVO {
      * 创建者姓名
      */
     private String createdByName;
+
+    /**
+     * 上次更新时间：作为乐观锁的版本号w
+     */
+    private String updatedAt;
 
     /**
      * 收款单所含收款记录列表
