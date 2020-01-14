@@ -334,7 +334,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     }
   }
 
-  @ViewChild('print1') printComponent: ENgxPrintComponent;
+  @ViewChild('print1',{static:false})
+  printComponent: ENgxPrintComponent;
   showPrint: boolean = false;
 
   printComplete() {
