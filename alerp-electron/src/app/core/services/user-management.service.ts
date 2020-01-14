@@ -6,6 +6,7 @@ import {StringUtils} from "./util.service";
 import {UserManagementInfoVO} from "../model/user-management";
 import {AppConfig} from "../../../environments/environment";
 import {PasswordInfoVO} from "../model/password";
+import {AuthVO} from "../model/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,14 @@ export class UserManagementService {
     return this.http.get<ResultVO<TableResultVO<UserManagementInfoVO>>>(
       `${AppConfig.BASE_URL}/api/user/list`, {
         params: queryParams,
+        withCredentials: true
+      }
+    );
+  }
+
+  public getAuthList(): Observable<ResultVO<TableResultVO<AuthVO>>> {
+    return this.http.get<ResultVO<TableResultVO<AuthVO>>>(
+      `${AppConfig.BASE_URL}/api/auth/list`, {
         withCredentials: true
       }
     );

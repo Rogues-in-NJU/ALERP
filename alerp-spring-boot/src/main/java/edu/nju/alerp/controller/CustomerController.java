@@ -52,7 +52,7 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "查看客户详细信息")
     public ResponseResult<CustomerVO> CustomerVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
@@ -81,7 +81,7 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除客户")
     public ResponseResult<Integer> delete(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
@@ -97,7 +97,7 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取客户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "name", required = false, defaultValue = "") String name) {
@@ -111,7 +111,7 @@ public class CustomerController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增客户/修改客户信息")
     public ResponseResult<Integer> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         try {
             return ResponseResult.ok(customerService.saveCustomer(customerDTO));
