@@ -38,6 +38,8 @@ public class SummaryServiceImpl implements SummaryService {
         String endDate = "";
         // 生成出货单数
         int shippingOrderTotalNum = shippingOrderService.findTotalNum(startDate, endDate);
+
+        int processingOrderTotalNum = processOrderService.queryTotalNum(startDate, endDate);
         // 新增出货单金额
         Double shippingOrderTotalCash = shippingOrderService.findTotalInCome(startDate, endDate);
         List<Integer> customerInMonthList = customerService.getCustomerListInMonth();
@@ -50,6 +52,7 @@ public class SummaryServiceImpl implements SummaryService {
         SummaryInfoVO summaryInfoVO = SummaryInfoVO.builder().
             totalReceivedCash(arrearOrderService.queryTotalReceivedCash(startDate, endDate)).
             totalOverdueCash(arrearOrderService.queryTotalOverdueCash(startDate, endDate)).
+            processingOrderTotalNum(processingOrderTotalNum).
             processingOrderTotalWeight(processOrderService.queryTotalWeight(startDate, endDate)).
             purchaseOrderTotalUnpaidCash(purchaseOrderService.queryUnPaidCash(startDate, endDate)).
             shippingOrderTotalWeight(shippingOrderService.queryTotalWeight(startDate, endDate)).
