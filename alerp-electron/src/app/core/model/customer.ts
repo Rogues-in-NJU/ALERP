@@ -9,6 +9,7 @@ export interface CustomerVO extends BaseInfo {
   period: number;
   payDate: number;
   description?: string;
+  isAway?: boolean;
 
   specialPrices?: CustomerSpecialPriceVO[];
 

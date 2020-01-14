@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { CustomerInfoComponent } from "./customer-info/customer-info.component";
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'list' },
+  // { path: '', pathMatch: 'full', redirectTo: 'list' },
   {
     path: 'list',
     pathMatch: 'full',

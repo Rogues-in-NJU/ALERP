@@ -27,6 +27,8 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
 
   orderList: PurchaseOrderVO[] = [];
 
+  needResetPageIndex: boolean = false;
+
   constructor(
     private router: Router,
     private purchaseOrder: PurchaseOrderService,
@@ -46,6 +48,10 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -89,7 +95,28 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
+    this.purchaseOrder.abandon(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('删除失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('删除成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
+  }
+
+  resetPageIndex(): void {
+    // this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
   refresh(): void {

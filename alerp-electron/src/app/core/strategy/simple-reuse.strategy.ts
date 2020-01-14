@@ -1,4 +1,5 @@
 import { ActivatedRouteSnapshot, DetachedRouteHandle, Route, RouteReuseStrategy } from "@angular/router";
+import { Objects } from "../services/util.service";
 
 /**
  * 路由复用策略，为了方便客户在不同的tab标签之间切换，避免需要通过刷新整个页面来进入另一个操作页面，
@@ -16,7 +17,6 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
     if (!route.routeConfig) {
       return null;
     }
-    console.log(SimpleReuseStrategy.handlers[ this.getRouteUrl(route) ]);
     return SimpleReuseStrategy.handlers[ this.getRouteUrl(route) ];
   }
 
@@ -43,6 +43,7 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
    * 当路由离开时会触发。按path作为key存储路由快照&组件当前实例对象
    * */
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void {
+    console.log('store');
     if (SimpleReuseStrategy.waitDelete && SimpleReuseStrategy.waitDelete === this.getRouteUrl(route)) {
       // 如果待删除是当前路由则不存储快照
       SimpleReuseStrategy.waitDelete = null;
@@ -52,14 +53,11 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
   }
 
   private getRouteUrl(route: ActivatedRouteSnapshot): string {
-    // return route[ '_routerState' ].url.replace(/\//g, '_');
-    let r: string = route['_routerState'].url.replace(/\//g, '_')
+    return route['_routerState'].url.replace(/\//g, '_')
       + '_' + (route.routeConfig.loadChildren || route.routeConfig.component.toString().split('(')[0].split(' ')[1] );
-    return r;
   }
 
   public static deleteRouteSnapshot(url: string, routeConfig: Route): void {
-    // const key = url.replace(/\//g, '_');
     const key = url.replace(/\//g, '_')
       + '_' + (routeConfig.loadChildren || routeConfig.component.toString().split('(')[0].split(' ')[1] );
     if (SimpleReuseStrategy.handlers[ key ]) {

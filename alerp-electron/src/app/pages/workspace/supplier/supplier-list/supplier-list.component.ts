@@ -43,6 +43,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    console.log('supplier init');
     this.supplierAddForm = this.fb.group({
       name: [ null, Validators.required ],
       description: [ null ]
@@ -58,7 +59,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
-    console.log(this.supplierName);
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -73,7 +73,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
           return;
         }
         const tableResult: TableResultVO<SupplierVO> = res.data;
-        console.log(tableResult);
         this.totalPages = tableResult.totalPages;
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;

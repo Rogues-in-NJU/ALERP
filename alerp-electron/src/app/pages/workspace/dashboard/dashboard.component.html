@@ -18,38 +18,38 @@
     <div *ngIf="!isSummaryDataLoading">
       <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.processingOrderTotalWeight | number:'1.1-3'" nzTitle="加工单铝材总重量"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.processingOrderTotalWeight ? (summaryData.processingOrderTotalWeight | number:'1.1-3') : '——'" nzTitle="加工单铝材总重量(千克)"></nz-statistic>
         </div>
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.shippingOrderTotalWeight | number:'1.1-3'" nzTitle="出货单铝材总重量"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.shippingOrderTotalWeight ? (summaryData.shippingOrderTotalWeight | number:'1.1-3') : '——'" nzTitle="出货单铝材总重量(千克)"></nz-statistic>
         </div>
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.shippingOrderTotalCash | number:'1.2-2'" nzTitle="新增出货单金额" [nzPrefix]="cashPrefix"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.shippingOrderTotalCash ? (summaryData.shippingOrderTotalCash | number:'1.2-2') : '——'" nzTitle="新增出货单金额" [nzPrefix]="cashPrefix"></nz-statistic>
         </div>
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.totalReceivedCash | number:'1.2-2'" nzTitle="收款金额" [nzPrefix]="cashPrefix"></nz-statistic>
-        </div>
-      </div>
-      <div nz-row [nzGutter]="24" style="margin-top: 20px">
-        <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.totalOverdueCash | number:'1.2-2'" nzTitle="逾期金额" [nzPrefix]="cashPrefix"></nz-statistic>
-        </div>
-        <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.purchaseOrderTotalUnpaidCash | number:'1.2-2'" nzTitle="采购单未付款金额" [nzPrefix]="cashPrefix"></nz-statistic>
-        </div>
-        <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.processingOrderTotalNum | number" nzTitle="生成加工单数"></nz-statistic>
-        </div>
-        <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.shippingOrderTotalNum | number" nzTitle="生成出货单数"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.totalReceivedCash ? (summaryData.totalReceivedCash | number:'1.2-2') : '——'" nzTitle="收款金额" [nzPrefix]="cashPrefix"></nz-statistic>
         </div>
       </div>
       <div nz-row [nzGutter]="24" style="margin-top: 20px">
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.averagePriceCash | number:'1.2-2'" nzTitle="现金客户平均单价"  [nzPrefix]="cashPrefix"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.totalOverdueCash ? (summaryData.totalOverdueCash | number:'1.2-2') : '——'" nzTitle="逾期金额" [nzPrefix]="cashPrefix"></nz-statistic>
         </div>
         <div nz-col [nzSpan]="6">
-          <nz-statistic [nzValue]="summaryData.averagePriceMonthly | number:'1.2-2'" nzTitle="月结客户平均单价"  [nzPrefix]="cashPrefix"></nz-statistic>
+          <nz-statistic [nzValue]="summaryData.purchaseOrderTotalUnpaidCash ? (summaryData.purchaseOrderTotalUnpaidCash | number:'1.2-2') : '——'" nzTitle="采购单未付款金额" [nzPrefix]="cashPrefix"></nz-statistic>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-statistic [nzValue]="summaryData.processingOrderTotalNum ? (summaryData.processingOrderTotalNum  | number) : '——'" nzTitle="生成加工单数(件)"></nz-statistic>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-statistic [nzValue]="summaryData.shippingOrderTotalNum ? (summaryData.shippingOrderTotalNum | number) : '——'" nzTitle="生成出货单数(件)"></nz-statistic>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24" style="margin-top: 20px">
+        <div nz-col [nzSpan]="6">
+          <nz-statistic [nzValue]="summaryData.averagePriceCash ? (summaryData.averagePriceCash | number:'1.2-2') : '——'" nzTitle="现金客户平均单价"  [nzPrefix]="cashPrefix"></nz-statistic>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-statistic [nzValue]="summaryData.averagePriceMonthly ? (summaryData.averagePriceMonthly | number:'1.2-2') : '——'" nzTitle="月结客户平均单价"  [nzPrefix]="cashPrefix"></nz-statistic>
         </div>
       </div>
       <ng-template #cashPrefix>

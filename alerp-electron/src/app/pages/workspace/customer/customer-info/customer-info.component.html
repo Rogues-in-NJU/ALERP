@@ -168,7 +168,7 @@
           {{ data.priceType | customer_price_type_pipe }}
         </ng-container>
         <ng-template #priceTypeEditTpl>
-          <nz-select [(ngModel)]="editCache.data.priceType" style="width: 80px">
+          <nz-select [(ngModel)]="editCache.data.priceType" style="width: 120px">
             <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
             <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
           </nz-select>
