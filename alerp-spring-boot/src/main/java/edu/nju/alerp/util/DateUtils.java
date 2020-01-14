@@ -1,5 +1,6 @@
 package edu.nju.alerp.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,5 +38,25 @@ public class DateUtils {
         }
         calendar.set(Calendar.DAY_OF_MONTH, payDate);
         return sdfInDay.format(calendar.getTime());
+    }
+
+    /**
+     * 获取日期差
+     */
+    public static long getTimeDifference(String date) {
+        long day = 0;
+        if (date == null) {
+            return day;
+        }
+
+        try {
+            Date createdAt = sdf.parse(date);
+            Date now = new Date();
+            long l = now.getTime() - createdAt.getTime();
+            day = l / (24 * 60 * 60 * 1000);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return day;
     }
 }

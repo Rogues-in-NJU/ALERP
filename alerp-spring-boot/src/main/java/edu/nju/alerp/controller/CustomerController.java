@@ -1,6 +1,10 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ExceptionWrapper;
+import edu.nju.alerp.entity.ProcessingOrder;
+import edu.nju.alerp.enums.ExceptionEnum;
+import edu.nju.alerp.service.ProcessOrderService;
+import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.CustomerVO;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.service.ProductService;
@@ -40,6 +44,10 @@ public class CustomerController {
     CustomerService customerService;
 
     @Autowired
+    ProcessOrderService processOrderService;
+
+
+    @Autowired
     ProductService productService;
 
     @Autowired
@@ -56,6 +64,17 @@ public class CustomerController {
     public ResponseResult<CustomerVO> CustomerVO(
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         Customer customer = customerService.getCustomer(id);
+        if (customer == null) {
+            return ResponseResult.fail(ExceptionEnum.ILLEGAL_PARAM, "客户不存在");
+        }
+        boolean inactive;
+        ProcessingOrder processingOrder = processOrderService.getLatestOrder(id);
+        if (processingOrder == null) {
+            inactive = true;
+        } else {
+            long diff = DateUtils.getTimeDifference(processingOrder.getCreateAt());
+            inactive = diff >= 25;
+        }
         List<SpecialPrice> specialPriceList = customerService.getSpecialPricesListByCustomerId(id);
         List<SpecialPricesVO> specialPricesVOList = new ArrayList<>();
         for (SpecialPrice specialPrice : specialPriceList) {
@@ -68,6 +87,7 @@ public class CustomerController {
         }
         CustomerVO customerVO = CustomerVO.builder()
                 .specialPrices(specialPricesVOList)
+                .inactive(inactive)
                 .build();
         BeanUtils.copyProperties(customer, customerVO);
 

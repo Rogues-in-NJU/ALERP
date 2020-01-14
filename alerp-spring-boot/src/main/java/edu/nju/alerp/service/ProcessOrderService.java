@@ -54,4 +54,6 @@ public interface ProcessOrderService {
      * 废弃加工单
      * */
     public int abandonProcessingOrder(int id) throws Exception;
+
+    ProcessingOrder getLatestOrder(int customerId);
 }

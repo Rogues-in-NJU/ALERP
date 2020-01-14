@@ -27,4 +27,5 @@ public class CustomerVO {
     private Integer updatedBy;
     private String updatedAt;
     private List<SpecialPricesVO> specialPrices;
+    private boolean inactive;
 }

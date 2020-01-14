@@ -29,6 +29,7 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -79,33 +80,33 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         QueryContainer<ProcessOrderProduct> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.equal("processOrderId", id));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         List<ProcessOrderProduct> pops = processOrderProductRepository.findAll(sp);
-        List<SpecialPrice> specialPrices =  customerService.getSpecialPricesListByCustomerId(processingOrder.getCustomerId());
+        List<SpecialPrice> specialPrices = customerService.getSpecialPricesListByCustomerId(processingOrder.getCustomerId());
         Map<Integer, SpecialPrice> specialPriceMap = specialPrices.parallelStream()
                 .map(specialPrice -> MutablePair.of(specialPrice.getProductId(), specialPrice))
                 .collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight));
 
         List<ProcessingOrderProductVO> productVOS = pops.parallelStream().map(processOrderProduct -> generateProcessingOrderProductVO(processOrderProduct, specialPriceMap))
-                                                                        .filter(Objects::nonNull)
-                                                                        .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         double totalWeight = productVOS.parallelStream().mapToDouble(ProcessingOrderProductVO::getExpectedWeight).sum();
 
         return ProcessingOrderDetailVO.builder().id(processingOrder.getId())
-                                                .code(processingOrder.getCode())
-                                                .customerId(processingOrder.getCustomerId())
-                                                .customerName(customerForProcessingOrder.getName())
-                                                .shippingOrderId(processingOrder.getShippingOrderId())
-                                                .salesman(processingOrder.getSalesman())
-                                                .status(processingOrder.getStatus())
-                                                .createdAt(processingOrder.getCreateAt())
-                                                .createdById(String.valueOf(processingOrder.getCreateBy()))
-                                                .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
-                                                .updatedAt(processingOrder.getUpdateAt())
-                                                .totalWeight(totalWeight)
-                                                .products(productVOS).build();
+                .code(processingOrder.getCode())
+                .customerId(processingOrder.getCustomerId())
+                .customerName(customerForProcessingOrder.getName())
+                .shippingOrderId(processingOrder.getShippingOrderId())
+                .salesman(processingOrder.getSalesman())
+                .status(processingOrder.getStatus())
+                .createdAt(processingOrder.getCreateAt())
+                .createdById(String.valueOf(processingOrder.getCreateBy()))
+                .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
+                .updatedAt(processingOrder.getUpdateAt())
+                .totalWeight(totalWeight)
+                .products(productVOS).build();
     }
 
     @Override
@@ -122,27 +123,27 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     public int addProcessingOrder(ProcessingOrderDTO processingOrderDTO) {
         String city = CityEnum.of(CommonUtils.getCity()).getMessage();
         ProcessingOrder processingOrder = ProcessingOrder.builder()
-                                        .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER, CityEnum.of(CommonUtils.getCity())))
-                                        .status(ProcessingOrderStatus.DRAFTING.getCode())
-                                        .customerId(processingOrderDTO.getCustomerId())
-                                        .salesman(processingOrderDTO.getSalesman())
-                                        .city(city)
-                                        .createAt(DateUtils.getToday())
-                                        .createBy(CommonUtils.getUserId())
-                                        .updateAt(DateUtils.getToday())
-                                        .updateBy(CommonUtils.getUserId())
-                                        .build();
+                .code(documentsIdFactory.generateNextCode(DocumentsType.PROCESSING_ORDER, CityEnum.of(CommonUtils.getCity())))
+                .status(ProcessingOrderStatus.DRAFTING.getCode())
+                .customerId(processingOrderDTO.getCustomerId())
+                .salesman(processingOrderDTO.getSalesman())
+                .city(city)
+                .createAt(DateUtils.getToday())
+                .createBy(CommonUtils.getUserId())
+                .updateAt(DateUtils.getToday())
+                .updateBy(CommonUtils.getUserId())
+                .build();
 
         ProcessingOrder entity = processingOrderRepository.saveAndFlush(processingOrder);
         List<ProcessOrderProduct> processOrderProducts =
                 processingOrderDTO.getProducts().parallelStream()
-                                                .map(p -> ProcessOrderProduct.builder()
-                                                            .productId(p.getProductId())
-                                                            .specification(p.getSpecification())
-                                                            .quantity(p.getQuantity())
-                                                            .processOrderId(entity.getId())
-                                                            .expectedWeight(p.getExpectedWeight()).build())
-                                                .collect(Collectors.toList());
+                        .map(p -> ProcessOrderProduct.builder()
+                                .productId(p.getProductId())
+                                .specification(p.getSpecification())
+                                .quantity(p.getQuantity())
+                                .processOrderId(entity.getId())
+                                .expectedWeight(p.getExpectedWeight()).build())
+                        .collect(Collectors.toList());
         processOrderProductRepository.saveAll(processOrderProducts);
         processOrderProductRepository.flush();
         return entity.getId();
@@ -153,7 +154,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.equal("shippingOrderId", id));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         return processingOrderRepository.findAll(sp);
@@ -164,7 +165,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         QueryContainer<ProcessingOrder> processSp = new QueryContainer<>();
         QueryContainer<ProcessOrderProduct> productSp = new QueryContainer<>();
         double totalWeight = 0;
-        try{
+        try {
             if (createdAtStartTime != null)
                 processSp.add(ConditionFactory.greatThanEqualTo("createAt", createdAtStartTime));
             if (createdAtEndTime != null)
@@ -172,15 +173,15 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             processSp.add(ConditionFactory.notEqual("status", ProcessingOrderStatus.ABANDONED.getCode()));
             List<ProcessingOrder> processingOrders = processingOrderRepository.findAll(processSp);
             List<Integer> processOrderIds = processingOrders.parallelStream()
-                                                        .map(ProcessingOrder::getId)
-                                                        .collect(Collectors.toList());
+                    .map(ProcessingOrder::getId)
+                    .collect(Collectors.toList());
 
             productSp.add(ConditionFactory.In("processOrderId", processOrderIds));
             List<ProcessOrderProduct> processOrderProducts = processOrderProductRepository.findAll(productSp);
             totalWeight = processOrderProducts.parallelStream()
-                                                .mapToDouble(ProcessOrderProduct::getExpectedWeight)
-                                                .sum();
-        }catch (Exception e) {
+                    .mapToDouble(ProcessOrderProduct::getExpectedWeight)
+                    .sum();
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         return totalWeight;
@@ -193,12 +194,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "加工单信息已变更，请重新更新");
         }
         ProcessOrderProduct processOrderProduct = ProcessOrderProduct.builder()
-                                                                    .processOrderId(updateProcessProductDTO.getProcessingOrderId())
-                                                                    .productId(updateProcessProductDTO.getProductId())
-                                                                    .quantity(updateProcessProductDTO.getQuantity())
-                                                                    .specification(updateProcessProductDTO.getSpecification())
-                                                                    .expectedWeight(updateProcessProductDTO.getExpectedWeight())
-                                                                    .build();
+                .processOrderId(updateProcessProductDTO.getProcessingOrderId())
+                .productId(updateProcessProductDTO.getProductId())
+                .quantity(updateProcessProductDTO.getQuantity())
+                .specification(updateProcessProductDTO.getSpecification())
+                .expectedWeight(updateProcessProductDTO.getExpectedWeight())
+                .build();
 
         if (updateProcessProductDTO.getId() != null) {
             processOrderProduct = processOrderProductRepository.getOne(updateProcessProductDTO.getId());
@@ -217,7 +218,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
-    public int deleteProcessProduct(int id) throws Exception{
+    public int deleteProcessProduct(int id) throws Exception {
         ProcessOrderProduct processOrderProduct = processOrderProductRepository.getOne(id);
         if (processOrderProduct == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该条目不存在");
@@ -231,7 +232,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
-    public int printProcessingOrder(int id) throws Exception{
+    public int printProcessingOrder(int id) throws Exception {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
@@ -243,7 +244,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
-    public int abandonProcessingOrder(int id) throws Exception{
+    public int abandonProcessingOrder(int id) throws Exception {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
@@ -257,6 +258,12 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
+    public ProcessingOrder getLatestOrder(int customerId) {
+        return processingOrderRepository.findLatestOrder(customerId);
+    }
+
+
+    @Override
     public Page<ProcessingOrderListVO> findAllByPage(Pageable pageable, String id, String customerName,
                                                      Integer status, String createAtStartTime, String createAtEndTime) {
         QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
@@ -266,7 +273,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             customers = customerRepository.findCustomerIdByNameAndShorthand(customerName);
         try {
             if (customerName != null)
-                sp.add(ConditionFactory.In("customerId",customers));
+                sp.add(ConditionFactory.In("customerId", customers));
             if (id != null)
                 sp.add(ConditionFactory.like("code", id));
             if (status != null)
@@ -279,7 +286,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             if (createAtEndTime != null)
                 sp.add(ConditionFactory.lessThanEqualTo("createAt", createAtEndTime));
             sp.add(ConditionFactory.equal("city", city));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         Page<ProcessingOrder> processingOrderPage = processingOrderRepository.findAll(sp, pageable);
@@ -287,7 +294,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         List<ProcessingOrderListVO> result = processingOrderPage.getContent()
                 .stream().map(processingOrder ->
                         ProcessingOrderListVO.buildProcessingOrderListVO(processingOrder,
-                                customerService.getCustomer(processingOrder.getCustomerId()).getName(),userService.getUser(processingOrder.getCreateBy()).getName()))
+                                customerService.getCustomer(processingOrder.getCustomerId()).getName(), userService.getUser(processingOrder.getCreateBy()).getName()))
                 .collect(Collectors.toList());
         return new PageImpl<>(result, pageable, processingOrderPage.getTotalElements());
     }
@@ -312,7 +319,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                     .quantity(processOrderProduct.getQuantity())
                     .expectedWeight(processOrderProduct.getExpectedWeight())
                     .isEditable(true).build();
-        }else {
+        } else {
             processingOrderProductVO = ProcessingOrderProductVO.builder().id(processOrderProduct.getId())
                     .productId(pro.getId())
                     .productName(pro.getName())
