@@ -27,6 +27,8 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
 
   orderList: PurchaseOrderVO[] = [];
 
+  needResetPageIndex: boolean = false;
+
   constructor(
     private router: Router,
     private purchaseOrder: PurchaseOrderService,
@@ -46,6 +48,10 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -106,6 +112,11 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
       }, () => {
         this.refresh();
       });
+  }
+
+  resetPageIndex(): void {
+    // this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
   refresh(): void {

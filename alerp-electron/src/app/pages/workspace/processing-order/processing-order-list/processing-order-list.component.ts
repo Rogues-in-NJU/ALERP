@@ -28,6 +28,8 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
 
   orderList: ProcessingOrderVO[] = [];
 
+  needResetPageIndex: boolean = false;
+
   constructor(
     private router: Router,
     private processingOrder: ProcessingOrderService,
@@ -47,6 +49,10 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -116,6 +122,11 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
       }, () => {
         this.refresh();
       });
+  }
+
+  resetPageIndex(): void {
+    // this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
   refresh(): void {

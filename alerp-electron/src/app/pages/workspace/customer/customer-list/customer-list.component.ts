@@ -44,6 +44,8 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     }
   };
 
+  needResetPageIndex: boolean = false;
+
   constructor(
     private router: Router,
     private customer: CustomerService,
@@ -73,6 +75,10 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -193,6 +199,11 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
       payDate: 20
     });
     this.customerAddVisible = false;
+  }
+
+  resetPageIndex(): void {
+    // this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
 }
