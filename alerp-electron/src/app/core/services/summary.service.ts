@@ -18,8 +18,8 @@ export class SummaryService {
 
   public getSummary(queryParams: QueryParams): Observable<ResultVO<SummaryVO>> {
     return this.http.get<ResultVO<SummaryVO>>(`${AppConfig.BASE_URL}/api/summary/info`, {
-      withCredentials: true,
-      params: queryParams
+      params: queryParams,
+      withCredentials: true
     });
     // return of({
     //   code: ResultCode.SUCCESS.code,

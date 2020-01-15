@@ -14,8 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 /**
  * 汇总信息controller
@@ -40,8 +40,12 @@ public class SummaryController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.GET, name = "获取汇总信息")
-    public ResponseResult<SummaryInfoVO> getSummaryInfo(@RequestBody SummaryInfoDTO dto) {
-        return ResponseResult.ok(summaryService.getSummaryInfo(dto));
+    public ResponseResult<SummaryInfoVO> getSummaryInfo(@RequestParam("startTime") String startTime,
+                                                        @RequestParam("endTime") String endTime) {
+        SummaryInfoDTO summaryInfoDTO = new SummaryInfoDTO();
+        summaryInfoDTO.setStartTime(startTime);
+        summaryInfoDTO.setEndTime(endTime);
+        return ResponseResult.ok(summaryService.getSummaryInfo(summaryInfoDTO));
     }
 
     /**

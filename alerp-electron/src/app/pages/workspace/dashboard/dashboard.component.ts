@@ -27,6 +27,10 @@ export class DashboardComponent implements OnInit {
   pageSize: number = 10;
   totalPages: number = 1;
 
+  disabledDate: any = (current: Date): boolean => {
+    return DateUtils.compare(current, new Date()) > 0;
+  };
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -37,6 +41,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const now: Date = new Date();
+    this.timeRange = [new Date(now.getFullYear(), now.getMonth(), now.getDate()), now];
     this.refresh();
   }
 
@@ -75,10 +81,13 @@ export class DashboardComponent implements OnInit {
 
   refresh(): void {
     this.isSummaryDataLoading = true;
-    const now: Date = new Date();
+    if (!Objects.valid(this.timeRange) || this.timeRange.length !== 2) {
+      const now: Date = new Date();
+      this.timeRange = [new Date(now.getFullYear(), now.getMonth(), now.getDate()), now];
+    }
     const queryParams: QueryParams = Object.assign(new QueryParams(), {
-      startTime: DateUtils.of(now.getFullYear(), now.getMonth(), now.getDate()),
-      endTime: DateUtils.format(now)
+      startTime: DateUtils.format(this.timeRange[0]),
+      endTime: DateUtils.format(this.timeRange[1])
     });
     this.summary.getSummary(queryParams)
       .subscribe((res: ResultVO<SummaryVO>) => {
@@ -98,6 +107,10 @@ export class DashboardComponent implements OnInit {
 
       });
     this.search();
+  }
+
+  isNaN(obj: any): boolean {
+    return Objects.isNaN(obj);
   }
 
 }

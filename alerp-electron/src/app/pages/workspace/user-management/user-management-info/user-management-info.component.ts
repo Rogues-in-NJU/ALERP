@@ -45,34 +45,48 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         }
         this.isLoading = false;
         this.userManagementData = res.data;
-        // console.log(this.userManagementData)
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
   }
 
-  // saveUser(): void {
-  //   if (!this.userManagementForm.valid) {
-  //     return;
-  //   }
-  //   let formData: any = this.userManagementForm.getRawValue();
-  //   let userManagementAdd: UserManagementInfoVO = {
-  //     name: formData.name,
-  //     phoneNumber: formData.phoneNumber,
-  //   };
-  //
-  //   this.isSaving = true;
-  //   this.userManagement.save(userManagementAdd)
-  //     .pipe(debounceTime(3000))
-  //     .subscribe((res: ResultVO<any>) => {
-  //       console.log(res);
-  //       this.message.success('修改成功!');
-  //       this.isSaving = false;
-  //       // TODO: 跳转回列表页面
-  //     }, (error: HttpErrorResponse) => {
-  //       this.message.error(error.message);
-  //     });
-  // }
+  confirmAdd(id: number): void {
+    let userInfo: UserManagementInfoVO = this.userManagementData;
+    for (const tmp of userInfo.authList) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    this.isSaving = true;
+    this.userManagement.save(userInfo)
+      .pipe(debounceTime(3000))
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        this.message.success('修改成功!');
+        this.isSaving = false;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+  }
+
+  confirmAbandon(id: number): void {
+    let userInfo: UserManagementInfoVO = this.userManagementData;
+    for (const tmp of userInfo.authList) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    this.isSaving = true;
+    this.userManagement.save(userInfo)
+      .pipe(debounceTime(3000))
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        this.message.success('修改成功!');
+        this.isSaving = false;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+  }
 
   tabClose(): void {
     this.closeTabService.closeEvent.emit({
