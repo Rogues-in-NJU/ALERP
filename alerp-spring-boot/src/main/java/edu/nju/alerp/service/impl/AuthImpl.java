@@ -131,9 +131,11 @@ public class AuthImpl implements AuthService, InitializingBean {
         List<AuthUser> authUsers = new ArrayList<>();
         for (UpdateUserAuthDTO us : updateAuths) {
             AuthUser authUser = findAuthUser(us.getUserId(), us.getAuthId());
-            if (authUser != null && authUser.getAction() != us.getAction()) {
-                authUser.setAction(us.getAction());
-                authUsers.add(authUser);
+            if (authUser != null) {
+                if (authUser.getAction() != us.getAction()) {
+                    authUser.setAction(us.getAction());
+                    authUsers.add(authUser);
+                }
             }else {
                 log.error(us.getUserId()+"_"+us.getAuthId()+"can not find.");
             }
