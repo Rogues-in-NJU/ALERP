@@ -26,6 +26,9 @@ public class UserInfoVO {
     private String createdAt;
     private String updatedAt;
     private String deletedAt;
+    private Integer createdBy;
+    private Integer updatedBy;
+    private Integer deletedBy;
     private int status;
     private List<Integer> cities;
     private List<AuthUserVO> authList;

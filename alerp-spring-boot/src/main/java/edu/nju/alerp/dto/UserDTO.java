@@ -18,7 +18,7 @@ public class UserDTO {
     private String name;
     private String phoneNumber;
     private String password;
-    private String updateAt;
-    private List<Integer> city;
+    private String updatedAt;
+    private List<Integer> cities;
     private List<UpdateUserAuthDTO> authList;
 }

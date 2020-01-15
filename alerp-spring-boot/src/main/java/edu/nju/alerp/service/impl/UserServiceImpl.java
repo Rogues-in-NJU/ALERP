@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             authService.updateUserAuth(userDTO.getAuthList());
         } else {
             User user = getUser(userDTO.getId());
-            if (!userDTO.getUpdateAt().equals(user.getUpdatedAt())) {
+            if (!userDTO.getUpdatedAt().equals(user.getUpdatedAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "用户信息已变更，请重新更新");
             }
             user.setName(userDTO.getName());
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             authService.updateUserAuth(userDTO.getAuthList());
         }
         List<Integer> cities = userCityRelationRepository.findCitiesByUserId(res.getId());
-        userDTO.getCity().forEach(c -> {
+        userDTO.getCities().forEach(c -> {
             if (!cities.contains(c)) {
                 UserCityRelation userCityRelation = UserCityRelation.builder()
                         .userId(res.getId())
