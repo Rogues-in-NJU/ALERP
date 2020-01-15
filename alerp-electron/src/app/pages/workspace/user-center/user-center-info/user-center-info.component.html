@@ -1,13 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>用户详情</nz-page-header-title>
   <nz-page-header-extra>
-    <button nz-button nzType="primary"
-            (click)="saveUser()"
-            [disabled]="!userManagementForm.valid || isSaving">
-      <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
-      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>
-      保存
-    </button>
+    <!--<button nz-button nzType="primary"-->
+            <!--(click)="saveUser()"-->
+            <!--[disabled]="!userManagementForm.valid || isSaving">-->
+      <!--<i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>-->
+      <!--<i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>-->
+      <!--保存-->
+    <!--</button>-->
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
@@ -16,12 +16,49 @@
 </div>
 <div class="content" *ngIf="!isLoading">
   <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="姓名" [nzSpan]="2">{{ userManagementData.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="电话号码" [nzSpan]="3">{{ userManagementData.phoneNumber }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="姓名" [nzSpan]="2">{{ userManagementData.name }}
+      <a style="margin-left: 5px" (click)="showModalName()">
+        修改
+      </a>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="电话号码" [nzSpan]="3">{{ userManagementData.phoneNumber }}
+      <a style="margin-left: 5px" (click)="showModalPhoneNumber()">
+        修改
+      </a></nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
       <nz-badge nzStatus="success" nzText="在职" *ngIf="userManagementData.status === 1"></nz-badge>
     </nz-descriptions-item>
   </nz-descriptions>
+
+  <nz-modal [(nzVisible)]="isVisibleName" nzTitle="修改姓名" (nzOnCancel)="handleCancelName()" (nzOnOk)="saveUserName()">
+    <form nz-form nzLayout="inline" [formGroup]="userNameForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col nzSpan="20">
+          <nz-form-item nzFlex>
+            <nz-form-label nzRequired nzSpan="6">姓名</nz-form-label>
+            <nz-form-control nzHasFeedback nzSpan="14">
+              <input nz-input formControlName="name" class="info-input"/>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-modal>
+
+  <nz-modal [(nzVisible)]="isVisiblePhoneNumber" nzTitle="修改电话号码" (nzOnCancel)="handleCancelPhoneNumber()" (nzOnOk)="saveUserPhoneNumber()">
+    <form nz-form nzLayout="inline" [formGroup]="userPhoneNumberForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col nzSpan="20">
+          <nz-form-item nzFlex>
+            <nz-form-label nzRequired nzSpan="6">电话号码</nz-form-label>
+            <nz-form-control nzHasFeedback nzSpan="14">
+              <input nz-input formControlName="phoneNumber" class="info-input"/>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-modal>
   <br/>
   <h3>权限列表</h3>
   <nz-table #userAuthTable

@@ -46,6 +46,7 @@ export class UserManagementService {
   }
 
   public save(info: UserManagementInfoVO): Observable<ResultVO<any>> {
+    console.log(JSON.stringify(info));
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user`, info, {
       withCredentials: true
     });
