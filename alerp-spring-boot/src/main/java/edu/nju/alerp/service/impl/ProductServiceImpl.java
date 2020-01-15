@@ -56,6 +56,25 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
     }
 
     @Override
+    public List<Product> findAllByName(String name) {
+        List<Product> productList;
+        QueryContainer<Product> sp = new QueryContainer<>();
+        if (!"".equals(name)) {
+            try {
+                sp.add(ConditionFactory.like("name", name));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (sp.isEmpty())
+            productList = productRepository.findAll();
+        else
+            productList = productRepository.findAll(sp);
+
+        return productList;
+    }
+
+    @Override
     public Page<ProductDetailVO> findAllByPage(Pageable pageable, String name, Integer type) {
 //        Specification<Product> sp = (Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
 //            Predicate typeEquals = criteriaBuilder.equal(root.get("type").as(Integer.class), type);
@@ -74,7 +93,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 sp.add(ConditionFactory.or(fuzzyMatch));
             }
             sp.add(ConditionFactory.isNull("deleteAt"));
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Value is null.", e);
         }
         Page<Product> productPage;
@@ -84,8 +103,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
             productPage = productRepository.findAll(sp, pageable);
 
         List<ProductDetailVO> result = productPage.getContent().parallelStream()
-                                                            .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(p.getCreateBy()).getName()))
-                                                            .collect(Collectors.toList());
+                .map(p -> ProductDetailVO.buildProductDetailVO(p, userService.getUser(p.getCreateBy()).getName()))
+                .collect(Collectors.toList());
         return new PageImpl<>(result, pageable, productPage.getTotalElements());
     }
 
@@ -115,7 +134,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 name = res.getName();
                 productNameCache.put(id, res);
             }
-        }else {
+        } else {
             name = res.getName();
         }
         return name;
@@ -136,7 +155,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
                 .shorthand(productDTO.getShorthand())
                 .type(Byte.valueOf(String.valueOf(productDTO.getType())))
                 .specification(productDTO.getSpecification()).build();
-        if (productDTO.getId() != null){
+        if (productDTO.getId() != null) {
             product = findProductById(productDTO.getId());
             if (!productDTO.getUpdatedAt().equals(product.getUpdateAt())) {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "商品信息已变更，请重新更新");

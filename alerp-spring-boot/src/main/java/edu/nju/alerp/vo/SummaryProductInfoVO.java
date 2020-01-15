@@ -1,10 +1,19 @@
 package edu.nju.alerp.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * 汇总商品信息VO
  * @author luhailong
  * @date 2020/01/12
  */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SummaryProductInfoVO {
     /**
      * 商品id

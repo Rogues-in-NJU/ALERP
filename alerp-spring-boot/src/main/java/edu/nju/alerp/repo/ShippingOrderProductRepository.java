@@ -20,9 +20,9 @@ public interface ShippingOrderProductRepository extends JpaRepository<ShippingOr
     @Query("select distinct s.processingOrderId from ShippingOrderProduct s where s.shippingOrderId = :shippingOrderId")
     List<Integer> findProcessingListByShippingId(@Param("shippingOrderId") int shippingOrderId);
 
-    @Query("select sum(s.cash) from ShippingOrderProduct s where s.productId = :productId")
+    @Query("select sum(s.cash) from ShippingOrderProduct s where s.productId = :productId and s.deletedAt = null")
     Double getTotalCashByProductId(@Param("productId") int productId);
 
-    @Query("select sum(s.weight) from ShippingOrderProduct s where s.productId = :productId and s.weight > 0")
+    @Query("select sum(s.weight) from ShippingOrderProduct s where s.productId = :productId and s.weight > 0 and s.deletedAt = null")
     Double getTotalWeightByProductId(@Param("productId") int productId);
 }

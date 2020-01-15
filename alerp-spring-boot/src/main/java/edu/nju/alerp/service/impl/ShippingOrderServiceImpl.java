@@ -124,6 +124,26 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
+    public List<ShippingOrder> getShippingOrderListByTime(String startTime, String endTime) {
+        QueryContainer<ShippingOrder> sp = new QueryContainer<>();
+        try {
+            if (!"".equals(startTime)) {
+                sp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            }
+            if (!"".equals(startTime)) {
+                sp.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (sp.isEmpty()) {
+            return shippingOrderRepository.findAll();
+        } else {
+            return shippingOrderRepository.findAll(sp);
+        }
+    }
+
+    @Override
     public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
         try {
@@ -172,6 +192,24 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Override
     public Double getTotalWeightByProductId(int productId) {
         return shippingOrderProductRepository.getTotalWeightByProductId(productId);
+    }
+
+    @Override
+    public List<ShippingOrderProduct> getShippingOrderByProductId(int productId, String startTime, String endTime) {
+        QueryContainer<ShippingOrderProduct> sp = new QueryContainer<>();
+        try {
+            sp.add(ConditionFactory.equal("productId", productId));
+            sp.add(ConditionFactory.greatThan("expectedWeight", 0));
+            sp.add(ConditionFactory.isNull("deletedAt"));
+            if ("".equals(startTime))
+                sp.add(ConditionFactory.greatThanEqualTo("createAt", startTime));
+            if ("".equals(endTime))
+                sp.add(ConditionFactory.lessThanEqualTo("createAt", endTime));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return shippingOrderProductRepository.findAll(sp);
     }
 
     /**

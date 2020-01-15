@@ -26,6 +26,8 @@ public interface ShippingOrderService {
 
     boolean printShippingOrder(int id);
 
+    List<ShippingOrder> getShippingOrderListByTime(String startTime,String endTime);
+
     Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
 
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
@@ -35,6 +37,8 @@ public interface ShippingOrderService {
     Double getTotalCashByProductId(int productId);
 
     Double getTotalWeightByProductId(int productId);
+
+    List<ShippingOrderProduct> getShippingOrderByProductId(int productId, String startTime, String endTime);
 
     Double getCustomerAvgPrice(List<Integer> customerIdList, String startDate, String endDate);
 

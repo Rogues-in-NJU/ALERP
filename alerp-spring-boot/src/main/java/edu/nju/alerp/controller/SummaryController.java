@@ -8,12 +8,14 @@ import edu.nju.alerp.vo.SummaryInfoVO;
 import edu.nju.alerp.vo.SummaryProductInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 汇总信息controller
@@ -50,8 +52,15 @@ public class SummaryController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/product", method = RequestMethod.GET, name = "获取商品汇总信息")
-    public ResponseResult<SummaryProductInfoVO> getSummaryProductInfo() {
-        return ResponseResult.ok(summaryService.getSummaryProductInfo());
+    public ResponseResult<Page<SummaryProductInfoVO>> getSummaryProductInfo(@RequestParam(value = "pageIndex") int pageIndex,
+                                                                            @RequestParam(value = "pageSize") int pageSize,
+                                                                            @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                                                                            @RequestParam(value = "startTime", required = false, defaultValue = "") String startTime,
+                                                                            @RequestParam(value = "endTime", required = false, defaultValue = "") String endTime) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        List<SummaryProductInfoVO> summaryProductInfoVOList = summaryService.getSummaryProductInfo(name, startTime, endTime);
+
+        return ResponseResult.ok(new PageImpl<>(summaryProductInfoVOList, pageable, summaryProductInfoVOList.size()));
     }
 
 }
