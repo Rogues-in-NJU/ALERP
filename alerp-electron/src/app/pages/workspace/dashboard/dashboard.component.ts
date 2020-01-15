@@ -100,4 +100,8 @@ export class DashboardComponent implements OnInit {
     this.search();
   }
 
+  isNaN(obj: any): boolean {
+    return Objects.isNaN(obj);
+  }
+
 }
