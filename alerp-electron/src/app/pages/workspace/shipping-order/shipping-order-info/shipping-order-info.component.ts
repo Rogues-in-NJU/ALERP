@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild, ElementRef} from "@angular/core";
 import {ClosableTab, RefreshableTab} from "../../tab/tab.component";
 import {ShippingOrderInfoVO, ShippingOrderProductInfoVO} from "../../../../core/model/shipping-order";
 import {TabService} from "../../../../core/services/tab.service";
@@ -13,6 +13,7 @@ import {ProcessingOrderProductVO, ProcessingOrderVO} from "../../../../core/mode
 import {Objects, SpecificationUtils, StringUtils} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ProductService} from "../../../../core/services/product.service";
+import {ENgxPrintComponent} from "e-ngx-print";
 
 @Component({
   selector: 'shipping-order-info',
@@ -36,7 +37,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
               private router: Router,
               private shippingOrder: ShippingOrderService,
               private product: ProductService,
-              private message: NzMessageService) {
+              private message: NzMessageService,
+              private elRef: ElementRef) {
     this.shippingOrderCode = this.route.snapshot.params['code'];
 
     this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
@@ -50,8 +52,89 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
 
+  @ViewChild('print1', {static: false})
+  printComponent: ENgxPrintComponent;
+  showPrint: boolean = false;
+
   printComplete() {
-    console.log('打印完成！');
+    // console.log('打印完成！');
+    this.showPrint = false;
+  }
+
+  customPrint(print: string) {
+    this.showPrint = true;
+    if (this.shippingOrderData.products[0].priceType == 2) {
+      const printHTML: any = this.elRef.nativeElement.childNodes[4];
+      console.log(printHTML);
+      this.printComponent.print(printHTML);
+    } else {
+      const printHTML: any = this.elRef.nativeElement.childNodes[5];
+      console.log(printHTML);
+      this.printComponent.print(printHTML);
+    }
+  }
+
+  stringMoney: string;
+
+  moneyToString(num: number) {
+    const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+    const radices = ['', '拾', '佰', '仟', '万', '亿'];
+    const bigRadices = ['', '万', '亿'];
+    const decimals = ['角', '分']; // 这里只精确到分
+    const cn_dollar = '元';
+    const cn_integer = '整';
+    // int_str = Math.floor(num).toString();
+    // float_str = num % 1;
+    const num_arr = num.toString().split('.');
+    const int_str = num_arr[0] || '';
+    let float_str = num_arr[1] || '';
+    if (float_str.length > 2) {
+      float_str = float_str.substr(0, 2);
+    }
+    let outputCharacters = '';
+    if (int_str) {
+      let zeroCount = 0;
+      const int_len = int_str.length;
+      for (var i = 0; i < int_len; i++) {
+        const p = int_len - i - 1;
+        const d = int_str.substr(i, 1);
+        const quotient = p / 4;
+        const modulus = p % 4;
+        if (d === '0') {
+          zeroCount++;
+        } else {
+          if (zeroCount > 0) {
+            outputCharacters += digits[0];
+          }
+          zeroCount = 0;
+          outputCharacters += digits[d] + radices[modulus];
+        }
+        if (modulus === 0 && zeroCount < 4) {
+          outputCharacters += bigRadices[quotient];
+          zeroCount = 0;
+        }
+      }
+      outputCharacters += cn_dollar;
+    }
+
+    if (float_str) {
+      const float_len = float_str.length;
+      for (let i = 0; i < float_len; i++) {
+        const d = float_str.substr(i, 1);
+        if (d !== '0') {
+          outputCharacters += digits[d] + decimals[i];
+        }
+      }
+    }
+
+    if (outputCharacters === '') {
+      outputCharacters = digits[0] + cn_dollar;
+    }
+
+    if (float_str) {
+      outputCharacters += cn_integer;
+    }
+    return outputCharacters;
   }
 
   ngOnInit(): void {
@@ -77,6 +160,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
         }
         this.isLoading = false;
         this.shippingOrderData = res.data;
+        this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
+        console.log(this.stringMoney);
         if (Objects.valid(this.shippingOrderData.products)) {
           this.shippingOrderData.products.forEach(item => {
             item['_id'] = this.processingOrderInfoProductCountIndex++;

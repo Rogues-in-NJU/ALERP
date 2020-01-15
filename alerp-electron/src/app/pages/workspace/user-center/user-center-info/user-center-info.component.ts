@@ -15,13 +15,32 @@ import {debounceTime} from "rxjs/internal/operators";
   styleUrls: ['./user-center-info.component.less']
 })
 export class UserCenterInfoComponent {
-  userManagementForm: FormGroup;
+  userNameForm: FormGroup;
+  userPhoneNumberForm: FormGroup;
   isLoading: boolean = true;
   userManagementData: UserManagementInfoVO;
   isSaving: boolean = false;
 
-  nameTmp: string;
-  phoneNumberTmp: string;
+
+
+  isVisibleName = false;
+  isVisiblePhoneNumber = false;
+
+  showModalName(): void {
+    this.isVisibleName = true;
+  }
+
+  handleCancelName(): void {
+    this.isVisibleName = false;
+  }
+
+  showModalPhoneNumber(): void {
+    this.isVisiblePhoneNumber = true;
+  }
+
+  handleCancelPhoneNumber(): void {
+    this.isVisiblePhoneNumber = false;
+  }
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -33,9 +52,11 @@ export class UserCenterInfoComponent {
   }
 
   ngOnInit(): void {
-    this.userManagementForm = this.fb.group({
-      name: [null],
-      phoneNumber: [null],
+    this.userNameForm = this.fb.group({
+      name: [null]
+    });
+    this.userPhoneNumberForm = this.fb.group({
+      phoneNumber: [null]
     });
     this.userManagement.findSelf()
       .subscribe((res: ResultVO<UserManagementInfoVO>) => {
@@ -45,32 +66,47 @@ export class UserCenterInfoComponent {
         }
         this.isLoading = false;
         this.userManagementData = res.data;
-        this.nameTmp = res.data.name;
-        this.phoneNumberTmp = res.data.phoneNumber;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
   }
 
-  saveUser(): void {
-    if (!this.userManagementForm.valid) {
+  saveUserName(): void {
+    if (!this.userNameForm.valid) {
       return;
     }
-    let formData: any = this.userManagementForm.getRawValue();
+    let formData: any = this.userNameForm.getRawValue();
     let userManagementAdd: UserManagementInfoVO = this.userManagementData;
-
-
+    userManagementAdd.name = formData.name;
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
         this.message.success('修改成功!');
         this.isSaving = false;
-        // TODO: 跳转回列表页面
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
+    this.isVisibleName = false;
+  }
+
+  saveUserPhoneNumber(): void {
+    if (!this.userPhoneNumberForm.valid) {
+      return;
+    }
+    let formData: any = this.userPhoneNumberForm.getRawValue();
+    let userManagementAdd: UserManagementInfoVO = this.userManagementData;
+    userManagementAdd.phoneNumber = formData.phoneNumber;
+    this.isSaving = true;
+    this.userManagement.save(userManagementAdd)
+      .pipe(debounceTime(3000))
+      .subscribe((res: ResultVO<any>) => {
+        this.message.success('修改成功!');
+        this.isSaving = false;
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      });
+    this.isVisiblePhoneNumber = false;
   }
 
   tabClose(): void {

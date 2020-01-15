@@ -2,12 +2,14 @@ package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.common.aop.InvokeControl;
+import edu.nju.alerp.dto.SummaryInfoDTO;
 import edu.nju.alerp.service.SummaryService;
 import edu.nju.alerp.vo.SummaryInfoVO;
 import edu.nju.alerp.vo.SummaryProductInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,8 +38,8 @@ public class SummaryController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.GET, name = "获取汇总信息")
-    public ResponseResult<SummaryInfoVO> getSummaryInfo() {
-        return ResponseResult.ok(summaryService.getSummaryInfo());
+    public ResponseResult<SummaryInfoVO> getSummaryInfo(@RequestBody SummaryInfoDTO dto) {
+        return ResponseResult.ok(summaryService.getSummaryInfo(dto));
     }
 
     /**

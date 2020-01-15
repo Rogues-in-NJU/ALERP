@@ -1,5 +1,6 @@
 package edu.nju.alerp.service;
 
+import edu.nju.alerp.dto.SummaryInfoDTO;
 import edu.nju.alerp.vo.SummaryInfoVO;
 import edu.nju.alerp.vo.SummaryProductInfoVO;
 
@@ -12,7 +13,7 @@ public interface SummaryService {
      * 获取汇总信息
      * @return
      */
-    SummaryInfoVO getSummaryInfo();
+    SummaryInfoVO getSummaryInfo(SummaryInfoDTO dto);
 
     /**
      * 汇总商品汇总信息

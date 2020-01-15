@@ -6,13 +6,13 @@
       新增出货单
     </button>
     <div>
-      <e-ngx-print
-        [btnText]="'打印'"
-        [printHTML]="print_div"
-        [printStyle]="printStyle"
-        [printCSS]="printCSS"
-        (printComplete)="printComplete()">
+      <e-ngx-print #print1
+                   [showBtn]="false"
+                   [printStyle]="printStyle"
+                   [printCSS]="printCSS"
+                   (printComplete)="printComplete()">
       </e-ngx-print>
+      <button (click)="customPrint('print1')">打印</button>
     </div>
   </nz-page-header-extra>
 </nz-page-header>
@@ -22,7 +22,7 @@
       <nz-form-label>出货单编号</nz-form-label>
       <nz-form-control>
         <input nz-input type="text" [(ngModel)]="orderCode"
-        (ngModelChange)="resetIndex()" />
+               (ngModelChange)="resetIndex()"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -67,7 +67,7 @@
     <div class="table-wrapper">
       <nz-table #shippingOrderTable
                 nzShowSizeChanger
-                [nzFrontPagination] = "false"
+                [nzFrontPagination]="false"
                 [nzData]="orderList"
                 [(nzPageIndex)]="pageIndex"
                 [(nzPageSize)]="pageSize"
@@ -78,7 +78,7 @@
                 [nzScroll]="{ x: '100%'}">
         <thead>
         <tr>
-<!--          code 客户 状态 应收金额 创建时间-->
+          <!--          code 客户 状态 应收金额 创建时间-->
           <th nzLeft="0px" nzWidth="150px">编号</th>
           <th>客户</th>
           <th>金额</th>
@@ -95,7 +95,11 @@
           <td>{{ data.customerName }}</td>
           <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
           <td>{{ data.createdAt }}</td>
-          <td><nz-tag nzColor="{{ data.status | shipping_order_status_color }}">{{ data.status | shipping_order_status }}</nz-tag></td>
+          <td>
+            <nz-tag nzColor="{{ data.status | shipping_order_status_color }}">{{ data.status | shipping_order_status
+              }}
+            </nz-tag>
+          </td>
           <td nzRight="0px">
             <a routerLink="/workspace/shipping-order/info/{{ data.id }}">查看</a>
             <a style="margin-left: 5px"
@@ -117,28 +121,28 @@
 
 <div id="print_div" #print_div>
 
-  <p>对账单</p>
-  <table>
+  <p *ngIf="showPrint">对账单</p>
+  <table *ngIf="showPrint">
     <thead>
     <tr>
       <th style="width: 200px">单号</th>
-      <th style="width: 200px">客户</th>
-      <th style="width: 200px">金额</th>
+      <th style="width: 150px">客户</th>
+      <th style="width: 100px">金额</th>
       <th style="width: 200px">日期</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let data of orderList">
-      <td> {{ data.code }}</td>
-      <td> {{ data.customerName }}</td>
-      <td> {{ data.receivableCash }}</td>
-      <td> {{ data.createdAt }}</td>
+      <td style="width: 200px" *ngIf="data.status!==2"> {{ data.code }}</td>
+      <td style="width: 150px" *ngIf="data.status!==2"> {{ data.customerName }}</td>
+      <td style="width: 100px" *ngIf="data.status!==2"> {{ data.receivableCash }}</td>
+      <td style="width: 200px" *ngIf="data.status!==2"> {{ data.createdAt }}</td>
     </tr>
     <tr>
       <td></td>
       <td></td>
       <td>(合计)</td>
-      <td> xxx总金额（前端计算？？）</td>
+      <td> {{ totalMoney }}</td>
     </tr>
     </tbody>
   </table>

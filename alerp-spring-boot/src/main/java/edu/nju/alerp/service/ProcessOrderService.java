@@ -35,6 +35,8 @@ public interface ProcessOrderService {
 
     public double queryTotalWeight(String createdAtStartTime, String createdAtEndTime);
 
+    public int queryTotalNum(String createdAtStartTime, String createdAtEndTime);
+
     /**
      * 新增/修改加工单的商品关联
      * */

@@ -182,7 +182,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   confirmProductDelete(_id: number): void {
-    const index: number = this.processingOrderData.products.findIndex(item => item[ '_id' ] === _id);
+    const index: number = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
     this.processingOrder.deleteProduct(this.processingOrderData.products[index].productId)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
@@ -321,7 +321,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         return;
       }
       for (const s of splits) {
-        console.log(s);
+        // console.log(s);
         if (s.search(SpecificationUtils.NUM_PATT) === -1) {
           this.editCacheValidateStatus.specification = 'error';
           return;
@@ -335,12 +335,12 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     }
   }
 
-  @ViewChild('print1',{static:false})
+  @ViewChild('print1', {static: false})
   printComponent: ENgxPrintComponent;
   showPrint: boolean = false;
 
   printComplete() {
-    console.log('打印完成！');
+    // console.log('打印完成！');
     this.showPrint = false;
   }
 
@@ -366,7 +366,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
             item.processingOrderUpdatedAt = this.processingOrderData.updatedAt;
           });
         }
-        console.log(this.processingOrderData);
+        // console.log(this.processingOrderData);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });

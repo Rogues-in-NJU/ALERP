@@ -2,13 +2,13 @@
   <nz-page-header-title>出货单详情</nz-page-header-title>
   <nz-page-header-extra>
     <div>
-      <e-ngx-print
-        [btnText]="'打印'"
-        [printHTML]="print_div"
-        [printStyle]="printStyle"
-        [printCSS]="printCSS"
-        (printComplete)="printComplete()">
+      <e-ngx-print #print1
+                   [showBtn]="false"
+                   [printStyle]="printStyle"
+                   [printCSS]="printCSS"
+                   (printComplete)="printComplete()">
       </e-ngx-print>
+      <button (click)="customPrint('print1')">打印</button>
     </div>
   </nz-page-header-extra>
 </nz-page-header>
@@ -124,38 +124,28 @@
   </nz-descriptions>
 </div>
 
-
-<div id="print_div" #print_div>
-  <p>(出货单编号:){{ shippingOrderData.code }}</p>
-  <p>(收款单编号:){{ shippingOrderData.arrearOrderCode }}</p>
+<!--按件数-->
+<div>
+  <p *ngIf="showPrint">(XX公司销售出货单)</p>
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
-  <p>(客户:){{ shippingOrderData.customerName }}</p>
-  <!--<p>状态:{{ shippingOrderData.status === 1 }}</p>-->
-  <!--<p>创建时间:{{ shippingOrderData.createdAt }}</p>-->
-  <!--<p>创建者:{{ shippingOrderData.createdByName }}</p>-->
-  <!--<p>废弃时间:{{ shippingOrderData.deletedAt }}</p>-->
-  <!--<p>废弃者:{{ shippingOrderData.deletedByName }}</p>-->
-  <!--<p>加工单编号:{{ code }}</p>-->
-
-
-  <!--<p>浮动金额:{{ shippingOrderData.floatingCash }}</p>-->
-  <!--<p>应收金额:{{ shippingOrderData.receivableCash }}</p>-->
-  <table>
+  <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
+  <p *ngIf="showPrint">(本单含税/未税)</p>
+  <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
+  <table *ngIf="showPrint">
     <thead>
     <tr>
-      <th style="width: 200px">(加工单编号)</th>
+      <th style="width: 200px">(订单号)</th>
       <th style="width: 100px">(商品)</th>
-      <th style="width: 200px">(加工规格)</th>
+      <th style="width: 200px">(规格)</th>
       <th style="width: 100px">(数量(件))</th>
       <th style="width: 100px">(单价)</th>
-      <!--<th nzWidth="100px">(预计重量)</th>-->
       <th style="width: 100px">(实际重量)</th>
-      <th style="width: 100px">(金额)</th>
+      <th style="width: 100px">(总金额)</th>
     </tr>
     </thead>
     <tbody>
@@ -165,24 +155,65 @@
       <td> {{ data.specification }}</td>
       <td> {{ data.quantity }}</td>
       <td> {{ data.price }}</td>
-      <!--<td> {{ data.expectedWeight }}</td>-->
       <td> {{ data.weight }}</td>
       <td> {{ data.cash }}</td>
     </tr>
     <tr>
+      <td>(合计(大写))</td>
+      <td> {{ stringMoney }}</td>
       <td></td>
       <td></td>
-      <td></td>
-      <td></td>
-      <!--<td></td>-->
       <td></td>
       <td>(合计)</td>
       <td> {{ shippingOrderData.cash }}</td>
     </tr>
     </tbody>
   </table>
-  <p>注* ()中的最后会去除</p>
 </div>
 
-
+<!--按重量-->
+<div>
+  <p *ngIf="showPrint">(XX公司销售出货单)</p>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
+  <p *ngIf="showPrint">(本单含税/未税)</p>
+  <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
+  <table *ngIf="showPrint">
+    <thead>
+    <tr>
+      <th style="width: 100px">(商品)</th>
+      <th style="width: 200px">(规格)</th>
+      <th style="width: 100px">(数量(KG))</th>
+      <th style="width: 100px">(单价)</th>
+      <th style="width: 100px">(实际重量)</th>
+      <th style="width: 100px">(总金额)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of shippingOrderData.products">
+      <td> {{ data.productName }}</td>
+      <td> {{ data.specification }}</td>
+      <td> {{ data.quantity }}</td>
+      <td> {{ data.price }}</td>
+      <td> {{ data.weight }}</td>
+      <td> {{ data.cash }}</td>
+    </tr>
+    <tr>
+      <td>(合计(大写))</td>
+      <td> {{ stringMoney }}</td>
+      <td></td>
+      <td></td>
+      <td>(合计(小写))</td>
+      <td> {{ shippingOrderData.cash }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <p *ngIf="showPrint">(备注:)TODO</p>
+  <p *ngIf="showPrint">(收货单位签字:)</p>
+</div>
 

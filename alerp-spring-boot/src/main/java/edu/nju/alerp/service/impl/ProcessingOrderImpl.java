@@ -29,7 +29,6 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -185,6 +184,21 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             log.error("Value is null.", e);
         }
         return totalWeight;
+    }
+
+    @Override
+    public int queryTotalNum(String createdAtStartTime, String createdAtEndTime) {
+        QueryContainer<ProcessingOrder> sp = new QueryContainer<>();
+        try {
+            if (createdAtStartTime != null)
+                sp.add(ConditionFactory.greatThanEqualTo("createAt", createdAtStartTime));
+            if (createdAtEndTime != null)
+                sp.add(ConditionFactory.lessThanEqualTo("createAt", createdAtEndTime));
+            sp.add(ConditionFactory.notEqual("status", ProcessingOrderStatus.ABANDONED.getCode()));
+        }catch (Exception e) {
+            log.error("Value is null.", e);
+        }
+        return processingOrderRepository.findAll(sp).size();
     }
 
     @Override
