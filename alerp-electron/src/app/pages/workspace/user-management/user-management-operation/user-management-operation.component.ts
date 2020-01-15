@@ -57,7 +57,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
         operationEndTime: DateUtils.format(this.timeRange[1])
       });
     }
-    // console.log(JSON.stringify(queryParams));
     this.Operation.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<OperationInfoVO>>) => {
         if (!res) {

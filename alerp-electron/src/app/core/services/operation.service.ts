@@ -16,6 +16,7 @@ export class OperationService {
   }
 
   public findAll(queryParams: TableQueryParams): Observable<ResultVO<TableResultVO<OperationInfoVO>>> {
+    JSON.stringify(queryParams);
     return this.http.get<ResultVO<TableResultVO<OperationInfoVO>>>(
       `${AppConfig.BASE_URL}/api/user/operation-log/list`, {
         params: queryParams,
