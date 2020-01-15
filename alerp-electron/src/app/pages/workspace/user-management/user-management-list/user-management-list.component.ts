@@ -24,6 +24,8 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   name: string;
 
   userList: UserManagementInfoVO[] = [];
+  //更改查询条件时，页数重置为1
+  shouldResetIndex: boolean = false;
 
   constructor(private router: Router,
               private UserManagement: UserManagementService,
@@ -36,16 +38,28 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
     this.search();
   }
 
+  resetQueryParams(): void{
+    this.name = null;
+    this.shouldResetIndex = false;
+    this.refresh();
+  }
+
+  resetIndex(): void{
+    this.shouldResetIndex = true;
+  }
+
+
   search(): void {
+
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     };
+
     if (!StringUtils.isEmpty(this.name)) {
       Object.assign(queryParams, {
         name: this.name
       });
-      this.name = null;
     }
     this.UserManagement.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<UserManagementInfoVO>>) => {
@@ -83,6 +97,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   refresh(): void {
+    this.search();
   }
 
 }
