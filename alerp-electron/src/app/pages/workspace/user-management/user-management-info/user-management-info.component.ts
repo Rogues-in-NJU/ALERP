@@ -45,7 +45,6 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         }
         this.isLoading = false;
         this.userManagementData = res.data;
-        console.log(this.userManagementData)
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
@@ -58,7 +57,6 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         tmp.action = 1;
       }
     }
-    console.log(userInfo);
     this.isSaving = true;
     this.userManagement.save(userInfo)
       .pipe(debounceTime(3000))
@@ -78,7 +76,6 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         tmp.action = 0;
       }
     }
-    console.log(userInfo);
     this.isSaving = true;
     this.userManagement.save(userInfo)
       .pipe(debounceTime(3000))
