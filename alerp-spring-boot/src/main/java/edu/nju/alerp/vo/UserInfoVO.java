@@ -23,6 +23,9 @@ public class UserInfoVO {
     private String name;
     private String phoneNumber;
     private String password;
+    private String createdAt;
+    private String updatedAt;
+    private String deletedAt;
     private int status;
     private List<Integer> cities;
     private List<AuthUserVO> authList;
