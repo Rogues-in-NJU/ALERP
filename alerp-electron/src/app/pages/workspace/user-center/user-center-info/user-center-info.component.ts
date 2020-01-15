@@ -60,12 +60,12 @@ export class UserCenterInfoComponent {
     });
     this.userManagement.findSelf()
       .subscribe((res: ResultVO<UserManagementInfoVO>) => {
-        console.log(res);
         if (!res) {
           return;
         }
         this.isLoading = false;
         this.userManagementData = res.data;
+        // console.log(this.userManagementData);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
