@@ -1,13 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>用户详情</nz-page-header-title>
   <nz-page-header-extra>
-    <button nz-button nzType="primary"
-            (click)="saveUser()"
-            [disabled]="!userManagementForm.valid || isSaving">
-      <i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>
-      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>
-      保存
-    </button>
+    <!--<button nz-button nzType="primary"-->
+            <!--(click)="saveUser()"-->
+            <!--[disabled]="!userManagementForm.valid || isSaving">-->
+      <!--<i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>-->
+      <!--<i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>-->
+      <!--保存-->
+    <!--</button>-->
   </nz-page-header-extra>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
