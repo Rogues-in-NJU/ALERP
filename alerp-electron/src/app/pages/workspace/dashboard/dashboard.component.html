@@ -2,7 +2,8 @@
   <nz-page-header-title>汇总信息</nz-page-header-title>
   <nz-page-header-extra>
     <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
-                     nzFormat="yyyy-MM-dd"
+                     nzFormat="yyyy-MM-dd HH:mm"
+                     [nzDisabledDate]="disabledDate"
                      [nzPlaceHolder]="['开始时间', '结束时间']"
                      [(ngModel)]="timeRange" (ngModelChange)="onTimeRangeChange()">
 

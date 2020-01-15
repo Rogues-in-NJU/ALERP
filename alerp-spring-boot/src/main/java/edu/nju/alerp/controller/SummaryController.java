@@ -9,11 +9,7 @@ import edu.nju.alerp.vo.SummaryProductInfoVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 汇总信息controller
@@ -38,8 +34,12 @@ public class SummaryController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.GET, name = "获取汇总信息")
-    public ResponseResult<SummaryInfoVO> getSummaryInfo(@RequestBody SummaryInfoDTO dto) {
-        return ResponseResult.ok(summaryService.getSummaryInfo(dto));
+    public ResponseResult<SummaryInfoVO> getSummaryInfo(@RequestParam("startTime") String startTime,
+                                                        @RequestParam("endTime") String endTime) {
+        SummaryInfoDTO summaryInfoDTO = new SummaryInfoDTO();
+        summaryInfoDTO.setStartTime(startTime);
+        summaryInfoDTO.setEndTime(endTime);
+        return ResponseResult.ok(summaryService.getSummaryInfo(summaryInfoDTO));
     }
 
     /**
