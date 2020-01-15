@@ -74,6 +74,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     @Override
     public int saveShippingOrder(ShippingOrder shippingOrder) {
+        // fixme:会不会存储两次了，这样？
         if (shippingOrder.getId() == null) {
             return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
         }

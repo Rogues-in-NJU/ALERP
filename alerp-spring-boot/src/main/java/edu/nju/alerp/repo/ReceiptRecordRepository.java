@@ -23,4 +23,11 @@ public interface ReceiptRecordRepository extends JpaRepository<ReceiptRecord, In
      * @return
      */
     List<ReceiptRecord> findReceiptRecordsByArrearOrderIdAndStatusOrderByDoneAt(int id, int status);
+
+    /**
+     * 查询某一收款单下的所有收款记录
+     * @param arrearId
+     * @return
+     */
+    List<ReceiptRecord> findAllByArrearOrderId(int arrearId);
 }

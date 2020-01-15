@@ -1,5 +1,6 @@
 package edu.nju.alerp.service.impl;
 
+import edu.nju.alerp.dto.SummaryInfoDTO;
 import edu.nju.alerp.service.*;
 import edu.nju.alerp.vo.SummaryInfoVO;
 import edu.nju.alerp.vo.SummaryProductInfoVO;
@@ -31,11 +32,9 @@ public class SummaryServiceImpl implements SummaryService {
     private CustomerService customerService;
 
     @Override
-    public SummaryInfoVO getSummaryInfo() {
-        // fixme:前端接口目前还没修改，之后会有startTime和endTime
-        // todo: 还缺少"processingOrderTotalNum"生成加工单数
-        String startDate = "";
-        String endDate = "";
+    public SummaryInfoVO getSummaryInfo(SummaryInfoDTO dto) {
+        String startDate = dto.getStartTime();
+        String endDate = dto.getEndTime();
         // 生成出货单数
         int shippingOrderTotalNum = shippingOrderService.findTotalNum(startDate, endDate);
 
