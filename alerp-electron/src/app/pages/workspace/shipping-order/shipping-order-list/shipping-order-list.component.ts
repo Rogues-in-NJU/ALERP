@@ -99,7 +99,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
 
     this.shippingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ShippingOrderInfoVO>>) => {
-        console.log(res)
+        // console.log(res)
         if (!Objects.valid(res)) {
           return;
         }
@@ -127,10 +127,10 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: number): void {
-    console.log('confirm abandon: ' + id);
+    // console.log('confirm abandon: ' + id);
     this.shippingOrder.abandon(id)
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
+        // console.log(res);
         if (!Objects.valid(res)) {
           return;
         }
@@ -167,7 +167,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
   showPrint: boolean = false;
 
   printComplete() {
-    console.log('打印完成！');
+    // console.log('打印完成！');
     this.showPrint = false;
   }
 

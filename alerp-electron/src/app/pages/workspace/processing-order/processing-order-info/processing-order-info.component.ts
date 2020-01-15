@@ -340,7 +340,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   showPrint: boolean = false;
 
   printComplete() {
-    console.log('打印完成！');
+    // console.log('打印完成！');
     this.showPrint = false;
   }
 
@@ -366,7 +366,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
             item.processingOrderUpdatedAt = this.processingOrderData.updatedAt;
           });
         }
-        console.log(this.processingOrderData);
+        // console.log(this.processingOrderData);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
