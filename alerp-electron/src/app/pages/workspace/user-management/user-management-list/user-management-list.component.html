@@ -12,13 +12,14 @@
     <nz-form-item>
       <nz-form-label>姓名/手机号</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="name"/>
+        <input nz-input type="text" [(ngModel)]="name" (ngModelChange)="resetIndex()"/>
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item>
       <nz-form-control>
         <button nz-button nzType="primary" (click)="search()">搜索</button>
+        <button class="queryButton" nz-button nzType="primary" (click)="resetQueryParams()">重置</button>
       </nz-form-control>
     </nz-form-item>
     <div class="table-wrapper">
