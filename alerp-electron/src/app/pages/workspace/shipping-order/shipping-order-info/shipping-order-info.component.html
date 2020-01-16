@@ -8,7 +8,7 @@
                    [printCSS]="printCSS"
                    (printComplete)="printComplete()">
       </e-ngx-print>
-      <button (click)="customPrint('print1')">打印</button>
+      <button (click)="showModal()">打印</button>
     </div>
   </nz-page-header-extra>
 </nz-page-header>
@@ -122,6 +122,14 @@
     <nz-descriptions-item nzTitle="浮动金额" [nzSpan]="2">- {{ shippingOrderData.floatingCash }} 元</nz-descriptions-item>
     <nz-descriptions-item nzTitle="应收金额" [nzSpan]="2">{{ shippingOrderData.receivableCash }} 元</nz-descriptions-item>
   </nz-descriptions>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
 </div>
 
 <!--按件数-->
@@ -134,28 +142,30 @@
   <br/>
   <br/>
   <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
-  <p *ngIf="showPrint">(本单含税/未税)</p>
+  <p *ngIf="showPrint">(本单含税/未税){{ hasTax }}</p>
   <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
   <table *ngIf="showPrint">
     <thead>
     <tr>
       <th style="width: 200px">(订单号)</th>
+      <th style="width: 200px">(物料编码)</th>
+
       <th style="width: 100px">(商品)</th>
       <th style="width: 200px">(规格)</th>
       <th style="width: 100px">(数量(件))</th>
       <th style="width: 100px">(单价)</th>
-      <th style="width: 100px">(实际重量)</th>
       <th style="width: 100px">(总金额)</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let data of shippingOrderData.products">
-      <td> {{ data.processingOrderCode }}</td>
+      <td></td>
+      <td></td>
+
       <td> {{ data.productName }}</td>
       <td> {{ data.specification }}</td>
       <td> {{ data.quantity }}</td>
       <td> {{ data.price }}</td>
-      <td> {{ data.weight }}</td>
       <td> {{ data.cash }}</td>
     </tr>
     <tr>
@@ -169,6 +179,10 @@
     </tr>
     </tbody>
   </table>
+  <br/>
+  <br/>
+  <br/>
+  <p *ngIf="showPrint">(备注:){{ remarks }}</p>
 </div>
 
 <!--按重量-->
@@ -181,7 +195,7 @@
   <br/>
   <br/>
   <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
-  <p *ngIf="showPrint">(本单含税/未税)</p>
+  <p *ngIf="showPrint">(本单含税/未税){{ hasTax }}</p>
   <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
   <table *ngIf="showPrint">
     <thead>
@@ -213,7 +227,97 @@
     </tr>
     </tbody>
   </table>
-  <p *ngIf="showPrint">(备注:)TODO</p>
+  <br/>
+  <br/>
+  <br/>
+  <p *ngIf="showPrint">(备注:){{ remarks }}</p>
   <p *ngIf="showPrint">(收货单位签字:)</p>
 </div>
+
+<nz-modal style="width: 300px" [(nzVisible)]="isVisibleWeight" nzTitle="打印" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="customPrint('print1')">
+  <form nz-form nzLayout="inline" [formGroup]="printForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">本单含税/未税</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <nz-radio-group formControlName="hasTax">
+              <label nz-radio nzValue="含税">含税</label>
+              <label nz-radio nzValue="未税">未税</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">备注</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <textarea formControlName="remarks" nz-input rows="3"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</nz-modal>
+
+<nz-modal style="width: 300px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="customPrint('print1')">
+  <form nz-form nzLayout="inline" [formGroup]="printForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">本单含税/未税</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <nz-radio-group formControlName="hasTax">
+              <label nz-radio nzValue="含税">含税</label>
+              <label nz-radio nzValue="未税">未税</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">备注</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <textarea formControlName="remarks" nz-input rows="3"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th style="width: 200px">(订单号)</th>
+        <th style="width: 200px">(物料编码)</th>
+
+        <th style="width: 100px">(商品)</th>
+        <th style="width: 200px">(规格)</th>
+        <th style="width: 100px">(数量(件))</th>
+        <th style="width: 100px">(单价)</th>
+        <th style="width: 100px">(总金额)</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of shippingOrderData.products">
+        <td></td>
+        <td></td>
+
+        <td> {{ data.productName }}</td>
+        <td> {{ data.specification }}</td>
+        <td> {{ data.quantity }}</td>
+        <td> {{ data.price }}</td>
+        <td> {{ data.cash }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </form>
+</nz-modal>
 

@@ -14,6 +14,7 @@ import {Objects, SpecificationUtils, StringUtils} from "../../../../core/service
 import {HttpErrorResponse} from "@angular/common/http";
 import {ProductService} from "../../../../core/services/product.service";
 import {ENgxPrintComponent} from "e-ngx-print";
+import {FormGroup, FormBuilder} from "@angular/forms";
 
 @Component({
   selector: 'shipping-order-info',
@@ -26,17 +27,24 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   shippingOrderCode: string;
   shippingOrderId: number;
   shippingOrderData: ShippingOrderInfoVO = {};
-
   processingOrderInfoProductCountIndex: number = 0;
 
   printCSS: string[];
+
   printStyle: string;
+
+  printForm: FormGroup;
+  isVisibleWeight = false;
+  isVisibleCount = false;
+  hasTax: string;
+  remarks: string;
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
               private router: Router,
               private shippingOrder: ShippingOrderService,
               private product: ProductService,
+              private fb: FormBuilder,
               private message: NzMessageService,
               private elRef: ElementRef) {
     this.shippingOrderCode = this.route.snapshot.params['code'];
@@ -61,15 +69,39 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     this.showPrint = false;
   }
 
+  handleCancel(): void {
+    this.isVisibleWeight = false;
+    this.isVisibleCount = false;
+  }
+
+  showModal(): void {
+    if (this.shippingOrderData.products[0].priceType == 2) {
+      this.isVisibleCount = true;
+    } else {
+      this.isVisibleWeight = true;
+    }
+  }
+
   customPrint(print: string) {
+    this.isVisibleWeight = false;
+    this.isVisibleCount = false;
+
+    if (!this.printForm.valid) {
+      return;
+    }
+    let formData: any = this.printForm.getRawValue();
+    // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+
     this.showPrint = true;
     if (this.shippingOrderData.products[0].priceType == 2) {
       const printHTML: any = this.elRef.nativeElement.childNodes[4];
-      console.log(printHTML);
+      // console.log(printHTML);
       this.printComponent.print(printHTML);
     } else {
       const printHTML: any = this.elRef.nativeElement.childNodes[5];
-      console.log(printHTML);
+      // console.log(printHTML);
       this.printComponent.print(printHTML);
     }
   }
@@ -138,6 +170,10 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.printForm = this.fb.group({
+      hasTax: [null],
+      remarks: [null],
+    });
     this.shippingOrderId = this.route.snapshot.params['id'];
     this.reload();
   }
@@ -151,7 +187,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   reload(): void {
-    console.log(this.shippingOrderId);
+    // console.log(this.shippingOrderId);
     this.shippingOrder.find(this.shippingOrderId)
       .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
         console.log(res);
@@ -161,7 +197,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
         this.isLoading = false;
         this.shippingOrderData = res.data;
         this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
-        console.log(this.stringMoney);
+        // console.log(this.stringMoney);
         if (Objects.valid(this.shippingOrderData.products)) {
           this.shippingOrderData.products.forEach(item => {
             item['_id'] = this.processingOrderInfoProductCountIndex++;
