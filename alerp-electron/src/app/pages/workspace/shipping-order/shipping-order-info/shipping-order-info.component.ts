@@ -15,6 +15,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {ProductService} from "../../../../core/services/product.service";
 import {ENgxPrintComponent} from "e-ngx-print";
 import {FormGroup, FormBuilder} from "@angular/forms";
+import {PrintCountModel} from "../../../../core/model/printCount";
 
 @Component({
   selector: 'shipping-order-info',
@@ -39,6 +40,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   isVisibleCount = false;
   hasTax: string;
   remarks: string;
+  printCountTmp: PrintCountModel = {};
+  printCountList: PrintCountModel[] = [];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -90,7 +93,6 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
       return;
     }
     let formData: any = this.printFormWeight.getRawValue();
-    // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
     this.hasTax = formData.hasTax;
     this.remarks = formData.remarks;
 
@@ -102,8 +104,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   customPrintCount(print: string) {
+    //TODO
     this.isVisibleCount = false;
-
     if (!this.printFormCount.valid) {
       return;
     }
@@ -111,6 +113,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
     this.hasTax = formData.hasTax;
     this.remarks = formData.remarks;
+    // this.printCountList = formData.printCountList;
 
     this.showPrint = true;
     const printHTML: any = this.elRef.nativeElement.childNodes[4];
@@ -186,10 +189,9 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
       hasTax: [null],
       remarks: [null],
     });
-
     this.printFormCount = this.fb.group({
       hasTax: [null],
-      remarks: [null],
+      remarks: [null]
     });
     this.shippingOrderId = this.route.snapshot.params['id'];
     this.reload();
@@ -203,6 +205,23 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     });
   }
 
+  editCache: {
+    _id?: number,
+    data?: PrintCountModel,
+  } = {};
+
+  startEditProduct(id: number): void {
+    this.editCache._id = id;
+  }
+
+  saveProductEdit(id: number): void {
+    this.editCache._id = null;
+  }
+
+  cancelProductEdit(id: number): void {
+    this.editCache._id = null;
+  }
+
   reload(): void {
     // console.log(this.shippingOrderId);
     this.shippingOrder.find(this.shippingOrderId)
@@ -211,8 +230,18 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
         if (!Objects.valid(res)) {
           return;
         }
-        this.isLoading = false;
+
         this.shippingOrderData = res.data;
+        for (const tmp of this.shippingOrderData.products) {
+          this.printCountTmp.name = tmp.productName;
+          this.printCountTmp.specification = tmp.specification;
+          this.printCountTmp.count = tmp.quantity;
+          this.printCountTmp.price = tmp.price;
+          this.printCountTmp.total = tmp.cash;
+          this.printCountList.push(this.printCountTmp);
+        }
+        this.isLoading = false;
+        // console.log(this.printCountList);
         this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
         // console.log(this.stringMoney);
         if (Objects.valid(this.shippingOrderData.products)) {
