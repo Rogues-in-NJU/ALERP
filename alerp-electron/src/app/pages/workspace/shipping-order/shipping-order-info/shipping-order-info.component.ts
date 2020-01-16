@@ -33,7 +33,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
 
   printStyle: string;
 
-  printForm: FormGroup;
+  printFormWeight: FormGroup;
+  printFormCount: FormGroup;
   isVisibleWeight = false;
   isVisibleCount = false;
   hasTax: string;
@@ -82,28 +83,39 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     }
   }
 
-  customPrint(print: string) {
+  customPrintWeight(print: string) {
     this.isVisibleWeight = false;
-    this.isVisibleCount = false;
 
-    if (!this.printForm.valid) {
+    if (!this.printFormWeight.valid) {
       return;
     }
-    let formData: any = this.printForm.getRawValue();
+    let formData: any = this.printFormWeight.getRawValue();
     // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
     this.hasTax = formData.hasTax;
     this.remarks = formData.remarks;
 
     this.showPrint = true;
-    if (this.shippingOrderData.products[0].priceType == 2) {
-      const printHTML: any = this.elRef.nativeElement.childNodes[4];
-      // console.log(printHTML);
-      this.printComponent.print(printHTML);
-    } else {
-      const printHTML: any = this.elRef.nativeElement.childNodes[5];
-      // console.log(printHTML);
-      this.printComponent.print(printHTML);
+
+    const printHTML: any = this.elRef.nativeElement.childNodes[5];
+    this.printComponent.print(printHTML);
+
+  }
+
+  customPrintCount(print: string) {
+    this.isVisibleCount = false;
+
+    if (!this.printFormCount.valid) {
+      return;
     }
+    let formData: any = this.printFormCount.getRawValue();
+    // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+
+    this.showPrint = true;
+    const printHTML: any = this.elRef.nativeElement.childNodes[4];
+    this.printComponent.print(printHTML);
+
   }
 
   stringMoney: string;
@@ -170,7 +182,12 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.printForm = this.fb.group({
+    this.printFormWeight = this.fb.group({
+      hasTax: [null],
+      remarks: [null],
+    });
+
+    this.printFormCount = this.fb.group({
       hasTax: [null],
       remarks: [null],
     });

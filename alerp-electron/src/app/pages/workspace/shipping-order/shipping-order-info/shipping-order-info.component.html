@@ -235,8 +235,8 @@
 </div>
 
 <nz-modal style="width: 300px" [(nzVisible)]="isVisibleWeight" nzTitle="打印" (nzOnCancel)="handleCancel()"
-          (nzOnOk)="customPrint('print1')">
-  <form nz-form nzLayout="inline" [formGroup]="printForm">
+          (nzOnOk)="customPrintWeight('print1')">
+  <form nz-form nzLayout="inline" [formGroup]="printFormWeight">
     <div nz-row [nzGutter]="24">
       <div nz-col nzSpan="24">
         <nz-form-item nzFlex>
@@ -265,32 +265,8 @@
 </nz-modal>
 
 <nz-modal style="width: 300px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
-          (nzOnOk)="customPrint('print1')">
-  <form nz-form nzLayout="inline" [formGroup]="printForm">
-    <div nz-row [nzGutter]="24">
-      <div nz-col nzSpan="24">
-        <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="8">本单含税/未税</nz-form-label>
-          <nz-form-control nzHasFeedback nzSpan="16">
-            <nz-radio-group formControlName="hasTax">
-              <label nz-radio nzValue="含税">含税</label>
-              <label nz-radio nzValue="未税">未税</label>
-            </nz-radio-group>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-
-    <div nz-row [nzGutter]="24">
-      <div nz-col nzSpan="24">
-        <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="8">备注</nz-form-label>
-          <nz-form-control nzHasFeedback nzSpan="16">
-            <textarea formControlName="remarks" nz-input rows="3"></textarea>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
+          (nzOnOk)="customPrintCount('print1')">
+  <form nz-form nzLayout="inline" [formGroup]="printFormCount">
 
     <table>
       <thead>
@@ -318,6 +294,31 @@
       </tr>
       </tbody>
     </table>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">本单含税/未税</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <nz-radio-group formControlName="hasTax">
+              <label nz-radio nzValue="含税">含税</label>
+              <label nz-radio nzValue="未税">未税</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col nzSpan="24">
+        <nz-form-item nzFlex>
+          <nz-form-label nzRequired nzSpan="8">备注</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="16">
+            <textarea formControlName="remarks" nz-input rows="3"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
   </form>
 </nz-modal>
 
