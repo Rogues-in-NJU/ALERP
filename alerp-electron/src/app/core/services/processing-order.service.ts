@@ -45,6 +45,12 @@ export class ProcessingOrderService {
     // return of(null);
   }
 
+  public finishPrint(id: number): Observable<ResultVO<any>> {
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/print/${id}`, {
+      withCredentials: true
+    });
+  }
+
   public saveProduct(product: ProcessingOrderProductVO): Observable<ResultVO<any>> {
     console.log(product);
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/product`, product, {
