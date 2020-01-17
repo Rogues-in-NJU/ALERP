@@ -4,7 +4,7 @@ import {RefreshableTab} from "../../tab/tab.component";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
-import {TabService} from "../../../../core/services/tab.service";
+import {TabService, RefreshTabEvent} from "../../../../core/services/tab.service";
 import {ExpenseService} from "../../../../core/services/expense.service";
 import {ExpenseInfoVO} from "../../../../core/model/expense";
 import {Objects} from "../../../../core/services/util.service";
@@ -31,7 +31,12 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/expense/list') {
+        this.refresh();
+      }
+    });
+    this.refresh();
   }
 
   search(): void {
@@ -78,6 +83,7 @@ export class ExpenseListComponent implements RefreshableTab, OnInit {
   }
 
   refresh(): void {
+    this.search();
   }
 
 }

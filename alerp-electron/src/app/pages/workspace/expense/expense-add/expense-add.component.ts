@@ -67,20 +67,26 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
         // console.log(res);
         this.message.success('添加成功!');
         this.isSaving = false;
-        // TODO: 跳转回列表页面
+        this.tabClose();
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
         this.tab.closeEvent.emit({
           url: this.router.url,
-          goToUrl: '/workspace/processing-order/list',
-          refreshUrl: '/workspace/processing-order/list',
+          goToUrl: '/workspace/expense/list',
+          refreshUrl: '/workspace/expense/list',
           routeConfig: this.route.snapshot.routeConfig
         });
       });
   }
 
   tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/expense/list',
+      refreshUrl: '/workspace/expense/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
   }
 
 }
