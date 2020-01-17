@@ -68,6 +68,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
 
     if (this.shouldResetIndex) {
       this.pageIndex = 1;
+      this.shouldResetIndex = false;
     }
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
