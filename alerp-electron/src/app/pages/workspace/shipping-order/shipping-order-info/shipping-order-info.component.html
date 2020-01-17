@@ -158,15 +158,15 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let data of shippingOrderData.products">
-      <td></td>
-      <td></td>
+    <tr *ngFor="let data of printCountList">
+      <td> {{ data.orderId }}</td>
+      <td> {{ data.code }}</td>
 
-      <td> {{ data.productName }}</td>
+      <td> {{ data.name }}</td>
       <td> {{ data.specification }}</td>
-      <td> {{ data.quantity }}</td>
+      <td> {{ data.count }}</td>
       <td> {{ data.price }}</td>
-      <td> {{ data.cash }}</td>
+      <td> {{ data.total }}</td>
     </tr>
     <tr>
       <td>(合计(大写))</td>
@@ -264,10 +264,10 @@
   </form>
 </nz-modal>
 
-<nz-modal style="width: 300px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
+<nz-modal style="width: 1000px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
           (nzOnOk)="customPrintCount('print1')" *ngIf="!isLoading">
   <!--TODO-->
-  <nz-table #printCountTable
+  <nz-table #editRowTable
             nzBordered
             nzShowPagination="false"
             nzSize="middle"
@@ -283,18 +283,25 @@
       <th style="width: 100px">数量(件)</th>
       <th style="width: 100px">单价</th>
       <th style="width: 100px">总金额</th>
+      <th style="width: 100px">操作</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let data of printCountTable.data">
+    <tr *ngFor="let data of editRowTable.data">
       <td style="width: 200px">
-        <ng-template>
-          {{ editCache.data.id }}
+        <ng-container *ngIf="!editCache[data.id].edit; else orderIdInputTpl">
+          {{ data.orderId }}
+        </ng-container>
+        <ng-template #orderIdInputTpl>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.orderId"/>
         </ng-template>
       </td>
       <td style="width: 200px">
-        <ng-template>
-          {{ editCache.data.code }}
+        <ng-container *ngIf="!editCache[data.id].edit; else codeInputTpl">
+          {{ data.code }}
+        </ng-container>
+        <ng-template #codeInputTpl>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.code"/>
         </ng-template>
       </td>
       <td style="width: 100px">
@@ -322,36 +329,47 @@
           {{ data.total }}
         </ng-container>
       </td>
+      <td style="width: 100px">
+        <div class="editable-row-operations">
+          <ng-container *ngIf="!editCache[data.id].edit; else saveTpl">
+            <a (click)="startEdit(data.id)">Edit</a>
+          </ng-container>
+          <ng-template #saveTpl>
+            <a (click)="saveEdit(data.id)">Save</a>
+            <a nz-popconfirm nzTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id)">Cancel</a>
+          </ng-template>
+        </div>
+      </td>
     </tr>
     </tbody>
   </nz-table>
   <form nz-form nzLayout="inline" [formGroup]="printFormCount">
 
     <!--<table>-->
-      <!--<thead>-->
-      <!--<tr>-->
-        <!--<th style="width: 200px">(订单号)</th>-->
-        <!--<th style="width: 200px">(物料编码)</th>-->
+    <!--<thead>-->
+    <!--<tr>-->
+    <!--<th style="width: 200px">(订单号)</th>-->
+    <!--<th style="width: 200px">(物料编码)</th>-->
 
-        <!--<th style="width: 100px">(商品)</th>-->
-        <!--<th style="width: 200px">(规格)</th>-->
-        <!--<th style="width: 100px">(数量(件))</th>-->
-        <!--<th style="width: 100px">(单价)</th>-->
-        <!--<th style="width: 100px">(总金额)</th>-->
-      <!--</tr>-->
-      <!--</thead>-->
-      <!--<tbody>-->
-      <!--<tr *ngFor="let data of printCountList">-->
-        <!--<td><input nz-input/></td>-->
-        <!--<td><input nz-input/></td>-->
+    <!--<th style="width: 100px">(商品)</th>-->
+    <!--<th style="width: 200px">(规格)</th>-->
+    <!--<th style="width: 100px">(数量(件))</th>-->
+    <!--<th style="width: 100px">(单价)</th>-->
+    <!--<th style="width: 100px">(总金额)</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--<tr *ngFor="let data of printCountList">-->
+    <!--<td><input nz-input/></td>-->
+    <!--<td><input nz-input/></td>-->
 
-        <!--<td> {{ data.name }}</td>-->
-        <!--<td> {{ data.specification }}</td>-->
-        <!--<td> {{ data.count }}</td>-->
-        <!--<td> {{ data.price }}</td>-->
-        <!--<td> {{ data.total }}</td>-->
-      <!--</tr>-->
-      <!--</tbody>-->
+    <!--<td> {{ data.name }}</td>-->
+    <!--<td> {{ data.specification }}</td>-->
+    <!--<td> {{ data.count }}</td>-->
+    <!--<td> {{ data.price }}</td>-->
+    <!--<td> {{ data.total }}</td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
     <!--</table>-->
 
     <div nz-row [nzGutter]="24">

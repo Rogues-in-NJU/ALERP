@@ -205,22 +205,36 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     });
   }
 
-  editCache: {
-    _id?: number,
-    data?: PrintCountModel,
-  } = {};
+  editCache: {[key: string]: {edit: boolean; data: PrintCountModel}} = {};
 
-  startEditProduct(id: number): void {
-    this.editCache._id = id;
+  startEdit(id: string): void {
+    this.editCache[id].edit = true;
   }
 
-  saveProductEdit(id: number): void {
-    this.editCache._id = null;
+  cancelEdit(id: string): void {
+    const index = this.printCountList.findIndex(item => item.id === id);
+    this.editCache[id] = {
+      data: {...this.printCountList[index]},
+      edit: false
+    };
   }
 
-  cancelProductEdit(id: number): void {
-    this.editCache._id = null;
+  saveEdit(id: string): void {
+    const index = this.printCountList.findIndex(item => item.id === id);
+    Object.assign(this.printCountList[index], this.editCache[id].data);
+    this.editCache[id].edit = false;
+    console.log(this.printCountList);
   }
+
+  updateEditCache(): void {
+    this.printCountList.forEach(item => {
+      this.editCache[item.id] = {
+        edit: false,
+        data: {...item}
+      };
+    });
+  }
+
 
   reload(): void {
     // console.log(this.shippingOrderId);
@@ -232,7 +246,9 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
         }
 
         this.shippingOrderData = res.data;
-        for (const tmp of this.shippingOrderData.products) {
+        for (var i = 0; i < this.shippingOrderData.products.length; i++) {
+          const tmp = this.shippingOrderData.products[i];
+          this.printCountTmp.id = i + '';
           this.printCountTmp.name = tmp.productName;
           this.printCountTmp.specification = tmp.specification;
           this.printCountTmp.count = tmp.quantity;
@@ -240,6 +256,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
           this.printCountTmp.total = tmp.cash;
           this.printCountList.push(this.printCountTmp);
         }
+        this.updateEditCache();
         this.isLoading = false;
         // console.log(this.printCountList);
         this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
