@@ -24,8 +24,11 @@ export class ArrearOrderStatusColorPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 1: return 'green';
-      default: return 'green';
+      case 1: return 'cyan';
+      case 2: return 'blue';
+      case 3: return 'green';
+      case 4: return '';
+      default: return '';
     }
   }
 
