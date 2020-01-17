@@ -264,7 +264,7 @@
   </form>
 </nz-modal>
 
-<nz-modal style="width: 1000px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
+<nz-modal nzWidth="1000px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
           (nzOnOk)="customPrintCount('print1')" *ngIf="!isLoading">
   <!--TODO-->
   <nz-table #editRowTable
@@ -276,14 +276,14 @@
     <thead>
     <tr>
       <th style="width: 200px">订单号</th>
-      <th style="width: 200px">物料编码</th>
+      <th style="width: 150px">物料编码</th>
 
       <th style="width: 100px">商品</th>
-      <th style="width: 200px">规格</th>
+      <th style="width: 100px">规格</th>
       <th style="width: 100px">数量(件)</th>
       <th style="width: 100px">单价</th>
       <th style="width: 100px">总金额</th>
-      <th style="width: 100px">操作</th>
+      <th style="width: 150px">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -296,7 +296,7 @@
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.orderId"/>
         </ng-template>
       </td>
-      <td style="width: 200px">
+      <td style="width: 150px">
         <ng-container *ngIf="!editCache[data.id].edit; else codeInputTpl">
           {{ data.code }}
         </ng-container>
@@ -309,7 +309,7 @@
           {{ data.name }}
         </ng-container>
       </td>
-      <td style="width: 200px">
+      <td style="width: 100px">
         <ng-container>
           {{ data.specification }}
         </ng-container>
@@ -329,14 +329,14 @@
           {{ data.total }}
         </ng-container>
       </td>
-      <td style="width: 100px">
+      <td style="width: 150px">
         <div class="editable-row-operations">
           <ng-container *ngIf="!editCache[data.id].edit; else saveTpl">
-            <a (click)="startEdit(data.id)">Edit</a>
+            <a (click)="startEdit(data.id)">编辑</a>
           </ng-container>
           <ng-template #saveTpl>
-            <a (click)="saveEdit(data.id)">Save</a>
-            <a nz-popconfirm nzTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id)">Cancel</a>
+            <a (click)="saveEdit(data.id)">[保存]</a>
+            <a nz-popconfirm nzTitle="确定取消?" (nzOnConfirm)="cancelEdit(data.id)">[取消]</a>
           </ng-template>
         </div>
       </td>
@@ -345,38 +345,11 @@
   </nz-table>
   <form nz-form nzLayout="inline" [formGroup]="printFormCount">
 
-    <!--<table>-->
-    <!--<thead>-->
-    <!--<tr>-->
-    <!--<th style="width: 200px">(订单号)</th>-->
-    <!--<th style="width: 200px">(物料编码)</th>-->
-
-    <!--<th style="width: 100px">(商品)</th>-->
-    <!--<th style="width: 200px">(规格)</th>-->
-    <!--<th style="width: 100px">(数量(件))</th>-->
-    <!--<th style="width: 100px">(单价)</th>-->
-    <!--<th style="width: 100px">(总金额)</th>-->
-    <!--</tr>-->
-    <!--</thead>-->
-    <!--<tbody>-->
-    <!--<tr *ngFor="let data of printCountList">-->
-    <!--<td><input nz-input/></td>-->
-    <!--<td><input nz-input/></td>-->
-
-    <!--<td> {{ data.name }}</td>-->
-    <!--<td> {{ data.specification }}</td>-->
-    <!--<td> {{ data.count }}</td>-->
-    <!--<td> {{ data.price }}</td>-->
-    <!--<td> {{ data.total }}</td>-->
-    <!--</tr>-->
-    <!--</tbody>-->
-    <!--</table>-->
-
     <div nz-row [nzGutter]="24">
       <div nz-col nzSpan="24">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="8">本单含税/未税</nz-form-label>
-          <nz-form-control nzHasFeedback nzSpan="16">
+          <nz-form-label nzRequired nzSpan="6">本单含税/未税</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="18">
             <nz-radio-group formControlName="hasTax">
               <label nz-radio nzValue="含税">含税</label>
               <label nz-radio nzValue="未税">未税</label>
@@ -389,9 +362,9 @@
     <div nz-row [nzGutter]="24">
       <div nz-col nzSpan="24">
         <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="8">备注</nz-form-label>
-          <nz-form-control nzHasFeedback nzSpan="16">
-            <textarea formControlName="remarks" nz-input rows="3"></textarea>
+          <nz-form-label nzRequired nzSpan="6">备注</nz-form-label>
+          <nz-form-control nzHasFeedback nzSpan="18">
+            <textarea formControlName="remarks" nz-input rows="4"></textarea>
           </nz-form-control>
         </nz-form-item>
       </div>
