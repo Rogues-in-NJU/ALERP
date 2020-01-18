@@ -44,6 +44,7 @@ public class ArrearOrder {
 
     /**
      * 收款单状态：未收款，部分收款，已完成，已废弃
+     * @see edu.nju.alerp.enums.ArrearOrderStatus
      */
     private int status;
 
