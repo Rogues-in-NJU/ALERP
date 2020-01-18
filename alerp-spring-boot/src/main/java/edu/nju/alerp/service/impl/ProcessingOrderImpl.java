@@ -97,7 +97,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 .code(processingOrder.getCode())
                 .customerId(processingOrder.getCustomerId())
                 .customerName(customerForProcessingOrder.getName())
-                .shippingOrderId(processingOrder.getShippingOrderId())
+                .shippingOrderCode(processingOrder.getShippingOrderId())
                 .salesman(processingOrder.getSalesman())
                 .status(processingOrder.getStatus())
                 .createdAt(processingOrder.getCreateAt())
