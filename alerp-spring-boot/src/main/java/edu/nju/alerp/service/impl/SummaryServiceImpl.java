@@ -89,7 +89,7 @@ public class SummaryServiceImpl implements SummaryService {
         productIdList.addAll(set);
         // 过滤name
         if (!"".equals(name)) {
-            productIdList.stream()
+            productIdList = productIdList.stream()
                     .filter(p -> productService.findProductNameById(p).contains(name))
                     .collect(Collectors.toList());
         }
@@ -98,20 +98,19 @@ public class SummaryServiceImpl implements SummaryService {
             List<ShippingOrderProduct> subShippingProductList = shippingOrderProductList.stream()
                     .filter(s -> s.getProductId() == p)
                     .collect(Collectors.toList());
-            subShippingProductList.forEach(s -> {
-                int size = subShippingProductList.size();
-                double weight = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getWeight).sum();
-                double totalCash = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getCash).sum();
-                double avg = totalCash / size;
-                BigDecimal b = new BigDecimal(avg);
-                SummaryProductInfoVO summaryProductInfoVO = SummaryProductInfoVO.builder()
-                        .id(p)
-                        .name(productService.findProductNameById(p))
-                        .totalWeight(weight)
-                        .averagePrice(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
-                        .build();
-                summaryProductInfoVOList.add(summaryProductInfoVO);
-            });
+            shippingOrderProductList.removeAll(subShippingProductList);
+            int size = subShippingProductList.size();
+            double weight = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getWeight).sum();
+            double totalCash = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getCash).sum();
+            double avg = totalCash / size;
+            BigDecimal b = new BigDecimal(avg);
+            SummaryProductInfoVO summaryProductInfoVO = SummaryProductInfoVO.builder()
+                    .id(p)
+                    .name(productService.findProductNameById(p))
+                    .totalWeight(weight)
+                    .averagePrice(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue())
+                    .build();
+            summaryProductInfoVOList.add(summaryProductInfoVO);
         });
 
 
