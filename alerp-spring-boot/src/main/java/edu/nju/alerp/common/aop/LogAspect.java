@@ -68,7 +68,7 @@ public class LogAspect {
         try {
             logOperate(userId, name, joinPoint);
             Object result = joinPoint.proceed();
-            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
+//            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
         } catch (Throwable e) {
             log.error(String.format("%s => fail", methodInvokeLog), e);
