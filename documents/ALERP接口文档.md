@@ -549,6 +549,7 @@ res:
   customerId: number,
   customerName: string,
   shippingOrderId: number,
+  shippingOrderCode: string, // 出货单编号
   salesman: string,
   status: number,
   createdAt: string,
