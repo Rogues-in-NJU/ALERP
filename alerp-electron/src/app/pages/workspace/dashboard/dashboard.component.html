@@ -58,7 +58,21 @@
       </ng-template>
     </div>
   </div>
+  <div nz-form nzLayout="inline" style="margin-top: 40px">
+    <nz-form-item>
+      <nz-form-label>商品名称</nz-form-label>
+      <nz-form-control>
+        <input type="text" nz-input [(ngModel)]="productName" (ngModelChange)="refreshIndex()"/>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="search()">搜索</button>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
   <div class="summary-products-wrapper" style="margin-top: 30px">
+
     <nz-table #summaryProductsTable
               nzShowSizeChanger
               [nzData]="summaryProducts"
@@ -80,7 +94,9 @@
       </thead>
       <tbody>
       <tr *ngFor="let data of summaryProductsTable.data">
-        <td nzLeft="0px">{{ data.id }}</td>
+        <td nzLeft="0px">
+            {{ data.id }}
+        </td>
         <td>{{ data.name }}</td>
         <td>{{ data.totalWeight }}</td>
         <td>{{ data.averagePrice }}</td>

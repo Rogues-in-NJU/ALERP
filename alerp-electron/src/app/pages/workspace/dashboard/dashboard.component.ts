@@ -5,7 +5,7 @@ import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } fr
 import { SummaryProductVO, SummaryVO } from "../../../core/model/summary";
 import { HttpErrorResponse } from "@angular/common/http";
 import { NzMessageService } from "ng-zorro-antd";
-import { DateUtils, Objects } from "../../../core/services/util.service";
+import { DateUtils, Objects, StringUtils } from "../../../core/services/util.service";
 
 @Component({
   selector: 'workspace-dashboard',
@@ -20,7 +20,8 @@ export class DashboardComponent implements OnInit {
   summaryData: SummaryVO;
   summaryProducts: SummaryProductVO[];
 
-
+  productName: string;
+  shouldRefreshIndex: boolean = false;
   timeRange: Date[];
 
   pageIndex: number = 1;
@@ -52,12 +53,21 @@ export class DashboardComponent implements OnInit {
 
   search(): void {
     this.isSummaryProductsLoading = true;
+    if (this.shouldRefreshIndex) {
+      this.shouldRefreshIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
       startTime: DateUtils.format(this.timeRange[0]),
       endTime: DateUtils.format(this.timeRange[1])
     });
+    if (!StringUtils.isEmpty(this.productName)) {
+      Object.assign(queryParams, {
+        name: this.productName
+      });
+    }
     this.summary.getSummaryProducts(queryParams)
       .subscribe((res: ResultVO<TableResultVO<SummaryProductVO>>) => {
         if (!Objects.valid(res)) {
@@ -113,6 +123,10 @@ export class DashboardComponent implements OnInit {
 
   isNaN(obj: any): boolean {
     return Objects.isNaN(obj);
+  }
+
+  refreshIndex(): void {
+    this.shouldRefreshIndex = true;
   }
 
 }
