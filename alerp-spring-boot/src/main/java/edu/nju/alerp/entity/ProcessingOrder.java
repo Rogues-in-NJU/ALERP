@@ -69,6 +69,12 @@ public class ProcessingOrder {
     private int shippingOrderId;
 
     /**
+     * 出货单code
+     */
+    @Column(name = "shipping_order_code")
+    private String shippintOrderCode;
+
+    /**
      * 业务员
      */
     private String salesman;
