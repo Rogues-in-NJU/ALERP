@@ -208,10 +208,10 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         try {
             // 根据时间范围查询出所有的收款单
             if (Strings.isNotBlank(startTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
@@ -232,10 +232,10 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         try {
             // 根据时间范围查询出所有的收款单
             if (Strings.isNotBlank(startTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
