@@ -14,6 +14,8 @@ import {Objects, SpecificationUtils, StringUtils} from "../../../../core/service
 import {HttpErrorResponse} from "@angular/common/http";
 import {ProductService} from "../../../../core/services/product.service";
 import {ENgxPrintComponent} from "e-ngx-print";
+import {FormGroup, FormBuilder} from "@angular/forms";
+import {PrintCountModel} from "../../../../core/model/printCount";
 
 @Component({
   selector: 'shipping-order-info',
@@ -26,17 +28,27 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   shippingOrderCode: string;
   shippingOrderId: number;
   shippingOrderData: ShippingOrderInfoVO = {};
-
   processingOrderInfoProductCountIndex: number = 0;
 
   printCSS: string[];
+
   printStyle: string;
+
+  printFormWeight: FormGroup;
+  printFormCount: FormGroup;
+  isVisibleWeight = false;
+  isVisibleCount = false;
+  hasTax: string;
+  remarks: string;
+  printCountTmp: PrintCountModel = {};
+  printCountList: PrintCountModel[] = [];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
               private router: Router,
               private shippingOrder: ShippingOrderService,
               private product: ProductService,
+              private fb: FormBuilder,
               private message: NzMessageService,
               private elRef: ElementRef) {
     this.shippingOrderCode = this.route.snapshot.params['code'];
@@ -61,17 +73,52 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     this.showPrint = false;
   }
 
-  customPrint(print: string) {
-    this.showPrint = true;
+  handleCancel(): void {
+    this.isVisibleWeight = false;
+    this.isVisibleCount = false;
+  }
+
+  showModal(): void {
     if (this.shippingOrderData.products[0].priceType == 2) {
-      const printHTML: any = this.elRef.nativeElement.childNodes[4];
-      console.log(printHTML);
-      this.printComponent.print(printHTML);
+      this.isVisibleCount = true;
     } else {
-      const printHTML: any = this.elRef.nativeElement.childNodes[5];
-      console.log(printHTML);
-      this.printComponent.print(printHTML);
+      this.isVisibleWeight = true;
     }
+  }
+
+  customPrintWeight(print: string) {
+    this.isVisibleWeight = false;
+
+    if (!this.printFormWeight.valid) {
+      return;
+    }
+    let formData: any = this.printFormWeight.getRawValue();
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+
+    this.showPrint = true;
+
+    const printHTML: any = this.elRef.nativeElement.childNodes[5];
+    this.printComponent.print(printHTML);
+
+  }
+
+  customPrintCount(print: string) {
+    //TODO
+    this.isVisibleCount = false;
+    if (!this.printFormCount.valid) {
+      return;
+    }
+    let formData: any = this.printFormCount.getRawValue();
+    // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+    // this.printCountList = formData.printCountList;
+
+    this.showPrint = true;
+    const printHTML: any = this.elRef.nativeElement.childNodes[4];
+    this.printComponent.print(printHTML);
+
   }
 
   stringMoney: string;
@@ -138,6 +185,14 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.printFormWeight = this.fb.group({
+      hasTax: [null],
+      remarks: [null],
+    });
+    this.printFormCount = this.fb.group({
+      hasTax: [null],
+      remarks: [null]
+    });
     this.shippingOrderId = this.route.snapshot.params['id'];
     this.reload();
   }
@@ -150,18 +205,62 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     });
   }
 
+  editCache: {[key: string]: {edit: boolean; data: PrintCountModel}} = {};
+
+  startEdit(id: string): void {
+    this.editCache[id].edit = true;
+  }
+
+  cancelEdit(id: string): void {
+    const index = this.printCountList.findIndex(item => item.id === id);
+    this.editCache[id] = {
+      data: {...this.printCountList[index]},
+      edit: false
+    };
+  }
+
+  saveEdit(id: string): void {
+    const index = this.printCountList.findIndex(item => item.id === id);
+    Object.assign(this.printCountList[index], this.editCache[id].data);
+    this.editCache[id].edit = false;
+    console.log(this.printCountList);
+  }
+
+  updateEditCache(): void {
+    this.printCountList.forEach(item => {
+      this.editCache[item.id] = {
+        edit: false,
+        data: {...item}
+      };
+    });
+  }
+
+
   reload(): void {
-    console.log(this.shippingOrderId);
+    // console.log(this.shippingOrderId);
     this.shippingOrder.find(this.shippingOrderId)
       .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
         console.log(res);
         if (!Objects.valid(res)) {
           return;
         }
-        this.isLoading = false;
+
         this.shippingOrderData = res.data;
+        for (var i = 0; i < this.shippingOrderData.products.length; i++) {
+          const tmp = this.shippingOrderData.products[i];
+          this.printCountTmp.id = i + '';
+          this.printCountTmp.name = tmp.productName;
+          this.printCountTmp.specification = tmp.specification;
+          this.printCountTmp.count = tmp.quantity;
+          this.printCountTmp.price = tmp.price;
+          this.printCountTmp.total = tmp.cash;
+          this.printCountList.push(this.printCountTmp);
+        }
+        this.updateEditCache();
+        this.isLoading = false;
+        // console.log(this.printCountList);
         this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
-        console.log(this.stringMoney);
+        // console.log(this.stringMoney);
         if (Objects.valid(this.shippingOrderData.products)) {
           this.shippingOrderData.products.forEach(item => {
             item['_id'] = this.processingOrderInfoProductCountIndex++;

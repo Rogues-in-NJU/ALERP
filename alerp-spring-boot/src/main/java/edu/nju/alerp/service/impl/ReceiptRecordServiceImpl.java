@@ -57,6 +57,7 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         // 存储收款记录，DB变更
         ReceiptRecord record = ReceiptRecord.builder().
             createdAt(DateUtils.getToday()).
+            createdBy(CommonUtils.getUserId()).
             status(ReceiptRecordStatus.CONFIRMED.getCode()).
             build();
         record.setArrearOrderId(dto.getArrearOrderId());

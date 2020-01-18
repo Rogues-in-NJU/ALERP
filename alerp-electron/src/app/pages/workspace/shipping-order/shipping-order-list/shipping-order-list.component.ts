@@ -68,6 +68,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
 
     if (this.shouldResetIndex) {
       this.pageIndex = 1;
+      this.shouldResetIndex = false;
     }
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
@@ -127,22 +128,25 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: number): void {
-    // console.log('confirm abandon: ' + id);
+    console.log('confirm abandon: ' + id);
     this.shippingOrder.abandon(id)
       .subscribe((res: ResultVO<any>) => {
-        // console.log(res);
+        console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error("删除失败");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error("删除失败 : " + res.message);
           return;
         }
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
+        this.refresh();
       });
 
-    // this.refresh();
+
   }
 
   refresh(): void {

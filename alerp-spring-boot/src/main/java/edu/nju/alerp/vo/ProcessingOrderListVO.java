@@ -10,7 +10,7 @@ public class ProcessingOrderListVO {
     private String code;
     private Integer customerId;
     private String customerName;
-    private Integer shippingOrderId;
+    private Integer shippingOrderCode;
     private String salesman;
     private Integer status;
     private String createdAt;
@@ -24,7 +24,7 @@ public class ProcessingOrderListVO {
         processingOrderListVO.setCode(processingOrder.getCode());
         processingOrderListVO.setCustomerId(processingOrder.getCustomerId());
         processingOrderListVO.setCustomerName(customerName);
-        processingOrderListVO.setShippingOrderId(processingOrder.getShippingOrderId());
+        processingOrderListVO.setShippingOrderCode(processingOrder.getShippingOrderId());
         processingOrderListVO.setSalesman(processingOrder.getSalesman());
         processingOrderListVO.setStatus(processingOrder.getStatus());
         processingOrderListVO.setCreatedAt(processingOrder.getCreateAt());

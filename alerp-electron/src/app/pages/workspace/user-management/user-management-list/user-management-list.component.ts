@@ -5,7 +5,7 @@ import {UserManagementService} from "../../../../core/services/user-management.s
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
-import {TabService} from "../../../../core/services/tab.service";
+import {TabService, RefreshTabEvent} from "../../../../core/services/tab.service";
 import {UserManagementInfoVO} from "../../../../core/model/user-management";
 import {StringUtils, Objects} from "../../../../core/services/util.service";
 
@@ -35,7 +35,12 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/user-management/list') {
+        this.refresh();
+      }
+    });
+    this.refresh();
   }
 
   resetQueryParams(): void{
@@ -94,6 +99,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
         this.message.error(error.message);
       }, () => {
       });
+    this.refresh();
   }
 
   refresh(): void {

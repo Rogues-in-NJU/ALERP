@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {ClosableTab} from "../../tab/tab.component";
 import {TabService} from "../../../../core/services/tab.service";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ResultVO, TableResultVO, ResultCode} from "../../../../core/model/result-vm";
 import {debounceTime} from "rxjs/operators";
@@ -49,6 +49,8 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   constructor(private closeTab: TabService,
               private userManagement: UserManagementService,
               private router: Router,
+              private route: ActivatedRoute,
+              private tab: TabService,
               private fb: FormBuilder,
               private message: NzMessageService) {
 
@@ -96,13 +98,19 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
         // console.log(res);
         this.message.success('添加成功!');
         this.isSaving = false;
-        // TODO: 跳转回列表页面
+        this.tabClose();
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
   }
 
   tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/user-management/list',
+      refreshUrl: '/workspace/user-management/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
   }
 
   confirmAdd(id: number): void {

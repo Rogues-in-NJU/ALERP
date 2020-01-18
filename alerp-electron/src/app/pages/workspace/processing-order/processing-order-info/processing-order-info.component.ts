@@ -340,7 +340,24 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   showPrint: boolean = false;
 
   printComplete() {
-    // console.log('打印完成！');
+    console.log('打印中！');
+    this.processingOrder.finishPrint(this.processingOrderData.id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('打印状态更新失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('打印状态更新成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
     this.showPrint = false;
   }
 

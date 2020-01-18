@@ -1,5 +1,5 @@
 <nz-page-header>
-  <nz-page-header-title>采购单详情</nz-page-header-title>
+  <nz-page-header-title>欠款明细详情</nz-page-header-title>
 </nz-page-header>
 <div class="content" *ngIf="isLoading">
   <nz-skeleton [nzActive]="true"></nz-skeleton>
@@ -9,7 +9,11 @@
 <!--  欠款单编号 出货单编号 状态 发票流水号 客户  应收金额 已收金额 截至日期 创建者 创建时间 删除者 删除时间-->
   <nz-descriptions nzBordered nzSize="small">
     <nz-descriptions-item nzTitle="欠款明细编号" [nzSpan]="2">{{ arrearOrderData.code }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">{{ arrearOrderData.shippingOrderCode }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="出货单编号" [nzSpan]="2">
+      <a routerLink="/workspace/shipping-order/info/{{arrearOrderData.shippingOrderId}}">
+        {{arrearOrderData.shippingOrderCode }}
+      </a>
+    </nz-descriptions-item>
     <nz-descriptions-item nzTitle="客户" [nzSpan]="2">{{ arrearOrderData.customerName }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="状态" [nzSpan]="2">
       <nz-tag nzColor="{{ arrearOrderData.status | arrear_order_status_color }}">

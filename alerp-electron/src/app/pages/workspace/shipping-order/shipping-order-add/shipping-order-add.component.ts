@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {RefreshableTab} from "../../tab/tab.component";
+import {ClosableTab, RefreshableTab} from "../../tab/tab.component";
 import {ShippingOrderInfoVO, ShippingOrderProductInfoVO} from "../../../../core/model/shipping-order";
 import {ProductVO} from "../../../../core/model/product";
 import {BehaviorSubject, Observable} from "rxjs";
@@ -20,7 +20,7 @@ import {ProcessingOrderService} from "../../../../core/services/processing-order
   templateUrl: './shipping-order-add.component.html',
   styleUrls: [ './shipping-order-add.component.less' ]
 })
-export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
+export class ShippingOrderAddComponent implements RefreshableTab, OnInit, ClosableTab{
 
   //todo 特价
 
@@ -109,7 +109,8 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     private shippingOrder: ShippingOrderService,
     private processingOrder: ProcessingOrderService,
     private product: ProductService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService,
   ) {
     // this.shippingOrderCode = this.route.snapshot.params['code'];
   }
@@ -177,14 +178,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     this.startEditProduct(item[ '_id' ], true);
   }
 
-  tabClose(): void {
-    this.closeTabService.closeEvent.emit({
-      url: this.router.url,
-      refreshUrl: null,
-      routeConfig: this.route.snapshot.routeConfig
-    });
-  }
-
   onProductSearch(value: string): void {
     this.isProductsLoading = true;
     this.searchChanges$.next(value);
@@ -194,6 +187,26 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     this.editCache.data.productId = event.id;
     this.editCache.data.productName = event.name;
     this.editCache.data.density = event.density;
+  }
+
+  caculateCashForProduct():void{
+
+    if(Objects.valid(this.editCache.data.cash)){
+      return;
+    }
+
+    if(Objects.valid(this.editCache.data.price) &&
+      Objects.valid(this.editCache.data.priceType)){
+      if(this.editCache.data.priceType === 1){
+        //yuan/kg
+        if(Objects.valid(this.editCache.data.weight)){
+          this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.weight;
+        }
+      } else if(this.editCache.data.priceType === 2){
+        //yuan/jian
+        this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.quantity;
+      }
+    }
   }
 
   startEditProduct(_id: number, isAdd?: boolean): void {
@@ -272,6 +285,20 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     //   return;
     // }
 
+    for(let product of this.shippingOrderData.products){
+      if(!Objects.valid(product.cash)){
+        this.message.warning("请确认是否录入每件商品的价格!");
+        return;
+      }
+    }
+
+    if(!Objects.valid(this.shippingOrderData.receivableCash) || this.shippingOrderData.receivableCash === 0 ){
+      this.message.warning("应收金额有误，请重新录入！");
+      return;
+    }
+
+
+
 
     console.log(this.shippingOrderData);
     this.shippingOrder.save(this.shippingOrderData)
@@ -289,6 +316,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
+
       });
   }
 
@@ -322,6 +350,10 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
   }
 
   checkModelNotNull(name: string): boolean {
+
+    //顺便自动计算一下价格
+    this.caculateCashForProduct();
+
     //损耗只需要增加cash
     if(this.isAddSunHao){
       if(name !== "cash" && name !== "productId"){
@@ -349,6 +381,14 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit{
     this.shippingOrderData.receivableCash = this.shippingOrderData.cash - this.shippingOrderData.floatingCash;
   }
 
+  tabClose(): void {
+    this.tab.closeEvent.emit({
+      url: this.router.url,
+      goToUrl: '/workspace/shipping-order/list',
+      refreshUrl: '/workspace/shipping-order/list',
+      routeConfig: this.route.snapshot.routeConfig
+    });
+  }
 
   //modal
 

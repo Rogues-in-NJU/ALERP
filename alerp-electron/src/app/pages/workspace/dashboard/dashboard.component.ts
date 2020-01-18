@@ -54,7 +54,9 @@ export class DashboardComponent implements OnInit {
     this.isSummaryProductsLoading = true;
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
-      pageSize: this.pageSize
+      pageSize: this.pageSize,
+      startTime: DateUtils.format(this.timeRange[0]),
+      endTime: DateUtils.format(this.timeRange[1])
     });
     this.summary.getSummaryProducts(queryParams)
       .subscribe((res: ResultVO<TableResultVO<SummaryProductVO>>) => {
