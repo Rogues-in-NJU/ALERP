@@ -173,6 +173,7 @@ public class ShippingOrderController {
                 ProcessingOrder processingOrder = processOrderService.getOne(p);
                 processingOrder.setShippingOrderId(shippingId);
                 processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
+                processingOrder.setShippintOrderCode(shippingOrder.getCode());
                 //待优化 可传list一次性更新
                 processOrderService.savaProcessingOrder(processingOrder);
             });
