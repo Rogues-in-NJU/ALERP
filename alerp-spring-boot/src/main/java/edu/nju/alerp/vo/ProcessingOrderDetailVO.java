@@ -18,7 +18,8 @@ public class ProcessingOrderDetailVO {
     private String code;
     private Integer customerId;
     private String customerName;
-    private Integer shippingOrderCode;
+    private Integer shippingOrderId;
+    private String shippintOrderCode;
     private String salesman;
     private Integer status;
     private String createdAt;

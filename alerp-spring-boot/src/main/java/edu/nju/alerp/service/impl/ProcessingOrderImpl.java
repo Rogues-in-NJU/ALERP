@@ -15,10 +15,7 @@ import edu.nju.alerp.enums.ProcessingOrderStatus;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.repo.ProcessOrderProductRepository;
 import edu.nju.alerp.repo.ProcessingOrderRepository;
-import edu.nju.alerp.service.CustomerService;
-import edu.nju.alerp.service.ProcessOrderService;
-import edu.nju.alerp.service.ProductService;
-import edu.nju.alerp.service.UserService;
+import edu.nju.alerp.service.*;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
@@ -51,6 +48,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
 
     @Autowired
     private ProcessOrderProductRepository processOrderProductRepository;
+
+    @Autowired
+    private ShippingOrderService shippingOrderService;
 
     @Autowired
     private ProductService productService;
@@ -93,11 +93,16 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 .collect(Collectors.toList());
         double totalWeight = productVOS.parallelStream().mapToDouble(ProcessingOrderProductVO::getExpectedWeight).sum();
 
+        String shippingOrderCode = processingOrder.getShippintOrderCode();
+        if (shippingOrderCode == null || shippingOrderCode.equals(""))
+            shippingOrderCode = queryShippingOrderCode(processingOrder.getShippingOrderId());
+
         return ProcessingOrderDetailVO.builder().id(processingOrder.getId())
                 .code(processingOrder.getCode())
                 .customerId(processingOrder.getCustomerId())
                 .customerName(customerForProcessingOrder.getName())
-                .shippingOrderCode(processingOrder.getShippingOrderId())
+                .shippingOrderId(processingOrder.getShippingOrderId())
+                .shippintOrderCode(shippingOrderCode)
                 .salesman(processingOrder.getSalesman())
                 .status(processingOrder.getStatus())
                 .createdAt(processingOrder.getCreateAt())
@@ -306,9 +311,14 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         Page<ProcessingOrder> processingOrderPage = processingOrderRepository.findAll(sp, pageable);
 
         List<ProcessingOrderListVO> result = processingOrderPage.getContent()
-                .stream().map(processingOrder ->
-                        ProcessingOrderListVO.buildProcessingOrderListVO(processingOrder,
-                                customerService.getCustomer(processingOrder.getCustomerId()).getName(), userService.getUser(processingOrder.getCreateBy()).getName()))
+                .stream().map(processingOrder -> {
+                    String shippingOrderCode = processingOrder.getShippintOrderCode();
+                    if (shippingOrderCode == null || shippingOrderCode.equals(""))
+                        shippingOrderCode = queryShippingOrderCode(processingOrder.getShippingOrderId());
+                    processingOrder.setShippintOrderCode(shippingOrderCode);
+                    return ProcessingOrderListVO.buildProcessingOrderListVO(processingOrder,
+                            customerService.getCustomer(processingOrder.getCustomerId()).getName(), userService.getUser(processingOrder.getCreateBy()).getName());
+                })
                 .collect(Collectors.toList());
         return new PageImpl<>(result, pageable, processingOrderPage.getTotalElements());
     }
@@ -348,5 +358,14 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                     .specialPriceType(specialPrice.getPriceType()).build();
         }
         return processingOrderProductVO;
+    }
+
+    private String queryShippingOrderCode(int shippingOrderId) {
+        if (shippingOrderId == 0)
+            return "";
+        ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(shippingOrderId);
+        if (shippingOrder == null)
+            return "";
+        return shippingOrder.getCode();
     }
 }
