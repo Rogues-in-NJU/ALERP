@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum  ActionType {
 
-    ACCESS(0, "通过权限"),
-    DEFUSE(1, "拒绝权限");
+    ACCESS(1, "通过权限"),
+    DEFUSE(0, "拒绝权限");
 
     private int code;
     private String message;
