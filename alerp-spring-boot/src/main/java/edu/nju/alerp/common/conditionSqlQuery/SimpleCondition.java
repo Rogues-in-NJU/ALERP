@@ -40,7 +40,7 @@ public class SimpleCondition implements Condition {
                 return builder.notEqual(condition, value);
             case LIKE:
 //                if (!(value instanceof String))
-//                    throw new Exception(); //抛String类型错误 exception #todo
+//                    throw new Exception(); //抛String类型错误 exception
                 return builder.like(condition, CommonUtils.fuzzyStringSplicing((String) value));
             case LT:
                 return builder.lessThan(condition, (Comparable) value);

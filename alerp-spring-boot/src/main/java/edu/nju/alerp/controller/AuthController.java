@@ -51,13 +51,18 @@ public class AuthController {
         return ResponseResult.ok(authService.updateUserAuth(updateAuths));
     }
 
-    @RequestMapping(value = "/initial/{id}", method = RequestMethod.GET, name = "初始化某个用户权限")
-    public ResponseResult<Integer> initialUserAuthById(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
-        return ResponseResult.ok(authService.initialUserAuthByUserId(id));
-    }
+//    @RequestMapping(value = "/initial/{id}", method = RequestMethod.GET, name = "初始化某个用户权限")
+//    public ResponseResult<Integer> initialUserAuthById(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+//        return ResponseResult.ok(authService.initialUserAuthByUserId(id));
+//    }
 
     @RequestMapping(value = "/userId/{id}", method = RequestMethod.GET, name = "查询某个用户的权限")
     public ResponseResult<List<AuthUserVO>> queryUserAuthByUserId(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(authService.queryAuthUserByUserId(id));
+    }
+
+    @RequestMapping(value = "/initialAuth", method = RequestMethod.GET, name = "初始化权限资源")
+    public ResponseResult<Integer> initialAuthResource() {
+        return ResponseResult.ok(authService.initialAuthResource());
     }
 }

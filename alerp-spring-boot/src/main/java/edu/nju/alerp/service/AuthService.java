@@ -28,4 +28,6 @@ public interface AuthService {
     public int initialUserAuthByUserId(int id);
 
     public List<AuthUserVO> queryAuthUserByUserId(int userId);
+
+    public int initialAuthResource();
 }

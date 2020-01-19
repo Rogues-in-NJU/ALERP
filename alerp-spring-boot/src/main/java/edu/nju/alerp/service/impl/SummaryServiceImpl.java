@@ -75,6 +75,13 @@ public class SummaryServiceImpl implements SummaryService {
         return summaryInfoVO;
     }
 
+    /**
+     * 根据时间和商品名称获取一段时间内商品售卖的均价
+     * @param name
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public List<SummaryProductInfoVO> getSummaryProductInfo(String name, String startTime, String endTime) {
         List<SummaryProductInfoVO> summaryProductInfoVOList = new ArrayList<>();
