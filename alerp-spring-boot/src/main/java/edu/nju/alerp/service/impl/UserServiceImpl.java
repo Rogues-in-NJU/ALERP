@@ -59,19 +59,28 @@ public class UserServiceImpl implements UserService, InitializingBean {
     @Resource
     private Cache<Integer, Object> userCache;
 
+    private static String initPassword = "00000000";
+
     @Override
     public void afterPropertiesSet() throws Exception {
         List<User> users = userRepository.findAll();
         userCache.putAll(users.stream().map(u -> MutablePair.of(u.getId(), u)).collect(Collectors.toMap(MutablePair::getLeft, MutablePair::getRight)));
     }
 
+    /**
+     * 添加/保存用户，添加用户时初始密码为00000000,并对应赋予相应权限和城市
+     *
+     * @param userDTO
+     * @return
+     * @throws Exception
+     */
     @Override
     public int saveUser(UserDTO userDTO) throws Exception {
         User res;
         if (userDTO.getId() == null) {
             User user = User.builder()
                     .name(userDTO.getName())
-                    .password(PasswordUtil.getMD5("00000000"))
+                    .password(PasswordUtil.getMD5(initPassword))
                     .updatedAt(DateUtils.getToday())
                     .phoneNumber(userDTO.getPhoneNumber())
                     .createdAt(DateUtils.getToday())
@@ -80,7 +89,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             res = userRepository.saveAndFlush(user);
             //新增用户初始化权限
             authService.initialUserAuthByUserId(res.getId());
-            userDTO.getAuthList().forEach(a ->{
+            userDTO.getAuthList().forEach(a -> {
                 a.setUserId(res.getId());
             });
             authService.updateUserAuth(userDTO.getAuthList());
@@ -111,6 +120,12 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return res.getId();
     }
 
+    /**
+     * 根据id获取用户
+     *
+     * @param id
+     * @return
+     */
     @Override
     public User getUser(int id) {
         User user = (User) userCache.get(id);
@@ -123,11 +138,24 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return user;
     }
 
+    /**
+     * 通过手机获取用户
+     *
+     * @param phoneNumber
+     * @return
+     */
     @Override
     public User getUserByPhoneNumber(String phoneNumber) {
         return userRepository.findDistinctByPhoneNumber(phoneNumber);
     }
 
+    /**
+     * 根据id删除用户
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
     public int deleteUser(int id) throws Exception {
         User user = getUser(id);
@@ -144,6 +172,15 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return ans;
     }
 
+    /**
+     * 分页查询用户列表
+     *
+     * @param pageable
+     * @param name
+     * @param status
+     * @param userList
+     * @return
+     */
     @Override
     public Page<UserVO> getUserList(Pageable pageable, String name, Integer status, List<Integer> userList) {
         QueryContainer<User> sp = new QueryContainer<>();
@@ -173,6 +210,12 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return new PageImpl<>(userVOList, pageable, ans.getTotalElements());
     }
 
+    /**
+     * 用户登录，不同错误返回不同字段
+     *
+     * @param loginDTO
+     * @return
+     */
     @Override
     public LoginResultDTO checkLogin(LoginDTO loginDTO) {
         LoginResultDTO loginResultDTO;
@@ -215,21 +258,39 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return loginResultDTO;
     }
 
+    /**
+     * 更新用户
+     *
+     * @param user
+     * @return
+     */
     @Override
     public int updateUser(User user) {
         return userRepository.save(user).getId();
     }
 
+    /**
+     * 全量获取用户列表
+     *
+     * @return
+     */
     @Override
     public List<User> getUserList() {
         return userRepository.findAll();
     }
 
+    @Deprecated
     @Override
     public int getIdFromName(String name) {
         return userRepository.findDistinctByName(name).getId();
     }
 
+    /**
+     * 根据用户id获取对应城市列表
+     *
+     * @param userId
+     * @return
+     */
     @Override
     public List<Integer> getCitiesByUserId(int userId) {
         List<Integer> cityList = userCityRelationRepository.findCitiesByUserId(userId);
@@ -237,6 +298,12 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return cityList;
     }
 
+    /**
+     * 根据城市id获取对应用户列表
+     *
+     * @param cityId
+     * @return
+     */
     @Override
     public List<Integer> getUserListByCityId(int cityId) {
         return userCityRelationRepository.getUserListByCityId(cityId);

@@ -43,6 +43,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private SpecialPricesRepository specialPricesRepository;
 
+    /**
+     * 存储客户
+     * @param customerDTO
+     * @return
+     * @throws Exception
+     */
     @Override
     public int saveCustomer(CustomerDTO customerDTO) throws Exception {
         if (customerDTO.getId() == null) {
@@ -119,16 +125,32 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    /**
+     * 根据id获取客户
+     * @param id
+     * @return
+     */
     @Override
     public Customer getCustomer(int id) {
         return customerRepository.getOne(id);
     }
 
+    /**
+     * 根据客户id获取相应特价
+     * @param id
+     * @return
+     */
     @Override
     public List<SpecialPrice> getSpecialPricesListByCustomerId(int id) {
         return specialPricesRepository.findByCustomerId(id);
     }
 
+    /**
+     * 根据id删除对应客户
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
     public int deleteCustomer(int id) throws Exception {
         Customer customer = getCustomer(id);
@@ -144,12 +166,22 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.save(customer).getId();
     }
 
+    /**
+     * 全量获取对应客户列表
+     * @return
+     */
     @Override
     public List<Customer> getCustomerList() {
         return customerRepository.findAll();
     }
 
 
+    /**
+     * 根据客户姓名分页查询客户列表
+     * @param pageable
+     * @param name
+     * @return
+     */
     @Override
     public Page<Customer> getCustomerListByName(Pageable pageable, String name) {
         QueryContainer<Customer> sp = new QueryContainer<>();
@@ -168,11 +200,19 @@ public class CustomerServiceImpl implements CustomerService {
         return sp.isEmpty() ? customerRepository.findAll(pageable) : customerRepository.findAll(sp, pageable);
     }
 
+    /**
+     * 获取现金客户id列表
+     * @return
+     */
     @Override
     public List<Integer> getCustomerListInCash() {
         return customerRepository.findCustomerListInCash();
     }
 
+    /**
+     * 获取月结客户id列表
+     * @return
+     */
     @Override
     public List<Integer> getCustomerListInMonth() {
         return customerRepository.findCustomerListInMonth();
