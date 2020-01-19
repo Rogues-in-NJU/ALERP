@@ -255,8 +255,8 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
-        if (!ProcessingOrderStatus.of(processingOrder.getStatus()).printable())
-            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
+//        if (!ProcessingOrderStatus.of(processingOrder.getStatus()).printable())
+//            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;
