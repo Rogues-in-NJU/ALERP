@@ -21,8 +21,8 @@ import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ReceiptRecordStatus;
 import edu.nju.alerp.repo.ArrearOrderRepository;
 import edu.nju.alerp.repo.CustomerRepository;
-import edu.nju.alerp.repo.ReceiptRecordRepository;
 import edu.nju.alerp.service.ArrearOrderService;
+import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.service.ReceiptRecordService;
 import edu.nju.alerp.service.ShippingOrderService;
 import edu.nju.alerp.service.UserService;
@@ -52,6 +52,9 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     private UserService userService;
 
     @Autowired
+    private CustomerService customerService;
+
+    @Autowired
     private ReceiptRecordService receiptRecordService;
 
     @Autowired
@@ -60,8 +63,6 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    @Autowired
-    private ReceiptRecordRepository receiptRecordRepository;
 
     @Override
     public ArrearOrder getOne(int id) {
@@ -131,7 +132,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             createdById(createdBy).
             updatedAt(arrearOrder.getUpdatedAt()).
             build();
-        arrearDetailVO.setCustomerName(userService.getUser(customerId).getName());
+        arrearDetailVO.setCustomerName(customerService.getCustomer(customerId).getName());
         arrearDetailVO.setCreatedByName(userService.getUser(createdBy).getName());
         arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getToday()) > 0);
         // 根据arrearOrderId查询出货单
@@ -207,10 +208,10 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         try {
             // 根据时间范围查询出所有的收款单
             if (Strings.isNotBlank(startTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
@@ -231,10 +232,10 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         try {
             // 根据时间范围查询出所有的收款单
             if (Strings.isNotBlank(startTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", startTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("doneAt", endTime));
+                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));

@@ -14,13 +14,17 @@ public interface SummaryService {
     /**
      * 获取汇总信息
      *
+     * @param dto
      * @return
      */
     SummaryInfoVO getSummaryInfo(SummaryInfoDTO dto);
 
     /**
-     * 汇总商品汇总信息
+     * 汇总商品信息
      *
+     * @param name
+     * @param startTime
+     * @param endTime
      * @return
      */
     List<SummaryProductInfoVO> getSummaryProductInfo(String name, String startTime, String endTime);

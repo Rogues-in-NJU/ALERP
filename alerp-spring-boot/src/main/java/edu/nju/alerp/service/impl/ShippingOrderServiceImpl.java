@@ -143,6 +143,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return shippingOrderRepository.save(shippingOrder).getId();
     }
 
+    // fixme: 及时清除废弃代码
+
     @Override
     public boolean printShippingOrder(int id) {
         return false;

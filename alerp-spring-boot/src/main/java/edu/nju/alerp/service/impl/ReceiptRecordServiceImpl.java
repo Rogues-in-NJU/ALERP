@@ -7,6 +7,7 @@ import edu.nju.alerp.dto.ReceiptRecordDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ReceiptRecord;
 import edu.nju.alerp.entity.ShippingOrder;
+import edu.nju.alerp.enums.ArrearOrderStatus;
 import edu.nju.alerp.enums.ReceiptRecordStatus;
 import edu.nju.alerp.enums.ShippingOrderStatus;
 import edu.nju.alerp.repo.ReceiptRecordRepository;
@@ -47,12 +48,26 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         if (arrearOrder == null || arrearOrder.getId() != dto.getArrearOrderId()) {
             throw new NJUException(ILLEGAL_REQUEST, "未查到对应的收款单");
         }
+        // 所在收款单"已完成"状态和"已废弃"状态下，均不能再添加收款记录
+        if (arrearOrder.getStatus() == ArrearOrderStatus.ABANDONED.getCode() ||
+            arrearOrder.getStatus() == ArrearOrderStatus.FINISHED.getCode()) {
+            throw new NJUException(ILLEGAL_REQUEST, "所在收款单已收款完成或者已被废弃");
+        }
+        double receivedCash = arrearOrder.getReceivedCash() + dto.getCash();
         // 收款金额不能超出总的应收金额
-        if (arrearOrder.getReceivedCash() + dto.getCash() > arrearOrder.getReceivableCash()) {
+        if (receivedCash > arrearOrder.getReceivableCash()) {
             throw new NJUException(ILLEGAL_REQUEST, "收款金额不能超出总应收金额");
         }
+        // 如果实收金额小于应收金额，则把收款单状态修改为"部分收款"
+        if (receivedCash < arrearOrder.getReceivableCash()) {
+            arrearOrder.setStatus(ArrearOrderStatus.PART_COLLECTED.getCode());
+        } else {
+            // 如果实收金额等于应收金额，则把收款单状态改为"已确认"，表明收款完成
+            arrearOrder.setStatus(ArrearOrderStatus.FINISHED.getCode());
+        }
         // 每当有一笔收款记录被添加，就把相应地收款单地"实收金额"加一笔
-        arrearOrder.setReceivedCash(arrearOrder.getReceivedCash() + dto.getCash());
+        arrearOrder.setReceivedCash(receivedCash);
+        // 收款单记录，DB变更
         arrearOrderService.saveArrearOrder(arrearOrder);
         // 存储收款记录，DB变更
         ReceiptRecord record = ReceiptRecord.builder().
@@ -90,10 +105,18 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         // 我们认为废弃的单据是不含金钱交易的，因此把废弃的收款记录里的钱扣除
         // 每当有一笔收款记录被删除，就把相应地收款单地"实收金额"减一笔
         double receivedCash = arrearOrder.getReceivedCash() - record.getCash();
-        // 收款金额不能超出总的应收金额
+        // 实收金额不能小于0
         if (receivedCash < 0) {
             throw new NJUException(ILLEGAL_REQUEST, "系统出错，废弃该收款记录后，所在收款单实收金额小于0");
         }
+        // 如果废弃了这条收款记录之后，该收款单下就没有收款记录了，则把收款单状态修改为"未收款"
+        if (receivedCash == 0) {
+            arrearOrder.setStatus(ArrearOrderStatus.UNCOLLECTED.getCode());
+        } else {
+            // 如果废弃了这条收款记录之后，该收款单下还有别的收款记录，则把收款单状态修改为"部分收款"
+            arrearOrder.setStatus(ArrearOrderStatus.PART_COLLECTED.getCode());
+        }
+
         arrearOrder.setReceivedCash(receivedCash);
         // 收款单DB变更
         arrearOrderService.saveArrearOrder(arrearOrder);

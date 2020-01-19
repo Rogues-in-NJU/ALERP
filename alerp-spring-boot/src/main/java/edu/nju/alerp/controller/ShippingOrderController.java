@@ -150,6 +150,8 @@ public class ShippingOrderController {
                 return ResponseResult.fail(ExceptionWrapper.customExceptionWrapper(ExceptionEnum.ILLEGAL_REQUEST, "出货单客户不存在"));
             }
             ArrearOrder arrearOrder = ArrearOrder.builder()
+                    // 收款单的初始状态为"未收款"
+                    .status(ArrearOrderStatus.UNCOLLECTED.getCode())
                     .createdAt(DateUtils.getToday())
                     .createdBy(userId)
                     .updatedAt(DateUtils.getToday())
