@@ -91,11 +91,12 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.isLoading = true;
     this.customer.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<CustomerVO>>) => {
-        console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error('搜索失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<CustomerVO> = res.data;
@@ -134,9 +135,11 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     this.customer.delete(id)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('删除失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('删除成功!');
@@ -158,7 +161,6 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
       period: 1,
       payDate: 20
     });
-    console.log('show modal');
   }
 
   confirmAdd(): void {
@@ -174,10 +176,12 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     const customerAddData: CustomerVO = this.customerAddForm.getRawValue();
     this.customer.save(customerAddData)
       .subscribe((res: ResultVO<any>) => {
+        this.message.error('添加失败!');
         if (!Objects.valid(res)) {
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('添加成功!');

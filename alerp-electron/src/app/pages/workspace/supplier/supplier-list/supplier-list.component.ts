@@ -67,9 +67,11 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplier.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<SupplierVO>>) => {
         if (!Objects.valid(res)) {
+          this.message.error('搜索失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<SupplierVO> = res.data;
@@ -108,6 +110,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplier.delete(id)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('删除失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
@@ -129,7 +132,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
       name: null,
       description: null
     });
-    console.log('show modal');
   }
 
   confirmAdd(): void {
@@ -145,9 +147,11 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplier.save(supplierAddData)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('添加失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('添加成功!');
@@ -190,9 +194,11 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     this.supplier.save(supplierEditData)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('修改失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('修改成功!');
