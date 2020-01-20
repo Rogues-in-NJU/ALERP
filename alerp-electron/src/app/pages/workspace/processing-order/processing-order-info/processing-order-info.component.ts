@@ -223,9 +223,11 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     this.processingOrder.saveProduct(this.processingOrderData.products[index])
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('修改失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('修改成功!');

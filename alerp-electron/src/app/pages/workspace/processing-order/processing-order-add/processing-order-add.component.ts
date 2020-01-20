@@ -161,6 +161,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     this.processingOrder.save(processingOrderData)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error('新增失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
