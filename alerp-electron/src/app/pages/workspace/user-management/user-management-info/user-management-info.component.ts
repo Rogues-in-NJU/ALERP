@@ -33,6 +33,10 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.search();
+  }
+
+  search(): void {
     this.userManagementForm = this.fb.group({
       name: [null],
       phoneNumber: [null],
@@ -61,8 +65,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     this.userManagement.save(userInfo)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
-        this.message.success('修改成功!');
+        this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
@@ -80,8 +83,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     this.userManagement.save(userInfo)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
-        this.message.success('修改成功!');
+        this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
@@ -93,6 +95,10 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
       url: this.router.url,
       refreshUrl: null
     });
+  }
+
+  refresh(): void {
+    this.search();
   }
 
 }
