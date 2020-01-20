@@ -7,7 +7,7 @@ export interface UserManagementInfoVO extends BaseInfo {
   phoneNumber?: string;
   password?: string;
   status?: number;
-  city?:number[]
+  cities?:number[]
   authList?: userAuthVO[];
 }
 
