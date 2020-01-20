@@ -255,7 +255,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         // 按人、按月统计
         List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth();
         OverdueCashVO targetVo = new OverdueCashVO();
-        Map<String, Object> statistics = Maps.newHashMap();
+
         // customerList里的一个元素
         Map<String, Object> customerMap = Maps.newHashMap();
         for (Map<String, Object> record : recordSbMonthList) {
