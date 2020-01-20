@@ -56,8 +56,8 @@ export class ReceiptRecordStatusColorPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 0: return 'green';
-      case 1: return '';
+      case 1: return 'green';
+      case 0: return '';
       default: return '';
     }
   }
