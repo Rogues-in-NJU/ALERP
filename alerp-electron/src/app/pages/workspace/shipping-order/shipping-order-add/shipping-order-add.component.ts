@@ -275,15 +275,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
   }
 
   confirmAddShippingOrder():void {
-    //todo 输入核验
-
-    // if (!this.processingOrderForm.valid) {
-    //   Object.values(this.processingOrderForm.controls).forEach(item => {
-    //     item.markAsDirty();
-    //     item.updateValueAndValidity();
-    //   });
-    //   return;
-    // }
 
     for(let product of this.shippingOrderData.products){
       if(!Objects.valid(product.cash)){
@@ -298,9 +289,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       this.message.warning("应收金额有误，请重新录入！");
       return;
     }
-
-
-
 
     console.log(this.shippingOrderData);
     this.shippingOrder.save(this.shippingOrderData)
