@@ -103,7 +103,7 @@ public class ShippingOrderController {
                                              @RequestParam(value = "status", required = false) Integer status,
                                              @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
                                              @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
-        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.ASC, "status"));
         Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, code, name, status, createAtStartTime, createAtEndTime);
         List<ShippingOrderBriefVO> result = new ArrayList<>();
         page.getContent().forEach(s -> {
