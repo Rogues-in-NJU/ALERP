@@ -86,9 +86,11 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       .subscribe((res: ResultVO<TableResultVO<ProductVO>>) =>{
         console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
 
@@ -166,9 +168,11 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     this.product.deleteProduct(id)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.message.success('删除成功!');
@@ -194,11 +198,11 @@ export class ProductListComponent implements RefreshableTab, OnInit{
     this.product.updateOrAddProduct(this.editCache.data)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
-          this.message.warning("失败")
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
-          this.message.warning(res.message);
+          this.message.error(res.message);
           return;
         }
       }, (error: HttpErrorResponse) => {

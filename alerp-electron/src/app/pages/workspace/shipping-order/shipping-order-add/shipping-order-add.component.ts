@@ -22,16 +22,6 @@ import {ProcessingOrderService} from "../../../../core/services/processing-order
 })
 export class ShippingOrderAddComponent implements RefreshableTab, OnInit, ClosableTab{
 
-  //todo 特价
-
-  //todo 自动计价
-
-  //todo 输入框上下调整问题
-
-  //todo 详情跳转至欠款明细
-
-  //todo 输入框内容的核查
-
   isLoading: boolean = true;
   shippingOrderCode: string = "";
   shippingOrderData: ShippingOrderInfoVO = {
@@ -119,7 +109,6 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
     this.showAddModal();
     Object.assign(this.editCache, this.defaultEditCache);
 
-    //todo 只能出损耗
     const getProducts: any = (name: string) => {
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
@@ -295,6 +284,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
@@ -396,9 +386,11 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
         console.log(res)
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<ProcessingOrderVO> = res.data;
@@ -431,6 +423,11 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         .subscribe((res: ResultVO<ProcessingOrderVO>) => {
           console.log(res);
           if (!Objects.valid(res)) {
+            this.message.error("请求失败！");
+            return;
+          }
+          if (res.code !== ResultCode.SUCCESS.code) {
+            this.message.error(res.message);
             return;
           }
           let processingOrderInfoVO : ProcessingOrderVO = res.data;
@@ -501,9 +498,11 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         console.log(res);
 
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<ProcessingOrderVO> = res.data;
