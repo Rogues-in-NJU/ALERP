@@ -5,7 +5,12 @@ import {RouterModule, Routes} from "@angular/router";
 import {AuthorizationGuard} from "../../../guards/authorization.guard";
 import {ArrearOrderListComponent} from "./arrear-order-list/arrear-order-list.component";
 import {ArrearOrderInfoComponent} from "./arrear-order-info/arrear-order-info.component";
-import {ArrearOrderStatusColorPipe, ArrearOrderStatusPipe} from "./arrear-order.pipe";
+import {
+  ArrearOrderStatusColorPipe,
+  ArrearOrderStatusPipe,
+  ReceiptRecordStatusColorPipe,
+  ReceiptRecordStatusPipe
+} from "./arrear-order.pipe";
 import {ArrearOrderStatisticsComponent} from "./arrear-order-statistics/arrear-order-statistics.component";
 
 
@@ -51,6 +56,8 @@ const routes: Routes = [
     ArrearOrderInfoComponent,
     ArrearOrderStatusPipe,
     ArrearOrderStatusColorPipe,
+    ReceiptRecordStatusColorPipe,
+    ReceiptRecordStatusPipe,
     ArrearOrderStatisticsComponent],
   exports: [ RouterModule ]
 })

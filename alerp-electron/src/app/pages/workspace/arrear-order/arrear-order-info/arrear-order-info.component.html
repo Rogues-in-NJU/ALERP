@@ -141,7 +141,9 @@
             </ng-template>
           </td>
           <td>
-            {{ data.status }}
+            <nz-tag nzColor="{{ data.status | receipt_record_status_color }}">
+              {{ data.status | receipt_record_status }}
+            </nz-tag>
           </td>
           <td>
             <ng-container *ngIf="editCache._id === null">
