@@ -1,5 +1,6 @@
 package edu.nju.alerp.controller;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -154,6 +155,11 @@ public class ArrearOrderController {
             result.add(targetVO);
         });
 
+        // 对列表进行多级排序，先按照状态排序，未收款和部分收款的单据排在前面，接着是已确认（收款完成）的，最后是已废弃的单据
+        // 第二级是按照duedate升序排列，就是越快要到期了的帐，放在越前面。
+        Comparator<ArrearOrderListContentVO> byStatus = Comparator.comparing(ArrearOrderListContentVO::getStatus);
+        Comparator<ArrearOrderListContentVO> byDueDate = Comparator.comparing(ArrearOrderListContentVO::getDueDate);
+        result.sort(byStatus.thenComparing(byDueDate));
         return ResponseResult.ok(ListResponseUtils
             .generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
     }
