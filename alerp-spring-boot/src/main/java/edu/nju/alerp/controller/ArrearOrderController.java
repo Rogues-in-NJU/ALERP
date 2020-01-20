@@ -145,7 +145,7 @@ public class ArrearOrderController {
                 receivableCash(s.getReceivableCash()).
                 receivedCash(s.getReceivedCash()).
                 dueDate(s.getDueDate()).
-                overDue(s.getDueDate().compareTo(DateUtils.getToday()) > 0).
+                overDue(s.getDueDate().compareTo(DateUtils.getTodayAccurateToDay()) > 0).
                 status(s.getStatus()).
                 createdAt(s.getCreatedAt()).
                 createdById(s.getCreatedBy()).

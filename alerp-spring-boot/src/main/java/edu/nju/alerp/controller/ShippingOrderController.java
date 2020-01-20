@@ -85,6 +85,8 @@ public class ShippingOrderController {
             processOrderService.savaProcessingOrder(processingOrder);
         });
         arrearOrder.setStatus(ArrearOrderStatus.ABANDONED.getCode());
+        arrearOrder.setDeletedAt(DateUtils.getTodayAccurateToMinute());
+        arrearOrder.setDeletedBy(CommonUtils.getUserId());
         arrearOrderService.saveArrearOrder(arrearOrder);
         return ResponseResult.ok(res);
     }
@@ -152,9 +154,9 @@ public class ShippingOrderController {
             ArrearOrder arrearOrder = ArrearOrder.builder()
                     // 收款单的初始状态为"未收款"
                     .status(ArrearOrderStatus.UNCOLLECTED.getCode())
-                    .createdAt(DateUtils.getToday())
+                    .createdAt(DateUtils.getTodayAccurateToMinute())
                     .createdBy(userId)
-                    .updatedAt(DateUtils.getToday())
+                    .updatedAt(DateUtils.getTodayAccurateToMinute())
                     .updatedBy(userId)
                     .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
                     .customerId(shippingOrderDTO.getCustomerId())

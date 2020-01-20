@@ -61,10 +61,10 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
-                .createdAt(DateUtils.getToday())
+                .createdAt(DateUtils.getTodayAccurateToMinute())
                 .createdBy(userId)
                 .city(CommonUtils.getCity())
-                .updatedAt(DateUtils.getToday())
+                .updatedAt(DateUtils.getTodayAccurateToMinute())
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
@@ -127,7 +127,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除出货单失败，出货单已被删除！");
         }
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
-        shippingOrder.setDeletedAt(DateUtils.getToday());
+        shippingOrder.setDeletedAt(DateUtils.getTodayAccurateToMinute());
         shippingOrder.setDeletedBy(CommonUtils.getUserId());
         List<ProcessingOrder> processingOrderList = findProcessingsByShipppingId(shippingOrder.getId());
         processingOrderList.forEach(p -> {
@@ -137,7 +137,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         });
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderProductRepository.findAllByShippingOrderId(id);
         shippingOrderProductList.forEach(s -> {
-            s.setDeletedAt(DateUtils.getToday());
+            s.setDeletedAt(DateUtils.getTodayAccurateToMinute());
             shippingOrderProductRepository.save(s);
         });
         return shippingOrderRepository.save(shippingOrder).getId();
