@@ -139,10 +139,9 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
     }
 
     @Override
-    public List<ReceiptRecord> findRecordListByArrearId(int arrearId, int status) {
+    public List<ReceiptRecord> findRecordListByArrearId(int arrearId) {
         List<ReceiptRecord> recordList = receiptRecordRepository
-            .findReceiptRecordsByArrearOrderIdAndStatusOrderByDoneAt(arrearId,
-                status);
+            .findReceiptRecordsByArrearOrderIdOrderByDoneAt(arrearId);
         return recordList;
     }
 

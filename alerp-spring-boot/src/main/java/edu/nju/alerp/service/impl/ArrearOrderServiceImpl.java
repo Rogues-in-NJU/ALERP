@@ -142,8 +142,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
         // 获取收款单中的收款记录列表：(只显示已确认的收款记录，已废弃的不显示)
         List<ReceiptRecordForArrearDTO> targetDTOList = Lists.newArrayList();
-        List<ReceiptRecord> recordList = receiptRecordService.findRecordListByArrearId(id,
-            ReceiptRecordStatus.CONFIRMED.getCode());
+        List<ReceiptRecord> recordList = receiptRecordService.findRecordListByArrearId(id);
         for (ReceiptRecord record : recordList) {
             ReceiptRecordForArrearDTO dto = ReceiptRecordForArrearDTO.builder().
                 id(record.getId()).
