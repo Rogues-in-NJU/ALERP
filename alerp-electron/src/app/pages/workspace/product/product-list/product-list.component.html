@@ -24,6 +24,7 @@
               [nzLoading]="isLoading">
       <thead>
       <tr>
+        <th nzWidth="120px">编号</th>
         <th nzWidth="120px">商品</th>
         <th nzWidth="120px">速记编号</th>
         <th nzWidth="120px">类型</th>
@@ -36,6 +37,9 @@
 
       <tbody>
       <tr *ngFor="let data of productsAddTable.data">
+        <td>
+          {{ data.id }}
+        </td>
         <td>
           <ng-container *ngIf="editCache._id !== data['_id']">
             {{ data.name }}

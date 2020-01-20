@@ -29,14 +29,14 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col nzSpan="8">
-        <nz-form-item nzFlex>
-          <nz-form-label nzRequired nzSpan="6">初始密码</nz-form-label>
-          <nz-form-control nzHasFeedback nzSpan="14">
-            <input nz-input formControlName="password" class="info-input"/>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+      <!--<div nz-col nzSpan="8">-->
+        <!--<nz-form-item nzFlex>-->
+          <!--<nz-form-label nzRequired nzSpan="6">初始密码</nz-form-label>-->
+          <!--<nz-form-control nzHasFeedback nzSpan="14">-->
+            <!--<input nz-input formControlName="password" class="info-input"/>-->
+          <!--</nz-form-control>-->
+        <!--</nz-form-item>-->
+      <!--</div>-->
       <div nz-col nzSpan="8">
         <nz-form-item nzFlex>
           <nz-form-label nzRequired nzSpan="6">城市</nz-form-label>
@@ -55,8 +55,7 @@
   <h3>权限列表</h3>
   <nz-table #userAuthTable
             nzBordered
-            nzShowPagination="false"
-            nzSize="middle"
+            nzShowPagination="true"
             [nzData]="authsTmp">
     <thead>
     <tr>

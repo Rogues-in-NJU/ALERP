@@ -4,7 +4,7 @@ import {ShippingOrderInfoVO} from "../../../../core/model/shipping-order";
 import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd";
 import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
-import {TabService} from "../../../../core/services/tab.service";
+import {RefreshTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {DateUtils, Objects, StringUtils} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -60,7 +60,12 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/shipping-order/list') {
+        this.refresh();
+      }
+    });
+    this.refresh();
   }
 
   search(): void {

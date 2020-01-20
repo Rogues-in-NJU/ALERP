@@ -268,7 +268,7 @@
       <nz-form-label>应收金额</nz-form-label>
       <nz-form-control>
         <nz-input-group nzSuffix="元">
-          <input nz-input type="text" [(ngModel)]="shippingOrderData.receivableCash"
+          <input nz-input [required]="true" type="text" [(ngModel)]="shippingOrderData.receivableCash"
                  (ngModelChange)="modifyFloatingCash()"/>
         </nz-input-group>
       </nz-form-control>
