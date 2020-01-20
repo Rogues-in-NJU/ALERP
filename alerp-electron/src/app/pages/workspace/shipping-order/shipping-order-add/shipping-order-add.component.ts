@@ -292,7 +292,9 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       }
     }
 
-    if(!Objects.valid(this.shippingOrderData.receivableCash) || this.shippingOrderData.receivableCash === 0 ){
+    if(!Objects.valid(this.shippingOrderData.receivableCash)
+      || this.shippingOrderData.receivableCash === 0
+      || Objects.isNaN(this.shippingOrderData.receivableCash)){
       this.message.warning("应收金额有误，请重新录入！");
       return;
     }
