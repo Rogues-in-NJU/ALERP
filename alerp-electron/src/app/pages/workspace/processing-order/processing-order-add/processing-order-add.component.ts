@@ -8,7 +8,7 @@ import { ProcessingOrderService } from "../../../../core/services/processing-ord
 import { ProductService } from "../../../../core/services/product.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { Objects, SpecificationUtils, StringUtils } from "../../../../core/services/util.service";
-import { QueryParams, ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
+import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { CustomerVO } from "../../../../core/model/customer";
 import { CustomerService } from "../../../../core/services/customer.service";
@@ -106,9 +106,6 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
       this.isProductsLoading = false;
     });
     const getCustomers: any = (name: string) => {
-      if (StringUtils.isEmpty(name)) {
-        return of([]);
-      }
       const t: Observable<ResultVO<TableResultVO<CustomerVO>>>
         = <Observable<ResultVO<TableResultVO<CustomerVO>>>>this.customer
         .findAll(Object.assign(new TableQueryParams(), {
@@ -284,7 +281,6 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     }
     splits = splits.filter(item => !StringUtils.isEmpty(item));
     splits = splits.map(item => item.trim());
-    console.log(splits);
     if (splits.length === 1) {
       if (splits[ 0 ].startsWith(SpecificationUtils.FAI_U)
         || splits[ 0 ].startsWith(SpecificationUtils.FAI_L)) {
@@ -408,7 +404,6 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
       isValid = false;
     }
     // 验证规格格式
-    console.log(this.editCache.data.specification);
     if (!SpecificationUtils.valid(this.editCache.data.specification)) {
       this.editCacheValidateStatus.specification = 'error';
       isValid = false;

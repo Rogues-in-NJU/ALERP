@@ -20,6 +20,8 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
   purchaseOrderId: number;
   purchaseOrderData: PurchaseOrderVO;
 
+  paidCash: number = 0;
+
   editCache: {
     _id?: number,
     data?: TempPurchaseOrderPaymentRecordVO,
@@ -88,23 +90,23 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   confirmPaymentRecordDelete(id: number): void {
-      this.purchaseOrder.deletePaymentRecord(id)
-        .subscribe((res: ResultVO<any>) => {
-          if (!Objects.valid(res)) {
-            this.message.error('修改失败!');
-            return;
-          }
-          if (res.code !== ResultCode.SUCCESS.code) {
-            this.message.error(res.message);
-            return;
-          }
-          this.message.success('修改成功!');
-        }, (error: HttpErrorResponse) => {
-          this.message.error(error.message);
-          this.refresh();
-        }, () => {
-          this.refresh();
-        });
+    this.purchaseOrder.deletePaymentRecord(id)
+      .subscribe((res: ResultVO<any>) => {
+        if (!Objects.valid(res)) {
+          this.message.error('修改失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('修改成功!');
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
+      });
   }
 
   cancelPaymentRecordDelete(_id: number): void {
@@ -146,6 +148,7 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
   }
 
   refresh(): void {
+    this.paidCash = 0;
     Object.assign(this.editCache, this.defaultEditCache);
     this.purchaseOrder.find(this.purchaseOrderId)
       .subscribe((res: ResultVO<PurchaseOrderVO>) => {
@@ -158,6 +161,9 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
             item[ '_id' ] = this.purchaseOrderPaymentRecordCountIndex++;
             item.purchaseOrderId = this.purchaseOrderData.id;
             item.updatedAt = this.purchaseOrderData.updatedAt;
+            if (item.status === 1) { // 已确认
+              this.paidCash += item.cash;
+            }
           });
         }
       }, (error: HttpErrorResponse) => {
