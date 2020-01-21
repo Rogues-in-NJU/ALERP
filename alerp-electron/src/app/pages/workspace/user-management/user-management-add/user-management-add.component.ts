@@ -137,10 +137,17 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     };
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
-      .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        // console.log(res);
-        this.message.success('添加成功!');
+        console.log(res);
+        if (!Objects.valid(res)) {
+          this.message.error('新增失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
         this.isSaving = false;
         this.tabClose();
       }, (error: HttpErrorResponse) => {
