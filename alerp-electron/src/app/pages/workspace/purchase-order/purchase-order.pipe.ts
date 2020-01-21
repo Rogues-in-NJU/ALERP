@@ -41,7 +41,7 @@ export class PurchaseOrderPriceTypePipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 1: return '元/千克';
+      case 1: return '元/kg';
       default: return '元/件';
     }
   }
@@ -57,7 +57,7 @@ export class PurchaseOrderPaymentRecordPipe implements PipeTransform {
     switch (value) {
       case 0: return '已废弃';
       case 1: return '已确认';
-      default: return '已废弃';
+      default: return '已确认';
     }
   }
 
@@ -72,7 +72,7 @@ export class PurchaseOrderPaymentRecordColorPipe implements PipeTransform {
     switch (value) {
       case 0: return '';
       case 1: return 'green';
-      default: return '';
+      default: return 'green';
     }
   }
 

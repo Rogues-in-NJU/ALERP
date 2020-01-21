@@ -38,7 +38,7 @@ export class ShippingOrderPriceTypePipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
     switch (value) {
-      case 1: return '元/千克';
+      case 1: return '元/kg';
       case 2: return '元/件';
       default: return '';
     }

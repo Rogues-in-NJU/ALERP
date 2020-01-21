@@ -54,6 +54,8 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     this.customerName = null;
     this.selectedStatus = null;
     this.timeRange = null;
+    this.needResetPageIndex = false;
+    this.search();
   }
 
   search(): void {

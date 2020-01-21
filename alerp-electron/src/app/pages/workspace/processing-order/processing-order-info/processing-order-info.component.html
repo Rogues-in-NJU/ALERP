@@ -40,7 +40,7 @@
             style="display: inline-block; margin-left: 20px"
             nzSize="small"
             (click)="addProductRow()"
-            [disabled]="editCache._id !== null">
+            [disabled]="editCache._id !== null || processingOrderData.status !== 0"> <!-- 草稿中可修改 -->
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增
     </button>
@@ -55,9 +55,9 @@
     <tr>
       <th nzWidth="100px">商品编号</th>
       <th nzWidth="200px">商品</th>
-      <th nzWidth="240px">加工规格(厘米)</th>
+      <th nzWidth="240px">加工规格(cm)</th>
       <th nzWidth="120px">数量(件)</th>
-      <th nzWidth="120px">预计重量(千克)</th>
+      <th nzWidth="120px">预计重量(kg)</th>
       <th>操作</th>
     </tr>
     </thead>
@@ -138,10 +138,11 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id === null">
-          <a (click)="startEditProduct(data._id)">编辑</a>
+          <a (click)="startEditProduct(data._id)" [class.disabled]="processingOrderData.status !== 0">编辑</a>
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"
+             [class.disabled]="processingOrderData.status !== 0"
              nzTitle="确认删除?"
              (nzOnConfirm)="confirmProductDelete(data._id)">
             删除
@@ -163,44 +164,38 @@
     </tr>
     </tbody>
   </nz-table>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
 </div>
 
-<div id="print_div" #print_div>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-  <p *ngIf="showPrint">(购货单位:){{ processingOrderData.customerName }}</p>
-  <table *ngIf="showPrint">
-    <thead>
-    <tr>
-      <th style="width: 200px">(型号)</th>
-      <th style="width: 300px">(加工规格)</th>
-      <th style="width: 120px">(数量(件))</th>
-      <th style="width: 120px">(预计重量(千克))</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let data of processingOrderData.products">
-      <td> {{ data.productName }}</td>
-      <td> {{ data.specification }}</td>
-      <td> {{ data.quantity }}</td>
-      <td> {{ data.expectedWeight }}</td>
-    </tr>
-    <tr>
-      <td></td>
-      <td></td>
-      <td> (重量汇总)</td>
-      <td> {{ processingOrderData.totalWeight }}</td>
-    </tr>
-    </tbody>
-  </table>
+<div class="print-wrapper">
+  <div id="print_div" #print_div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <p *ngIf="showPrint">(购货单位:){{ processingOrderData.customerName }}</p>
+    <table *ngIf="showPrint">
+      <thead>
+      <tr>
+        <th style="width: 200px">(型号)</th>
+        <th style="width: 300px">(加工规格)</th>
+        <th style="width: 120px">(数量(件))</th>
+        <th style="width: 120px">(预计重量(kg))</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of processingOrderData.products">
+        <td> {{ data.productName }}</td>
+        <td> {{ data.specification }}</td>
+        <td> {{ data.quantity }}</td>
+        <td> {{ data.expectedWeight }}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td> (重量汇总)</td>
+        <td> {{ processingOrderData.totalWeight }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

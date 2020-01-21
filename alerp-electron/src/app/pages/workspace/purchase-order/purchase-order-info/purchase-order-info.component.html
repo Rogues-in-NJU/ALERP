@@ -14,7 +14,7 @@
       <nz-badge nzColor="{{ purchaseOrderData.status | purchase_order_status_color }}" nzText="{{ purchaseOrderData.status | purchase_order_status }}"></nz-badge>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="已付金额" [nzSpan]="2">&yen;{{ purchaseOrderData.cash | number:'1.2-2' }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="已付金额" [nzSpan]="2">&yen;{{ paidCash | number:'1.2-2' }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="采购时间" [nzSpan]="2">{{ purchaseOrderData.doneAt }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="业务员" [nzSpan]="2">{{ purchaseOrderData.salesman }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ purchaseOrderData.createdAt }}</nz-descriptions-item>
@@ -118,7 +118,7 @@
               {{ data.doneAt }}
             </ng-container>
             <ng-template #doneAtEditTpl>
-              <nz-form-control>
+              <nz-form-control [nzValidateStatus]="editCacheValidateStatus.doneAt">
                 <nz-date-picker nzShowTime
                                 [(ngModel)]="editCache.data.doneAt"
                                 [nzDisabledDate]="disabledDate"

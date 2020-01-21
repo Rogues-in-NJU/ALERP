@@ -1,13 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>
     出货单列表
+  </nz-page-header-title>
+  <nz-page-header-extra>
     <button nz-button nzType="primary" routerLink="/workspace/shipping-order/add">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增出货单
     </button>
-  </nz-page-header-title>
-  <nz-page-header-extra>
-    <div>
+    <div style="display: inline-block">
       <e-ngx-print #print1
                    [showBtn]="false"
                    [printStyle]="printStyle"
@@ -94,7 +94,11 @@
           <td nzLeft="0px">
             <a routerLink="/workspace/shipping-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
-          <td>{{ data.customerName }}</td>
+          <td>
+            <a routerLink="/workspace/customer/info/{{ data.customerId }}">
+              {{ data.customerName }}
+            </a>
+          </td>
           <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
           <td>{{ data.createdAt }}</td>
           <td>

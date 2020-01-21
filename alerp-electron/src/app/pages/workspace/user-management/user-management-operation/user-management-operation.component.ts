@@ -26,6 +26,7 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
 
   operationList: OperationInfoVO[] = [];
 
+  needResetPageIndex: boolean = false;
   constructor(private router: Router,
               private Operation: OperationService,
               private message: NzMessageService,
@@ -38,6 +39,10 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
   }
 
   search(): void {
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -84,8 +89,7 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
   }
 
   resetIndex(): void {
-    this.pageSize = 10;
-    this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
 }

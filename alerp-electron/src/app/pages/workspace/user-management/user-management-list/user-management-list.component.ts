@@ -24,6 +24,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   name: string;
 
   userList: UserManagementInfoVO[] = [];
+  needResetPageIndex: boolean = false;
 
   constructor(private router: Router,
               private UserManagement: UserManagementService,
@@ -41,19 +42,21 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
     this.refresh();
   }
 
-  resetQueryParams(): void{
+  resetQueryParams(): void {
     this.name = null;
     this.refresh();
   }
 
   resetIndex(): void {
-    this.pageSize = 10;
-    this.pageIndex = 1;
+    this.needResetPageIndex = true;
   }
 
 
   search(): void {
-
+    if (this.needResetPageIndex) {
+      this.needResetPageIndex = false;
+      this.pageIndex = 1;
+    }
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
