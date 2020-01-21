@@ -66,7 +66,7 @@ public class LogAspect {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
         try {
-            logOperate(userId, name, joinPoint);
+            doLogOperate(userId, name, joinPoint);
             Object result = joinPoint.proceed();
 //            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
@@ -78,9 +78,9 @@ public class LogAspect {
         }
     }
 
-    private void logOperate(Integer userId, String name, ProceedingJoinPoint joinPoint) {
-        EXECUTOR_SERVICE.submit(() -> doLogOperate(userId, name, joinPoint));
-    }
+//    private void logOperate(Integer userId, String name, ProceedingJoinPoint joinPoint) {
+//        EXECUTOR_SERVICE.submit(() -> doLogOperate(userId, name, joinPoint));
+//    }
 
     private void doLogOperate(Integer userId, String name, ProceedingJoinPoint joinPoint) {
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
