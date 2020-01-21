@@ -24,7 +24,7 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   isLoading: boolean = false;
 
   isSaving: boolean = false;
-  cityTmp: number[];
+  cityTmp: number[] = [];
 
   authsTmp: userAuthVO[] = [
     <userAuthVO>{id: 0, authId: 1, description: "查看商品列表", action: 1},
@@ -119,11 +119,14 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     this.userManagementForm = this.fb.group({
       name: [null, Validators.required],
       phoneNumber: [null, Validators.required],
-      // password: [null, Validators.required],
     });
   }
 
   saveUser(): void {
+    if (this.cityTmp.length == 0) {
+      this.message.error('请至少选择一个城市!');
+      return;
+    }
     if (!this.userManagementForm.valid) {
       return;
     }
@@ -131,7 +134,6 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     let userManagementAdd: UserManagementInfoVO = {
       name: formData.name,
       phoneNumber: formData.phoneNumber,
-      // password: formData.password,
       cities: this.cityTmp,
       authList: this.authsTmp
     };
