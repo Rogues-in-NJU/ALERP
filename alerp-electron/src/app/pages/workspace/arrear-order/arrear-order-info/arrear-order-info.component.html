@@ -26,34 +26,62 @@
     <nz-descriptions-item nzTitle="截至时间" [nzSpan]="4">
       <nz-form-control *ngIf="!isChangeDueDate">
         {{ arrearOrderData.dueDate }}
-        <button nz-button [nzType]="'primary'"  (click)="changeDueDate()">编辑</button>
+        <a (click)="changeDueDate()" style="cursor: pointer">
+          <i nz-icon nzType="edit" nzTheme="outline" ></i>
+        </a>
       </nz-form-control>
 
-      <nz-form-control *ngIf="isChangeDueDate">
-        <nz-form-control>
-          <nz-date-picker nzShowTime
-                          [(ngModel)]="duedate"
-                          nzFormat="yyyy-MM-dd HH:mm"
-                          nzPlaceHolder="选择时间">
+      <div nz-form nzLayout="inline" *ngIf="isChangeDueDate">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-date-picker nzShowTime
+                            [(ngModel)]="duedate"
+                            nzFormat="yyyy-MM-dd HH:mm"
+                            nzPlaceHolder="选择时间">
 
-          </nz-date-picker>
-        </nz-form-control>
-        <button nz-button [nzType]="'primary'"  (click)="confirmChangeDueDate()">确认</button>
-        <button nz-button [nzType]="'primary'"  (click)="cancelChangeDueDate()">取消</button>
-      </nz-form-control>
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <a (click)="confirmChangeDueDate()" style="color: #52c41a"><i nz-icon nzType="check" nzTheme="outline"></i></a>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <a (click)="cancelChangeDueDate()" style="color: #f50"><i nz-icon nzType="close" nzTheme="outline"></i></a>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <ng-container>
+
+      </ng-container>
     </nz-descriptions-item>
 
     <nz-descriptions-item nzTitle="发票流水号" [nzSpan]="4">
       <nz-form-control *ngIf="!isChangeInvoiceNumber">
         {{ arrearOrderData.invoiceNumber }}
-        <button nz-button [nzType]="'primary'"  (click)="changeInvoiceNumber()">编辑</button>
+        <a (click)="changeInvoiceNumber()" style="cursor: pointer">
+          <i nz-icon nzType="edit" nzTheme="outline" ></i>
+        </a>
       </nz-form-control>
-
-      <nz-form-control *ngIf="isChangeInvoiceNumber">
-        <input nz-input type="text" [(ngModel)]="invoiceNumber"/>
-        <button nz-button [nzType]="'primary'"  (click)="confirmChangeInvoiceNumber()">确认</button>
-        <button nz-button [nzType]="'primary'"  (click)="cancelChangeInvoiceNumber()">取消</button>
-      </nz-form-control>
+      <div nz-form *ngIf="isChangeInvoiceNumber" nzLayout="inline">
+        <nz-form-item>
+          <nz-form-control>
+            <input nz-input type="text" [(ngModel)]="invoiceNumber"/>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <a (click)="confirmChangeInvoiceNumber()" style="color: #52c41a"><i nz-icon nzType="check" nzTheme="outline"></i></a>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <a (click)="cancelChangeInvoiceNumber()" style="color: #f50"><i nz-icon nzType="close" nzTheme="outline"></i></a>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </nz-descriptions-item>
 
     <nz-descriptions-item nzTitle="创建时间" [nzSpan]="2">{{ arrearOrderData.createdAt }}</nz-descriptions-item>
