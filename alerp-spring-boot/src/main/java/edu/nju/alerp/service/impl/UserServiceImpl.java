@@ -135,6 +135,13 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return user;
     }
 
+    @Override
+    public int reloadPassWord(int id) {
+        User user = (User) userCache.get(id);
+        user.setPassword(PasswordUtil.getMD5("00000000"));
+        return userRepository.save(user).getId();
+    }
+
     /**
      * 通过手机获取用户
      *

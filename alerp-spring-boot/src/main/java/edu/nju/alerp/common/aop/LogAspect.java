@@ -65,8 +65,9 @@ public class LogAspect {
         String methodInvokeLog = buildMethodInvokeLog(joinPoint, userId);
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
+        HttpServletRequest request = CommonUtils.getHttpServletRequest();
         try {
-            doLogOperate(userId, name, joinPoint);
+            logOperate(userId, name, joinPoint, request);
             Object result = joinPoint.proceed();
 //            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
@@ -78,12 +79,11 @@ public class LogAspect {
         }
     }
 
-//    private void logOperate(Integer userId, String name, ProceedingJoinPoint joinPoint) {
-//        EXECUTOR_SERVICE.submit(() -> doLogOperate(userId, name, joinPoint));
-//    }
+    private void logOperate(Integer userId, String name, ProceedingJoinPoint joinPoint, HttpServletRequest request) {
+        EXECUTOR_SERVICE.submit(() -> doLogOperate(userId, name, joinPoint, request));
+    }
 
-    private void doLogOperate(Integer userId, String name, ProceedingJoinPoint joinPoint) {
-        HttpServletRequest request = CommonUtils.getHttpServletRequest();
+    private void doLogOperate(Integer userId, String name, ProceedingJoinPoint joinPoint, HttpServletRequest request) {
         try {
             OperationLog operationLog = OperationLog.builder()
                     .createdAt(TimeUtil.dateFormat(new Date()))
