@@ -24,8 +24,6 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   name: string;
 
   userList: UserManagementInfoVO[] = [];
-  //更改查询条件时，页数重置为1
-  shouldResetIndex: boolean = false;
 
   constructor(private router: Router,
               private UserManagement: UserManagementService,
@@ -45,12 +43,12 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
 
   resetQueryParams(): void{
     this.name = null;
-    this.shouldResetIndex = false;
     this.refresh();
   }
 
-  resetIndex(): void{
-    this.shouldResetIndex = true;
+  resetIndex(): void {
+    this.pageSize = 10;
+    this.pageIndex = 1;
   }
 
 

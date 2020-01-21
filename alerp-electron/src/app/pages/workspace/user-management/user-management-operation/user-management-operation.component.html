@@ -15,7 +15,8 @@
         <nz-range-picker [nzShowTime]="{ nzFormat: 'HH:mm' }"
                          nzFormat="yyyy-MM-dd HH:mm"
                          [nzPlaceHolder]="['开始时间', '结束时间']"
-                         [(ngModel)]="timeRange">
+                         [(ngModel)]="timeRange"
+                         (ngModelChange)="resetIndex()">
         </nz-range-picker>
       </nz-form-control>
     </nz-form-item>
