@@ -150,7 +150,7 @@ public class AuthImpl implements AuthService, InitializingBean {
 
     @Override
     public List<Auth> findAll() {
-        return authRepository.findAll();
+        return authRepository.findAll(Sort.by(Sort.Direction.ASC, "route"));
     }
 
     @Override
@@ -244,7 +244,7 @@ public class AuthImpl implements AuthService, InitializingBean {
         }catch (Exception e) {
             log.error("error", e);
         }
-        List<AuthUser> authUsers = authUserRepository.findAll(authUserSp, Sort.by(Sort.Direction.DESC, "action"));
+        List<AuthUser> authUsers = authUserRepository.findAll(authUserSp);
         List<AuthUserVO> result = authUsers.parallelStream()
                                             .map(authUser -> {
                                                 AuthUserVO authUserVO = new AuthUserVO();
