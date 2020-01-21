@@ -43,7 +43,6 @@ export class TabComponent {
       filter(route => route.outlet === 'primary')
     ).subscribe(
       (route: ActivatedRoute) => {
-        console.log(this.storage.get('user'));
         if (!Objects.valid(this.storage.get('user'))) {
           return;
         }
@@ -63,7 +62,6 @@ export class TabComponent {
           this.menuList.push(menu);
         }
         this.currentIndex = this.menuList.findIndex(p => p.url === url);
-        console.log(route, this.menuList);
       }
     );
 

@@ -85,7 +85,7 @@
                 地区: <span style="margin-left: 10px">{{ city | city }}</span>
               </label>
             </li>
-            <li nz-submenu nzTitle="用户中心" nzIcon="user" [nzOpen]="isOpen">
+            <li nz-submenu nzTitle="用户中心({{ userName }})" nzIcon="user" [nzOpen]="isOpen">
               <ul>
                   <li nz-menu-item routerLink="user-center/user">用户信息</li>
                   <li nz-menu-item routerLink="user-center/password">修改密码</li>

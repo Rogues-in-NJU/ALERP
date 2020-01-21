@@ -126,7 +126,6 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   confirmDelete(id: number): void {
-    console.log(id);
     if (!Objects.valid(id)) {
       this.refresh();
       return;
