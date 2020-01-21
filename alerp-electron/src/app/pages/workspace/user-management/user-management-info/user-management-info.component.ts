@@ -4,11 +4,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UserManagementInfoVO} from "../../../../core/model/user-management";
 import {ClosableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
-import {ResultVO} from "../../../../core/model/result-vm";
+import {ResultVO, ResultCode} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NzMessageService} from "ng-zorro-antd";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime} from "rxjs/internal/operators";
+import {Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-management-info',
@@ -44,7 +45,12 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     this.userManagementId = this.route.snapshot.params['id'];
     this.userManagement.find(this.userManagementId)
       .subscribe((res: ResultVO<UserManagementInfoVO>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.isLoading = false;

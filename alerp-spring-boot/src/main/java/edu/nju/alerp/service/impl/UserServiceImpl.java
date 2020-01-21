@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 
@@ -134,6 +135,13 @@ public class UserServiceImpl implements UserService, InitializingBean {
         return user;
     }
 
+    @Override
+    public int reloadPassWord(int id) {
+        User user = (User) userCache.get(id);
+        user.setPassword(PasswordUtil.getMD5("00000000"));
+        return userRepository.save(user).getId();
+    }
+
     /**
      * 通过手机获取用户
      *
@@ -184,7 +192,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
             }
-            sp.add(ConditionFactory.In("id", userList));
+            if (!CollectionUtils.isEmpty(userList)) {
+                sp.add(ConditionFactory.In("id", userList));
+            }
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));

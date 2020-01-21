@@ -10,6 +10,7 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 import {AuthVO} from "../../../../core/model/auth";
+import {Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-management-add',
@@ -104,11 +105,12 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
   ngOnInit(): void {
     this.userManagement.getAuthList()
       .subscribe((res: ResultVO<TableResultVO<AuthVO>>) => {
-        // console.log(res);
-        if (!res) {
+        if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
       }, (error: HttpErrorResponse) => {
@@ -135,10 +137,17 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     };
     this.isSaving = true;
     this.userManagement.save(userManagementAdd)
-      .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        // console.log(res);
-        this.message.success('添加成功!');
+        console.log(res);
+        if (!Objects.valid(res)) {
+          this.message.error('新增失败!');
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
+        this.message.success('新增成功!');
         this.isSaving = false;
         this.tabClose();
       }, (error: HttpErrorResponse) => {

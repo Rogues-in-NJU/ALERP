@@ -24,6 +24,8 @@ public interface UserService {
 
     User getUser(int id);
 
+    int reloadPassWord(int id);
+
     User getUserByPhoneNumber(String phoneNumber);
 
     int deleteUser(int id) throws Exception;

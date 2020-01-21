@@ -19,7 +19,9 @@
     <nz-form-item>
       <nz-form-control>
         <button nz-button nzType="primary" (click)="search()">搜索</button>
-        <button style="margin-left: 10px" class="queryButton" nz-button nzType="primary" (click)="resetQueryParams()">重置</button>
+        <button style="margin-left: 10px" class="queryButton" nz-button nzType="primary" (click)="resetQueryParams()">
+          重置
+        </button>
       </nz-form-control>
     </nz-form-item>
     <div class="table-wrapper">
@@ -39,7 +41,7 @@
           <th nzLeft="0px" nzWidth="150px">姓名</th>
           <th nzWidth="150px">手机号</th>
           <th>状态</th>
-          <th nzRight="0px" nzWidth="150px">操作</th>
+          <th nzRight="0px" nzWidth="200px">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -54,7 +56,15 @@
             </nz-tag>
           </td>
           <td nzRight="0px">
-            <a routerLink="/workspace/user-management/info/{{ data.id }}">查看</a>
+            <a style="margin-left: 5px"
+               [class.disabled]="false"
+               nz-popconfirm
+               nzPopconfirmTitle="确认重置?"
+               nzPopconfirmPlacement="top"
+               (nzOnConfirm)="resetPassword(data.id)">
+              [重置密码]
+            </a>
+            <a routerLink="/workspace/user-management/info/{{ data.id }}">[查看]</a>
             <a style="margin-left: 5px"
                class="abandon"
                [class.disabled]="false"
@@ -62,7 +72,7 @@
                nzPopconfirmTitle="确认删除?"
                nzPopconfirmPlacement="top"
                (nzOnConfirm)="confirmAbandon(data.id)" *ngIf="data.status===1">
-              删除
+              [删除]
             </a>
           </td>
         </tr>

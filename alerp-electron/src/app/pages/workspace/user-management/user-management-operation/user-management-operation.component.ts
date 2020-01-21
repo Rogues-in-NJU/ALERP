@@ -40,7 +40,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
   }
 
   search(): void {
-
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
@@ -49,7 +48,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
       Object.assign(queryParams, {
         userName: this.userName
       });
-      // this.userName = null;
     }
     if (Objects.valid(this.timeRange) && this.timeRange.length === 2) {
       Object.assign(queryParams, {
@@ -59,10 +57,12 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
     }
     this.Operation.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<OperationInfoVO>>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<OperationInfoVO> = res.data;
@@ -70,7 +70,6 @@ export class UserManagementOperationComponent implements RefreshableTab, OnInit 
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.operationList = tableResult.result;
-        // console.log(this.operationList);
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       });
