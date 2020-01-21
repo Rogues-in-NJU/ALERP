@@ -77,9 +77,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
             User user = User.builder()
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5(initPassword))
-                    .updatedAt(DateUtils.getTodayAccurateToMinute())
+                    .updatedAt(DateUtils.getTodayAccurateToSecond())
                     .phoneNumber(userDTO.getPhoneNumber())
-                    .createdAt(DateUtils.getTodayAccurateToMinute())
+                    .createdAt(DateUtils.getTodayAccurateToSecond())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
             res = userRepository.saveAndFlush(user);
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             }
             user.setName(userDTO.getName());
             user.setPhoneNumber(userDTO.getPhoneNumber());
-            user.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
+            user.setUpdatedAt(DateUtils.getTodayAccurateToSecond());
             res = userRepository.save(user);
             authService.updateUserAuth(userDTO.getAuthList());
         }
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除用户失败，用户已被删除！");
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
-        user.setDeletedAt(DateUtils.getTodayAccurateToMinute());
+        user.setDeletedAt(DateUtils.getTodayAccurateToSecond());
         int ans = userRepository.save(user).getId();
         userCache.put(id, user);
         return ans;

@@ -142,9 +142,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "规格格式错误，请重新填写.");
 
         Product product = Product.builder()
-                .createAt(DateUtils.getTodayAccurateToMinute())
+                .createAt(DateUtils.getTodayAccurateToSecond())
                 .createBy(CommonUtils.getUserId())
-                .updateAt(DateUtils.getTodayAccurateToMinute())
+                .updateAt(DateUtils.getTodayAccurateToSecond())
                 .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
@@ -174,7 +174,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
         if (product == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "商品不存在");
 
-        product.setDeleteAt(DateUtils.getTodayAccurateToMinute());
+        product.setDeleteAt(DateUtils.getTodayAccurateToSecond());
         product.setDeleteBy(CommonUtils.getUserId());
         return productRepository.saveAndFlush(product).getId();
     }

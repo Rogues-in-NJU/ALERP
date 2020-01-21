@@ -137,9 +137,9 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER, CityEnum.of(CommonUtils.getCity())))
                                                             .status(PurchaseOrderStatus.UNPAID.getCode())
-                                                            .createAt(DateUtils.getTodayAccurateToMinute())
+                                                            .createAt(DateUtils.getTodayAccurateToSecond())
                                                             .createBy(CommonUtils.getUserId())
-                                                            .updateAt(DateUtils.getTodayAccurateToMinute())
+                                                            .updateAt(DateUtils.getTodayAccurateToSecond())
                                                             .updateBy(CommonUtils.getUserId())
                                                             .build();
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
@@ -214,7 +214,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                         .description(addPaymentRecordDTO.getDescription())
                                                         .salesman(addPaymentRecordDTO.getSalesman())
                                                         .doneAt(addPaymentRecordDTO.getDoneAt())
-                                                        .createAt(DateUtils.getTodayAccurateToMinute())
+                                                        .createAt(DateUtils.getTodayAccurateToSecond())
                                                         .createBy(CommonUtils.getUserId())
                                                         .build();
         int result = paymentRecordRepository.saveAndFlush(newPayment).getId();
@@ -236,7 +236,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据已被废弃");
 
         paymentRecord.setStatus(PaymentRecordStatus.ABANDONED.getCode());
-        paymentRecord.setDeleteAt(DateUtils.getTodayAccurateToMinute());
+        paymentRecord.setDeleteAt(DateUtils.getTodayAccurateToSecond());
         paymentRecord.setDeleteBy(CommonUtils.getUserId());
         int result = paymentRecordRepository.saveAndFlush(paymentRecord).getId();
 

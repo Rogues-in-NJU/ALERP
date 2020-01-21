@@ -11,14 +11,14 @@ import java.util.Date;
  * @CreateDate: 2019-12-23 19:25
  */
 public class DateUtils {
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static SimpleDateFormat sdfInDay = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * 获取当前时间，精确到分钟
      * @return
      */
-    public static String getTodayAccurateToMinute() {
+    public static String getTodayAccurateToSecond() {
         return sdf.format(new Date());
     }
 
