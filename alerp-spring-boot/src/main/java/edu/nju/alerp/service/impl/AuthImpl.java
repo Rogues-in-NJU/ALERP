@@ -222,10 +222,10 @@ public class AuthImpl implements AuthService, InitializingBean {
                                             AuthUser authUser = AuthUser.builder()
                                                     .userId(id)
                                                     .authId(auth.getId()).build();
-                                            if (managerRoute.contains(auth.getRoute()))
+//                                            if (managerRoute.contains(auth.getRoute()))
                                                 authUser.setAction(1);
-                                            else
-                                                authUser.setAction(0);
+//                                            else
+//                                                authUser.setAction(0);
                                             return authUser;
                                         })
                                         .collect(Collectors.toList());
