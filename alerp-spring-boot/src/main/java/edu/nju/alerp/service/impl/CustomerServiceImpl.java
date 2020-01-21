@@ -103,6 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
                         specialPricesRepository.saveAndFlush(specialPrice);
                     } else {
                         specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
+                        specialPrice.setPrice(specialPricesDTO.getPrice());
                         specialPrice.setUpdatedAt(DateUtils.getTodayAccurateToSecond());
                         specialPrice.setUpdatedBy(CommonUtils.getUserId());
                         specialPricesRepository.save(specialPrice);
