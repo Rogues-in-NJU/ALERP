@@ -290,7 +290,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
      */
     @Override
     public Double getCustomerAvgPrice(List<Integer> customerIdList, String startDate, String endDate) {
-        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList, "", "");
+        List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList, startDate, endDate);
         if (CollectionUtils.isEmpty(shippingOrderList)) {
             return (double) 0;
         }
