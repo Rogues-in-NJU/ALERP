@@ -1,13 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>
     出货单列表
+  </nz-page-header-title>
+  <nz-page-header-extra>
     <button nz-button nzType="primary" routerLink="/workspace/shipping-order/add">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增出货单
     </button>
-  </nz-page-header-title>
-  <nz-page-header-extra>
-    <div>
+    <div style="display: inline-block">
       <e-ngx-print #print1
                    [showBtn]="false"
                    [printStyle]="printStyle"
