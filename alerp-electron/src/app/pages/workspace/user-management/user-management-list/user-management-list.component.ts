@@ -87,7 +87,6 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   confirmAbandon(id: string): void {
-    console.log('confirm abandon: ' + id);
     this.UserManagement.abandon(id)
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
@@ -100,6 +99,24 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
+      });
+    this.refresh();
+  }
+
+  resetPassword(id: string): void {
+    this.UserManagement.resetPassword(id)
+      .subscribe((res: ResultVO<any>) => {
+        console.log(res);
+        if (!Objects.valid(res)) {
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+        }
+      }, (error: HttpErrorResponse) => {
+        this.message.error(error.message);
+      }, () => {
+        this.message.success("重置密码成功");
       });
     this.refresh();
   }

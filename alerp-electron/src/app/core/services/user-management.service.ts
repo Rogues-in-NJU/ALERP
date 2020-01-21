@@ -63,4 +63,10 @@ export class UserManagementService {
     });
   }
 
+  public resetPassword(id: string): Observable<ResultVO<any>> {
+    return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/reloadPassword/${id}`, {
+      withCredentials: true
+    });
+  }
+
 }
