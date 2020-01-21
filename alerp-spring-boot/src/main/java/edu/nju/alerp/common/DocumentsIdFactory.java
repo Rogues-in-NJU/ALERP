@@ -78,7 +78,7 @@ public class DocumentsIdFactory implements InitializingBean {
         }
 
         generator.increment();
-        generator.setUpdateTime(DateUtils.getToday());
+        generator.setUpdateTime(DateUtils.getTodayAccurateToMinute());
         idGeneratorRepository.saveAndFlush(generator);
 
         return nextCount;
@@ -99,7 +99,7 @@ public class DocumentsIdFactory implements InitializingBean {
     }
 
     private AtomicInteger buildCurrentCount(IdGenerator idGenerator) {
-        long days = TimeUtil.getDays(DateUtils.getToday(), idGenerator.getUpdateTime());
+        long days = TimeUtil.getDays(DateUtils.getTodayAccurateToMinute(), idGenerator.getUpdateTime());
         if ( days == 0 )
             return new AtomicInteger(idGenerator.getCurrentCount());
         return new AtomicInteger();

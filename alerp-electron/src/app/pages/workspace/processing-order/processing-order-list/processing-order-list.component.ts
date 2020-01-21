@@ -48,6 +48,14 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     this.refresh();
   }
 
+  reset(): void {
+    this.pageIndex = 1;
+    this.pageSize = 10;
+    this.customerName = null;
+    this.selectedStatus = null;
+    this.timeRange = null;
+  }
+
   search(): void {
     if (this.needResetPageIndex) {
       this.needResetPageIndex = false;
@@ -82,12 +90,12 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     this.isLoading = true;
     this.processingOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<ProcessingOrderVO>>) => {
-        console.log(res);
-
         if (!Objects.valid(res)) {
+          this.message.error('搜索失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<ProcessingOrderVO> = res.data;

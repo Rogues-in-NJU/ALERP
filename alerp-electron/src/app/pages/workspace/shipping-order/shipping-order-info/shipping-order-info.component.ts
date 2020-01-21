@@ -242,9 +242,13 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
       .subscribe((res: ResultVO<ShippingOrderInfoVO>) => {
         console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
-
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
+          return;
+        }
         this.shippingOrderData = res.data;
         for (var i = 0; i < this.shippingOrderData.products.length; i++) {
           const tmp = this.shippingOrderData.products[i];

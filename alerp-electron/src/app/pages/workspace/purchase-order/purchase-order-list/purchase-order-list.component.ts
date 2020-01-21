@@ -76,9 +76,11 @@ export class PurchaseOrderListComponent implements RefreshableTab, OnInit {
     this.purchaseOrder.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<PurchaseOrderVO>>) => {
         if (!Objects.valid(res)) {
+          this.message.error('搜索失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<PurchaseOrderVO> = res.data;

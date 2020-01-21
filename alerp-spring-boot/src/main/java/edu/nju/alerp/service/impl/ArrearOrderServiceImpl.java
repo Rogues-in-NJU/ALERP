@@ -18,7 +18,6 @@ import edu.nju.alerp.entity.ReceiptRecord;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.enums.ArrearOrderStatus;
 import edu.nju.alerp.enums.ExceptionEnum;
-import edu.nju.alerp.enums.ReceiptRecordStatus;
 import edu.nju.alerp.repo.ArrearOrderRepository;
 import edu.nju.alerp.repo.CustomerRepository;
 import edu.nju.alerp.service.ArrearOrderService;
@@ -86,7 +85,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
         }
         arrearOrder.setDueDate(dto.getDueDate());
-        arrearOrder.setUpdatedAt(DateUtils.getToday());
+        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
         return result.getId();
@@ -104,7 +103,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
         }
         arrearOrder.setInvoiceNumber(dto.getInvoiceNumber());
-        arrearOrder.setUpdatedAt(DateUtils.getToday());
+        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
         return result.getId();
@@ -134,7 +133,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             build();
         arrearDetailVO.setCustomerName(customerService.getCustomer(customerId).getName());
         arrearDetailVO.setCreatedByName(userService.getUser(createdBy).getName());
-        arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getToday()) > 0);
+        arrearDetailVO.setOverDue(arrearOrder.getDueDate().compareTo(DateUtils.getTodayAccurateToDay()) > 0);
         // 根据arrearOrderId查询出货单
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrderByArrearOrderId(id);
         arrearDetailVO.setShippingOrderId(shippingOrder.getId());
@@ -142,8 +141,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
         // 获取收款单中的收款记录列表：(只显示已确认的收款记录，已废弃的不显示)
         List<ReceiptRecordForArrearDTO> targetDTOList = Lists.newArrayList();
-        List<ReceiptRecord> recordList = receiptRecordService.findRecordListByArrearId(id,
-            ReceiptRecordStatus.CONFIRMED.getCode());
+        List<ReceiptRecord> recordList = receiptRecordService.findRecordListByArrearId(id);
         for (ReceiptRecord record : recordList) {
             ReceiptRecordForArrearDTO dto = ReceiptRecordForArrearDTO.builder().
                 id(record.getId()).
@@ -211,7 +209,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
                 arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
+                arrearOrderSp.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
@@ -235,12 +233,12 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
                 arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
             }
             if (Strings.isNotBlank(endTime)) {
-                arrearOrderSp.add(ConditionFactory.greatThanEqualTo("createdAt", endTime));
+                arrearOrderSp.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             }
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
             // 查询所有逾期的收款单
-            arrearOrderSp.add(ConditionFactory.greatThanEqualTo("dueDate", DateUtils.getToday()));
+            arrearOrderSp.add(ConditionFactory.lessThanEqualTo("dueDate", DateUtils.getTodayAccurateToDay()));
             List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
             totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
             totalReceivableCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivableCash).sum();
@@ -256,7 +254,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         // 按人、按月统计
         List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth();
         OverdueCashVO targetVo = new OverdueCashVO();
-        Map<String, Object> statistics = Maps.newHashMap();
+
         // customerList里的一个元素
         Map<String, Object> customerMap = Maps.newHashMap();
         for (Map<String, Object> record : recordSbMonthList) {

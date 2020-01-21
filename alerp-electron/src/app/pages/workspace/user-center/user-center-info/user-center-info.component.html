@@ -59,29 +59,28 @@
       </div>
     </form>
   </nz-modal>
-  <br/>
-  <h3>权限列表</h3>
-  <nz-table #userAuthTable
-            nzBordered
-            nzShowPagination="false"
-            nzSize="middle"
-            [nzData]="userManagementData.authList">
-    <thead>
-    <tr>
-      <th nzWidth="200px">描述</th>
-      <th nzWidth="200px">是否拥有</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let data of userAuthTable.data">
-      <td> {{ data.description }}</td>
-      <td>
-        <nz-tag nzColor="{{ data.action | user_center_auth_color }}">{{ data.action | user_center_auth
-          }}
-        </nz-tag>
-      </td>
-    </tr>
-    </tbody>
-  </nz-table>
+  <!--<br/>-->
+  <!--<h3>权限列表</h3>-->
+  <!--<nz-table #userAuthTable-->
+            <!--nzBordered-->
+            <!--nzShowPagination="true"-->
+            <!--[nzData]="userManagementData.authList">-->
+    <!--<thead>-->
+    <!--<tr>-->
+      <!--<th nzWidth="200px">描述</th>-->
+      <!--<th nzWidth="200px">是否拥有</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+    <!--<tbody>-->
+    <!--<tr *ngFor="let data of userAuthTable.data">-->
+      <!--<td> {{ data.description }}</td>-->
+      <!--<td>-->
+        <!--<nz-tag nzColor="{{ data.action | user_center_auth_color }}">{{ data.action | user_center_auth-->
+          <!--}}-->
+        <!--</nz-tag>-->
+      <!--</td>-->
+    <!--</tr>-->
+    <!--</tbody>-->
+  <!--</nz-table>-->
 </div>
 

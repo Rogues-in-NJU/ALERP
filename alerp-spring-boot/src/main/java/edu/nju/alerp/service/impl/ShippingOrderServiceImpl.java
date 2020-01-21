@@ -51,15 +51,20 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     @Resource
     private DocumentsIdFactory documentsIdFactory;
 
+    /**
+     * 生成出货单实体类
+     * @param shippingOrderDTO
+     * @return
+     */
     @Override
     public ShippingOrder addShippingOrder(ShippingOrderDTO shippingOrderDTO) {
         int userId = CommonUtils.getUserId();
         ShippingOrder shippingOrder = ShippingOrder.builder()
                 .code(documentsIdFactory.generateNextCode(DocumentsType.SHIPPING_ORDER, CityEnum.of(CommonUtils.getCity())))
-                .createdAt(DateUtils.getToday())
+                .createdAt(DateUtils.getTodayAccurateToMinute())
                 .createdBy(userId)
                 .city(CommonUtils.getCity())
-                .updatedAt(DateUtils.getToday())
+                .updatedAt(DateUtils.getTodayAccurateToMinute())
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .build();
@@ -67,14 +72,23 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return shippingOrder;
     }
 
+    /**
+     * 根据出货单id获取出货单信息
+     * @param id
+     * @return
+     */
     @Override
     public ShippingOrder getShippingOrder(int id) {
         return shippingOrderRepository.getOne(id);
     }
 
+    /**
+     * 对外提供的收款单实体类接口
+     * @param shippingOrder
+     * @return
+     */
     @Override
     public int saveShippingOrder(ShippingOrder shippingOrder) {
-        // fixme:会不会存储两次了，这样？
         if (shippingOrder.getId() == null) {
             return shippingOrderRepository.saveAndFlush(shippingOrder).getId();
         }
@@ -82,6 +96,11 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     }
 
+    /**
+     * 储存出货单商品
+     * @param shippingOrderProduct
+     * @return
+     */
     @Override
     public int saveShippingOrderProduct(ShippingOrderProduct shippingOrderProduct) {
         if (shippingOrderProduct.getId() == null) {
@@ -91,6 +110,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         }
     }
 
+    /**
+     * 废弃出货单
+     * @param id
+     * @return
+     * @throws Exception
+     */
     @Override
     public int deleteShippingOrder(int id) throws Exception {
         ShippingOrder shippingOrder = shippingOrderRepository.getOne(id);
@@ -102,7 +127,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除出货单失败，出货单已被删除！");
         }
         shippingOrder.setStatus(ShippingOrderStatus.ABANDONED.getCode());
-        shippingOrder.setDeletedAt(DateUtils.getToday());
+        shippingOrder.setDeletedAt(DateUtils.getTodayAccurateToMinute());
         shippingOrder.setDeletedBy(CommonUtils.getUserId());
         List<ProcessingOrder> processingOrderList = findProcessingsByShipppingId(shippingOrder.getId());
         processingOrderList.forEach(p -> {
@@ -112,7 +137,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         });
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderProductRepository.findAllByShippingOrderId(id);
         shippingOrderProductList.forEach(s -> {
-            s.setDeletedAt(DateUtils.getToday());
+            s.setDeletedAt(DateUtils.getTodayAccurateToMinute());
             shippingOrderProductRepository.save(s);
         });
         return shippingOrderRepository.save(shippingOrder).getId();
@@ -125,6 +150,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return false;
     }
 
+    /**
+     * 根据时间获取出货单列表
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public List<ShippingOrder> getShippingOrderListByTime(String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
@@ -145,6 +176,16 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         }
     }
 
+    /**
+     * 分页查询出货单列表（流水号，名称，状态，时间）
+     * @param pageable
+     * @param code
+     * @param name
+     * @param status
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
@@ -176,26 +217,53 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return shippingOrderRepository.findAll(sp, pageable);
     }
 
+    /**
+     * 根据出货单id获取对应出货单的商品
+     * @param shippingOrderId
+     * @return
+     */
     @Override
     public List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId) {
         return shippingOrderProductRepository.findAllByShippingOrderId(shippingOrderId);
     }
 
+    /**
+     * 根据出货单id获取对应加工单id
+     * @param id
+     * @return
+     */
     @Override
     public List<Integer> getProcessingListById(int id) {
         return shippingOrderProductRepository.findProcessingListByShippingId(id);
     }
 
+    /**
+     * 根据商品id获取该商品总出货金额
+     * @param productId
+     * @return
+     */
     @Override
     public Double getTotalCashByProductId(int productId) {
         return shippingOrderProductRepository.getTotalCashByProductId(productId);
     }
 
+    /**
+     * 根据商品id获取该商品总出货重量
+     * @param productId
+     * @return
+     */
     @Override
     public Double getTotalWeightByProductId(int productId) {
         return shippingOrderProductRepository.getTotalWeightByProductId(productId);
     }
 
+    /**
+     * 根据商品id和时间获取对应出货商品列表
+     * @param productId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @Override
     public List<ShippingOrderProduct> getShippingOrderByProductId(int productId, String startTime, String endTime) {
         QueryContainer<ShippingOrderProduct> sp = new QueryContainer<>();
@@ -232,6 +300,12 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
         return b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
+    /**
+     * 获取总出货重量
+     * @param createdAtStartTime
+     * @param createdAtEndTime
+     * @return
+     */
     @Override
     public Double queryTotalWeight(String createdAtStartTime, String createdAtEndTime) {
         QueryContainer<ShippingOrder> shippingSp = new QueryContainer<>();

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable, of } from "rxjs";
-import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
+import { Observable } from "rxjs";
+import { ResultVO, TableQueryParams, TableResultVO } from "../model/result-vm";
 import { ProcessingOrderProductVO, ProcessingOrderVO } from "../model/processing-order";
 import { AppConfig } from "../../../environments/environment";
 
@@ -42,7 +42,6 @@ export class ProcessingOrderService {
     return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/abandon/${id}`, {
       withCredentials: true
     });
-    // return of(null);
   }
 
   public finishPrint(id: number): Observable<ResultVO<any>> {
@@ -56,22 +55,12 @@ export class ProcessingOrderService {
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/product`, product, {
       withCredentials: true
     });
-    // return of({
-    //   code: ResultCode.SUCCESS.code,
-    //   message: '',
-    //   data: null
-    // });
   }
 
   public deleteProduct(id: number): Observable<ResultVO<any>> {
     return this.http.get<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order/product/delete/${id}`, {
       withCredentials: true
     });
-    // return of({
-    //   code: ResultCode.SUCCESS.code,
-    //   message: '',
-    //   data: null
-    // });
   }
 
 }

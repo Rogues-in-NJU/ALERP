@@ -4,7 +4,7 @@ import {ShippingOrderInfoVO} from "../../../../core/model/shipping-order";
 import {Router} from "@angular/router";
 import {NzMessageService} from "ng-zorro-antd";
 import {ShippingOrderService} from "../../../../core/services/shipping-order.service";
-import {TabService} from "../../../../core/services/tab.service";
+import {RefreshTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {DateUtils, Objects, StringUtils} from "../../../../core/services/util.service";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -60,7 +60,12 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/shipping-order/list') {
+        this.refresh();
+      }
+    });
+    this.refresh();
   }
 
   search(): void {
@@ -102,9 +107,11 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
       .subscribe((res: ResultVO<TableResultVO<ShippingOrderInfoVO>>) => {
         // console.log(res)
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<ShippingOrderInfoVO> = res.data;
