@@ -94,7 +94,11 @@
           <td nzLeft="0px">
             <a routerLink="/workspace/shipping-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
-          <td>{{ data.customerName }}</td>
+          <td>
+            <a routerLink="/workspace/customer/info/{{ data.customerId }}">
+              {{ data.customerName }}
+            </a>
+          </td>
           <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
           <td>{{ data.createdAt }}</td>
           <td>
