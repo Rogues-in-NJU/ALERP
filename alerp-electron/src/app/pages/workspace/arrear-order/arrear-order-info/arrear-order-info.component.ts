@@ -169,12 +169,13 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error('修改失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
-        this.message.success('新增成功!');
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
       }, () => {
