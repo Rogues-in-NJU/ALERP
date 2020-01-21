@@ -11,6 +11,8 @@ function createWindow(): BrowserWindow {
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
+  Menu.setApplicationMenu(null);
+
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
