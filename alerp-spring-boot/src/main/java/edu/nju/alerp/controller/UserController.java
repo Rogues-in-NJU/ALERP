@@ -196,6 +196,22 @@ public class UserController {
     }
 
     /**
+     * 重置密码
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/reloadPassword/{id}", method = RequestMethod.GET, name = "重置密码")
+    public ResponseResult<Integer> reloadPassword(@PathVariable("id") Integer id) {
+        try {
+            return ResponseResult.ok(userService.reloadPassWord(id));
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
+    /**
      * 用户登出
      *
      * @return
