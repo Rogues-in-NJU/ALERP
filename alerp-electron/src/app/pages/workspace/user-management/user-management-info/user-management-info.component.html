@@ -27,6 +27,7 @@
   <nz-table #userAuthTable
             nzBordered
             nzShowPagination="true"
+            nzSize="small"
             [nzData]="userManagementData.authList">
     <thead>
     <tr>
@@ -46,7 +47,7 @@
       <td nzRight="0px">
         <a style="margin-left: 5px"
            class="abandon"
-           [class.disabled]="false"
+           [class.disabled]="isSaving"
            nz-popconfirm
            nzPopconfirmTitle="确认删除?"
            nzPopconfirmPlacement="top"
@@ -54,8 +55,7 @@
           删除权限
         </a>
         <a style="margin-left: 5px"
-           class="abandon"
-           [class.disabled]="false"
+           [class.disabled]="isSaving"
            nz-popconfirm
            nzPopconfirmTitle="确认赋予?"
            nzPopconfirmPlacement="top"

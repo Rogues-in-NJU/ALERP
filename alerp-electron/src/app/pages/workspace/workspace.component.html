@@ -23,27 +23,6 @@
         <i nz-icon nzType="shop" nzTheme="outline"></i>
         <span>供应商管理</span>
       </li>
-<!--      <li nz-submenu nzTitle="采购单管理" nzIcon="shopping-cart">-->
-<!--        <ul>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="purchase-order/list">采购单列表</a>-->
-<!--          </li>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="purchase-order/add">新增采购单</a>-->
-<!--          </li>-->
-<!--        </ul>-->
-<!--      </li>-->
-<!--      <li nz-submenu nzTitle="加工单管理" nzIcon="rocket">-->
-<!--        <ul>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="processing-order/list">加工单列表</a>-->
-<!--          </li>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="processing-order/add">新增加工单</a>-->
-<!--          </li>-->
-<!--        </ul>-->
-<!--      </li>-->
-
       <li nz-menu-item routerLink="purchase-order/list" nzMatchRouter>
         <i nz-icon nzType="shopping-cart"></i>
         <span>采购单管理</span>
@@ -78,16 +57,6 @@
         <i nz-icon nzType="transaction"></i>
         <span>公司支出</span>
       </li>
-<!--      <li nz-submenu nzTitle="公司支出" nzIcon="transaction">-->
-<!--        <ul>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="expense/list">公司支出列表</a>-->
-<!--          </li>-->
-<!--          <li nz-menu-item nzMatchRouter>-->
-<!--            <a routerLink="expense/add">新增公司支出</a>-->
-<!--          </li>-->
-<!--        </ul>-->
-<!--      </li>-->
       <li nz-submenu nzTitle="用户管理" nzIcon="user">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -116,7 +85,7 @@
                 地区: <span style="margin-left: 10px">{{ city | city }}</span>
               </label>
             </li>
-            <li nz-submenu nzTitle="用户中心" nzIcon="user" [nzOpen]="isOpen">
+            <li nz-submenu nzTitle="用户中心({{ userName }})" nzIcon="user" [nzOpen]="isOpen">
               <ul>
                   <li nz-menu-item routerLink="user-center/user">用户信息</li>
                   <li nz-menu-item routerLink="user-center/password">修改密码</li>
@@ -129,7 +98,7 @@
     </nz-header>
     <nz-content>
       <div class="inner-content">
-        <app-tab>
+        <app-tab #tabComponent>
           <router-outlet></router-outlet>
         </app-tab>
       </div>

@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { SupplierService } from "../../../../core/services/supplier.service";
 import { NzMessageService } from "ng-zorro-antd";
 import { ResultCode, ResultVO, TableQueryParams, TableResultVO } from "../../../../core/model/result-vm";
-import { Objects } from "../../../../core/services/util.service";
+import { Objects, StringUtils } from "../../../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { RefreshableTab } from "../../tab/tab.component";
 
@@ -33,6 +33,8 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   supplierAddForm: FormGroup;
   supplierEditForm: FormGroup;
 
+  shouldRefreshIndex: boolean = false;
+
   constructor(
     private router: Router,
     private supplier: SupplierService,
@@ -43,7 +45,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    console.log('supplier init');
     this.supplierAddForm = this.fb.group({
       name: [ null, Validators.required ],
       description: [ null ]
@@ -59,10 +60,19 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   search(): void {
+    if (this.shouldRefreshIndex) {
+      this.pageIndex = 1;
+      this.shouldRefreshIndex = false;
+    }
     const queryParams: TableQueryParams = Object.assign(new TableQueryParams(), {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize
     });
+    if (!StringUtils.isEmpty(this.supplierName)) {
+      Object.assign(queryParams, {
+        name: this.supplierName
+      });
+    }
     this.isLoading = true;
     this.supplier.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<SupplierVO>>) => {
@@ -178,7 +188,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
     }
     this.supplierEditVisible = true;
     this.supplierEditForm.reset(this.supplierList[ index ]);
-    console.log('show modal');
   }
 
   confirmEdit(): void {
@@ -208,6 +217,10 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
       }, () => {
         this.refresh();
       });
+  }
+
+  refreshPageIndex(): void {
+    this.shouldRefreshIndex = true;
   }
 
   cancelEdit(): void {

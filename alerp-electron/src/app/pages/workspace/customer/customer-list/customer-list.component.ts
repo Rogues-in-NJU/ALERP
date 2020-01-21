@@ -57,7 +57,6 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    console.log('init customer list');
     this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
       if (Objects.valid(event) && event.url === '/workspace/customer/list') {
         this.refresh();
@@ -127,7 +126,6 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
   }
 
   confirmDelete(id: number): void {
-    console.log(id);
     if (!Objects.valid(id)) {
       this.refresh();
       return;

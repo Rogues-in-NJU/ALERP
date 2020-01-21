@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, of } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
+import { TabService } from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'customer-info',
@@ -79,13 +80,13 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     private route: ActivatedRoute,
     private customer: CustomerService,
     private product: ProductService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
 
   ngOnInit(): void {
-    console.log('init customer info');
     this.customerId = this.route.snapshot.params[ 'id' ];
     this.refresh();
 
@@ -118,7 +119,6 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
       this.searchProducts = data;
       this.isProductsLoading = false;
     });
-    console.log(this.editCache);
   }
 
   startInfoEdit(): void {
@@ -133,7 +133,6 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
       payDate: null
     };
     Object.assign(this.customerDataCache, this.customerData);
-    console.log(this.customerDataCache);
   }
 
   onInputValueChange(value: any, name: string): void {
@@ -298,6 +297,9 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
         this.refresh();
         this.isInfoSaving = false;
         this.isInfoEditing = false;
+        this.tab.refreshEvent.emit({
+          url: '/workspace/customer/list'
+        });
       });
   }
 

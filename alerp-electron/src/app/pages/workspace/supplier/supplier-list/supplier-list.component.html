@@ -38,7 +38,7 @@
     <nz-form-item>
       <nz-form-label>供应商名称</nz-form-label>
       <nz-form-control>
-        <input nz-input type="text" [(ngModel)]="supplierName"/>
+        <input nz-input type="text" [(ngModel)]="supplierName" (ngModelChange)="refreshPageIndex()"/>
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>

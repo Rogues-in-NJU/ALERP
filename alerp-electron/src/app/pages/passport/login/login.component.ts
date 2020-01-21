@@ -8,6 +8,7 @@ import { LoginResultVO } from "../../../core/model/user";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects } from "../../../core/services/util.service";
 import { LocalStorageService } from "../../../core/services/local-storage.service";
+import { TabService } from "../../../core/services/tab.service";
 
 @Component({
   selector: 'passport-login',
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit {
     private message: NzMessageService,
     private fb: FormBuilder,
     private router: Router,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private tab: TabService
   ) {
   }
 
@@ -34,7 +36,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      phoneNumber: [ null, [ Validators.required, Validators.pattern(/^1[3456789]\d{9}$/) ] ],
+      phoneNumber: [ null, [ Validators.required, Validators.pattern(/^\d{11}$/) ] ],
       password: [ null, Validators.required ],
       city: [ 1, Validators.required ]
     });
@@ -52,9 +54,11 @@ export class LoginComponent implements OnInit {
     this.user.login(this.loginForm.getRawValue())
       .subscribe((res: ResultVO<LoginResultVO>) => {
         if (!Objects.valid(res)) {
+          this.message.error('登录失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const loginVO: LoginResultVO = res.data;

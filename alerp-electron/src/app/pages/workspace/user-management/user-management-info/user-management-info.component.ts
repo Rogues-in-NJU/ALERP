@@ -69,12 +69,14 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     }
     this.isSaving = true;
     this.userManagement.save(userInfo)
-      .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
       });
   }
 
@@ -87,12 +89,14 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
     }
     this.isSaving = true;
     this.userManagement.save(userInfo)
-      .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.refresh();
+      }, () => {
+        this.refresh();
       });
   }
 
