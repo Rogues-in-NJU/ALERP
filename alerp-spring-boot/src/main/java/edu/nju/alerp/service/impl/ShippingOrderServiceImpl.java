@@ -53,6 +53,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 生成出货单实体类
+     *
      * @param shippingOrderDTO
      * @return
      */
@@ -74,6 +75,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据出货单id获取出货单信息
+     *
      * @param id
      * @return
      */
@@ -84,6 +86,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 对外提供的收款单实体类接口
+     *
      * @param shippingOrder
      * @return
      */
@@ -98,6 +101,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 储存出货单商品
+     *
      * @param shippingOrderProduct
      * @return
      */
@@ -112,6 +116,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 废弃出货单
+     *
      * @param id
      * @return
      * @throws Exception
@@ -152,6 +157,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据时间获取出货单列表
+     *
      * @param startTime
      * @param endTime
      * @return
@@ -178,6 +184,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 分页查询出货单列表（流水号，名称，状态，时间）
+     *
      * @param pageable
      * @param code
      * @param name
@@ -219,6 +226,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据出货单id获取对应出货单的商品
+     *
      * @param shippingOrderId
      * @return
      */
@@ -229,6 +237,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据出货单id获取对应加工单id
+     *
      * @param id
      * @return
      */
@@ -239,6 +248,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据商品id获取该商品总出货金额
+     *
      * @param productId
      * @return
      */
@@ -249,6 +259,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据商品id获取该商品总出货重量
+     *
      * @param productId
      * @return
      */
@@ -259,6 +270,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 根据商品id和时间获取对应出货商品列表
+     *
      * @param productId
      * @param startTime
      * @param endTime
@@ -290,6 +302,9 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
      */
     @Override
     public Double getCustomerAvgPrice(List<Integer> customerIdList, String startDate, String endDate) {
+        if (CollectionUtils.isEmpty(customerIdList)) {
+            return (double) 0;
+        }
         List<ShippingOrder> shippingOrderList = shippingOrderRepository.findByCustomerList(customerIdList, startDate, endDate);
         if (CollectionUtils.isEmpty(shippingOrderList)) {
             return (double) 0;
@@ -302,6 +317,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
 
     /**
      * 获取总出货重量
+     *
      * @param createdAtStartTime
      * @param createdAtEndTime
      * @return

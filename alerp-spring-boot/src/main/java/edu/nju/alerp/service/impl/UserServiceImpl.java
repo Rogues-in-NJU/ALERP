@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 
@@ -184,7 +185,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
             }
-            sp.add(ConditionFactory.In("id", userList));
+            if (!CollectionUtils.isEmpty(userList)) {
+                sp.add(ConditionFactory.In("id", userList));
+            }
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(name)) {
                 fuzzyMatch.add(ConditionFactory.like("name", name));
