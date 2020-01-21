@@ -6,8 +6,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {NzMessageService} from "ng-zorro-antd";
 import {HttpErrorResponse} from "@angular/common/http";
-import {ResultVO} from "../../../../core/model/result-vm";
+import {ResultVO, ResultCode} from "../../../../core/model/result-vm";
 import {debounceTime} from "rxjs/internal/operators";
+import {Objects} from "../../../../core/services/util.service";
 
 @Component({
   selector: 'user-center-info',
@@ -60,7 +61,12 @@ export class UserCenterInfoComponent {
     });
     this.userManagement.findSelf()
       .subscribe((res: ResultVO<UserManagementInfoVO>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
+          return;
+        }
+        if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.isLoading = false;
