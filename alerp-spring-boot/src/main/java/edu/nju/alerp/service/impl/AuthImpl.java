@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -222,10 +223,10 @@ public class AuthImpl implements AuthService, InitializingBean {
                                             AuthUser authUser = AuthUser.builder()
                                                     .userId(id)
                                                     .authId(auth.getId()).build();
-                                            if (managerRoute.contains(auth.getRoute()))
+//                                            if (managerRoute.contains(auth.getRoute()))
                                                 authUser.setAction(1);
-                                            else
-                                                authUser.setAction(0);
+//                                            else
+//                                                authUser.setAction(0);
                                             return authUser;
                                         })
                                         .collect(Collectors.toList());
@@ -243,7 +244,7 @@ public class AuthImpl implements AuthService, InitializingBean {
         }catch (Exception e) {
             log.error("error", e);
         }
-        List<AuthUser> authUsers = authUserRepository.findAll(authUserSp);
+        List<AuthUser> authUsers = authUserRepository.findAll(authUserSp, Sort.by(Sort.Direction.DESC, "action"));
         List<AuthUserVO> result = authUsers.parallelStream()
                                             .map(authUser -> {
                                                 AuthUserVO authUserVO = new AuthUserVO();
