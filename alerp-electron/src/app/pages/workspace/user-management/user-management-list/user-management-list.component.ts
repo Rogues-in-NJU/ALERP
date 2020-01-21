@@ -68,10 +68,12 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
     }
     this.UserManagement.findAll(queryParams)
       .subscribe((res: ResultVO<TableResultVO<UserManagementInfoVO>>) => {
-        if (!res) {
+        if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const tableResult: TableResultVO<UserManagementInfoVO> = res.data;
@@ -93,7 +95,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
-          return;
+          this.message.error(res.message);
         }
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
