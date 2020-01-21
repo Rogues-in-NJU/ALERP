@@ -10,6 +10,7 @@ import {ArrearOrderService} from "../../../../core/services/arrear-order.service
 import {QueryParams, ResultCode, ResultVO, TableResultVO} from "../../../../core/model/result-vm";
 import {HttpErrorResponse} from "@angular/common/http";
 import {ProcessingOrderVO} from "../../../../core/model/processing-order";
+import {TabService} from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'arrear-order-info',
@@ -63,7 +64,8 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private arrearOrder: ArrearOrderService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService,
   ) {
   }
   ngOnInit(): void {
@@ -141,6 +143,9 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         this.refresh();
       }, () => {
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/arrear-order/list'
+        });
       });
   }
 
@@ -180,6 +185,9 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         this.message.error(error.message);
       }, () => {
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/arrear-order/list'
+        });
       });
   }
 
@@ -246,6 +254,9 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       },()=>{
         this.isChangeDueDate = false;
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/arrear-order/list'
+        });
       });
   }
 
