@@ -7,8 +7,11 @@ import { SimpleReuseStrategy } from "../../core/strategy/simple-reuse.strategy";
 import { TabComponent } from "./tab/tab.component";
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'user-center' },
+  { path: '', pathMatch: 'full', redirectTo: 'welcome' },
   {
+    path: 'welcome',
+    loadChildren: './welcome/welcome.module#WelcomeModule'
+  }, {
     path: 'dashboard',
     loadChildren: './dashboard/dashboard.module#DashboardModule'
   }, {

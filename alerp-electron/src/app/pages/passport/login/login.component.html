@@ -7,7 +7,8 @@
       <nz-form-label>账户</nz-form-label>
       <nz-form-control nzHasFeedback>
         <nz-input-group nzPrefixIcon="user">
-          <input nz-input name="username" type="text" id="phoneNumber" formControlName="phoneNumber" placeholder="输入手机号"/>
+          <input nz-input name="username" type="text" id="phoneNumber"
+                 formControlName="phoneNumber" placeholder="输入手机号" (keypress)="($event.which === 13) ? login() : 0"/>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -15,7 +16,8 @@
       <nz-form-label>密码</nz-form-label>
       <nz-form-control nzHasFeedback>
         <nz-input-group nzPrefixIcon="lock">
-          <input nz-input name="password" type="password" id="password" formControlName="password" placeholder="输入密码"/>
+          <input nz-input name="password" type="password" id="password"
+                 formControlName="password" placeholder="输入密码" (keypress)="($event.which === 13) ? login() : 0"/>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>

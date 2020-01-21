@@ -1,11 +1,12 @@
-import { Component, OnInit, Pipe, PipeTransform } from "@angular/core";
+import { Component, OnInit, Pipe, PipeTransform, ViewChild } from "@angular/core";
 import { LocalStorageService } from "../../core/services/local-storage.service";
 import { UserService } from "../../core/services/user.service";
 import { Router } from "@angular/router";
 import { UserStorageVO } from "../../core/model/user";
 import { ResultVO } from "../../core/model/result-vm";
-import { Objects } from "../../core/services/util.service";
 import { HttpErrorResponse } from "@angular/common/http";
+import { SimpleReuseStrategy } from "../../core/strategy/simple-reuse.strategy";
+import { TabComponent } from "./tab/tab.component";
 
 @Component({
   selector: 'app-workspace',
@@ -13,6 +14,8 @@ import { HttpErrorResponse } from "@angular/common/http";
   styleUrls: [ './workspace.component.less' ]
 })
 export class WorkspaceComponent implements OnInit {
+
+  @ViewChild("tabComponent", null) tabComponent: TabComponent;
 
   isCollapsed: boolean = false;
   isOpen: boolean = false;
@@ -35,6 +38,8 @@ export class WorkspaceComponent implements OnInit {
     this.storage.remove('user');
     this.isOpen = false;
     setTimeout(() => {
+      SimpleReuseStrategy.reset();
+      this.tabComponent.resetMenu();
       this.user.logout()
         .subscribe((res: ResultVO<any>) => {}, (error: HttpErrorResponse) => {
           this.route.navigate([ '/passport/login' ]);

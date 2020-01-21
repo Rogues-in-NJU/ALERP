@@ -10,6 +10,11 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
   public static handlers: { [ key: string ]: DetachedRouteHandle } = {};
   private static waitDelete: string;
 
+  static reset(): void {
+    SimpleReuseStrategy.handlers = {};
+    SimpleReuseStrategy.waitDelete = null;
+  }
+
   /**
    * 从缓存中获取快照，若无则返回null
    * */

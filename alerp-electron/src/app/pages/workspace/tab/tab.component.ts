@@ -5,6 +5,7 @@ import { Title } from "@angular/platform-browser";
 import { filter, map } from "rxjs/operators";
 import { CloseTabEvent, TabService } from "../../../core/services/tab.service";
 import { Objects } from "../../../core/services/util.service";
+import { LocalStorageService } from "../../../core/services/local-storage.service";
 
 /**
  * Tab页面组件，注册到workspace module中，提供路由切换时切换tab页面的功能
@@ -25,7 +26,8 @@ export class TabComponent {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
-    private tab: TabService
+    private tab: TabService,
+    private storage: LocalStorageService
   ) {
 
     // 路由事件
@@ -41,6 +43,10 @@ export class TabComponent {
       filter(route => route.outlet === 'primary')
     ).subscribe(
       (route: ActivatedRoute) => {
+        console.log(this.storage.get('user'));
+        if (!Objects.valid(this.storage.get('user'))) {
+          return;
+        }
         // 路由data的标题
         const menu: MenuConfig = { ...route.snapshot.data };
         menu.url = this.router.url;
@@ -57,6 +63,7 @@ export class TabComponent {
           this.menuList.push(menu);
         }
         this.currentIndex = this.menuList.findIndex(p => p.url === url);
+        console.log(route, this.menuList);
       }
     );
 
@@ -115,6 +122,11 @@ export class TabComponent {
         url: url
       });
     }
+  }
+
+  resetMenu(): void {
+    this.menuList = [];
+    this.currentIndex = -1;
   }
 
   /**

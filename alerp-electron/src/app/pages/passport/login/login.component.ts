@@ -8,6 +8,7 @@ import { LoginResultVO } from "../../../core/model/user";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Objects } from "../../../core/services/util.service";
 import { LocalStorageService } from "../../../core/services/local-storage.service";
+import { TabService } from "../../../core/services/tab.service";
 
 @Component({
   selector: 'passport-login',
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit {
     private message: NzMessageService,
     private fb: FormBuilder,
     private router: Router,
-    private storage: LocalStorageService
+    private storage: LocalStorageService,
+    private tab: TabService
   ) {
   }
 
@@ -34,7 +36,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      phoneNumber: [ null, [ Validators.required, Validators.pattern(/^1[3456789]\d{9}$/) ] ],
+      phoneNumber: [ null, [ Validators.required, Validators.pattern(/^\d{11}$/) ] ],
       password: [ null, Validators.required ],
       city: [ 1, Validators.required ]
     });

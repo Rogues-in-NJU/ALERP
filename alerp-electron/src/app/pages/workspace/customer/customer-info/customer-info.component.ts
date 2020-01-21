@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, of } from "rxjs";
 import { ProductService } from "../../../../core/services/product.service";
 import { debounceTime, map, switchMap } from "rxjs/operators";
 import { RefreshableTab } from "../../tab/tab.component";
+import { TabService } from "../../../../core/services/tab.service";
 
 @Component({
   selector: 'customer-info',
@@ -79,7 +80,8 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     private route: ActivatedRoute,
     private customer: CustomerService,
     private product: ProductService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private tab: TabService
   ) {
 
   }
@@ -295,6 +297,9 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
         this.refresh();
         this.isInfoSaving = false;
         this.isInfoEditing = false;
+        this.tab.refreshEvent.emit({
+          url: '/workspace/customer/list'
+        });
       });
   }
 

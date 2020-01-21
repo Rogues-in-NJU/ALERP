@@ -1,0 +1,26 @@
+<nz-page-header>
+  <nz-page-header-title style="font-size: 30px">欢迎使用ALERP企业资源管理系统</nz-page-header-title>
+</nz-page-header>
+<br/>
+<div class="content">
+  <h2>快速开始</h2>
+  <br>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="6">
+      <div>
+        <h3>客户管理</h3>
+        <a routerLink="/workspace/customer/list">查看客户列表</a>
+      </div>
+      <div>
+        <h3>采购单管理</h3>
+        <a routerLink="/workspace/purchase-order/list">查看采购单列表</a>
+      </div>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <div>
+        <h3>供应商管理</h3>
+        <a routerLink="/workspace/supplier/list">查看供应商列表</a>
+      </div>
+    </div>
+  </div>
+</div>
