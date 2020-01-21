@@ -1,15 +1,13 @@
 <nz-page-header>
   <nz-page-header-title>商品列表</nz-page-header-title>
-</nz-page-header>
-<div class="content">
-  <div class="operate">
+  <nz-page-header-extra>
     <button nz-button nzType="primary" (click)="addRow()">
       <i nz-icon nzType="plus" nzTheme="outline"></i>
       新增商品
     </button>
-  </div>
-  <br>
-
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content">
   <div class="table-wrapper">
     <nz-table #productsAddTable
               nzShowSizeChanger
@@ -97,6 +95,7 @@
             <a nz-popconfirm
                style="margin-left: 5px;"
                class="delete"
+               [class.disabled]="isSaving"
                nzTitle="确认删除?"
                (nzOnConfirm)="confirmDelete(data.id)">
               删除

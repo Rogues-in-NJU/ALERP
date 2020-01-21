@@ -195,6 +195,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       this.message.warning('请选择商品类型!');
       return;
     }
+    this.isSaving = true;
     this.product.updateOrAddProduct(this.editCache.data)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
@@ -207,7 +208,9 @@ export class ProductListComponent implements RefreshableTab, OnInit{
         }
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
+        this.isSaving = false;
       }, () => {
+        this.isSaving = false;
         this.refresh();
       });
     Object.assign(this.editCache, this.defaultEditCache);

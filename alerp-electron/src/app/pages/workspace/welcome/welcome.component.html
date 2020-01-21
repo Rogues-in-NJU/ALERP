@@ -3,7 +3,7 @@
 </nz-page-header>
 <br/>
 <div class="content">
-  <h2>快速开始</h2>
+  <h1>快速开始</h1>
   <br>
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="6">
@@ -11,15 +11,53 @@
         <h3>客户管理</h3>
         <a routerLink="/workspace/customer/list">查看客户列表</a>
       </div>
-      <div>
-        <h3>采购单管理</h3>
-        <a routerLink="/workspace/purchase-order/list">查看采购单列表</a>
+      <div class="quick-start-item">
+        <h3>供应商管理</h3>
+        <a routerLink="/workspace/supplier/list">查看供应商列表</a>
+      </div>
+      <div class="quick-start-item">
+        <h3>商品管理</h3>
+        <a routerLink="/workspace/product/list">查看商品列表</a>
       </div>
     </div>
     <div nz-col [nzSpan]="6">
-      <div>
-        <h3>供应商管理</h3>
-        <a routerLink="/workspace/supplier/list">查看供应商列表</a>
+      <div class="quick-start-item">
+        <h3>采购单管理</h3>
+        <a routerLink="/workspace/purchase-order/list">查看采购单列表</a>
+        <a routerLink="/workspace/purchase-order/add">新增采购单</a>
+      </div>
+      <div class="quick-start-item">
+        <h3>加工单管理</h3>
+        <a routerLink="/workspace/processing-order/list">查看加工单列表</a>
+        <a routerLink="/workspace/processing-order/add">新增加工单</a>
+      </div>
+      <div class="quick-start-item">
+        <h3>出货单管理</h3>
+        <a routerLink="/workspace/purchase-order/list">查看采购单列表</a>
+        <a routerLink="/workspace/purchase-order/add">新增采购单</a>
+      </div>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <div class="quick-start-item">
+        <h3>欠款明细</h3>
+        <a routerLink="/workspace/arrear-order/list">查看欠款明细列表</a>
+        <a routerLink="/workspace/arrear-order/statistics">查看欠款统计</a>
+      </div>
+      <div class="quick-start-item">
+        <h3>公司支出</h3>
+        <a routerLink="/workspace/expense/list">查看公司支出列表</a>
+        <a routerLink="/workspace/expense/add">新增公司支出</a>
+      </div>
+      <div class="quick-start-item">
+        <h3>汇总信息</h3>
+        <a routerLink="/workspace/dashboard">查看汇总信息</a>
+      </div>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <div class="quick-start-item">
+        <h3>用户管理</h3>
+        <a routerLink="/workspace/user-management/list">查看用户列表</a>
+        <a routerLink="/workspace/user-management/add">新增用户</a>
       </div>
     </div>
   </div>
