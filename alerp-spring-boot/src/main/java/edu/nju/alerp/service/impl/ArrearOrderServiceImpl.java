@@ -85,7 +85,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
         }
         arrearOrder.setDueDate(dto.getDueDate());
-        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
+        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToSecond());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
         return result.getId();
@@ -103,7 +103,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
         }
         arrearOrder.setInvoiceNumber(dto.getInvoiceNumber());
-        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
+        arrearOrder.setUpdatedAt(DateUtils.getTodayAccurateToSecond());
         arrearOrder.setUpdatedBy(CommonUtils.getUserId());
         ArrearOrder result = arrearOrderRepository.save(arrearOrder);
         return result.getId();

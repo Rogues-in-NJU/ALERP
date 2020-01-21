@@ -132,9 +132,9 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 .customerId(processingOrderDTO.getCustomerId())
                 .salesman(processingOrderDTO.getSalesman())
                 .city(city)
-                .createAt(DateUtils.getTodayAccurateToMinute())
+                .createAt(DateUtils.getTodayAccurateToSecond())
                 .createBy(CommonUtils.getUserId())
-                .updateAt(DateUtils.getTodayAccurateToMinute())
+                .updateAt(DateUtils.getTodayAccurateToSecond())
                 .updateBy(CommonUtils.getUserId())
                 .build();
 
@@ -229,7 +229,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
             processOrderProduct.setExpectedWeight(updateProcessProductDTO.getExpectedWeight());
         }
 
-        processingOrder.setUpdateAt(DateUtils.getTodayAccurateToMinute());
+        processingOrder.setUpdateAt(DateUtils.getTodayAccurateToSecond());
         processingOrder.setUpdateBy(CommonUtils.getUserId());
         processOrderProduct = processOrderProductRepository.saveAndFlush(processOrderProduct);
         processingOrderRepository.saveAndFlush(processingOrder);
@@ -270,7 +270,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
         if (!ProcessingOrderStatus.of(processingOrder.getStatus()).abandonable())
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该状态下单据不支持该操作");
         processingOrder.setStatus(ProcessingOrderStatus.ABANDONED.getCode());
-        processingOrder.setDeleteAt(DateUtils.getTodayAccurateToMinute());
+        processingOrder.setDeleteAt(DateUtils.getTodayAccurateToSecond());
         processingOrder.setDeleteBy(CommonUtils.getUserId());
         processingOrderRepository.saveAndFlush(processingOrder);
         return id;

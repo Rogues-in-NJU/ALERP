@@ -104,11 +104,11 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
         Supplier supplier = Supplier.builder().name(supplierDTO.getName())
                                               .city(city)
-                                              .createAt(DateUtils.getTodayAccurateToMinute())
+                                              .createAt(DateUtils.getTodayAccurateToSecond())
                                               .createBy(CommonUtils.getUserId())
                                               .status(SupplierStatus.NORMAL.getCode())
                                               .description(supplierDTO.getDescription())
-                                              .updateAt(DateUtils.getTodayAccurateToMinute())
+                                              .updateAt(DateUtils.getTodayAccurateToSecond())
                                               .updateBy(CommonUtils.getUserId())
                                               .build();
         if (supplierDTO.getId() != null) {
@@ -118,7 +118,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
             }
             supplier.setDescription(supplierDTO.getDescription());
             supplier.setName(supplierDTO.getName());
-            supplier.setUpdateAt(DateUtils.getTodayAccurateToMinute());
+            supplier.setUpdateAt(DateUtils.getTodayAccurateToSecond());
         }
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());
@@ -129,7 +129,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
     public int deleteSupplier(int id) {
         Supplier supplier = supplierRepository.getOne(id);
         supplier.setStatus(SupplierStatus.DELETED.getCode());
-        supplier.setDeleteAt(DateUtils.getTodayAccurateToMinute());
+        supplier.setDeleteAt(DateUtils.getTodayAccurateToSecond());
         supplier.setDeleteBy(CommonUtils.getUserId());
         return supplierRepository.saveAndFlush(supplier).getId();
     }

@@ -36,7 +36,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public int addExpense(ExpenseDTO expenseDTO) {
         Expense expense = Expense.builder().
-            createdAt(DateUtils.getTodayAccurateToMinute()).
+            createdAt(DateUtils.getTodayAccurateToSecond()).
             createdBy(CommonUtils.getUserId()).
             code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity()))).
             city(CommonUtils.getCity()).
@@ -52,7 +52,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         if (expense == null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "未查到该公司支出");
         }
-        expense.setDeletedAt(DateUtils.getTodayAccurateToMinute());
+        expense.setDeletedAt(DateUtils.getTodayAccurateToSecond());
         expense.setDeletedBy(CommonUtils.getUserId());
         Expense result = expenseRepository.save(expense);
         return result.getId();

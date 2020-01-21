@@ -71,7 +71,7 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         arrearOrderService.saveArrearOrder(arrearOrder);
         // 存储收款记录，DB变更
         ReceiptRecord record = ReceiptRecord.builder().
-            createdAt(DateUtils.getTodayAccurateToMinute()).
+            createdAt(DateUtils.getTodayAccurateToSecond()).
             createdBy(CommonUtils.getUserId()).
             status(ReceiptRecordStatus.CONFIRMED.getCode()).
             build();
@@ -122,7 +122,7 @@ public class ReceiptRecordServiceImpl implements ReceiptRecordService {
         arrearOrderService.saveArrearOrder(arrearOrder);
 
         // 收款记录软删除
-        record.setDeletedAt(DateUtils.getTodayAccurateToMinute());
+        record.setDeletedAt(DateUtils.getTodayAccurateToSecond());
         record.setDeletedBy(CommonUtils.getUserId());
         record.setStatus(ReceiptRecordStatus.ABANDONED.getCode());
         ReceiptRecord result = receiptRecordRepository.save(record);
