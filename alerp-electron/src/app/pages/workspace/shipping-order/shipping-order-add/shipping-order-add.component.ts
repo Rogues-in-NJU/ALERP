@@ -438,7 +438,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
               let shippingProduct: ShippingOrderProductInfoVO = {};
               shippingProduct.processingOrderId = processingOrder.id;
               shippingProduct.processingOrderCode = processingOrder.code;
-              shippingProduct.productId = product.id;
+              shippingProduct.productId = product.productId;
               shippingProduct.productName = product.productName;
               shippingProduct.type = product.type;
               shippingProduct.density = product.density;
