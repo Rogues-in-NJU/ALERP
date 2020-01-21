@@ -82,9 +82,11 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       .subscribe((res: ResultVO<ArrearOrderInfoVO>) => {
         console.log(res)
         if (!Objects.valid(res)) {
+          this.message.error('请求失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.isLoading = false;
@@ -174,7 +176,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
       .subscribe((res: ResultVO<any>) => {
         console.log(res);
         if (!Objects.valid(res)) {
-          this.message.error('修改失败!');
+          this.message.error('请求失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
@@ -242,12 +244,14 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         console.log(res);
 
         if (!Objects.valid(res)) {
+          this.message.error('请求失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
           this.message.error(res.message);
           return;
         }
+
         this.message.success("修改成功");
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
@@ -280,6 +284,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         console.log(res);
 
         if (!Objects.valid(res)) {
+          this.message.error('请求失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
