@@ -43,7 +43,6 @@ export class SimpleReuseStrategy implements RouteReuseStrategy {
    * 当路由离开时会触发。按path作为key存储路由快照&组件当前实例对象
    * */
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void {
-    console.log('store');
     if (SimpleReuseStrategy.waitDelete && SimpleReuseStrategy.waitDelete === this.getRouteUrl(route)) {
       // 如果待删除是当前路由则不存储快照
       SimpleReuseStrategy.waitDelete = null;

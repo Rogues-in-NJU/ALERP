@@ -43,7 +43,6 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    console.log('supplier init');
     this.supplierAddForm = this.fb.group({
       name: [ null, Validators.required ],
       description: [ null ]

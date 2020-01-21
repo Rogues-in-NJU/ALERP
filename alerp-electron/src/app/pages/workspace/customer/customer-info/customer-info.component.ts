@@ -85,7 +85,6 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
-    console.log('init customer info');
     this.customerId = this.route.snapshot.params[ 'id' ];
     this.refresh();
 
@@ -118,7 +117,6 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
       this.searchProducts = data;
       this.isProductsLoading = false;
     });
-    console.log(this.editCache);
   }
 
   startInfoEdit(): void {
@@ -133,7 +131,6 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
       payDate: null
     };
     Object.assign(this.customerDataCache, this.customerData);
-    console.log(this.customerDataCache);
   }
 
   onInputValueChange(value: any, name: string): void {

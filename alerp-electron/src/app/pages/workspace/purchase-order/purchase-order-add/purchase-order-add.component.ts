@@ -120,9 +120,6 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       this.isProductLoading = false;
     });
     const getSuppliers: any = (name: string) => {
-      if (StringUtils.isEmpty(name)) {
-        return of([]);
-      }
       const t: Observable<ResultVO<TableResultVO<SupplierVO>>>
         = <Observable<ResultVO<TableResultVO<SupplierVO>>>>this.supplier
         .findAll(Object.assign(new TableQueryParams(), {
@@ -167,7 +164,6 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     this.isSaving = true;
     this.purchaseOrder.save(purchaseOrderAdd)
       .subscribe((res: ResultVO<any>) => {
-        console.log(res);
         if (!Objects.valid(res)) {
           this.message.error('新增失败!');
           return;
@@ -202,7 +198,6 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       cash: null
     };
     item['_id'] = this.productCountIndex ++;
-    console.log(item);
     this.products = [
       item,
       ...this.products

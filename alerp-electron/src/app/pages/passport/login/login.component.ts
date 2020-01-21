@@ -52,9 +52,11 @@ export class LoginComponent implements OnInit {
     this.user.login(this.loginForm.getRawValue())
       .subscribe((res: ResultVO<LoginResultVO>) => {
         if (!Objects.valid(res)) {
+          this.message.error('登录失败!');
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         const loginVO: LoginResultVO = res.data;
