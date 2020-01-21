@@ -89,5 +89,13 @@
   },
   "engines": {
     "node": ">=10.9.0"
+  },
+  "build": {
+    "mac": {
+      "icon": "src/favicon.icns"
+    },
+    "win": {
+      "icon": "src/favicon.ico"
+    }
   }
 }

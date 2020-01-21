@@ -14,8 +14,20 @@ public class DateUtils {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static SimpleDateFormat sdfInDay = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static String getToday() {
+    /**
+     * 获取当前时间，精确到分钟
+     * @return
+     */
+    public static String getTodayAccurateToMinute() {
         return sdf.format(new Date());
+    }
+
+    /**
+     * 获取当前时间，精确到天
+     * @return
+     */
+    public static String getTodayAccurateToDay() {
+        return sdfInDay.format(new Date());
     }
 
     /**

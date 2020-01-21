@@ -14,7 +14,6 @@ import edu.nju.alerp.service.SupplierService;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
-import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.SupplierListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -26,9 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,11 +104,11 @@ public class SupplierImpl implements SupplierService, InitializingBean {
 
         Supplier supplier = Supplier.builder().name(supplierDTO.getName())
                                               .city(city)
-                                              .createAt(DateUtils.getToday())
+                                              .createAt(DateUtils.getTodayAccurateToMinute())
                                               .createBy(CommonUtils.getUserId())
                                               .status(SupplierStatus.NORMAL.getCode())
                                               .description(supplierDTO.getDescription())
-                                              .updateAt(DateUtils.getToday())
+                                              .updateAt(DateUtils.getTodayAccurateToMinute())
                                               .updateBy(CommonUtils.getUserId())
                                               .build();
         if (supplierDTO.getId() != null) {
@@ -121,7 +118,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
             }
             supplier.setDescription(supplierDTO.getDescription());
             supplier.setName(supplierDTO.getName());
-            supplier.setUpdateAt(DateUtils.getToday());
+            supplier.setUpdateAt(DateUtils.getTodayAccurateToMinute());
         }
         int res = supplierRepository.saveAndFlush(supplier).getId();
         supplierNameCache.put(res, supplier.getName());
@@ -132,7 +129,7 @@ public class SupplierImpl implements SupplierService, InitializingBean {
     public int deleteSupplier(int id) {
         Supplier supplier = supplierRepository.getOne(id);
         supplier.setStatus(SupplierStatus.DELETED.getCode());
-        supplier.setDeleteAt(DateUtils.getToday());
+        supplier.setDeleteAt(DateUtils.getTodayAccurateToMinute());
         supplier.setDeleteBy(CommonUtils.getUserId());
         return supplierRepository.saveAndFlush(supplier).getId();
     }

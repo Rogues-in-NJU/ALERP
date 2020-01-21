@@ -16,11 +16,9 @@ import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
-import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.PasswordUtil;
 import edu.nju.alerp.vo.UserVO;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.BeanUtils;
@@ -32,10 +30,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,9 +77,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
             User user = User.builder()
                     .name(userDTO.getName())
                     .password(PasswordUtil.getMD5(initPassword))
-                    .updatedAt(DateUtils.getToday())
+                    .updatedAt(DateUtils.getTodayAccurateToMinute())
                     .phoneNumber(userDTO.getPhoneNumber())
-                    .createdAt(DateUtils.getToday())
+                    .createdAt(DateUtils.getTodayAccurateToMinute())
                     .status(UserStatus.ONJOB.getCode())
                     .build();
             res = userRepository.saveAndFlush(user);
@@ -100,7 +96,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             }
             user.setName(userDTO.getName());
             user.setPhoneNumber(userDTO.getPhoneNumber());
-            user.setUpdatedAt(DateUtils.getToday());
+            user.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
             res = userRepository.save(user);
             authService.updateUserAuth(userDTO.getAuthList());
         }
@@ -166,7 +162,7 @@ public class UserServiceImpl implements UserService, InitializingBean {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除用户失败，用户已被删除！");
         }
         user.setStatus(UserStatus.OFFJOB.getCode());
-        user.setDeletedAt(DateUtils.getToday());
+        user.setDeletedAt(DateUtils.getTodayAccurateToMinute());
         int ans = userRepository.save(user).getId();
         userCache.put(id, user);
         return ans;

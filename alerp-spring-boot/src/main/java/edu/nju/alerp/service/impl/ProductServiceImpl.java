@@ -3,7 +3,6 @@ package edu.nju.alerp.service.impl;
 import edu.nju.alerp.common.NJUException;
 import edu.nju.alerp.common.cache.Cache;
 import edu.nju.alerp.dto.ProductDTO;
-import edu.nju.alerp.enums.CityEnum;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.enums.ProductType;
 import edu.nju.alerp.repo.ProductRepository;
@@ -15,7 +14,6 @@ import edu.nju.alerp.entity.Product;
 import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
-import edu.nju.alerp.util.TimeUtil;
 import edu.nju.alerp.vo.ProductDetailVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,9 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -146,9 +142,9 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "规格格式错误，请重新填写.");
 
         Product product = Product.builder()
-                .createAt(DateUtils.getToday())
+                .createAt(DateUtils.getTodayAccurateToMinute())
                 .createBy(CommonUtils.getUserId())
-                .updateAt(DateUtils.getToday())
+                .updateAt(DateUtils.getTodayAccurateToMinute())
                 .updateBy(CommonUtils.getUserId())
                 .density(productDTO.getDensity())
                 .name(productDTO.getName())
@@ -178,7 +174,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
         if (product == null)
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "商品不存在");
 
-        product.setDeleteAt(DateUtils.getToday());
+        product.setDeleteAt(DateUtils.getTodayAccurateToMinute());
         product.setDeleteBy(CommonUtils.getUserId());
         return productRepository.saveAndFlush(product).getId();
     }

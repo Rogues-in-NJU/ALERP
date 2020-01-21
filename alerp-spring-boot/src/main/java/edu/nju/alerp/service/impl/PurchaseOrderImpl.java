@@ -8,7 +8,6 @@ import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.AddPaymentRecordDTO;
 import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.entity.PaymentRecord;
-import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.PurchaseOrder;
 import edu.nju.alerp.entity.PurchaseOrderProduct;
 import edu.nju.alerp.enums.*;
@@ -138,9 +137,9 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                             .doneAt(purchaseOrderDTO.getDoneAt())
                                                             .code(documentsIdFactory.generateNextCode(DocumentsType.PURCHASE_ORDER, CityEnum.of(CommonUtils.getCity())))
                                                             .status(PurchaseOrderStatus.UNPAID.getCode())
-                                                            .createAt(DateUtils.getToday())
+                                                            .createAt(DateUtils.getTodayAccurateToMinute())
                                                             .createBy(CommonUtils.getUserId())
-                                                            .updateAt(DateUtils.getToday())
+                                                            .updateAt(DateUtils.getTodayAccurateToMinute())
                                                             .updateBy(CommonUtils.getUserId())
                                                             .build();
         PurchaseOrder current = purchaseOrderRepository.saveAndFlush(purchaseOrder);
@@ -215,7 +214,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
                                                         .description(addPaymentRecordDTO.getDescription())
                                                         .salesman(addPaymentRecordDTO.getSalesman())
                                                         .doneAt(addPaymentRecordDTO.getDoneAt())
-                                                        .createAt(DateUtils.getToday())
+                                                        .createAt(DateUtils.getTodayAccurateToMinute())
                                                         .createBy(CommonUtils.getUserId())
                                                         .build();
         int result = paymentRecordRepository.saveAndFlush(newPayment).getId();
@@ -237,7 +236,7 @@ public class PurchaseOrderImpl implements PurchaseOrderService {
             throw new NJUException(ExceptionEnum.SERVER_ERROR, "该单据已被废弃");
 
         paymentRecord.setStatus(PaymentRecordStatus.ABANDONED.getCode());
-        paymentRecord.setDeleteAt(DateUtils.getToday());
+        paymentRecord.setDeleteAt(DateUtils.getTodayAccurateToMinute());
         paymentRecord.setDeleteBy(CommonUtils.getUserId());
         int result = paymentRecordRepository.saveAndFlush(paymentRecord).getId();
 

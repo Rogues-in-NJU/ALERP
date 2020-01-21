@@ -27,11 +27,10 @@ public interface ReceiptRecordService {
     int deleteReceiptRecord(int id);
 
     /**
-     * 根据收款单id和收款记录状态获取收款记录列表,结果按照创建时间升序排序
+     * 根据收款单id获取收款记录列表,结果按照创建时间升序排序
      *
      * @param arrearId
-     * @param status
      * @return
      */
-    List<ReceiptRecord> findRecordListByArrearId(int arrearId, int status);
+    List<ReceiptRecord> findRecordListByArrearId(int arrearId);
 }

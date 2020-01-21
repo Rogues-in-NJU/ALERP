@@ -6,7 +6,6 @@ import edu.nju.alerp.common.conditionSqlQuery.ConditionFactory;
 import edu.nju.alerp.common.conditionSqlQuery.QueryContainer;
 import edu.nju.alerp.dto.CustomerDTO;
 import edu.nju.alerp.dto.SpecialPricesDTO;
-import edu.nju.alerp.enums.CustomerType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.CustomerService;
 import edu.nju.alerp.repo.CustomerRepository;
@@ -22,9 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import sun.misc.Unsafe;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,22 +50,22 @@ public class CustomerServiceImpl implements CustomerService {
     public int saveCustomer(CustomerDTO customerDTO) throws Exception {
         if (customerDTO.getId() == null) {
             Customer customer = Customer.builder()
-                    .createdAt(DateUtils.getToday())
+                    .createdAt(DateUtils.getTodayAccurateToMinute())
                     .createdBy(CommonUtils.getUserId())
-//                    .updatedAt(DateUtils.getToday())  //下方BeanUtils覆盖问题
+//                    .updatedAt(DateUtils.getTodayAccurateToMinute())  //下方BeanUtils覆盖问题
                     .updatedBy(CommonUtils.getUserId())
                     .city(CommonUtils.getCity())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
-            customer.setUpdatedAt(DateUtils.getToday());
+            customer.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
                     SpecialPrice specialPrice = SpecialPrice.builder()
                             .customerId(customerDTO.getId())
-                            .createdAt(DateUtils.getToday())
+                            .createdAt(DateUtils.getTodayAccurateToMinute())
                             .createdBy(CommonUtils.getUserId())
-                            .updatedAt(DateUtils.getToday())
+                            .updatedAt(DateUtils.getTodayAccurateToMinute())
                             .updatedBy(CommonUtils.getUserId())
                             .productId(specialPricesDTO.getProductId())
                             .price(specialPricesDTO.getPrice())
@@ -84,7 +81,7 @@ public class CustomerServiceImpl implements CustomerService {
                 throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "客户信息变更，请重新更新！");
             }
             nowCustomer.setUpdatedBy(CommonUtils.getUserId());
-            nowCustomer.setUpdatedAt(DateUtils.getToday());
+            nowCustomer.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
             BeanUtils.copyProperties(customerDTO, nowCustomer);
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             //取出customerid现有的特价商品
@@ -94,9 +91,9 @@ public class CustomerServiceImpl implements CustomerService {
                     SpecialPrice specialPrice;
                     if (specialPricesDTO.getId() == null) {
                         specialPrice = SpecialPrice.builder()
-                                .createdAt(DateUtils.getToday())
+                                .createdAt(DateUtils.getTodayAccurateToMinute())
                                 .createdBy(CommonUtils.getUserId())
-                                .updatedAt(DateUtils.getToday())
+                                .updatedAt(DateUtils.getTodayAccurateToMinute())
                                 .updatedBy(CommonUtils.getUserId())
                                 .productId(specialPricesDTO.getProductId())
                                 .price(specialPricesDTO.getPrice())
@@ -106,7 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
                         specialPricesRepository.saveAndFlush(specialPrice);
                     } else {
                         specialPrice = specialPricesRepository.getOne(specialPricesDTO.getId());
-                        specialPrice.setUpdatedAt(DateUtils.getToday());
+                        specialPrice.setUpdatedAt(DateUtils.getTodayAccurateToMinute());
                         specialPrice.setUpdatedBy(CommonUtils.getUserId());
                         specialPricesRepository.save(specialPrice);
                     }
@@ -116,7 +113,7 @@ public class CustomerServiceImpl implements CustomerService {
                     origin.forEach(o -> {
                         if (!nowIdList.contains(o)) {
                             SpecialPrice s = specialPricesRepository.getOne(o);
-                            s.setDeletedAt(DateUtils.getToday());
+                            s.setDeletedAt(DateUtils.getTodayAccurateToMinute());
                             specialPricesRepository.save(s);
                         }
                     });
@@ -161,7 +158,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getDeletedAt() != null) {
             throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "删除客户失败，该客户已被删除！");
         }
-        customer.setDeletedAt(DateUtils.getToday());
+        customer.setDeletedAt(DateUtils.getTodayAccurateToMinute());
         customer.setDeletedBy(CommonUtils.getUserId());
         //考虑到客户为懒删除，建议暂存特惠价格数据
         return customerRepository.save(customer).getId();
