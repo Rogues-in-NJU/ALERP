@@ -205,17 +205,21 @@ public class ShippingOrderController {
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
         List<ProductVO> productVOList = new ArrayList<>();
-        shippingOrderProductList.forEach(s -> {
-            Product product = productService.findProductById(s.getProductId());
-            int processingId = s.getProcessingOrderId();
-            ProductVO productVO = ProductVO.builder()
-                    .processingOrderCode(processingId == 0 ? "" : processOrderService.getOne(processingId).getCode())
-                    .productName(product.getName())
-                    .type(product.getType())
-                    .build();
-            BeanUtils.copyProperties(s, productVO);
-            productVOList.add(productVO);
-        });
+        try {
+            shippingOrderProductList.forEach(s -> {
+                Product product = productService.findProductById(s.getProductId());
+                int processingId = s.getProcessingOrderId();
+                ProductVO productVO = ProductVO.builder()
+                        .processingOrderCode(processingId == 0 ? "" : processOrderService.getOne(processingId).getCode())
+                        .productName(product.getName())
+                        .type(product.getType())
+                        .build();
+                BeanUtils.copyProperties(s, productVO);
+                productVOList.add(productVO);
+            });
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
         List<ProcessingOrder> processingOrderList = processOrderService.findProcessingsByShipppingId(id);
         List<ProcessOrderIdCodeVO> processOrderIdCodeVOList = new ArrayList<>();
         processingOrderList.forEach(p -> {
