@@ -98,7 +98,7 @@
         <button nz-button
                 (click)="addReceiptRecordRow()"
                 nzType="primary"
-                [disabled]="editCache._id !== null">
+                [disabled]="editCache._id !== null || this.arrearOrderData.status === 3 || this.arrearOrderData.status === 4">
           <i nz-icon nzType="plus" nzTheme="outline"></i>
           新增收款记录
         </button>
