@@ -55,11 +55,12 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customer = Customer.builder()
                     .createdAt(DateUtils.getToday())
                     .createdBy(CommonUtils.getUserId())
-                    .updatedAt(DateUtils.getToday())
+//                    .updatedAt(DateUtils.getToday())  //下方BeanUtils覆盖问题
                     .updatedBy(CommonUtils.getUserId())
                     .city(CommonUtils.getCity())
                     .build();
             BeanUtils.copyProperties(customerDTO, customer);
+            customer.setUpdatedAt(DateUtils.getToday());
             List<SpecialPricesDTO> specialPricesList = customerDTO.getSpecialPrices();
             if (!CollectionUtils.isEmpty(specialPricesList)) {
                 for (SpecialPricesDTO specialPricesDTO : specialPricesList) {
