@@ -91,7 +91,7 @@
       <th nzWidth="100px">商品编号</th>
       <th nzWidth="200px">商品</th>
       <th nzWidth="100px">数量(件)</th>
-      <th nzWidth="100px">重量(千克)</th>
+      <th nzWidth="100px">重量(kg)</th>
       <th nzWidth="100px">单价</th>
       <th nzWidth="120px">单位</th>
       <th nzWidth="120px">总价</th>
@@ -168,7 +168,7 @@
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.priceType">
             <nz-select [(ngModel)]="editCache.data.priceType" style="width: 90px">
-              <nz-option nzLabel="元/千克" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="元/kg" [nzValue]="1"></nz-option>
               <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
             </nz-select>
           </nz-form-control>
