@@ -39,14 +39,14 @@ public class AuthFilter implements Filter {
         }catch (Exception e) {
             if (e.getCause() instanceof NJUException) {
                 NJUException njuException = (NJUException) e.getCause();
-//                if (njuException.getExceptionEnum() == ExceptionEnum.AUTH_FAIL) {
+                if (njuException.getExceptionEnum() == ExceptionEnum.AUTH_FAIL) {
                     responseWrapper.setStatus(200);
                     responseWrapper.setHeader("Content-Type", "application/json;charset=UTF-8");
 
                     String result = JSON.toJSONString(ResponseResult.fail(ExceptionEnum.AUTH_FAIL, njuException.getMessage()));
                     responseWrapper.getOutputStream().write(result.getBytes());
                     responseWrapper.getOutputStream().flush();
-//                }
+                }
             }
         }finally {
             AuthRegistry.clearAuthContext();
