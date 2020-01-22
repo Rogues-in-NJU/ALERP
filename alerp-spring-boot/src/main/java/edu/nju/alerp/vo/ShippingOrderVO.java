@@ -26,6 +26,8 @@ public class ShippingOrderVO {
     private String city;
     private String createdAt;
     private Integer createdBy;
+    private String deletedAt;
+    private String deletedByName;
     private String createdByName;
     private double totalWeight;
     private List<ProcessOrderIdCodeVO> processingOrderIdsCodes;
