@@ -109,7 +109,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       if (res.url === this.router.url) {
         this.refresh();
       }
-    })
+    });
   }
 
   addProductRow(): void {
@@ -127,7 +127,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       productSpecification: null,
       specification: null,
       quantity: null,
-      expectedWeight: null
+      expectedWeight: null,
+      processingOrderUpdatedAt: this.processingOrderData.updatedAt
     };
     item['_id'] = this.processingOrderInfoProductCountIndex++;
     this.processingOrderData.products = [
@@ -342,7 +343,6 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   showPrint: boolean = false;
 
   printComplete() {
-    console.log('打印中！');
     this.processingOrder.finishPrint(this.processingOrderData.id)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
@@ -357,8 +357,14 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error(error.message);
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/processing-order/list'
+        });
       }, () => {
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/processing-order/list'
+        });
       });
     this.showPrint = false;
   }

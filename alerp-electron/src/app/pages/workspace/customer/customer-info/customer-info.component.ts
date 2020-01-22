@@ -48,6 +48,11 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     currentProduct: null,
     isAdd: false
   };
+  editCacheValidate = {
+    productId: null,
+    price: null,
+    priceType: null
+  };
   customerSpecialPriceCountIndex: number = 0;
   searchProducts: ProductVO[];
   searchChange$: BehaviorSubject<string> = new BehaviorSubject('');
@@ -246,6 +251,12 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     if (_id !== this.editCache._id) {
       return;
     }
+    if (!this.checkProductId()) {
+      return;
+    }
+    if (!this.checkPrice()) {
+      return;
+    }
     const index = this.customerData.specialPrices.findIndex(item => item[ '_id' ] === _id);
     Object.assign(this.customerData.specialPrices[ index ], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
@@ -254,6 +265,24 @@ export class CustomerInfoComponent implements RefreshableTab, OnInit {
     }
     delete this.customerData.specialPrices[index]['_id'];
     this.saveCustomer(this.customerData);
+  }
+
+  checkProductId(): boolean {
+    if (!Objects.valid(this.editCache.data.productId)) {
+      this.editCacheValidate.productId = 'error';
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkPrice(): boolean {
+    if (Objects.isNaN(this.editCache.data.price)) {
+      this.editCacheValidate.price = 'error';
+      return false;
+    } else {
+      return true;
+    }
   }
 
   refresh(): void {
