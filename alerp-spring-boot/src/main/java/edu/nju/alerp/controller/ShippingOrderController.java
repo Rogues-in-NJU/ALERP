@@ -240,7 +240,10 @@ public class ShippingOrderController {
                 .products(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
+        if(shippingOrder.getDeletedBy() != 0){
+            shippingOrderVO.setDeletedByName(userService.getUser(shippingOrder.getDeletedBy()).getName());
 
+        }
         return ResponseResult.ok(shippingOrderVO);
     }
 
