@@ -139,20 +139,22 @@
           {{ data.productName }}
         </ng-container>
         <ng-template #productNameEditTpl>
-          <nz-select [(ngModel)]="editCache.product"
-                     nzShowSearch
-                     nzServerSearch
-                     (nzOnSearch)="onProductSearch($event)"
-                     (ngModelChange)="onChangeSelectedProduct($event)"
-                     style="width: 150px">
-            <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
-            <ng-container *ngFor="let p of searchProducts">
-              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
-            </ng-container>
-            <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
-              <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
-            </nz-option>
-          </nz-select>
+          <nz-form-control [nzValidateStatus]="editCacheValidate.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeSelectedProduct($event)"
+                       style="width: 150px">
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts">
+                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>
@@ -160,7 +162,9 @@
           &yen; {{ data.price | number: '1.2-2' }}
         </ng-container>
         <ng-template #priceEditTpl>
-          <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" [nzFormatter]="cashFormatter"></nz-input-number>
+          <nz-form-control [nzValidateStatus]="editCacheValidate.price">
+            <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" [nzFormatter]="cashFormatter"></nz-input-number>
+          </nz-form-control>
         </ng-template>
       </td>
       <td>
