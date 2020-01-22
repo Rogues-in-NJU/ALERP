@@ -9,8 +9,10 @@ import edu.nju.alerp.service.OperationLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +34,14 @@ public class OperationLogServiceImpl implements OperationLogService {
     }
 
     @Override
-    public Page<OperationLog> getOpearationLogList(Pageable pageable, String userName, String operationStartTime, String operationEndTime) {
+    public Page<OperationLog> getOpearationLogList(Pageable pageable, List<Integer> userList, String userName, String operationStartTime, String operationEndTime) {
         QueryContainer<OperationLog> sp = new QueryContainer<>();
+        if (CollectionUtils.isEmpty(userList)) {
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
+        }
         try {
             List<Condition> fuzzyMatch = new ArrayList<>();
+            fuzzyMatch.add(ConditionFactory.In("userId", userList));
             if (!"".equals(userName)) {
                 fuzzyMatch.add(ConditionFactory.like("userName", userName));
             }
