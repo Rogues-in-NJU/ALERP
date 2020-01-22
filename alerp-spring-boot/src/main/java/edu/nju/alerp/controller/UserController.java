@@ -2,6 +2,7 @@ package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.common.ManagerSessions;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
+import static edu.nju.alerp.Application.managerSession;
 
 /**
  * @Description: 用户Controller层
@@ -222,6 +225,7 @@ public class UserController {
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
+            managerSession.getSessions().remove(CommonUtils.getUserId());
             if (session != null) {
                 session.invalidate();
             }
