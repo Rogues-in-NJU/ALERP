@@ -184,7 +184,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
 
   confirmProductDelete(_id: number): void {
     const index: number = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
-    this.processingOrder.deleteProduct(this.processingOrderData.products[index].productId)
+    this.processingOrder.deleteProduct(this.processingOrderData.products[index].id)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {
           this.message.error('删除失败!');
