@@ -256,10 +256,9 @@ public class UserServiceImpl implements UserService, InitializingBean {
         if (res) {
             HttpSession hs = managerSession.getSessions().get(user.getId());
             if (hs != null) {
-                hs.invalidate();
                 loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.DENIED.getCode())
-                        .result(LoginResult.DENIED.getMessage())
+                        .code(LoginResult.ALREADY.getCode())
+                        .result(LoginResult.ALREADY.getMessage())
                         .userId(user.getId())
                         .build();
             } else {

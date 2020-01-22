@@ -38,6 +38,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+import static edu.nju.alerp.Application.managerSession;
+
 /**
  * @Description: 用户Controller层
  * @Author: qianen.yin
@@ -223,6 +225,7 @@ public class UserController {
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
+            managerSession.getSessions().remove(CommonUtils.getUserId());
             if (session != null) {
                 session.invalidate();
             }
