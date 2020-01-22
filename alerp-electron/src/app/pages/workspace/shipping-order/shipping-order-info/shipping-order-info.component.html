@@ -67,7 +67,7 @@
     <tr *ngFor="let data of shippingOrderInfoProductsTable.data">
       <td>
         <ng-container>
-          <a routerLink="/processing-order/info/">{{ data.processingOrderCode }}</a>
+          <a routerLink="/workspace/processing-order/info/{{data.processingOrderId}}">{{ data.processingOrderCode }}</a>
         </ng-container>
       </td>
       <td>

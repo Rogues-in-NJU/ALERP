@@ -7,6 +7,7 @@ import edu.nju.alerp.entity.ArrearOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 收款单dao层
@@ -25,8 +26,8 @@ public interface ArrearOrderRepository extends JpaRepository<ArrearOrder, Intege
     @Query(value =
         "select customer_id as customerId, DATE_FORMAT(due_date, '%Y-%m') as month, sum(receivable_cash - "
             + "received_cash) as cash from "
-            + "arrear_order where status = 1 or  status = 2 group by customer_id, month", nativeQuery = true)
-    List<Map<String, Object>> getOverdueCashBySbByMonth();
+            + "arrear_order where (status = 1 or  status = 2) and city=:city group by customer_id, month", nativeQuery = true)
+    List<Map<String, Object>> getOverdueCashBySbByMonth(@Param("city") int city);
 
     /**
      * 按照月返回欠款金额。
