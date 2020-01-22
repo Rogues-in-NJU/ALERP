@@ -295,7 +295,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         this.message.success('新增成功!');
         this.tabClose();
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
 
       });
@@ -401,7 +401,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 
@@ -459,7 +459,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
             }
           }
         }, (error: HttpErrorResponse) => {
-          this.message.error(error.message);
+          this.message.error('网络异常，请检查网络或者尝试重新登录!');
         });
     }
 
@@ -513,7 +513,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         // this.addShippingOrder_pageSize = tableResult.pageSize;
         this.addShippingOrder_allProcessingOrderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
 
     this.addShippingOrder_isLoading = false;

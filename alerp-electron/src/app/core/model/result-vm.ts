@@ -70,6 +70,7 @@ export class LoginCode {
   public static NONE: LoginCode = new LoginCode(3, '没有该手机号的用户');
   public static DENIED: LoginCode = new LoginCode(4, '没有该城市访问权限');
   public static OFFJOB: LoginCode = new LoginCode(5, '用户已离职');
+  public static DUPLICATE: LoginCode = new LoginCode(6, '重复登录');
 
   private _code: number;
   private _message: string;

@@ -25,12 +25,9 @@ export class WorkspaceComponent implements OnInit {
 
   city: number;
 
-  userName: string;
-
   constructor(
     private storage: LocalStorageService,
     private user: UserService,
-    private userManagement: UserManagementService,
     private route: Router
   ) {
   }
@@ -38,20 +35,10 @@ export class WorkspaceComponent implements OnInit {
   ngOnInit(): void {
     const userInfo: UserStorageVO = this.storage.getObject<UserStorageVO>('user');
     this.city = userInfo.city;
-    this.userManagement.findSelf()
-      .subscribe((res: ResultVO<UserManagementInfoVO>) => {
-        if (!Objects.valid(res)) {
-          return;
-        }
-        if (res.code !== ResultCode.SUCCESS.code) {
-          return;
-        }
-        this.userName = res.data.name;
-      }, (error: HttpErrorResponse) => {
 
-      }, () => {
-
-      });
+    setInterval(() => {
+      console.log(this.route.url);
+    }, 10000);
   }
 
   logout(): void {

@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author luhailong
@@ -61,7 +62,6 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
 
     @Autowired
     private CustomerRepository customerRepository;
-
 
     @Override
     public ArrearOrder getOne(int id) {
@@ -252,8 +252,12 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
     @Override
     public OverdueCashVO getOverdueCash() {
         // 按人、按月统计
-        List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth();
+        List<Map<String, Object>> recordSbMonthList = arrearOrderRepository.getOverdueCashBySbByMonth(
+            CommonUtils.getCity());
         OverdueCashVO targetVo = new OverdueCashVO();
+        if (CollectionUtils.isEmpty(recordSbMonthList)){
+            return null;
+        }
 
         // customerList里的一个元素
         Map<String, Object> customerMap = Maps.newHashMap();
@@ -287,7 +291,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
         //按照月份统计
         List<Map<String, Object>> recordMonthList = arrearOrderRepository.getOverdueCashByMonth();
         targetVo.getStatistics().put("overdues", recordMonthList);
-        targetVo.getStatistics().put("total",getTotalOverdues(recordMonthList));
+        targetVo.getStatistics().put("total", getTotalOverdues(recordMonthList));
         return targetVo;
     }
 

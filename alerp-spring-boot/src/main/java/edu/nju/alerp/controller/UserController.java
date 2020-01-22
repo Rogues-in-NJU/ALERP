@@ -2,6 +2,7 @@ package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.common.ManagerSessions;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
+import static edu.nju.alerp.Application.managerSession;
 
 /**
  * @Description: 用户Controller层
@@ -152,8 +155,8 @@ public class UserController {
                                                          @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
                                                          @RequestParam(value = "operationStartTime", required = false, defaultValue = "") String operationStartTime,
                                                          @RequestParam(value = "operationEndTime", required = false, defaultValue = "") String operationEndTime) {
-
-        Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")), userName, operationStartTime, operationEndTime);
+        List<Integer> userList = userService.getUserListByCityId(CommonUtils.getCity());
+        Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")), userList, userName, operationStartTime, operationEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
@@ -222,6 +225,7 @@ public class UserController {
     public ResponseResult<Boolean> logout() {
         try {
             HttpSession session = CommonUtils.getHttpSession();
+            managerSession.getSessions().remove(CommonUtils.getUserId());
             if (session != null) {
                 session.invalidate();
             }

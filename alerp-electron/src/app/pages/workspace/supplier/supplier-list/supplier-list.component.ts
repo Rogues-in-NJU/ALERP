@@ -90,7 +90,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         this.pageSize = tableResult.pageSize;
         this.supplierList = tableResult.result;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isLoading = false;
       }, () => {
         this.isLoading = false;
@@ -129,7 +129,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         }
         this.message.success('删除成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -166,7 +166,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         }
         this.message.success('添加成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -212,7 +212,7 @@ export class SupplierListComponent implements RefreshableTab, OnInit {
         }
         this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();

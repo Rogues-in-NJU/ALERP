@@ -196,7 +196,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         }
         this.message.success('删除成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -233,7 +233,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         }
         this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -355,7 +355,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         }
         this.message.success('打印状态更新成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('打印出错!');
         this.refresh();
         this.tab.refreshEvent.emit({
           url: '/workspace/processing-order/list'
@@ -393,7 +393,7 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         }
         // console.log(this.processingOrderData);
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 

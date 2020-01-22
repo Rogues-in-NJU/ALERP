@@ -61,7 +61,7 @@ export class UserCenterPasswordComponent implements ClosableTab, OnInit {
         this.isSaving = false;
         // TODO: 跳转回列表页面
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 

@@ -97,7 +97,7 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
         this.pageSize = tableResult.pageSize;
         this.orderList = tableResult.result;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
         this.isLoading = false;
       });

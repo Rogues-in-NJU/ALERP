@@ -69,7 +69,7 @@ export class ExpenseAddComponent implements ClosableTab, OnInit {
         this.isSaving = false;
         this.tabClose();
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
         this.tab.closeEvent.emit({
           url: this.router.url,

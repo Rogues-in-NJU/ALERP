@@ -175,7 +175,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
         this.message.success('新增成功!');
         this.tabClose();
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isSaving = false;
       }, () => {
         this.isSaving = false;

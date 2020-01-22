@@ -99,7 +99,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
           })
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 
@@ -141,7 +141,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         }
         this.message.success('修改成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -184,7 +184,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
           return;
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
         this.refresh();
         this.tab.refreshEvent.emit({
@@ -254,7 +254,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
 
         this.message.success("修改成功");
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       },()=>{
         this.isChangeDueDate = false;
         this.refresh();
@@ -293,7 +293,7 @@ export class ArrearOrderInfoComponent implements RefreshableTab, OnInit {
         }
         this.message.success("修改成功");
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       },()=>{
         this.isChangeInvoiceNumber = false;
         this.refresh();

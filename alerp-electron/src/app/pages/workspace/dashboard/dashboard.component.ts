@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
         this.totalPages = tableResults.totalPages;
         this.isSummaryProductsLoading = false;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
 
       });
@@ -114,7 +114,7 @@ export class DashboardComponent implements OnInit {
         this.summaryData = res.data;
         this.isSummaryDataLoading = false;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
 
       });
