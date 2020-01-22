@@ -67,15 +67,15 @@ public class LogAspect {
         String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
         try {
-            logOperate(userId, name, joinPoint, request);
+            if ("POST".equals(request.getMethod())) {
+                logOperate(userId, name, joinPoint, request);
+            }
             Object result = joinPoint.proceed();
 //            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
         } catch (Throwable e) {
             log.error(String.format("%s => fail", methodInvokeLog), e);
             throw e;
-        } finally {
-
         }
     }
 
