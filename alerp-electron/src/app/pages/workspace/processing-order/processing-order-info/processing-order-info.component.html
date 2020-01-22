@@ -173,29 +173,30 @@
     <br/>
     <br/>
     <p *ngIf="showPrint">(购货单位:){{ processingOrderData.customerName }}</p>
-    <table *ngIf="showPrint">
-      <thead>
-      <tr>
-        <th style="width: 200px">(型号)</th>
-        <th style="width: 300px">(加工规格(cm))</th>
-        <th style="width: 120px">(数量(件))</th>
-        <th style="width: 120px">(预计重量(kg))</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let data of processingOrderData.products">
-        <td> {{ data.productName }}</td>
-        <td> {{ data.specification }}</td>
-        <td> {{ data.quantity }}</td>
-        <td> {{ data.expectedWeight }}</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td> (重量汇总)</td>
-        <td> {{ processingOrderData.totalWeight }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div style="height: 500px">
+      <table *ngIf="showPrint">
+        <thead>
+        <tr>
+          <th style="width: 200px">(型号)</th>
+          <th style="width: 300px">(加工规格(cm))</th>
+          <th style="width: 120px">(数量(件))</th>
+          <th style="width: 120px">(预计重量(kg))</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of processingOrderData.products">
+          <td> {{ data.productName }}</td>
+          <td> {{ data.specification }}</td>
+          <td> {{ data.quantity }}</td>
+          <td> {{ data.expectedWeight }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="position: relative">
+      <div style="position: absolute; right: 0">
+        <label>重量汇总:</label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight }}</span>
+      </div>
+    </div>
   </div>
 </div>
