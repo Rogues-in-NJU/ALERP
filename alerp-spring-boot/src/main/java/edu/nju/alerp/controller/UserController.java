@@ -2,6 +2,7 @@ package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
+import edu.nju.alerp.common.ManagerSessions;
 import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
