@@ -16,7 +16,8 @@ public enum LoginResult {
     INCORRECT(2, "密码错误"),
     NONE(3, "没有该手机号的用户"),
     DENIED(4, "没有该城市访问权限"),
-    OFFJOB(5, "用户已离职");
+    OFFJOB(5, "用户已离职"),
+    ALREADY(6, "该账户已登录");
 
     private int code;
     private String message;

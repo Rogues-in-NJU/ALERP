@@ -16,6 +16,7 @@ import edu.nju.alerp.service.UserService;
 import edu.nju.alerp.enums.UserStatus;
 import edu.nju.alerp.repo.UserRepository;
 import edu.nju.alerp.dto.UserDTO;
+import edu.nju.alerp.util.CommonUtils;
 import edu.nju.alerp.util.DateUtils;
 import edu.nju.alerp.util.PasswordUtil;
 import edu.nju.alerp.vo.UserVO;
@@ -31,10 +32,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static edu.nju.alerp.Application.managerSession;
 
 /**
  * @Description: 用户服务层实现
@@ -250,11 +254,21 @@ public class UserServiceImpl implements UserService, InitializingBean {
         }
         boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
         if (res) {
-            loginResultDTO = LoginResultDTO.builder()
-                    .code(LoginResult.SUCCESS.getCode())
-                    .result(LoginResult.SUCCESS.getMessage())
-                    .userId(user.getId())
-                    .build();
+            HttpSession hs = managerSession.getSessions().get(user.getId());
+            if (hs != null) {
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.ALREADY.getCode())
+                        .result(LoginResult.ALREADY.getMessage())
+                        .userId(user.getId())
+                        .build();
+            } else {
+                managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
+                loginResultDTO = LoginResultDTO.builder()
+                        .code(LoginResult.SUCCESS.getCode())
+                        .result(LoginResult.SUCCESS.getMessage())
+                        .userId(user.getId())
+                        .build();
+            }
             return loginResultDTO;
         }
         loginResultDTO = LoginResultDTO.builder()
