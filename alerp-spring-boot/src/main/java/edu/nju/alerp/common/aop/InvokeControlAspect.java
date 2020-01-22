@@ -33,9 +33,11 @@ public class InvokeControlAspect {
         } catch (Throwable t) {
             if (t instanceof NJUException) {
                 // 业务异常，输出业务日志
+                log.error(String.format("[%s]%s", ((NJUException)t).getExceptionEnum(), t.getMessage()));
                 return ResponseResult.fail(((NJUException)t).getExceptionEnum(), t.getMessage());
             }
             // 系统异常，输出堆栈信息
+            log.error(t.getMessage());
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(t));
         }
     }
