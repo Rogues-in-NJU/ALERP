@@ -56,7 +56,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         this.isLoading = false;
         this.userManagementData = res.data;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 
@@ -73,7 +73,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -93,7 +93,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
         this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();

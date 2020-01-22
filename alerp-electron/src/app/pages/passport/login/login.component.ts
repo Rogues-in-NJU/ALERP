@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
           this.message.error(loginVO.result);
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isLoading = false;
       }, () => {
         this.isLoading = false;

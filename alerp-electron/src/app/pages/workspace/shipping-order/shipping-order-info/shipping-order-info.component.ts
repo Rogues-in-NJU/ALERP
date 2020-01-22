@@ -271,7 +271,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
           })
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 

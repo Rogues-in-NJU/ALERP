@@ -103,7 +103,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
           product['_id'] = this.productCountIndex ++;
         }
     }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
     });
 
     Object.assign(this.editCache, this.defaultEditCache);
@@ -177,7 +177,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
         }
         this.message.success('删除成功!');
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
       }, () => {
         this.refresh();
@@ -207,7 +207,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
           return;
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isSaving = false;
       }, () => {
         this.isSaving = false;

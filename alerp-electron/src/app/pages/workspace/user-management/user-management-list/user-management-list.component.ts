@@ -83,7 +83,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
         this.pageSize = tableResult.pageSize;
         this.userList = tableResult.result;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
   }
 
@@ -98,7 +98,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
           this.message.error(res.message);
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
       });
     this.refresh();
@@ -115,7 +115,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
           this.message.error(res.message);
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
         this.message.success("重置密码成功");
       });

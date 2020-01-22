@@ -48,7 +48,7 @@ export class ArrearOrderStatisticsComponent implements RefreshableTab, OnInit {
         this.customers = this.arrearStatisticsData.customers;
         this.statistics = this.arrearStatisticsData.statistics;
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isLoading = false;
       }, () => {
         this.isLoading = false;

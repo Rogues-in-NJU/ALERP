@@ -129,7 +129,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
           // console.log(this.totalMoney);
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
     this.isLoading = false;
   }
@@ -148,7 +148,7 @@ export class ShippingOrderListComponent implements RefreshableTab, OnInit {
           return;
         }
       }, (error: HttpErrorResponse) => {
-        this.message.error(error.message);
+        this.message.error('网络异常，请检查网络或者尝试重新登录!');
       }, () => {
         this.refresh();
       });
