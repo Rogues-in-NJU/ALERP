@@ -152,8 +152,8 @@ public class UserController {
                                                          @RequestParam(value = "userName", required = false, defaultValue = "") String userName,
                                                          @RequestParam(value = "operationStartTime", required = false, defaultValue = "") String operationStartTime,
                                                          @RequestParam(value = "operationEndTime", required = false, defaultValue = "") String operationEndTime) {
-
-        Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")), userName, operationStartTime, operationEndTime);
+        List<Integer> userList = userService.getUserListByCityId(CommonUtils.getCity());
+        Page<OperationLog> page = operationLogService.getOpearationLogList(PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")), userList, userName, operationStartTime, operationEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
