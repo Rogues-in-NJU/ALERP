@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://rm-m5esy44qbvr1b2m98125010.mysql.rds.aliyuncs.com:3306/ALERP?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://47.97.90.30:3306/ALERP?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8
     username: alerp
-    password: Tyf123456
+    password: alerp
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-test-query: SELECT 1
