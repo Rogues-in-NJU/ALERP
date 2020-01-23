@@ -70,7 +70,7 @@ public class ProductController {
      * @param productDTO
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或更新商品")
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增商品/更新商品")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
             int res = productService.addOrUpdate(productDTO);

@@ -66,9 +66,7 @@ public class LogAspect {
         String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
         try {
-            if ("POST".equals(request.getMethod())) {
-                logOperate(userId, name, joinPoint, request);
-            }
+            logOperate(userId, name, joinPoint, request);
             Object result = joinPoint.proceed();
 //            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
