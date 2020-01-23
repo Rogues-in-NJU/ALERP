@@ -45,6 +45,8 @@ public class LogAspect {
 
     private static Set<String> set = new HashSet<>();
 
+//    private static Set<String> specialSet = new HashSet<>();  //需要记录的get请求
+
     @PostConstruct
     private void init() {
         set.add("/api/supplier");
@@ -55,6 +57,19 @@ public class LogAspect {
         set.add("/api/customer");
         set.add("/api/product");
         set.add("/api/auth");
+
+//        specialSet.add("/api/product/delete/");
+//        specialSet.add("/api/user/delete/");
+//        specialSet.add("/api/supplier/delete/");
+//        specialSet.add("/api/customer/delete/");
+//        specialSet.add("/api/process-order/product/delete/");
+//        specialSet.add("/api/process-order/delete/");
+//        specialSet.add("/api/purchase-order/abandon/");
+//        specialSet.add("/api/purchase-order/payment-record/delete/");
+//        specialSet.add("/api/shipping-order/delete/");
+//        specialSet.add("/api/arrear-order/receipt-record/delete/");
+//        specialSet.add("/api/expense/delete/");
+
     }
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
@@ -66,7 +81,9 @@ public class LogAspect {
         String name = methodSignature.getMethod().getAnnotation(RequestMapping.class).name();
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
         try {
-            logOperate(userId, name, joinPoint, request);
+            if (request.getRequestURI().contains("delete") || "POST".equals(request.getMethod())) {
+                logOperate(userId, name, joinPoint, request);
+            }
             Object result = joinPoint.proceed();
 //            log.info("{}=>{}", methodInvokeLog, JSON.toJSONString(result));
             return result;
