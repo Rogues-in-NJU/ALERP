@@ -31,12 +31,12 @@ public class AuthController {
     private AuthService authService;
 
     /**
-     * 新增或更新权限资源
+     * 新增/更新权限资源
      *
      * @param authDTO
      * @return
      */
-    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或者更新权限资源")
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增权限资源/更新权限资源")
     public ResponseResult<Integer> addOrUpdateAuth(@RequestBody AuthDTO authDTO) {
         return ResponseResult.ok(authService.addOrUpdateAuth(authDTO));
     }
