@@ -35,10 +35,6 @@ export class WorkspaceComponent implements OnInit {
   ngOnInit(): void {
     const userInfo: UserStorageVO = this.storage.getObject<UserStorageVO>('user');
     this.city = userInfo.city;
-
-    setInterval(() => {
-      console.log(this.route.url);
-    }, 10000);
   }
 
   logout(): void {
