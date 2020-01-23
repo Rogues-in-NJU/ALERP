@@ -87,7 +87,7 @@ export class UserCenterInfoComponent {
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        this.message.success('修改成功!');
+        this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
@@ -106,7 +106,7 @@ export class UserCenterInfoComponent {
     this.userManagement.save(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
-        this.message.success('修改成功!');
+        this.message.success(res.message);
         this.isSaving = false;
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
