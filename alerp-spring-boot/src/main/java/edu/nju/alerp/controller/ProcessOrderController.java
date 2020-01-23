@@ -51,12 +51,12 @@ public class ProcessOrderController {
         return ResponseResult.ok(processOrderService.findProcessingById(id));
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增或者更新加工单")
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增加工单/更新加工单")
     public ResponseResult<Integer> addNewProcessingOrder(@RequestBody ProcessingOrderDTO processingOrderDTO) {
         return ResponseResult.ok(processOrderService.addProcessingOrder(processingOrderDTO));
     }
 
-    @RequestMapping(value = "/product", method = RequestMethod.POST, name = "新增或者更新加工单商品")
+    @RequestMapping(value = "/product", method = RequestMethod.POST, name = "新增加工单商品/更新加工单商品")
     public ResponseResult<Integer> addOrUpdateProcessingProduct(@RequestBody UpdateProcessProductDTO updateProcessProductDTO) {
         return ResponseResult.ok(processOrderService.addOrUpdateProcessProduct(updateProcessProductDTO));
     }

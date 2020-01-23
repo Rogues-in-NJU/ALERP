@@ -256,19 +256,15 @@ public class UserServiceImpl implements UserService, InitializingBean {
         if (res) {
             HttpSession hs = managerSession.getSessions().get(user.getId());
             if (hs != null) {
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.ALREADY.getCode())
-                        .result(LoginResult.ALREADY.getMessage())
-                        .userId(user.getId())
-                        .build();
-            } else {
-                managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.SUCCESS.getCode())
-                        .result(LoginResult.SUCCESS.getMessage())
-                        .userId(user.getId())
-                        .build();
+                hs.setAttribute("msg", "您的账号已经在另一处登录了,您被迫下线!");
             }
+            managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
+            managerSession.getSessionIds().put(user.getId(), CommonUtils.getHttpSession().getId());
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.SUCCESS.getCode())
+                    .result(LoginResult.SUCCESS.getMessage())
+                    .userId(user.getId())
+                    .build();
             return loginResultDTO;
         }
         loginResultDTO = LoginResultDTO.builder()
