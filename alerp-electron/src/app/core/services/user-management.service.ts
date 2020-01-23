@@ -51,6 +51,12 @@ export class UserManagementService {
     });
   }
 
+  public update(info: UserManagementInfoVO): Observable<ResultVO<any>> {
+    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/update`, info, {
+      withCredentials: true
+    });
+  }
+
   public updatePassword(info: PasswordInfoVO): Observable<ResultVO<any>> {
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/user/updatePassword`, info, {
       withCredentials: true

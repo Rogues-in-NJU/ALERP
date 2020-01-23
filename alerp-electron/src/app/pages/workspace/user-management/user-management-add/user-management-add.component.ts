@@ -102,10 +102,11 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     <userAuthVO>{id: 3, authId: 49, description: "修改当前用户密码", action: 1},
     <userAuthVO>{id: 4, authId: 50, description: "获取登录用户详细信息", action: 1},
     <userAuthVO>{id: 5, authId: 51, description: "用户操作日志查询", action: 0},
-    <userAuthVO>{id: 6, authId: 52, description: "新增用户/修改用户信息", action: 0},
+    <userAuthVO>{id: 6, authId: 52, description: "新增用户", action: 0},
     <userAuthVO>{id: 7, authId: 53, description: "查询权限资源列表", action: 0},
     <userAuthVO>{id: 8, authId: 54, description: "编辑用户权限", action: 0},
     <userAuthVO>{id: 9, authId: 55, description: "查询用户的拥有权限", action: 0},
+    <userAuthVO>{id: 10, authId: 56, description: "修改当前用户信息", action: 1},
   ];
 
   authsTmp: userAuthVO[] = [];
