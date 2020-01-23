@@ -256,7 +256,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             CommonUtils.getCity());
         OverdueCashVO targetVo = new OverdueCashVO();
         if (CollectionUtils.isEmpty(recordSbMonthList)){
-            return null;
+            return new OverdueCashVO();
         }
 
         // customerList里的一个元素
