@@ -60,11 +60,11 @@ public class AuthImpl implements AuthService, InitializingBean {
                     MutablePair.of("/api/product/([1-9]\\d*)?", "查看商品详情"),
                     MutablePair.of("/api/product/delete/([1-9]\\d*)?", "废弃商品"),
                     // 收款单
-                    MutablePair.of("/api/arrear-order/([1-9]\\d*)?", "获取收款单详情"),
-                    MutablePair.of("/api/arrear-order/due-date", "修改收款单截止日期"),
+                    MutablePair.of("/api/arrear-order/([1-9]\\d*)?", "获取欠款明细详情"),
+                    MutablePair.of("/api/arrear-order/due-date", "修改欠款明细截止日期"),
                     MutablePair.of("/api/arrear-order/invoice-number", "修改发票流水号"),
-                    MutablePair.of("/api/arrear-order/list", "查询收款单列表"),
-                    MutablePair.of("/api/overdue-warning", "获取欠款统计列表"),
+                    MutablePair.of("/api/arrear-order/list", "查询欠款明细列表"),
+                    MutablePair.of("/api/overdue-warning", "获取欠款统计"),
                     // 客户
                     MutablePair.of("/api/customer/([1-9]\\d*)?", "查看客户详细信息"),
                     MutablePair.of("/api/customer/delete/([1-9]\\d*)?", "删除客户"),

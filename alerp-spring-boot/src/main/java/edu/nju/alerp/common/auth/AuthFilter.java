@@ -43,7 +43,7 @@ public class AuthFilter implements Filter {
                     responseWrapper.setStatus(200);
                     responseWrapper.setHeader("Content-Type", "application/json;charset=UTF-8");
 
-                    String result = JSON.toJSONString(ResponseResult.fail(ExceptionEnum.AUTH_FAIL, "您没有权限执行该操作."));
+                    String result = JSON.toJSONString(ResponseResult.fail(ExceptionEnum.AUTH_FAIL, njuException.getMessage()));
                     responseWrapper.getOutputStream().write(result.getBytes());
                     responseWrapper.getOutputStream().flush();
                 }
