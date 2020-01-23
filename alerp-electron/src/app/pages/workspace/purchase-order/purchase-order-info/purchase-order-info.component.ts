@@ -142,8 +142,14 @@ export class PurchaseOrderInfoComponent implements RefreshableTab, OnInit {
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/purchase-order/list'
+        });
       }, () => {
         this.refresh();
+        this.tab.refreshEvent.emit({
+          url: '/workspace/purchase-order/list'
+        });
       });
   }
 
