@@ -84,7 +84,7 @@ export class UserCenterInfoComponent {
     let userManagementAdd: UserManagementInfoVO = this.userManagementData;
     userManagementAdd.name = formData.name;
     this.isSaving = true;
-    this.userManagement.save(userManagementAdd)
+    this.userManagement.update(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
@@ -103,7 +103,7 @@ export class UserCenterInfoComponent {
     let userManagementAdd: UserManagementInfoVO = this.userManagementData;
     userManagementAdd.phoneNumber = formData.phoneNumber;
     this.isSaving = true;
-    this.userManagement.save(userManagementAdd)
+    this.userManagement.update(userManagementAdd)
       .pipe(debounceTime(3000))
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
