@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * @Description: 权限注册类
@@ -37,9 +38,14 @@ public class AuthRegistry {
 
     public static AuthInfo getAuthInfo(HttpServletRequest httpServletRequest) {
         String uri = httpServletRequest.getRequestURI();
-        AuthInfo authInfo = authInfos.get(uri);
-        if (authInfo != null)
-            return authInfo;
+//        AuthInfo authInfo = authInfos.get(uri);
+        for (Map.Entry<String, AuthInfo> authInfo : authInfos.entrySet()) {
+            String route = authInfo.getKey();
+            if (Pattern.matches(route, uri))
+                return authInfo.getValue();
+        }
+//        if (authInfo != null)
+//            return authInfo;
         return null;
     }
 

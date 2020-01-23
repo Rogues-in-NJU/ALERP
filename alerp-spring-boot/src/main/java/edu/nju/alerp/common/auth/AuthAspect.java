@@ -50,7 +50,7 @@ public class AuthAspect {
             verifyResult = verify(authContext);
         }catch (Exception e) {
             log.warn("Error verifying auth, {}", authContext, e);
-            throw new NJUException(ExceptionEnum.AUTH_FAIL, "No Auth");
+            throw new NJUException(ExceptionEnum.AUTH_FAIL, "您没有权限执行该操作。");
         }
 
         if (verifyResult) {
@@ -58,7 +58,7 @@ public class AuthAspect {
             return result;
         }
 
-        throw new NJUException(ExceptionEnum.AUTH_FAIL, "No Auth");
+        throw new NJUException(ExceptionEnum.AUTH_FAIL, "您没有权限执行该操作。");
     }
 
     private boolean verify(AuthContext authContext) throws Exception{
