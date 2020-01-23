@@ -38,7 +38,9 @@ public class DocumentsIdFactory implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         List<IdGenerator> documents = idGeneratorRepository.findAll();
         documents.forEach(id -> {
-            idGenerator.put(id.getDocuments(), buildCurrentCount(id));
+            AtomicInteger atomicInteger = buildCurrentCount(id);
+            idGenerator.put(id.getDocuments(), atomicInteger);
+            id.setCurrentCount(atomicInteger.get());
             generatorMap.put(id.getDocuments(), id);
         });
 
