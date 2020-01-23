@@ -123,6 +123,7 @@ export class UserManagementListComponent implements RefreshableTab, OnInit {
   }
 
   refresh(): void {
+    console.log('refresh');
     this.search();
   }
 

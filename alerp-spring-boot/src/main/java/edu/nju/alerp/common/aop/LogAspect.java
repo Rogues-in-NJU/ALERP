@@ -47,7 +47,6 @@ public class LogAspect {
 
     @PostConstruct
     private void init() {
-        set.add("/api/user");
         set.add("/api/supplier");
         set.add("/api/shipping-order");
         set.add("/api/purchase-order");

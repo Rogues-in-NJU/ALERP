@@ -161,13 +161,30 @@ public class UserController {
     }
 
     /**
-     * 新增用户/修改用户信息
+     * 新增用户
      *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增用户/修改用户信息")
-    public ResponseResult<Integer> saveUser(@Valid @RequestBody UserDTO userDTO) {
+    @RequestMapping(value = "", method = RequestMethod.POST, name = "新增用户")
+    public ResponseResult<Integer> addUser(@Valid @RequestBody UserDTO userDTO) {
+        try {
+            int result = userService.saveUser(userDTO);
+            return ResponseResult.ok(result);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
+    /**
+     * 修改用户信息
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/update", method = RequestMethod.POST, name = "修改用户信息")
+    public ResponseResult<Integer> updateUser(@Valid @RequestBody UserDTO userDTO) {
         try {
             int result = userService.saveUser(userDTO);
             return ResponseResult.ok(result);
