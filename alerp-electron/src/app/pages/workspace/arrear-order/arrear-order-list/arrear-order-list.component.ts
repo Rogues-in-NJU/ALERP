@@ -3,7 +3,7 @@ import { RefreshableTab } from "../../tab/tab.component";
 import { ArrearOrderInfoVO } from "../../../../core/model/arrear-order";
 import { Router } from "@angular/router";
 import { NzMessageService } from "ng-zorro-antd";
-import { TabService } from "../../../../core/services/tab.service";
+import {RefreshTabEvent, TabService} from "../../../../core/services/tab.service";
 import { ArrearOrderService } from "../../../../core/services/arrear-order.service";
 import {ResultCode, ResultVO, TableQueryParams, TableResultVO} from "../../../../core/model/result-vm";
 import {DateUtils, Objects, StringUtils} from "../../../../core/services/util.service";
@@ -40,6 +40,11 @@ export class ArrearOrderListComponent implements RefreshableTab, OnInit {
   }
 
   ngOnInit(): void {
+    this.tab.refreshEvent.subscribe((event: RefreshTabEvent) => {
+      if (Objects.valid(event) && event.url === '/workspace/arrear-order/list') {
+        this.refresh();
+      }
+    });
     this.refresh();
   }
 
