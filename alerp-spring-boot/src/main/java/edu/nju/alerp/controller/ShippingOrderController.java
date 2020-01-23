@@ -160,7 +160,7 @@ public class ShippingOrderController {
                     .updatedBy(userId)
                     .code(documentsIdFactory.generateNextCode(DocumentsType.ARREAR_ORDER, CityEnum.of(CommonUtils.getCity())))
                     .customerId(shippingOrderDTO.getCustomerId())
-                    .dueDate(DateUtils.getDueDate(customer.getPayDate()))
+                    .dueDate(customer.getType() == CustomerType.MONTH.getCode() ? DateUtils.getDueDate(customer.getPayDate()) : DateUtils.getTodayAccurateToDay())
                     .receivableCash(shippingOrderDTO.getReceivableCash())
                     .receivedCash(0)
                     .city(CommonUtils.getCity())
@@ -240,7 +240,7 @@ public class ShippingOrderController {
                 .products(productVOList)
                 .build();
         BeanUtils.copyProperties(shippingOrder, shippingOrderVO);
-        if(shippingOrder.getDeletedBy() != 0){
+        if (shippingOrder.getDeletedBy() != 0) {
             shippingOrderVO.setDeletedByName(userService.getUser(shippingOrder.getDeletedBy()).getName());
 
         }

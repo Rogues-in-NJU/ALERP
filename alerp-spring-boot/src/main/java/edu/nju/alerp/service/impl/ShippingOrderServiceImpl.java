@@ -207,16 +207,18 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             }
             if (!"".equals(name)) {
                 List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
-                fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
-            }
-            if (!"".equals(startTime)) {
-                fuzzyMatch.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
-            }
-            if (!"".equals(endTime)) {
-                fuzzyMatch.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
+                if(!CollectionUtils.isEmpty(customerIdList)){
+                    fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
+                }
             }
             if (!fuzzyMatch.isEmpty()) {
                 sp.add(ConditionFactory.or(fuzzyMatch));
+            }
+            if (!"".equals(startTime)) {
+                sp.add(ConditionFactory.greatThanEqualTo("createdAt", startTime));
+            }
+            if (!"".equals(endTime)) {
+                sp.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             }
         } catch (Exception e) {
             log.error("Value is null", e);

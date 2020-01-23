@@ -77,6 +77,7 @@ public class SummaryServiceImpl implements SummaryService {
 
     /**
      * 根据时间和商品名称获取一段时间内商品售卖的均价
+     *
      * @param name
      * @param startTime
      * @param endTime
@@ -107,10 +108,9 @@ public class SummaryServiceImpl implements SummaryService {
                     .filter(s -> s.getProductId() == p)
                     .collect(Collectors.toList());
             shippingOrderProductList.removeAll(subShippingProductList);
-            int size = subShippingProductList.size();
             double weight = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getWeight).sum();
             double totalCash = subShippingProductList.stream().mapToDouble(ShippingOrderProduct::getCash).sum();
-            double avg = totalCash / size;
+            double avg = weight == 0 ? 0 : totalCash / weight;
             BigDecimal b = new BigDecimal(avg);
             SummaryProductInfoVO summaryProductInfoVO = SummaryProductInfoVO.builder()
                     .id(p)

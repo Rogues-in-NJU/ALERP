@@ -238,7 +238,7 @@ public class ArrearOrderServiceImpl implements ArrearOrderService {
             // 已废弃的单据不认为参与了金钱交易
             arrearOrderSp.add(ConditionFactory.notEqual("status", ArrearOrderStatus.ABANDONED.getCode()));
             // 查询所有逾期的收款单
-            arrearOrderSp.add(ConditionFactory.lessThanEqualTo("dueDate", DateUtils.getTodayAccurateToDay()));
+            arrearOrderSp.add(ConditionFactory.lessThan("dueDate", DateUtils.getTodayAccurateToDay()));
             List<ArrearOrder> arrearOrderList = arrearOrderRepository.findAll(arrearOrderSp);
             totalReceivedCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivedCash).sum();
             totalReceivableCash = arrearOrderList.parallelStream().mapToDouble(ArrearOrder::getReceivableCash).sum();
