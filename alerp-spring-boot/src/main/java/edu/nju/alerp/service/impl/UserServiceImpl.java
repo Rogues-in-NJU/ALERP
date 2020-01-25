@@ -254,10 +254,6 @@ public class UserServiceImpl implements UserService, InitializingBean {
         }
         boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
         if (res) {
-            HttpSession hs = managerSession.getSessions().get(user.getId());
-            if (hs != null) {
-                hs.setAttribute("msg", "您的账号已经在另一处登录了,您被迫下线!");
-            }
             managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
             managerSession.getSessionIds().put(user.getId(), CommonUtils.getHttpSession().getId());
             loginResultDTO = LoginResultDTO.builder()
