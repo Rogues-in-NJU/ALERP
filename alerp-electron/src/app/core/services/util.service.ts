@@ -121,7 +121,7 @@ export class SpecificationUtils {
     }
     let volumn: number;
     if (specArr.length === 2) {
-      volumn = Math.pow(specArr[0] / 2.0, 2) * specArr[1];
+      volumn = Math.PI * Math.pow(specArr[0] / 2.0, 2) * specArr[1];
     } else {
       volumn = specArr[0] * specArr[1] * specArr[2];
     }

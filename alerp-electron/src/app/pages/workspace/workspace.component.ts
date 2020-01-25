@@ -10,6 +10,8 @@ import { TabComponent } from "./tab/tab.component";
 import { UserManagementService } from "../../core/services/user-management.service";
 import { UserManagementInfoVO } from "../../core/model/user-management";
 import { Objects } from "../../core/services/util.service";
+import { CookieService } from "ngx-cookie";
+import { NzNotificationService } from "ng-zorro-antd";
 
 @Component({
   selector: 'app-workspace',
@@ -28,13 +30,40 @@ export class WorkspaceComponent implements OnInit {
   constructor(
     private storage: LocalStorageService,
     private user: UserService,
-    private route: Router
+    private route: Router,
+    private cookie: CookieService,
+    private notification: NzNotificationService
   ) {
   }
 
   ngOnInit(): void {
     const userInfo: UserStorageVO = this.storage.getObject<UserStorageVO>('user');
     this.city = userInfo.city;
+
+    setInterval(() => {
+      if (Objects.valid(this.storage.get('user'))) {
+        this.user.isSessionValidate()
+          .subscribe((res: ResultVO<boolean>) => {
+            if (!Objects.valid(res)) {
+              this.notification.warning('会话失效', '登录状态失效，请重新登录!', { nzDuration: 0 });
+              this.logout();
+              return;
+            }
+            if (res.code !== ResultCode.SUCCESS.code) {
+              this.notification.warning('会话失效', '登录状态失效，请重新登录!', { nzDuration: 0 });
+              this.logout();
+              return;
+            }
+            if (!res.data) {
+              this.notification.warning('会话失效', '登录状态失效，请重新登录!', { nzDuration: 0 });
+              this.logout();
+            }
+          }, (error: HttpErrorResponse) => {
+            this.notification.warning('会话失效', '登录状态失效，请重新登录!', { nzDuration: 0 });
+            this.logout();
+          });
+      }
+    }, 10000);
   }
 
   logout(): void {
@@ -43,8 +72,10 @@ export class WorkspaceComponent implements OnInit {
     setTimeout(() => {
       SimpleReuseStrategy.reset();
       this.tabComponent.resetMenu();
+      this.cookie.removeAll();
       this.user.logout()
-        .subscribe((res: ResultVO<any>) => {}, (error: HttpErrorResponse) => {
+        .subscribe((res: ResultVO<any>) => {
+        }, (error: HttpErrorResponse) => {
           this.route.navigate([ '/passport/login' ]);
         }, () => {
           this.route.navigate([ '/passport/login' ]);
@@ -60,10 +91,13 @@ export class WorkspaceComponent implements OnInit {
 export class CityPipe implements PipeTransform {
 
   transform(value: number, ...args: any[]): any {
-    switch(value) {
-      case 1: return '苏州';
-      case 2: return '昆山';
-      default: return '苏州';
+    switch (value) {
+      case 1:
+        return '苏州';
+      case 2:
+        return '昆山';
+      default:
+        return '苏州';
     }
   }
 
