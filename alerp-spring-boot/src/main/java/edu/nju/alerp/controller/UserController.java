@@ -277,7 +277,7 @@ public class UserController {
         try {
             HttpSession session = CommonUtils.getHttpSession();
             long second = (System.currentTimeMillis() - session.getCreationTime()) / 1000;
-            return ResponseResult.ok(second < 7200);
+            return ResponseResult.ok(second < session.getMaxInactiveInterval());
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
