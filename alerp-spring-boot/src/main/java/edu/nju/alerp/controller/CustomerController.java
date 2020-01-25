@@ -1,6 +1,7 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ExceptionWrapper;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.ProcessOrderService;
@@ -59,6 +60,7 @@ public class CustomerController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "查看客户详细信息")
     public ResponseResult<CustomerVO> CustomerVO(
@@ -100,6 +102,7 @@ public class CustomerController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除客户")
     public ResponseResult<Integer> delete(
@@ -116,6 +119,7 @@ public class CustomerController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取客户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
@@ -130,6 +134,7 @@ public class CustomerController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增客户/修改客户信息")
     public ResponseResult<Integer> saveCustomer(@Valid @RequestBody CustomerDTO customerDTO) {

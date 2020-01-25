@@ -4,6 +4,7 @@ import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ManagerSessions;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.LoginDTO;
 import edu.nju.alerp.dto.LoginResultDTO;
 import edu.nju.alerp.dto.PasswordDTO;
@@ -65,6 +66,7 @@ public class UserController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除用户")
     public ResponseResult<Integer> delete(
@@ -81,6 +83,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取用户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
@@ -97,6 +100,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取用户详细信息")
     public ResponseResult<UserInfoVO> userInfo(@PathVariable("id") Integer id) {
@@ -109,6 +113,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST, name = "修改当前用户密码")
     public ResponseResult<String> updatePassword(@RequestBody PasswordDTO passwordDTO) {
@@ -126,6 +131,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/self", method = RequestMethod.GET, name = "获取登录用户详细信息")
     public ResponseResult<UserInfoVO> self() {
@@ -148,6 +154,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/operation-log/list", method = RequestMethod.GET, name = "用户操作日志查询")
     public ResponseResult<ListResponse> operationLogList(@RequestParam(value = "pageIndex") int pageIndex,
@@ -165,6 +172,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增用户")
     public ResponseResult<Integer> addUser(@Valid @RequestBody UserDTO userDTO) {
@@ -182,6 +190,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST, name = "修改用户信息")
     public ResponseResult<Integer> updateUser(@Valid @RequestBody UserDTO userDTO) {
@@ -199,6 +208,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST, name = "用户登录")
     public ResponseResult<LoginResultDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -221,6 +231,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/reloadPassword/{id}", method = RequestMethod.GET, name = "重置密码")
     public ResponseResult<Integer> reloadPassword(@PathVariable("id") Integer id) {
@@ -237,6 +248,7 @@ public class UserController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/logout", method = RequestMethod.GET, name = "用户登出")
     public ResponseResult<Boolean> logout() {
@@ -247,6 +259,25 @@ public class UserController {
                 session.invalidate();
             }
             return ResponseResult.ok(true);
+        } catch (Exception e) {
+            return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+        }
+
+    }
+
+    /**
+     * session过期校验
+     *
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/sessionValidation", method = RequestMethod.GET, name = "session过期校验")
+    public ResponseResult<Boolean> sessionValidation() {
+        try {
+            HttpSession session = CommonUtils.getHttpSession();
+            long second = (System.currentTimeMillis() - session.getCreationTime()) / 1000;
+            return ResponseResult.ok(second < 7200);
         } catch (Exception e) {
             return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
         }
