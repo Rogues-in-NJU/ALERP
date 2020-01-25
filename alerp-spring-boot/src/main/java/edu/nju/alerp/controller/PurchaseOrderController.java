@@ -4,6 +4,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.AddPaymentRecordDTO;
 import edu.nju.alerp.dto.PurchaseOrderDTO;
 import edu.nju.alerp.service.PurchaseOrderService;
@@ -43,6 +44,7 @@ public class PurchaseOrderController {
      * @param doneEndTime
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取采购单列表（分页）")
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
@@ -59,6 +61,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取采购单详情")
     public ResponseResult<PurchaseOrderDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(purchaseOrderService.findPurchaseById(id));
@@ -70,6 +73,7 @@ public class PurchaseOrderController {
      * @param purchaseOrderDTO
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增采购单")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         return ResponseResult.ok(purchaseOrderService.addNewPurchaseOrder(purchaseOrderDTO));
@@ -81,6 +85,7 @@ public class PurchaseOrderController {
      * @param addPaymentRecordDTO
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/payment-record", method = RequestMethod.POST, name = "新增采购单付款记录")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody AddPaymentRecordDTO addPaymentRecordDTO) {
         try {
@@ -95,6 +100,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/payment-record/delete/{id}", method = RequestMethod.GET, name = "废弃采购单付款记录")
     public ResponseResult<Integer> deletePaymentRecord(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {
@@ -109,6 +115,7 @@ public class PurchaseOrderController {
      * @param id
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/abandon/{id}", method = RequestMethod.GET, name = "废弃采购单")
     public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {

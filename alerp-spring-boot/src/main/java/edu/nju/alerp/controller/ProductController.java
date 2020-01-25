@@ -1,6 +1,7 @@
 package edu.nju.alerp.controller;
 
 
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ProductDTO;
 import edu.nju.alerp.service.ProductService;
 import edu.nju.alerp.common.ExceptionWrapper;
@@ -43,6 +44,7 @@ public class ProductController {
      * @param type
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取商品列表（分页）")
     public ResponseResult<ListResponse> findProductsByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                             @RequestParam(value = "pageSize") int pageSize,
@@ -59,6 +61,7 @@ public class ProductController {
      * @param id
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "获取商品详情")
     public ResponseResult<ProductDetailVO> findProductsDetail(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(productService.findProductVO(id));
@@ -70,6 +73,7 @@ public class ProductController {
      * @param productDTO
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增商品/更新商品")
     public ResponseResult<Integer> addOrUpdateProduct(@RequestBody ProductDTO productDTO) {
         try {
@@ -85,6 +89,7 @@ public class ProductController {
      * @param id
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "废弃商品")
     public ResponseResult<Integer> abandonPurchaseOrder(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         try {

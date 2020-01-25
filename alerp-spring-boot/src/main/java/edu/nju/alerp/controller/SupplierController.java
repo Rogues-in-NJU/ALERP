@@ -2,6 +2,7 @@ package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.ListResponse;
 import edu.nju.alerp.common.ResponseResult;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.SupplierDTO;
 import edu.nju.alerp.service.SupplierService;
 import edu.nju.alerp.util.ListResponseUtils;
@@ -33,6 +34,7 @@ public class SupplierController {
      * @param name
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取供货商列表（分页）")
     public ResponseResult<ListResponse> queryPurchaseOrderByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                   @RequestParam(value = "pageSize") int pageSize,
@@ -40,11 +42,13 @@ public class SupplierController {
         return ResponseResult.ok(ListResponseUtils.generateResponse(supplierService.findSuppliersByPage(PageRequest.of(pageIndex - 1, pageSize), name),pageIndex,pageSize));
     }
 
+    @InvokeControl
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增供货商/更新供货商")
     public ResponseResult<Integer> addOrUpdateProcessingProduct(@RequestBody SupplierDTO supplierDTO) {
         return ResponseResult.ok(supplierService.addOrUpdateSupplier(supplierDTO));
     }
 
+    @InvokeControl
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除供货商")
     public ResponseResult<Integer> deleteProcessingProduct(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
             return ResponseResult.ok(supplierService.deleteSupplier(id));
