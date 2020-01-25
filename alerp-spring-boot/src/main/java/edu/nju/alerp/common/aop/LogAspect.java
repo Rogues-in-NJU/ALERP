@@ -53,6 +53,7 @@ public class LogAspect {
         set.add("/api/shipping-order");
         set.add("/api/purchase-order");
         set.add("/api/process-order");
+        set.add("/api/process-order/product");
         set.add("/api/expense");
         set.add("/api/customer");
         set.add("/api/product");
