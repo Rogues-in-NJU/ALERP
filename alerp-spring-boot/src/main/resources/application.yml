@@ -24,8 +24,3 @@ spring:
 alerp:
   auth:
     enable: true
-
-server:
-  servlet:
-    session:
-      timeout: 7200s
