@@ -82,7 +82,7 @@ public class LogAspect {
         HttpServletRequest request = CommonUtils.getHttpServletRequest();
         try {
             int index = request.getRequestURI().lastIndexOf("/");
-            if (specialSet.contains(request.getRequestURI().substring(0, index)) || "POST".equals(request.getMethod())) {
+            if ((specialSet.contains(request.getRequestURI().substring(0, index)) || "POST".equals(request.getMethod())) && userId != 0) {
                 logOperate(userId, name, joinPoint, request);
             }
             Object result = joinPoint.proceed();
