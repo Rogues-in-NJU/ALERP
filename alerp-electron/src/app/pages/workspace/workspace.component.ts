@@ -12,6 +12,7 @@ import { UserManagementInfoVO } from "../../core/model/user-management";
 import { Objects } from "../../core/services/util.service";
 import { CookieService } from "ngx-cookie";
 import { NzNotificationService } from "ng-zorro-antd";
+import { AppConfig } from "../../../environments/environment";
 
 @Component({
   selector: 'app-workspace',
