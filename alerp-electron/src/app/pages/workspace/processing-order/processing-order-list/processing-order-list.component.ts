@@ -79,7 +79,7 @@ export class ProcessingOrderListComponent implements RefreshableTab, OnInit {
     }
     if (Objects.valid(this.selectedStatus)) {
       Object.assign(queryParams, {
-        statue: this.selectedStatus
+        status: this.selectedStatus
       });
     }
     if (Objects.valid(this.timeRange) && this.timeRange.length === 2) {
