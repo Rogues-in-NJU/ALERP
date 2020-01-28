@@ -174,7 +174,6 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     const customerAddData: CustomerVO = this.customerAddForm.getRawValue();
     this.customer.save(customerAddData)
       .subscribe((res: ResultVO<any>) => {
-        this.message.error('添加失败!');
         if (!Objects.valid(res)) {
           return;
         }

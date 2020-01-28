@@ -5,6 +5,7 @@ import { CityPipe, WorkspaceComponent } from "./workspace.component";
 import { RouteReuseStrategy, RouterModule, Routes } from "@angular/router";
 import { SimpleReuseStrategy } from "../../core/strategy/simple-reuse.strategy";
 import { TabComponent } from "./tab/tab.component";
+import { CookieModule } from "ngx-cookie";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'welcome' },
@@ -51,7 +52,7 @@ const routes: Routes = [
   providers: [
     { provide: RouteReuseStrategy, useClass: SimpleReuseStrategy }
   ],
-  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes) ],
+  imports: [ CoreModule, SharedModule, RouterModule.forChild(routes), CookieModule.forRoot() ],
   declarations: [ WorkspaceComponent, TabComponent, CityPipe ],
   exports: [ WorkspaceComponent, RouterModule ]
 })

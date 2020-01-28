@@ -254,21 +254,13 @@ public class UserServiceImpl implements UserService, InitializingBean {
         }
         boolean res = user.getPassword().equals(PasswordUtil.getMD5(loginDTO.getPassword()));
         if (res) {
-            HttpSession hs = managerSession.getSessions().get(user.getId());
-            if (hs != null) {
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.ALREADY.getCode())
-                        .result(LoginResult.ALREADY.getMessage())
-                        .userId(user.getId())
-                        .build();
-            } else {
-                managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
-                loginResultDTO = LoginResultDTO.builder()
-                        .code(LoginResult.SUCCESS.getCode())
-                        .result(LoginResult.SUCCESS.getMessage())
-                        .userId(user.getId())
-                        .build();
-            }
+            managerSession.getSessions().put(user.getId(), CommonUtils.getHttpSession());
+            managerSession.getSessionIds().put(user.getId(), CommonUtils.getHttpSession().getId());
+            loginResultDTO = LoginResultDTO.builder()
+                    .code(LoginResult.SUCCESS.getCode())
+                    .result(LoginResult.SUCCESS.getMessage())
+                    .userId(user.getId())
+                    .build();
             return loginResultDTO;
         }
         loginResultDTO = LoginResultDTO.builder()

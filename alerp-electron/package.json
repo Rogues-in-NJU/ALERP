@@ -44,6 +44,7 @@
     "e-ngx-print": "5.3.1",
     "electron-log": "4.0.3",
     "ng-zorro-antd": "8.5.1",
+    "ngx-cookie": "4.1.2",
     "rxjs": "6.5.3",
     "tslib": "1.10.0",
     "zone.js": "0.9.1"
@@ -56,6 +57,7 @@
     "@angular/compiler": "8.2.12",
     "@angular/compiler-cli": "8.2.12",
     "@angular/language-service": "8.2.12",
+    "@nguniversal/express-engine": "8.2.6",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
     "@types/jasmine": "3.3.16",

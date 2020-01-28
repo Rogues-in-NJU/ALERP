@@ -1,6 +1,7 @@
 package edu.nju.alerp.controller;
 
 import edu.nju.alerp.common.*;
+import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ProcessingOrderIdCodeDTO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.entity.*;
@@ -57,6 +58,7 @@ public class ShippingOrderController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, name = "删除出货单")
     @Transactional(rollbackFor = Exception.class)
@@ -96,6 +98,7 @@ public class ShippingOrderController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取出货单列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
@@ -124,6 +127,7 @@ public class ShippingOrderController {
      *
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.POST, name = "新增出货单")
     @Transactional(rollbackFor = Exception.class)
@@ -198,6 +202,7 @@ public class ShippingOrderController {
      * @param id
      * @return
      */
+    @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, name = "查看出货单详情")
     public ResponseResult<ShippingOrderVO> ShippingOrderVO(
@@ -255,6 +260,7 @@ public class ShippingOrderController {
      * @param name
      * @return
      */
+    @InvokeControl
     @RequestMapping(value = "/productAvgPriceslist", method = RequestMethod.GET, name = "获取商品平均单价列表（分页）")
     public ResponseResult<ListResponse> findProductPricesByPages(@RequestParam(value = "pageIndex") int pageIndex,
                                                                  @RequestParam(value = "pageSize") int pageSize,

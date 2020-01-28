@@ -34,4 +34,10 @@ export class UserService {
     return of(null);
   }
 
+  public isSessionValidate(): Observable<ResultVO<boolean>> {
+    return this.http.get<ResultVO<boolean>>(`${AppConfig.BASE_URL}/api/user/sessionValidation`, {
+      withCredentials: true
+    });
+  }
+
 }

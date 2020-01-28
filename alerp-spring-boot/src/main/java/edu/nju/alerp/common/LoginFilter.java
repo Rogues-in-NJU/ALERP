@@ -11,7 +11,10 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+
+import static edu.nju.alerp.Application.managerSession;
 
 /**
  * @Description: 对未登陆的用户拒绝访问
@@ -31,7 +34,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         ResponseWrapper responseWrapper = new ResponseWrapper(response);
         if (!HttpMethod.OPTIONS.matches(httpServletRequest.getMethod())
-                && CommonUtils.getUserId() == 0
+                && !CommonUtils.getHttpSession().getId().equals(managerSession.getSessionIds().get(CommonUtils.getUserId()))
                 && !"/api/user/login".equals(httpServletRequest.getRequestURI())) {
 //            throw new NJUException(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口");
             responseWrapper.setStatus(200);
@@ -40,7 +43,7 @@ public class LoginFilter implements Filter {
             String result = JSON.toJSONString(ResponseResult.fail(ExceptionEnum.ILLEGAL_USER, "请登陆后再访问该接口"));
             responseWrapper.getOutputStream().write(result.getBytes());
             responseWrapper.getOutputStream().flush();
-        }else {
+        } else {
             filterChain.doFilter(httpServletRequest, servletResponse);
         }
     }
