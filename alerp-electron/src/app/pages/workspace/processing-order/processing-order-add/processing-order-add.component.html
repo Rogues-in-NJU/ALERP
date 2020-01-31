@@ -132,7 +132,7 @@
         </ng-container>
         <ng-template #expectedWeightEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.expectedWeight">
-            <nz-input-number nzMin="0" nzStep="0.0001"
+            <nz-input-number nzMin="0" nzStep="0.01"
                              [(ngModel)]="editCache.data.expectedWeight"
                              (ngModelChange)="checkExpectedWeight()"></nz-input-number>
           </nz-form-control>
@@ -141,6 +141,7 @@
       <td>
         <ng-container *ngIf="editCache._id === null">
           <a (click)="startEditProduct(data._id)">编辑</a>
+          <a style="margin-left: 5px" (click)="copyProductRow(data._id)">复制</a>
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"

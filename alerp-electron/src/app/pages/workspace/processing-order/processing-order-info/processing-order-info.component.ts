@@ -138,6 +138,42 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     this.startEditProduct(item['_id'], true);
   }
 
+  copyProductRow(_id: number): void {
+    if (Objects.valid(this.editCache._id)) {
+      this.message.warning('请先保存加工商品列表的更改!');
+      return;
+    }
+    const index = this.processingOrderData.products.findIndex(item => item['_id'] === _id);
+    if (index === -1) {
+      this.message.error('没有可复制的商品条目!');
+      return;
+    }
+    let item: ProcessingOrderProductVO = {
+      id: null,
+      processingOrderId: this.processingOrderData.id,
+      productId: null,
+      productName: null,
+      type: null,
+      density: null,
+      productSpecification: null,
+      specification: null,
+      quantity: null,
+      expectedWeight: null,
+      processingOrderUpdatedAt: this.processingOrderData.updatedAt
+    };
+    Object.assign(item, this.processingOrderData.products[index], {
+      id: null,  // 重要，不能把id也复制过去
+      processingOrderUpdatedAt: this.processingOrderData.updatedAt
+    });
+    item['_id'] = this.processingOrderInfoProductCountIndex++;
+    this.processingOrderData.products = [
+      ...this.processingOrderData.products.filter((item, i) => i < index),
+      item,
+      ...this.processingOrderData.products.filter((item, i) => i >= index)
+    ];
+    this.startEditProduct(item['_id'], true);
+  }
+
   onProductSearch(value: string): void {
     this.isProductsLoading = true;
     this.searchChanges$.next(value);

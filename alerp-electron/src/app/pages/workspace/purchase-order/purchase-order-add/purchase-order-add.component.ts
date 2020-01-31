@@ -205,6 +205,36 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     this.startEdit(item['_id'], true);
   }
 
+  copyRow(_id: number): void {
+    if (Objects.valid(this.editCache._id)) {
+      this.message.warning('请先保存商品列表的更改!');
+      return;
+    }
+    const index = this.products.findIndex(item => item['_id'] ===_id);
+    if (index === -1) {
+      this.message.error('没有可复制的商品条目!');
+      return;
+    }
+    let item: PurchaseOrderProductVO = {
+      id: null,
+      productId: null,
+      name: null,
+      quantity: null,
+      weight: null,
+      price: null,
+      priceType: 1,
+      cash: null
+    };
+    Object.assign(item, this.products[index]);
+    item['_id'] = this.productCountIndex ++;
+    this.products = [
+      ...this.products.filter((item, i) => i < index),
+      item,
+      ...this.products.filter((item, i) => i >= index)
+    ];
+    this.startEdit(item['_id'], true);
+  }
+
   onProductSearch(value: string): void {
     this.isProductLoading = true;
     this.searchProductsChange$.next(value);

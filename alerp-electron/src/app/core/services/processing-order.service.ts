@@ -31,8 +31,8 @@ export class ProcessingOrderService {
 
   }
 
-  public save(info: ProcessingOrderVO): Observable<ResultVO<any>> {
-    return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/process-order`, info, {
+  public save(info: ProcessingOrderVO): Observable<ResultVO<number>> {
+    return this.http.post<ResultVO<number>>(`${AppConfig.BASE_URL}/api/process-order`, info, {
       withCredentials: true
     });
     // return of(null);

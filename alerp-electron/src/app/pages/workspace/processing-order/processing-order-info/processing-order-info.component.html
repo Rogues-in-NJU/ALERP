@@ -139,6 +139,7 @@
       <td>
         <ng-container *ngIf="editCache._id === null">
           <a (click)="startEditProduct(data._id)" [class.disabled]="processingOrderData.status !== 0">编辑</a>
+          <a (click)="copyProductRow(data._id)" style="margin-left: 5px" [class.disabled]="processingOrderData.status !== 0">复制</a>
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"

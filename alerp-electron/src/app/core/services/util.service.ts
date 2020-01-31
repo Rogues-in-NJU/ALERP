@@ -125,7 +125,7 @@ export class SpecificationUtils {
     } else {
       volumn = specArr[0] * specArr[1] * specArr[2];
     }
-    return volumn * density * quantity;
+    return parseFloat((volumn * density * quantity).toFixed(2));
   }
 
 }

@@ -21,7 +21,7 @@ import { ClosableTab } from "../../tab/tab.component";
   templateUrl: './processing-order-add.component.html',
   styleUrls: [ './processing-order-add.component.less' ]
 })
-export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
+export class ProcessingOrderAddComponent implements OnInit {
 
   isSaving: boolean = false;
 
@@ -156,7 +156,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     });
     this.isSaving = true;
     this.processingOrder.save(processingOrderData)
-      .subscribe((res: ResultVO<any>) => {
+      .subscribe((res: ResultVO<number>) => {
         if (!Objects.valid(res)) {
           this.message.error('新增失败!');
           return;
@@ -166,7 +166,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
           return;
         }
         this.message.success('新增成功!');
-        this.tabClose();
+        this.tabClose(res.data);
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
         this.isSaving = false;
@@ -199,6 +199,37 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     this.startEditProduct(item[ '_id' ], true);
   }
 
+  copyProductRow(_id: number): void {
+    if (Objects.valid(this.editCache._id)) {
+      this.message.warning('请先保存加工商品列表的更改!');
+      return;
+    }
+    const index = this.products.findIndex(item => item['_id'] === _id);
+    if (index === -1) {
+      this.message.error('没有可复制的商品条目!');
+      return;
+    }
+    let item: ProcessingOrderProductVO = {
+      id: null,
+      productId: null,
+      productName: null,
+      type: null,
+      density: null,
+      productSpecification: null,
+      specification: null,
+      quantity: null,
+      expectedWeight: null
+    };
+    Object.assign(item, this.products[index]);
+    item[ '_id' ] = this.processingOrderInfoProductCountIndex++;
+    this.products = [
+      ...this.products.filter((item, i) => i < index),
+      item,
+      ...this.products.filter((item, i) => i >= index)
+    ];
+    this.startEditProduct(item[ '_id' ], true);
+  }
+
   onProductSearch(value: string): void {
     this.isProductsLoading = true;
     this.searchProductChanges$.next(value);
@@ -208,6 +239,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     this.editCache.data.productId = event.id;
     this.editCache.data.productName = event.name;
     this.editCache.data.density = event.density;
+    this.calculateExpectedWeight();
   }
 
   onCustomerSearch(value: string): void {
@@ -306,6 +338,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
           value: '' + parseFloat(splits[ 0 ])
         } ];
       }
+      this.calculateExpectedWeight();
       return;
     }
     if (splits.length === 2) {
@@ -351,6 +384,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
         label: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`,
         value: `${parseFloat(splits[ 0 ])}*${parseFloat(splits[ 1 ])}*${parseFloat(splits[ 2 ])}`
       } ];
+      this.calculateExpectedWeight();
       return;
     }
   }
@@ -362,6 +396,7 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
   }
 
   onQuantityChange(): void {
+    console.log('change');
     if (this.checkQuantity()) {
       this.calculateExpectedWeight();
     }
@@ -411,10 +446,10 @@ export class ProcessingOrderAddComponent implements ClosableTab, OnInit {
     return isValid;
   }
 
-  tabClose(): void {
+  tabClose(id: number): void {
     this.tab.closeEvent.emit({
       url: this.router.url,
-      goToUrl: '/workspace/processing-order/list',
+      goToUrl: `/workspace/processing-order/info/${id}`,
       refreshUrl: '/workspace/processing-order/list',
       routeConfig: this.route.snapshot.routeConfig
     });
