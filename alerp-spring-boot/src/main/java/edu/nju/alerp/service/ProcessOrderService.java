@@ -2,6 +2,7 @@ package edu.nju.alerp.service;
 
 import edu.nju.alerp.dto.ProcessingOrderDTO;
 import edu.nju.alerp.dto.UpdateProcessProductDTO;
+import edu.nju.alerp.entity.ProcessOrderProduct;
 import edu.nju.alerp.entity.ProcessingOrder;
 import edu.nju.alerp.vo.ProcessingOrderDetailVO;
 import edu.nju.alerp.vo.ProcessingOrderListVO;
@@ -56,6 +57,8 @@ public interface ProcessOrderService {
      * 废弃加工单
      * */
     public int abandonProcessingOrder(int id) throws Exception;
+
+    List<ProcessOrderProduct> findProductByOrderId(int processOrderId);
 
     ProcessingOrder getLatestOrder(int customerId);
 }

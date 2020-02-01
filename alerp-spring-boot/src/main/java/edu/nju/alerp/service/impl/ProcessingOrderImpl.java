@@ -277,6 +277,11 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
+    public List<ProcessOrderProduct> findProductByOrderId(int processOrderId) {
+        return processOrderProductRepository.findAllByProcessOrderId(processOrderId);
+    }
+
+    @Override
     public ProcessingOrder getLatestOrder(int customerId) {
         return processingOrderRepository.findLatestOrder(customerId);
     }

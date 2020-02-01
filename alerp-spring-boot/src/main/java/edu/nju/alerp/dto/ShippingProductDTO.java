@@ -13,6 +13,7 @@ import lombok.Data;
 public class ShippingProductDTO {
     private int processingOrderId;
     private int productId;
+    private Integer processingProductId;
     private String specification;
     private int quantity;
     private int priceType;
