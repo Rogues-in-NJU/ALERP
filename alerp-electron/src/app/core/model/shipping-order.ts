@@ -12,6 +12,8 @@ export interface ShippingOrderInfoVO extends BaseInfo{
   floatingCash?: number
   receivableCash?: number
 
+  hasTax?: number
+
   products?: ShippingOrderProductInfoVO[];
   processingOrderIdsCodes?: ProcessingOrderIdCodeInShippingOrder[];
 }

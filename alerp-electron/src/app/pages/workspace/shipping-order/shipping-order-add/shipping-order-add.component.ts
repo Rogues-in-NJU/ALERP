@@ -27,6 +27,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
   shippingOrderData: ShippingOrderInfoVO = {
     processingOrderIdsCodes: [],
     products: [],
+    hasTax: 1,
     cash: 0,
     floatingCash: 0,
     receivableCash: 0,
@@ -180,9 +181,9 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
 
   caculateCashForProduct():void{
 
-    if(Objects.valid(this.editCache.data.cash)){
-      return;
-    }
+    // if(Objects.valid(this.editCache.data.cash)){
+    //   return;
+    // }
 
     if(Objects.valid(this.editCache.data.price) &&
       Objects.valid(this.editCache.data.priceType)){
@@ -280,6 +281,12 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       return;
     }
 
+    if(Objects.isNaN(this.shippingOrderData.hasTax)){
+      this.message.warning("请确认是否含税！");
+      return;
+    }
+
+
     console.log(this.shippingOrderData);
     this.shippingOrder.save(this.shippingOrderData)
       .subscribe((res: ResultVO<any>) => {
@@ -330,10 +337,13 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
     return isValid;
   }
 
-  checkModelNotNull(name: string): boolean {
-
+  checkModelNotNullAndCaculateCash(name: string): boolean{
     //顺便自动计算一下价格
     this.caculateCashForProduct();
+
+    return this.checkModelNotNull(name);
+  }
+  checkModelNotNull(name: string): boolean {
 
     //损耗只需要增加cash
     if(this.isAddSunHao){
