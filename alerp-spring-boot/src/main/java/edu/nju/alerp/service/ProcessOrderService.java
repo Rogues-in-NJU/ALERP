@@ -49,6 +49,11 @@ public interface ProcessOrderService {
     public int deleteProcessProduct(int id) throws Exception;
 
     /**
+     * 出货时删除加工单的商品管理
+     * */
+    int deleteProcessProductInShipping(int id) throws Exception;
+
+    /**
      * 打印加工单
      * */
     public int printProcessingOrder(int id) throws Exception;

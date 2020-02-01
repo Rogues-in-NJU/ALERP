@@ -251,6 +251,19 @@ public class ProcessingOrderImpl implements ProcessOrderService {
     }
 
     @Override
+    public int deleteProcessProductInShipping(int id) throws Exception {
+        ProcessOrderProduct processOrderProduct = processOrderProductRepository.getOne(id);
+        if (processOrderProduct == null)
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "该条目不存在");
+        ProcessingOrder processingOrder = processingOrderRepository.getOne(processOrderProduct.getProcessOrderId());
+        if (processingOrder == null)
+            throw new NJUException(ExceptionEnum.SERVER_ERROR, "不存在该加工单");
+        processOrderProductRepository.deleteById(id);
+        return id;
+    }
+
+
+    @Override
     public int printProcessingOrder(int id) throws Exception {
         ProcessingOrder processingOrder = processingOrderRepository.getOne(id);
         if (processingOrder == null)

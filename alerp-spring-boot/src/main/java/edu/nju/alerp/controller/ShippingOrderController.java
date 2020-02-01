@@ -147,15 +147,15 @@ public class ShippingOrderController {
                 processingProductList.addAll(processOrderService.findProductByOrderId(p.getProcessingOrderId()));
             });
             List<Integer> processingProductIdList = processingProductList.stream().map(ProcessOrderProduct::getId).collect(Collectors.toList());
-            processingProductIdList.forEach(p -> {
-                if (!shippingProcessingProductIdList.contains(p)) {
-                    try {
-                        processOrderService.deleteProcessProduct(p);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            try {
+                for (Integer p : processingProductIdList) {
+                    if (!shippingProcessingProductIdList.contains(p)) {
+                        processOrderService.deleteProcessProductInShipping(p);
                     }
                 }
-            });
+            } catch (Exception e) {
+                return ResponseResult.fail(ExceptionWrapper.defaultExceptionWrapper(e));
+            }
 
             //校验计价方式，遍历商品获取所有加工单
             try {
