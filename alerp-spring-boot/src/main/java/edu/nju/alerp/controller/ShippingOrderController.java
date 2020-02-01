@@ -139,7 +139,7 @@ public class ShippingOrderController {
             List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
             //删除加工单对应商品
             List<Integer> shippingProcessingProductIdList = shippingOrderDTO.getProducts().stream()
-                    .filter(s -> s.getProcessingProductId() == null)
+                    .filter(s -> s.getProcessingProductId() != null)
                     .map(ShippingProductDTO::getProcessingProductId)
                     .collect(Collectors.toList());
             List<ProcessOrderProduct> processingProductList = new ArrayList<>();
