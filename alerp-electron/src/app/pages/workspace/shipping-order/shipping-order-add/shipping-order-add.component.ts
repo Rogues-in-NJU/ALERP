@@ -145,6 +145,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
     }
     let item: ShippingOrderProductInfoVO = {
       id: null,
+      processingProductId: null,
       processingOrderCode: '',
       productId: null,
       productName: null,
@@ -448,6 +449,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
               let shippingProduct: ShippingOrderProductInfoVO = {};
               shippingProduct.processingOrderId = processingOrder.id;
               shippingProduct.processingOrderCode = processingOrder.code;
+              shippingProduct.processingProductId = product.id;
               shippingProduct.productId = product.productId;
               shippingProduct.productName = product.productName;
               shippingProduct.type = product.type;
