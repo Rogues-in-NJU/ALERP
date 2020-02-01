@@ -4,6 +4,7 @@ import edu.nju.alerp.common.*;
 import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ProcessingOrderIdCodeDTO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
+import edu.nju.alerp.dto.ShippingProductDTO;
 import edu.nju.alerp.entity.*;
 import edu.nju.alerp.enums.*;
 import edu.nju.alerp.service.*;
@@ -136,6 +137,25 @@ public class ShippingOrderController {
             ShippingOrder shippingOrder = shippingOrderService.addShippingOrder(shippingOrderDTO);
             List<Integer> processingOrderList = shippingOrderDTO.getProcessingOrderIdsCodes().stream().map(ProcessingOrderIdCodeDTO::getProcessingOrderId).collect(Collectors.toList());
             List<ShippingOrderProduct> shippingOrderProductList = new ArrayList<>();
+            //删除加工单对应商品
+            List<Integer> shippingProcessingProductIdList = shippingOrderDTO.getProducts().stream()
+                    .filter(s -> s.getProcessingProductId() != null)
+                    .map(ShippingProductDTO::getProcessingProductId)
+                    .collect(Collectors.toList());
+            List<ProcessOrderProduct> processingProductList = new ArrayList<>();
+            shippingOrderDTO.getProcessingOrderIdsCodes().forEach(p -> {
+                processingProductList.addAll(processOrderService.findProductByOrderId(p.getProcessingOrderId()));
+            });
+            List<Integer> processingProductIdList = processingProductList.stream().map(ProcessOrderProduct::getId).collect(Collectors.toList());
+            processingProductIdList.forEach(p -> {
+                if (!shippingProcessingProductIdList.contains(p)) {
+                    try {
+                        processOrderService.deleteProcessProduct(p);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             //校验计价方式，遍历商品获取所有加工单
             try {
