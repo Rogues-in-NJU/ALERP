@@ -69,6 +69,12 @@
     <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="4">
       <p  *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></p>
     </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="是否含税" [nzSpan]="4">
+      <nz-radio-group [(ngModel)]="shippingOrderData.tax">
+        <label nz-radio nzValue=true>含税</label>
+        <label nz-radio nzValue=false>不含税</label>
+      </nz-radio-group>
+    </nz-descriptions-item>
   </nz-descriptions>
   <br/>
   <div nz-row class="table-header">
@@ -93,7 +99,7 @@
     <tr>
       <th nzWidth="150px">加工单编号</th>
       <th nzWidth="100px">商品</th>
-      <th nzWidth="160px">加工规格(厘米)</th>
+      <th nzWidth="160px">加工规格(毫米)</th>
       <th nzWidth="75px">数量(件)</th>
       <th nzWidth="75px">单价(元)</th>
       <th nzWidth="100px">预计重量(公斤)</th>
@@ -163,7 +169,7 @@
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.price">
             <nz-input-number nzMin="0" nzStep="0.01"
                              [(ngModel)]="editCache.data.price"
-                             (ngModelChange)="checkModelNotNull('price')"></nz-input-number>
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('price')"></nz-input-number>
           </nz-form-control>
         </ng-template>
       </td>
@@ -180,7 +186,7 @@
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
             <nz-input-number nzMin="0" nzStep="0.0001"
                              [(ngModel)]="editCache.data.weight"
-                             (ngModelChange)="checkModelNotNull('weight')"></nz-input-number>
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('weight')"></nz-input-number>
           </nz-form-control>
         </ng-template>
       </td>
@@ -191,7 +197,7 @@
         <ng-template #priceTypeEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.priceType">
             <nz-select [(ngModel)]="editCache.data.priceType"
-                       (ngModelChange)="checkModelNotNull('priceType')"
+                       (ngModelChange)="checkModelNotNullAndCaculateCash('priceType')"
                        style="width: 80px">
               <nz-option nzLabel="元/kg" [nzValue]="1"></nz-option>
               <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
@@ -207,15 +213,13 @@
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
             <nz-input-number nzMin="0" nzStep="0.0001"
                              [(ngModel)]="editCache.data.cash"
-                             (ngModelChange)="checkModelNotNull('cash')"></nz-input-number>
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('cash')"></nz-input-number>
           </nz-form-control>
         </ng-template>
       </td>
       <td>
         <ng-container *ngIf="editCache._id === null">
           <a (click)="startEditProduct(data._id)">编辑</a>
-        </ng-container>
-        <ng-container *ngIf="editCache._id === null && data._isSunhao">
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"

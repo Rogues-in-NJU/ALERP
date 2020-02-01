@@ -27,6 +27,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
   shippingOrderData: ShippingOrderInfoVO = {
     processingOrderIdsCodes: [],
     products: [],
+    tax: false,
     cash: 0,
     floatingCash: 0,
     receivableCash: 0,
@@ -144,6 +145,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
     }
     let item: ShippingOrderProductInfoVO = {
       id: null,
+      processingProductId: null,
       processingOrderCode: '',
       productId: null,
       productName: null,
@@ -180,9 +182,9 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
 
   caculateCashForProduct():void{
 
-    if(Objects.valid(this.editCache.data.cash)){
-      return;
-    }
+    // if(Objects.valid(this.editCache.data.cash)){
+    //   return;
+    // }
 
     if(Objects.valid(this.editCache.data.price) &&
       Objects.valid(this.editCache.data.priceType)){
@@ -280,6 +282,12 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       return;
     }
 
+    if(Objects.isNaN(this.shippingOrderData.tax)){
+      this.message.warning("请确认是否含税！");
+      return;
+    }
+
+
     console.log(this.shippingOrderData);
     this.shippingOrder.save(this.shippingOrderData)
       .subscribe((res: ResultVO<any>) => {
@@ -330,10 +338,13 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
     return isValid;
   }
 
-  checkModelNotNull(name: string): boolean {
-
+  checkModelNotNullAndCaculateCash(name: string): boolean{
     //顺便自动计算一下价格
     this.caculateCashForProduct();
+
+    return this.checkModelNotNull(name);
+  }
+  checkModelNotNull(name: string): boolean {
 
     //损耗只需要增加cash
     if(this.isAddSunHao){
@@ -438,6 +449,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
               let shippingProduct: ShippingOrderProductInfoVO = {};
               shippingProduct.processingOrderId = processingOrder.id;
               shippingProduct.processingOrderCode = processingOrder.code;
+              shippingProduct.processingProductId = product.id;
               shippingProduct.productId = product.productId;
               shippingProduct.productName = product.productName;
               shippingProduct.type = product.type;

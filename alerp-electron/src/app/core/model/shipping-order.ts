@@ -12,6 +12,8 @@ export interface ShippingOrderInfoVO extends BaseInfo{
   floatingCash?: number
   receivableCash?: number
 
+  tax?: boolean
+
   products?: ShippingOrderProductInfoVO[];
   processingOrderIdsCodes?: ProcessingOrderIdCodeInShippingOrder[];
 }
@@ -27,6 +29,9 @@ export interface ShippingOrderProductInfoVO extends BaseInfo{
   shippingOrderCode?: string
   processingOrderId?: number
   processingOrderCode?: string
+
+  processingProductId?: number
+
   productId?: number
   productName?: string
   type?: number,
