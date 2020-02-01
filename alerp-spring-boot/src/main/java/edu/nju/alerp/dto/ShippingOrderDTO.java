@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class ShippingOrderDTO {
     private int customerId;
+    private boolean tax;
     private double cash;
     private double floatingCash;
     private double receivableCash;
