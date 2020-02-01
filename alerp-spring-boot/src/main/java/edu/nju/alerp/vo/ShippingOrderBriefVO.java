@@ -17,6 +17,7 @@ public class ShippingOrderBriefVO {
     private String customerName;
     private Integer arrearOrderId;
     private Integer status;
+    private boolean tax;
     private double cash;
     private Integer city;
     private double floatingCash;

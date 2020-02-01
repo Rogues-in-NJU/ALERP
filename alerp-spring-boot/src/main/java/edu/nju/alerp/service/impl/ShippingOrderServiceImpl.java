@@ -68,6 +68,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .updatedAt(DateUtils.getTodayAccurateToSecond())
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
+                .tax(shippingOrderDTO.isTax())
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
         return shippingOrder;

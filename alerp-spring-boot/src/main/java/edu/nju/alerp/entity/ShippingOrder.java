@@ -52,6 +52,10 @@ public class ShippingOrder {
      */
     private int city;
     /**
+     * 是否含税
+     */
+    private boolean tax;
+    /**
      *浮动金额
      */
     @Column(name="floating_cash")
