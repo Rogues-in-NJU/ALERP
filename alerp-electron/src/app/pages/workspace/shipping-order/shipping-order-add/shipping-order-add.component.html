@@ -70,9 +70,9 @@
       <p  *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></p>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="是否含税" [nzSpan]="4">
-      <nz-radio-group [(ngModel)]="shippingOrderData.hasTax">
-        <label nz-radio nzValue=1>含税</label>
-        <label nz-radio nzValue=2>不含税</label>
+      <nz-radio-group [(ngModel)]="shippingOrderData.tax">
+        <label nz-radio nzValue=true>含税</label>
+        <label nz-radio nzValue=false>不含税</label>
       </nz-radio-group>
     </nz-descriptions-item>
   </nz-descriptions>

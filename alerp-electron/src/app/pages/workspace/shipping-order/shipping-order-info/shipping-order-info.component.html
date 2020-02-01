@@ -41,7 +41,7 @@
          routerLink="/workspace/processing-order/info/{{data.processingOrderId}}">{{ data.processingOrderCode }}<br></a>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="是否含税" [nzSpan]="4">
-      {{ shippingOrderData.hasTax | shipping_order_hasTax_type }}
+      {{ shippingOrderData.tax | shipping_order_hasTax_type }}
     </nz-descriptions-item>
   </nz-descriptions>
   <br/>

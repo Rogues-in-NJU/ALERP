@@ -27,7 +27,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
   shippingOrderData: ShippingOrderInfoVO = {
     processingOrderIdsCodes: [],
     products: [],
-    hasTax: 1,
+    tax: false,
     cash: 0,
     floatingCash: 0,
     receivableCash: 0,
@@ -281,7 +281,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       return;
     }
 
-    if(Objects.isNaN(this.shippingOrderData.hasTax)){
+    if(Objects.isNaN(this.shippingOrderData.tax)){
       this.message.warning("请确认是否含税！");
       return;
     }
