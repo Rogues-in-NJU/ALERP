@@ -2,11 +2,11 @@
   <nz-page-header-title>用户详情</nz-page-header-title>
   <nz-page-header-extra>
     <!--<button nz-button nzType="primary"-->
-            <!--(click)="saveUser()"-->
-            <!--[disabled]="!userManagementForm.valid || isSaving">-->
-      <!--<i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>-->
-      <!--<i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>-->
-      <!--保存-->
+    <!--(click)="saveUser()"-->
+    <!--[disabled]="!userManagementForm.valid || isSaving">-->
+    <!--<i nz-icon nzType="save" nzTheme="outline" *ngIf="!isSaving"></i>-->
+    <!--<i nz-icon nzType="loading" nzTheme="outline" *ngIf="isSaving"></i>-->
+    <!--保存-->
     <!--</button>-->
   </nz-page-header-extra>
 </nz-page-header>
@@ -24,11 +24,12 @@
   </nz-descriptions>
   <br/>
   <h3>权限列表</h3>
-  <nz-table #userAuthTable
+  <h4>商品</h4>
+  <nz-table #userAuthTable1
             nzBordered
-            nzShowPagination="true"
             nzSize="small"
-            [nzData]="userManagementData.authList">
+            [nzShowPagination]="false"
+            [nzData]="authList1">
     <thead>
     <tr>
       <th nzWidth="200px">描述</th>
@@ -37,7 +38,394 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let data of userAuthTable.data">
+    <tr *ngFor="let data of userAuthTable1.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>欠款明细</h4>
+  <nz-table #userAuthTable2
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList2">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable2.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>客户</h4>
+  <nz-table #userAuthTable3
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList3">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable3.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>支出</h4>
+  <nz-table #userAuthTable4
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList4">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable4.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>加工单</h4>
+  <nz-table #userAuthTable5
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList5">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable5.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>采购单</h4>
+  <nz-table #userAuthTable6
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList6">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable6.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>出货单</h4>
+  <nz-table #userAuthTable7
+            nzBordered
+            nzSize="small"
+            [nzShowPagination]="false"
+            [nzData]="authList7">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable7.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>汇总信息</h4>
+  <nz-table #userAuthTable8
+            nzBordered
+            nzShowPagination="true"
+            nzSize="small"
+            [nzData]="authList8">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable8.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>供货商</h4>
+  <nz-table #userAuthTable9
+            nzBordered
+            nzShowPagination="true"
+            nzSize="small"
+            [nzData]="authList9">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable9.data">
+      <td> {{ data.description }}</td>
+      <td>
+        <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
+          }}
+        </nz-tag>
+      </td>
+      <td nzRight="0px">
+        <a style="margin-left: 5px"
+           class="abandon"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAbandon(data.authId)" *ngIf="data.action===1">
+          删除权限
+        </a>
+        <a style="margin-left: 5px"
+           [class.disabled]="isSaving"
+           nz-popconfirm
+           nzPopconfirmTitle="确认赋予?"
+           nzPopconfirmPlacement="top"
+           (nzOnConfirm)="confirmAdd(data.authId)" *ngIf="data.action===0">
+          赋予权限
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+  <h4>用户相关</h4>
+  <nz-table #userAuthTable10
+            nzBordered
+            nzShowPagination="true"
+            nzSize="small"
+            [nzData]="authList10">
+    <thead>
+    <tr>
+      <th nzWidth="200px">描述</th>
+      <th nzWidth="200px">是否拥有</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of userAuthTable10.data">
       <td> {{ data.description }}</td>
       <td>
         <nz-tag nzColor="{{ data.action | user_management_auth_color }}">{{ data.action | user_management_auth
