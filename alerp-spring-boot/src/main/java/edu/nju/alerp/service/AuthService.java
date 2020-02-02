@@ -28,7 +28,7 @@ public interface AuthService {
 
     public int initialUserAuthByUserId(int id);
 
-    public Map<String, List<AuthUserVO>> queryAuthUserByUserId(int userId);
+    public Map<Integer, List<AuthUserVO>> queryAuthUserByUserId(int userId);
 
     public int initialAuthResource();
 }

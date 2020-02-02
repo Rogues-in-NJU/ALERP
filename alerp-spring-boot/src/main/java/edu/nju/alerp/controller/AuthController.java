@@ -63,7 +63,7 @@ public class AuthController {
 
     @InvokeControl
     @RequestMapping(value = "/userId/{id}", method = RequestMethod.GET, name = "查询某个用户的权限")
-    public ResponseResult<Map<String, List<AuthUserVO>>> queryUserAuthByUserId(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
+    public ResponseResult<Map<Integer, List<AuthUserVO>>> queryUserAuthByUserId(@NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         return ResponseResult.ok(authService.queryAuthUserByUserId(id));
     }
 

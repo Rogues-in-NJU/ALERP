@@ -235,7 +235,7 @@ public class AuthImpl implements AuthService, InitializingBean {
     }
 
     @Override
-    public Map<String, List<AuthUserVO>> queryAuthUserByUserId(int userId) {
+    public Map<Integer, List<AuthUserVO>> queryAuthUserByUserId(int userId) {
         QueryContainer<AuthUser> authUserSp = new QueryContainer<>();
         try {
             authUserSp.add(ConditionFactory.equal("userId", userId));
@@ -254,10 +254,10 @@ public class AuthImpl implements AuthService, InitializingBean {
                                                 return authUserVO;
                                             }).collect(Collectors.toList());
 
-        Map<String, List<AuthUserVO>> resultMap = new HashMap<>();
+        Map<Integer, List<AuthUserVO>> resultMap = new HashMap<>();
         for (AuthUserVO authUserVO : result) {
             try {
-                String k = AuthClassification.getClassificationFromAuthId(authUserVO.getAuthId()).getMessage();
+                int k = AuthClassification.getClassificationFromAuthId(authUserVO.getAuthId()).getCode();
                 List<AuthUserVO> temp = resultMap.get(k);
                 if (temp == null) {
                     temp = new ArrayList<>();
