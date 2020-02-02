@@ -23,27 +23,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   userManagementId: string;
   userManagementData: UserManagementInfoVO;
   isSaving: boolean = false;
-
-  //商品
-  authsTmp1: userAuthVO[];
-  //欠款明细
-  authsTmp2: userAuthVO[];
-  //客户
-  authsTmp3: userAuthVO[];
-  //支出
-  authsTmp4: userAuthVO[];
-  //加工单
-  authsTmp5: userAuthVO[];
-  //采购单
-  authsTmp6: userAuthVO[];
-  //出货单
-  authsTmp7: userAuthVO[];
-  //汇总信息
-  authsTmp8: userAuthVO[];
-  //供货商
-  authsTmp9: userAuthVO[];
-  //用户相关
-  authsTmp10: userAuthVO[];
+  authlist: userAuthVO[] = [];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -87,53 +67,65 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList2) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList3) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList4) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList5) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList6) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList7) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList8) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList9) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList10) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
+
     this.isSaving = true;
+    userInfo.authList = this.authlist;
     this.userManagement.save(userInfo)
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
@@ -152,53 +144,65 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList2) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList3) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList4) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList5) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList6) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList7) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList8) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList9) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
     for (const tmp of userInfo.authList10) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
+
     this.isSaving = true;
+    userInfo.authList = this.authlist;
     this.userManagement.save(userInfo)
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
