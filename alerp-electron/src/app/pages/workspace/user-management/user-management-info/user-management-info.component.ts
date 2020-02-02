@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {CloseTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 import {ClosableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {ResultVO, ResultCode} from "../../../../core/model/result-vm";
@@ -23,6 +23,27 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   userManagementId: string;
   userManagementData: UserManagementInfoVO;
   isSaving: boolean = false;
+
+  //商品
+  authsTmp1: userAuthVO[];
+  //欠款明细
+  authsTmp2: userAuthVO[];
+  //客户
+  authsTmp3: userAuthVO[];
+  //支出
+  authsTmp4: userAuthVO[];
+  //加工单
+  authsTmp5: userAuthVO[];
+  //采购单
+  authsTmp6: userAuthVO[];
+  //出货单
+  authsTmp7: userAuthVO[];
+  //汇总信息
+  authsTmp8: userAuthVO[];
+  //供货商
+  authsTmp9: userAuthVO[];
+  //用户相关
+  authsTmp10: userAuthVO[];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -62,7 +83,52 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
 
   confirmAdd(id: number): void {
     let userInfo: UserManagementInfoVO = this.userManagementData;
-    for (const tmp of userInfo.authList) {
+    for (const tmp of userInfo.authList1) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList2) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList3) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList4) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList5) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList6) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList7) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList8) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList9) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+    }
+    for (const tmp of userInfo.authList10) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
@@ -82,7 +148,52 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
 
   confirmAbandon(id: number): void {
     let userInfo: UserManagementInfoVO = this.userManagementData;
-    for (const tmp of userInfo.authList) {
+    for (const tmp of userInfo.authList1) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList2) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList3) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList4) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList5) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList6) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList7) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList8) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList9) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+    }
+    for (const tmp of userInfo.authList10) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
