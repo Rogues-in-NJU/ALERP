@@ -138,8 +138,13 @@ public class ProductServiceImpl implements ProductService, InitializingBean {
 
     @Override
     public int addOrUpdate(ProductDTO productDTO) {
-        if (!ProductType.of(productDTO.getType()).validateSpecification(productDTO.getSpecification()))
-            throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "规格格式错误，请重新填写.");
+        String specification = productDTO.getSpecification();
+        if (specification == null || specification.length() == 0) {
+            specification = "";
+        }else {
+            if (!ProductType.of(productDTO.getType()).validateSpecification(productDTO.getSpecification()))
+                throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "规格格式错误，请重新填写.");
+        }
 
         Product product = Product.builder()
                 .createAt(DateUtils.getTodayAccurateToSecond())

@@ -7,6 +7,7 @@ import edu.nju.alerp.entity.AuthUser;
 import edu.nju.alerp.vo.AuthUserVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 权限资源服务接口类
@@ -27,7 +28,7 @@ public interface AuthService {
 
     public int initialUserAuthByUserId(int id);
 
-    public List<AuthUserVO> queryAuthUserByUserId(int userId);
+    public Map<String, List<AuthUserVO>> queryAuthUserByUserId(int userId);
 
     public int initialAuthResource();
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 用户详细信息VO
@@ -31,5 +32,5 @@ public class UserInfoVO {
     private Integer deletedBy;
     private int status;
     private List<Integer> cities;
-    private List<AuthUserVO> authList;
+    private Map<String, List<AuthUserVO>> authList;
 }

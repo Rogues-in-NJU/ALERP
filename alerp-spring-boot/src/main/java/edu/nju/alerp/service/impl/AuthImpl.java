@@ -11,6 +11,7 @@ import edu.nju.alerp.dto.AuthDTO;
 import edu.nju.alerp.dto.UpdateUserAuthDTO;
 import edu.nju.alerp.entity.Auth;
 import edu.nju.alerp.entity.AuthUser;
+import edu.nju.alerp.enums.AuthClassification;
 import edu.nju.alerp.repo.AuthRepository;
 import edu.nju.alerp.repo.AuthUserRepository;
 import edu.nju.alerp.service.AuthService;
@@ -24,10 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -237,7 +235,7 @@ public class AuthImpl implements AuthService, InitializingBean {
     }
 
     @Override
-    public List<AuthUserVO> queryAuthUserByUserId(int userId) {
+    public Map<String, List<AuthUserVO>> queryAuthUserByUserId(int userId) {
         QueryContainer<AuthUser> authUserSp = new QueryContainer<>();
         try {
             authUserSp.add(ConditionFactory.equal("userId", userId));
@@ -255,7 +253,25 @@ public class AuthImpl implements AuthService, InitializingBean {
                                                 authUserVO.setAction(authUser.getAction());
                                                 return authUserVO;
                                             }).collect(Collectors.toList());
-        return result;
+
+        Map<String, List<AuthUserVO>> resultMap = new HashMap<>();
+        for (AuthUserVO authUserVO : result) {
+            try {
+                String k = AuthClassification.getClassificationFromAuthId(authUserVO.getAuthId()).getMessage();
+                List<AuthUserVO> temp = resultMap.get(k);
+                if (temp == null) {
+                    temp = new ArrayList<>();
+                    temp.add(authUserVO);
+                    resultMap.put(k, temp);
+                }else {
+                    temp.add(authUserVO);
+                }
+            }catch (Exception e) {
+                log.error(authUserVO.getDescription()+"can not find,",e);
+            }
+
+        }
+        return resultMap;
     }
 
     @Override

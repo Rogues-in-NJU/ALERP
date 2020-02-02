@@ -38,6 +38,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 import static edu.nju.alerp.Application.managerSession;
 
@@ -140,7 +141,7 @@ public class UserController {
     }
 
     private UserInfoVO generateUserInfo(User user) {
-        List<AuthUserVO> authList = authService.queryAuthUserByUserId(user.getId());
+        Map<String, List<AuthUserVO>> authList = authService.queryAuthUserByUserId(user.getId());
         UserInfoVO userInfoVO = UserInfoVO.builder()
                 .cities(userService.getCitiesByUserId(user.getId()))
                 .authList(authList)
