@@ -69,6 +69,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .tax(shippingOrderDTO.isTax())
+                .check(false)
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
         return shippingOrder;
@@ -208,7 +209,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             }
             if (!"".equals(name)) {
                 List<Integer> customerIdList = customerRepository.findCustomerIdByNameAndShorthand(name);
-                if(!CollectionUtils.isEmpty(customerIdList)){
+                if (!CollectionUtils.isEmpty(customerIdList)) {
                     fuzzyMatch.add(ConditionFactory.In("customerId", customerIdList));
                 }
             }

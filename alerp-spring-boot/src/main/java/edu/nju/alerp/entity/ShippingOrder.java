@@ -56,6 +56,10 @@ public class ShippingOrder {
      */
     private boolean tax;
     /**
+     * 是否已对账
+     */
+    private boolean check;
+    /**
      *浮动金额
      */
     @Column(name="floating_cash")

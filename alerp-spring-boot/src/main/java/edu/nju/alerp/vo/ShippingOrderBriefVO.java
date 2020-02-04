@@ -18,6 +18,7 @@ public class ShippingOrderBriefVO {
     private Integer arrearOrderId;
     private Integer status;
     private boolean tax;
+    private boolean check;
     private double cash;
     private Integer city;
     private double floatingCash;

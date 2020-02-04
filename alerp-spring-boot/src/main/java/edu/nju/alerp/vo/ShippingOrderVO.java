@@ -20,6 +20,7 @@ public class ShippingOrderVO {
     private Integer arrearOrderId;
     private String arrearOrderCode;
     private boolean tax;
+    private boolean check;
     private double cash;
     private double floatingCash;
     private double receivableCash;
