@@ -1,0 +1,41 @@
+<nz-page-header>
+  <nz-page-header-title>月结客户列表</nz-page-header-title>
+</nz-page-header>
+<div class="content">
+  <div nz-form nzLayout="inline">
+    <div class="table-wrapper">
+      <nz-table #customerTable
+                nzShowSizeChanger
+                [nzFrontPagination]="false"
+                [nzData]="customerList"
+                [(nzPageIndex)]="pageIndex"
+                [(nzPageSize)]="pageSize"
+                (nzPageIndexChange)="search()"
+                (nzPageSizeChange)="search()"
+                [nzTotal]="totalPages * pageSize"
+                [nzLoading]="isLoading"
+                [nzScroll]="{ x: '100%'}">
+        <thead>
+        <tr>
+          <th nzLeft="0px" nzWidth="150px">ID</th>
+          <th nzWidth="150px">客户名称</th>
+          <th nzRight="0px" nzWidth="150px">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of customerTable.data">
+          <td nzLeft="0px">
+            <a routerLink="/workspace/customer/info/{{ data.id }}">{{ data.id }}</a>
+          </td>
+          <td>
+            <a routerLink="/workspace/customer/info/{{ data.id }}">{{ data.name }}</a>
+          </td>
+          <td nzRight="0px">
+            <a routerLink="/workspace/reconciliation/shipping-order-list/{{ data.id }}">开始对账</a>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
