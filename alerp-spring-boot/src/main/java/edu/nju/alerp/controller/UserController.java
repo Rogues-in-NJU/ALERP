@@ -38,6 +38,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 import static edu.nju.alerp.Application.managerSession;
 
@@ -140,10 +141,19 @@ public class UserController {
     }
 
     private UserInfoVO generateUserInfo(User user) {
-        List<AuthUserVO> authList = authService.queryAuthUserByUserId(user.getId());
+        Map<Integer, List<AuthUserVO>> authList = authService.queryAuthUserByUserId(user.getId());
         UserInfoVO userInfoVO = UserInfoVO.builder()
                 .cities(userService.getCitiesByUserId(user.getId()))
-                .authList(authList)
+                .authList1(authList.get(1))
+                .authList2(authList.get(2))
+                .authList3(authList.get(3))
+                .authList4(authList.get(4))
+                .authList5(authList.get(5))
+                .authList6(authList.get(6))
+                .authList7(authList.get(7))
+                .authList8(authList.get(8))
+                .authList9(authList.get(9))
+                .authList10(authList.get(10))
                 .build();
         BeanUtils.copyProperties(user, userInfoVO);
         return userInfoVO;

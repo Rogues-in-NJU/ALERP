@@ -173,15 +173,16 @@
     <br/>
     <br/>
     <br/>
-    <p *ngIf="showPrint">(购货单位:){{ processingOrderData.customerName }}</p>
+    <!--(购货单位:)-->
+    <p *ngIf="showPrint">{{ processingOrderData.customerName }}</p>
     <div style="height: 500px">
       <table *ngIf="showPrint">
         <thead>
         <tr>
-          <th style="width: 200px">(型号)</th>
-          <th style="width: 300px">(加工规格(mm))</th>
-          <th style="width: 120px">(数量(件))</th>
-          <th style="width: 120px">(预计重量(kg))</th>
+          <!--<th style="width: 200px">(型号)</th>-->
+          <!--<th style="width: 300px">(加工规格(mm))</th>-->
+          <!--<th style="width: 120px">(数量(件))</th>-->
+          <!--<th style="width: 120px">(预计重量(kg))</th>-->
         </tr>
         </thead>
         <tbody>
@@ -196,7 +197,8 @@
     </div>
     <div style="position: relative">
       <div style="position: absolute; right: 0">
-        <label>重量汇总:</label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight }}</span>
+        <!--重量汇总:-->
+        <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight }}</span>
       </div>
     </div>
   </div>

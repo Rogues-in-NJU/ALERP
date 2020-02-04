@@ -133,16 +133,16 @@
   </div>
 </div>
 
-<div id="print_div" #print_div>
-
-  <p *ngIf="showPrint">对账单</p>
+<div class="print-wrapper" id="print_div" #print_div>
+  <br/>
+  <!--<p *ngIf="showPrint">对账单</p>-->
   <table *ngIf="showPrint">
     <thead>
     <tr>
-      <th style="width: 200px">单号</th>
-      <th style="width: 150px">客户</th>
-      <th style="width: 100px">金额</th>
-      <th style="width: 200px">日期</th>
+    <!--<th style="width: 200px">单号</th>-->
+    <!--<th style="width: 150px">客户</th>-->
+    <!--<th style="width: 100px">金额</th>-->
+    <!--<th style="width: 200px">日期</th>-->
     </tr>
     </thead>
     <tbody>
@@ -155,7 +155,8 @@
     <tr>
       <td></td>
       <td></td>
-      <td>(合计)</td>
+      <td></td>
+      <!--<td>(合计)</td>-->
       <td> {{ totalMoney }}</td>
     </tr>
     </tbody>

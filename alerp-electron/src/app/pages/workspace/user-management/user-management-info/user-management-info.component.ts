@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {CloseTabEvent, TabService} from "../../../../core/services/tab.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserManagementInfoVO} from "../../../../core/model/user-management";
+import {UserManagementInfoVO, userAuthVO} from "../../../../core/model/user-management";
 import {ClosableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
 import {ResultVO, ResultCode} from "../../../../core/model/result-vm";
@@ -23,6 +23,7 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
   userManagementId: string;
   userManagementData: UserManagementInfoVO;
   isSaving: boolean = false;
+  authlist: userAuthVO[] = [];
 
   constructor(private closeTabService: TabService,
               private route: ActivatedRoute,
@@ -62,12 +63,69 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
 
   confirmAdd(id: number): void {
     let userInfo: UserManagementInfoVO = this.userManagementData;
-    for (const tmp of userInfo.authList) {
+    for (const tmp of userInfo.authList1) {
       if (tmp.authId == id) {
         tmp.action = 1;
       }
+      this.authlist.push(tmp);
     }
+    for (const tmp of userInfo.authList2) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList3) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList4) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList5) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList6) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList7) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList8) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList9) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList10) {
+      if (tmp.authId == id) {
+        tmp.action = 1;
+      }
+      this.authlist.push(tmp);
+    }
+
     this.isSaving = true;
+    userInfo.authList = this.authlist;
     this.userManagement.save(userInfo)
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);
@@ -82,12 +140,69 @@ export class UserManagementInfoComponent implements ClosableTab, OnInit {
 
   confirmAbandon(id: number): void {
     let userInfo: UserManagementInfoVO = this.userManagementData;
-    for (const tmp of userInfo.authList) {
+    for (const tmp of userInfo.authList1) {
       if (tmp.authId == id) {
         tmp.action = 0;
       }
+      this.authlist.push(tmp);
     }
+    for (const tmp of userInfo.authList2) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList3) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList4) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList5) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList6) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList7) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList8) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList9) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+    for (const tmp of userInfo.authList10) {
+      if (tmp.authId == id) {
+        tmp.action = 0;
+      }
+      this.authlist.push(tmp);
+    }
+
     this.isSaving = true;
+    userInfo.authList = this.authlist;
     this.userManagement.save(userInfo)
       .subscribe((res: ResultVO<any>) => {
         this.message.success(res.message);

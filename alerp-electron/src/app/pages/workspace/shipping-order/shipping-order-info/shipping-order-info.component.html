@@ -136,35 +136,37 @@
 </div>
 
 <!--按件数-->
-<div>
-  <p *ngIf="showPrint">(XX公司销售出货单)</p>
+<div class="print-wrapper">
+  <!--<p *ngIf="showPrint">(XX公司销售出货单)</p>-->
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
-  <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
-  <p *ngIf="showPrint">(本单含税/未税){{ hasTax }}</p>
-  <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
+  <!--(客户:)-->
+  <p *ngIf="showPrint">{{ shippingOrderData.customerName }}</p>
+  <!--(本单含税/未税)-->
+  <p *ngIf="showPrint">{{ hasTax }}</p>
+  <!--(出货单编号:)-->
+  <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
   <table *ngIf="showPrint">
     <thead>
     <tr>
-      <th style="width: 200px">(订单号)</th>
-      <th style="width: 200px">(物料编码)</th>
+      <!--<th style="width: 200px">(订单号)</th>-->
+      <!--<th style="width: 200px">(物料编码)</th>-->
 
-      <th style="width: 100px">(商品)</th>
-      <th style="width: 200px">(规格)</th>
-      <th style="width: 100px">(数量(件))</th>
-      <th style="width: 100px">(单价)</th>
-      <th style="width: 100px">(总金额)</th>
+      <!--<th style="width: 100px">(商品)</th>-->
+      <!--<th style="width: 200px">(规格)</th>-->
+      <!--<th style="width: 100px">(数量(件))</th>-->
+      <!--<th style="width: 100px">(单价)</th>-->
+      <!--<th style="width: 100px">(总金额)</th>-->
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let data of printCountList">
       <td> {{ data.orderId }}</td>
       <td> {{ data.code }}</td>
-
       <td> {{ data.name }}</td>
       <td> {{ data.specification }}</td>
       <td> {{ data.count }}</td>
@@ -172,12 +174,14 @@
       <td> {{ data.total }}</td>
     </tr>
     <tr>
-      <td>(合计(大写))</td>
+      <!--(合计(大写))-->
+      <td></td>
       <td> {{ stringMoney }}</td>
       <td></td>
       <td></td>
       <td></td>
-      <td>(合计)</td>
+      <!--(合计)-->
+      <td></td>
       <td> {{ shippingOrderData.cash }}</td>
     </tr>
     </tbody>
@@ -185,30 +189,34 @@
   <br/>
   <br/>
   <br/>
-  <p *ngIf="showPrint">(备注:){{ remarks }}</p>
+  <!--(备注:)-->
+  <p *ngIf="showPrint">{{ remarks }}</p>
 </div>
 
 <!--按重量-->
-<div>
-  <p *ngIf="showPrint">(XX公司销售出货单)</p>
+<div class="print-wrapper">
+  <!--<p *ngIf="showPrint">(XX公司销售出货单)</p>-->
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
   <br/>
-  <p *ngIf="showPrint">(客户:){{ shippingOrderData.customerName }}</p>
-  <p *ngIf="showPrint">(本单含税/未税){{ hasTax }}</p>
-  <p *ngIf="showPrint">(出货单编号:){{ shippingOrderData.code }}</p>
+  <!--(客户:)-->
+  <p *ngIf="showPrint">{{ shippingOrderData.customerName }}</p>
+  <!--(本单含税/未税)-->
+  <p *ngIf="showPrint">{{ hasTax }}</p>
+  <!--(出货单编号:)-->
+  <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
   <table *ngIf="showPrint">
     <thead>
     <tr>
-      <th style="width: 100px">(商品)</th>
-      <th style="width: 200px">(规格)</th>
-      <th style="width: 100px">(数量(KG))</th>
-      <th style="width: 100px">(单价)</th>
-      <th style="width: 100px">(实际重量)</th>
-      <th style="width: 100px">(总金额)</th>
+      <!--<th style="width: 100px">(商品)</th>-->
+      <!--<th style="width: 200px">(规格)</th>-->
+      <!--<th style="width: 100px">(数量(KG))</th>-->
+      <!--<th style="width: 100px">(单价)</th>-->
+      <!--<th style="width: 100px">(实际重量)</th>-->
+      <!--<th style="width: 100px">(总金额)</th>-->
     </tr>
     </thead>
     <tbody>
@@ -221,11 +229,13 @@
       <td> {{ data.cash }}</td>
     </tr>
     <tr>
-      <td>(合计(大写))</td>
+      <!--(合计(大写))-->
+      <td></td>
       <td> {{ stringMoney }}</td>
       <td></td>
       <td></td>
-      <td>(合计(小写))</td>
+      <!--(合计(小写))-->
+      <td></td>
       <td> {{ shippingOrderData.cash }}</td>
     </tr>
     </tbody>
@@ -233,8 +243,10 @@
   <br/>
   <br/>
   <br/>
-  <p *ngIf="showPrint">(备注:){{ remarks }}</p>
-  <p *ngIf="showPrint">(收货单位签字:)</p>
+  <!--(备注:)-->
+  <p *ngIf="showPrint">{{ remarks }}</p>
+  <!--(收货单位签字:)-->
+  <p *ngIf="showPrint"></p>
 </div>
 
 <nz-modal style="width: 300px" [(nzVisible)]="isVisibleWeight" nzTitle="打印" (nzOnCancel)="handleCancel()"
