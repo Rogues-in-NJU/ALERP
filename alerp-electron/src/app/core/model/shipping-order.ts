@@ -32,6 +32,8 @@ export interface ShippingOrderProductInfoVO extends BaseInfo{
 
   processingProductId?: number
 
+  hasReconciliationed?: number
+
   productId?: number
   productName?: string
   type?: number,

@@ -1,0 +1,289 @@
+<nz-page-header>
+  <nz-page-header-title>出货单列表</nz-page-header-title>
+  <nz-page-header-extra>
+    <nz-modal [(nzVisible)]="shippingOrderAddVisible"
+              nzTitle="导入加工单"
+              (nzOnCancel)="cancelAdd()"
+              (nzOnOk)="confirmAdd()"
+              [nzOkLoading]="shippingOrderAddOkLoading">
+      <div nz-form nzLayout="inline">
+        <nz-form-item>
+          <nz-form-label>客户</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="text" [(ngModel)]="addShippingOrder_customerName"/>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary" (click)="searchProcessingOrderBycustomername()">搜索</button>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <nz-table
+        #rowSelectionTable
+        nzShowPagination
+        nzShowSizeChanger
+        [(nzPageIndex)]="addShippingOrder_pageIndex"
+        [(nzPageSize)]="addShippingOrder_pageSize"
+        [nzData]="addShippingOrder_allProcessingOrderList"
+        (nzCurrentPageDataChange)="currentPageDataChange($event)">
+        <thead>
+        <tr>
+          <th
+            nzShowCheckbox
+            [(nzChecked)]="isAllDisplayDataChecked"
+            [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)">
+          </th>
+          <th>编号</th>
+          <th>客户</th>
+          <th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data">
+          <td
+            nzShowCheckbox
+            [(nzChecked)]="mapOfCheckedId[data.id]"
+            [nzDisabled]="checkedCustomerId !== -1 && data.customerId !== checkedCustomerId"
+            (nzCheckedChange)="refreshStatus(data.customerId)"
+          ></td>
+          <td>{{ data.code }}</td>
+          <td>{{ data.customerName }}</td>
+          <td>{{ data.createdAt }}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </nz-modal>
+  </nz-page-header-extra>
+</nz-page-header>
+<div class="content" *ngIf="isLoading">
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+  <nz-skeleton [nzActive]="true"></nz-skeleton>
+</div>
+
+<div class="content" *ngIf="!isLoading">
+  <nz-descriptions nzBordered nzSize="small">
+    <nz-descriptions-item nzTitle="客户" [nzSpan]="4">{{ shippingOrderData.customerName }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="加工单编号" [nzSpan]="4">
+      <p  *ngFor="let data of shippingOrderData.processingOrderIdsCodes">{{ data.processingOrderCode }}<br></p>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="是否含税" [nzSpan]="4">
+      <nz-radio-group [(ngModel)]="shippingOrderData.tax">
+        <label nz-radio nzValue=true>含税</label>
+        <label nz-radio nzValue=false>不含税</label>
+      </nz-radio-group>
+    </nz-descriptions-item>
+  </nz-descriptions>
+  <br/>
+  <div nz-row class="table-header">
+    <h3 style="display: inline-block">商品列表</h3>
+    <button nz-button
+            nzType="primary"
+            style="display: inline-block; margin-left: 20px"
+            nzSize="small"
+            (click)="addProductRow()"
+            [disabled]="editCache._id !== null">
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      新增
+    </button>
+  </div>
+  <nz-table #shippingOrderInfoProductsTable
+            nzBordered
+            nzShowPagination="false"
+            nzSize="middle"
+            [nzData]="shippingOrderData.products"
+  >
+    <thead>
+    <tr>
+      <th nzWidth="150px">加工单编号</th>
+      <th nzWidth="100px">商品</th>
+      <th nzWidth="160px">加工规格(毫米)</th>
+      <th nzWidth="75px">数量(件)</th>
+      <th nzWidth="75px">单价(元)</th>
+      <th nzWidth="100px">预计重量(公斤)</th>
+      <th nzWidth="100px">实际重量(公斤)</th>
+      <th nzWidth="125px">计价方式</th>
+      <th nzWidth="100px">金额(元)</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of shippingOrderInfoProductsTable.data">
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao">
+          {{ data.processingOrderCode }}
+        </ng-container>
+      </td>
+
+      <!--      productName-->
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao; else productNameEditTpl">
+          {{ data.productName }}
+        </ng-container>
+        <ng-template #productNameEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.productId">
+            <nz-select [(ngModel)]="editCache.product"
+                       nzShowSearch
+                       nzServerSearch
+                       (nzOnSearch)="onProductSearch($event)"
+                       (ngModelChange)="onChangeSelectedProduct($event)"
+                       style="width: 100px">
+              <nz-option *ngIf="!isProductsLoading" nzLabel="{{ editCache.currentProduct.name }}" [nzValue]="editCache.currentProduct" nzHide></nz-option>
+              <ng-container *ngFor="let p of searchProducts; let i = index;">
+                <nz-option *ngIf="!isProductsLoading" nzLabel="{{ p.name }}" [nzValue]="p"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="isProductsLoading" nzDisabled nzCustomContent>
+                <i nz-icon nzType="loading" class="loading-icon"></i> Loading Data...
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container>
+          {{ data.specification }}
+        </ng-container>
+
+      </td>
+
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !isAddSunHao ; else quantityEditTpl">
+          {{ data.quantity }}
+        </ng-container>
+        <ng-template #quantityEditTpl>
+          <nz-form-control>
+            <nz-input-number nzMin="1" nzStep="1"
+                             [(ngModel)]="editCache.data.quantity"
+                             (ngModelChange)="caculateCashForProduct()">
+            </nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !data.isEditable; else priceEditTpl">
+          {{ data.price }}
+        </ng-container>
+        <ng-template #priceEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.price">
+            <nz-input-number nzMin="0" nzStep="0.01"
+                             [(ngModel)]="editCache.data.price"
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('price')"></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container>
+          {{ data.expectedWeight }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else weightEditTpl">
+          {{ data.weight }}
+        </ng-container>
+        <ng-template #weightEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
+            <nz-input-number nzMin="0" nzStep="0.0001"
+                             [(ngModel)]="editCache.data.weight"
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('weight')"></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id'] || !data.isEditable; else priceTypeEditTpl">
+          {{ data.priceType | shipping_order_price_type }}
+        </ng-container>
+        <ng-template #priceTypeEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.priceType">
+            <nz-select [(ngModel)]="editCache.data.priceType"
+                       (ngModelChange)="checkModelNotNullAndCaculateCash('priceType')"
+                       style="width: 80px">
+              <nz-option nzLabel="元/kg" [nzValue]="1"></nz-option>
+              <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id !== data['_id']; else cashEditTpl">
+          {{ data.cash }}
+        </ng-container>
+        <ng-template #cashEditTpl>
+          <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
+            <nz-input-number nzMin="0" nzStep="0.0001"
+                             [(ngModel)]="editCache.data.cash"
+                             (ngModelChange)="checkModelNotNullAndCaculateCash('cash')"></nz-input-number>
+          </nz-form-control>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="editCache._id === null">
+          <a (click)="startEditProduct(data._id)">编辑</a>
+          <a nz-popconfirm
+             style="margin-left: 5px"
+             class="delete"
+             nzTitle="确认删除?"
+             (nzOnConfirm)="confirmProductDelete(data._id)">
+            删除
+          </a>
+        </ng-container>
+        <ng-container *ngIf="editCache._id !== data['_id']; else saveTpl">
+
+        </ng-container>
+        <ng-template #saveTpl>
+          <a (click)="saveProductEdit(data._id)">保存</a>
+          <a nz-popconfirm
+             nzTitle="确认取消?"
+             (nzOnConfirm)="cancelProductEdit(data._id)"
+             style="margin-left: 5px;">
+            取消
+          </a>
+        </ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+
+  <br>
+  <hr>
+  <br>
+
+  <div nz-form nzLayout="inline">
+    <nz-form-item>
+      <nz-form-label >累计金额</nz-form-label>
+      <nz-form-control >
+        <nz-input-group nzSuffix="元">
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.cash"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>浮动金额</nz-form-label>
+      <nz-form-control>
+        <nz-input-group nzPrefix="-" nzSuffix="元">
+          <input nz-input type="text" [(ngModel)]="shippingOrderData.floatingCash"
+                 (ngModelChange)="modifyReceivableCash()"/>
+        </nz-input-group>
+
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>应收金额</nz-form-label>
+      <nz-form-control>
+        <nz-input-group nzSuffix="元">
+          <input nz-input [required]="true" type="text" [(ngModel)]="shippingOrderData.receivableCash"
+                 (ngModelChange)="modifyFloatingCash()"/>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+
+
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="confirmAddShippingOrder()">确认</button>
+      </div>
+    </div>
+  </div>
+
+</div>
