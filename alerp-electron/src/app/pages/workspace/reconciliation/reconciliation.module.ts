@@ -6,6 +6,7 @@ import {SharedModule} from "../../../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {ReconciliationUserListComponent} from "./reconciliation-user-list/reconciliation-user-list.component";
 import {ReconciliationShippingOrderListComponent} from "./reconciliation-shipping-order-list/reconciliation-shipping-order-list.component";
+import {ShippingOrderReconciliationStatusColorPipe, ShippingOrderReconciliationStatusPipe} from "./reconciliation.pipe";
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'user-list'},
@@ -39,7 +40,9 @@ const routes: Routes = [
   ],
   declarations: [
     ReconciliationUserListComponent,
-    ReconciliationShippingOrderListComponent
+    ReconciliationShippingOrderListComponent,
+    ShippingOrderReconciliationStatusPipe,
+    ShippingOrderReconciliationStatusColorPipe,
   ],
   exports: [RouterModule]
 })
