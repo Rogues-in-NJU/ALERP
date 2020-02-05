@@ -45,6 +45,9 @@ const routes: Routes = [
   }, {
     path: 'arrear-order',
     loadChildren: './arrear-order/arrear-order.module#ArrearOrderModule'
+  }, {
+    path: 'reconciliation',
+    loadChildren: './reconciliation/reconciliation.module#ReconciliationModule'
   }
 ];
 

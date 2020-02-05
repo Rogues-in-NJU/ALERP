@@ -43,5 +43,5 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class UserManagementModule {
+export class ReconciliationModule {
 }
