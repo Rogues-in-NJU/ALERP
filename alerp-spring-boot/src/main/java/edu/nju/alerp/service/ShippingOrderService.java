@@ -30,6 +30,8 @@ public interface ShippingOrderService {
 
     Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
 
+    Page<ShippingOrder> getReconciliationList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
+
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
 
     List<Integer> getProcessingListById(int id);

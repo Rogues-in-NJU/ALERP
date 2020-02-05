@@ -69,7 +69,7 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 .updatedBy(userId)
                 .status(ShippingOrderStatus.SHIPPIED.getCode())
                 .tax(shippingOrderDTO.isTax())
-                .check(false)
+                .hasReconciliationed(0)
                 .build();
         BeanUtils.copyProperties(shippingOrderDTO, shippingOrder);
         return shippingOrder;
@@ -202,6 +202,30 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
             }
+            setQueryContainer(sp, code, name, startTime, endTime);
+        } catch (Exception e) {
+            log.error("Value is null", e);
+        }
+        return shippingOrderRepository.findAll(sp, pageable);
+    }
+
+    @Override
+    public Page<ShippingOrder> getReconciliationList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
+        QueryContainer<ShippingOrder> sp = new QueryContainer<>();
+        try {
+            if (status != null) {
+                sp.add(ConditionFactory.equal("status", status));
+            }
+            sp.add(ConditionFactory.notEqual("status", ShippingOrderStatus.ABANDONED.getCode()));
+            setQueryContainer(sp, code, name, startTime, endTime);
+        } catch (Exception e) {
+            log.error("Value is null", e);
+        }
+        return shippingOrderRepository.findAll(sp, pageable);
+    }
+
+    private void setQueryContainer(QueryContainer<ShippingOrder> sp, String code, String name, String startTime, String endTime) {
+        try {
             sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
             List<Condition> fuzzyMatch = new ArrayList<>();
             if (!"".equals(code)) {
@@ -223,9 +247,8 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
                 sp.add(ConditionFactory.lessThanEqualTo("createdAt", endTime));
             }
         } catch (Exception e) {
-            log.error("Value is null", e);
+            e.printStackTrace();
         }
-        return shippingOrderRepository.findAll(sp, pageable);
     }
 
     /**

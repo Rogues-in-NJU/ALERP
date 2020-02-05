@@ -21,7 +21,7 @@ public class ShippingOrderVO {
     private String arrearOrderCode;
     private boolean tax;
     private boolean check;
-    private double cash;
+    private int hasReconciliationed;
     private double floatingCash;
     private double receivableCash;
     private Integer status;

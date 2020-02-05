@@ -3,6 +3,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.*;
 import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ProcessingOrderIdCodeDTO;
+import edu.nju.alerp.dto.ReconciliationDTO;
 import edu.nju.alerp.dto.ShippingOrderDTO;
 import edu.nju.alerp.dto.ShippingProductDTO;
 import edu.nju.alerp.entity.*;
@@ -111,6 +112,30 @@ public class ShippingOrderController {
                                              @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.ASC, "status"));
         Page<ShippingOrder> page = shippingOrderService.getShippingOrderList(pageable, code, name, status, createAtStartTime, createAtEndTime);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(transfer(page), pageable, page.getTotalElements()), pageIndex, pageSize));
+    }
+
+    /**
+     * 获取出货单列表
+     *
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/reconciliation", method = RequestMethod.GET, name = "获取出货单列表")
+    public ResponseResult<ListResponse> reconciliation(@RequestParam(value = "pageIndex") int pageIndex,
+                                                       @RequestParam(value = "pageSize") int pageSize,
+                                                       @RequestParam(value = "id", required = false, defaultValue = "") String code,
+                                                       @RequestParam(value = "customerName", required = false, defaultValue = "") String name,
+                                                       @RequestParam(value = "status", required = false) Integer status,
+                                                       @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
+                                                       @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.ASC, "hasReconciliationed"));
+        Page<ShippingOrder> page = shippingOrderService.getReconciliationList(pageable, code, name, status, createAtStartTime, createAtEndTime);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(transfer(page), pageable, page.getTotalElements()), pageIndex, pageSize));
+    }
+
+    private List<ShippingOrderBriefVO> transfer(Page<ShippingOrder> page) {
         List<ShippingOrderBriefVO> result = new ArrayList<>();
         page.getContent().forEach(s -> {
             ShippingOrderBriefVO shippingOrderBriefVO = ShippingOrderBriefVO.builder()
@@ -119,8 +144,24 @@ public class ShippingOrderController {
             BeanUtils.copyProperties(s, shippingOrderBriefVO);
             result.add(shippingOrderBriefVO);
         });
+        return result;
+    }
 
-        return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(result, pageable, page.getTotalElements()), pageIndex, pageSize));
+    /**
+     * 批量修改对账状态
+     *
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/print-list", method = RequestMethod.POST, name = "批量修改对账状态")
+    public ResponseResult<Boolean> updateState(ReconciliationDTO reconciliationDTO){
+        for(Integer id:reconciliationDTO.getShippingOrderIds()){
+            ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
+            shippingOrder.setHasReconciliationed(reconciliationDTO.getToState());
+            shippingOrderService.saveShippingOrder(shippingOrder);
+        }
+        return ResponseResult.ok(true);
     }
 
     /**
@@ -215,6 +256,8 @@ public class ShippingOrderController {
         }
 
     }
+
+
 
     /**
      * 查看出货单详情

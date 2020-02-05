@@ -58,7 +58,8 @@ public class ShippingOrder {
     /**
      * 是否已对账
      */
-    private boolean check;
+    @Column(name = "has_reconciliationed")
+    private Integer hasReconciliationed;
     /**
      *浮动金额
      */
