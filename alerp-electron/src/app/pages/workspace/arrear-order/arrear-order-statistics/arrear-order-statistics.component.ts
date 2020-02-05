@@ -39,9 +39,11 @@ export class ArrearOrderStatisticsComponent implements RefreshableTab, OnInit {
       .subscribe((res: ResultVO<ArrearStatisticsVO>) => {
         console.log(res);
         if (!Objects.valid(res)) {
+          this.message.error("请求失败！");
           return;
         }
         if (res.code !== ResultCode.SUCCESS.code) {
+          this.message.error(res.message);
           return;
         }
         this.arrearStatisticsData = res.data;

@@ -537,6 +537,8 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
   }
 
   refreshStatus(id: number): void {
+
+    console.log("logggg " + this.mapOfCheckedId );
     this.isAllDisplayDataChecked = this.listOfDisplayData
       .filter(item => this.isProcessingOrderAvailable(item.customerId))
       .every(item => this.mapOfCheckedId[item.id]);
