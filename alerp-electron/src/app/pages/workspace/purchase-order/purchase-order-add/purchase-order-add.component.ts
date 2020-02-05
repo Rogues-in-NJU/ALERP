@@ -91,9 +91,9 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       doneAt: [ null, Validators.required ]
     });
     const getProducts: any = (name: string) => {
-      if (StringUtils.isEmpty(name)) {
-        return of([]);
-      }
+      // if (StringUtils.isEmpty(name)) {
+      //   return of([]);
+      // }
       const t: Observable<ResultVO<TableResultVO<ProductVO>>>
         = <Observable<ResultVO<TableResultVO<ProductVO>>>>this.product
         .findAll(Object.assign(new TableQueryParams(), {
