@@ -155,8 +155,8 @@ public class ShippingOrderController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/print-list", method = RequestMethod.POST, name = "批量修改对账状态")
-    public ResponseResult<Boolean> updateState(ReconciliationDTO reconciliationDTO){
-        for(Integer id:reconciliationDTO.getShippingOrderIds()){
+    public ResponseResult<Boolean> updateState(@RequestBody ReconciliationDTO reconciliationDTO) {
+        for (Integer id : reconciliationDTO.getShippingOrderIds()) {
             ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
             shippingOrder.setHasReconciliationed(reconciliationDTO.getToState());
             shippingOrderService.saveShippingOrder(shippingOrder);
@@ -256,7 +256,6 @@ public class ShippingOrderController {
         }
 
     }
-
 
 
     /**
