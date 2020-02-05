@@ -19,7 +19,7 @@ public class ShippingOrderBriefVO {
     private Integer status;
     private boolean tax;
     private boolean check;
-    private int hasReconciliationed;
+    private Integer hasReconciliationed;
     private Integer city;
     private double floatingCash;
     private double receivableCash;
