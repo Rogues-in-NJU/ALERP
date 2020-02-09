@@ -157,6 +157,8 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       expectedWeight: null,
       weight: null,
       cash: null,
+
+      isEditable: true,
     };
     item[ '_isEditable'] = true;
     item[ '_isSunhao' ] = true;

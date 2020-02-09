@@ -101,6 +101,10 @@ export class TabComponent {
           this.router.navigate([ this.menuList[ goToIndex ].url ]);
           this.refreshTab(refreshUrl);
           return;
+        } else {
+          this.router.navigate([ goToUrl ]);
+          this.refreshTab(refreshUrl);
+          return;
         }
       }
       // 显示上一个选中

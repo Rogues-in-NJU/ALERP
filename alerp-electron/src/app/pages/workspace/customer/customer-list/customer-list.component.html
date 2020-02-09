@@ -47,7 +47,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col nzSpan="24">
+          <div nz-col nzSpan="24" *ngIf="customerAddForm.getRawValue()['type'] === 2">
             <nz-form-item nzFlex>
               <nz-form-label nzRequired nzSpan="6">账期</nz-form-label>
               <nz-form-control nzHasFeedback nzSpan="14">
@@ -55,7 +55,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col nzSpan="24">
+          <div nz-col nzSpan="24" *ngIf="customerAddForm.getRawValue()['type'] === 2">
             <nz-form-item nzFlex>
               <nz-form-label nzRequired nzSpan="6">结算日期</nz-form-label>
               <nz-form-control nzHasFeedback nzSpan="14">
