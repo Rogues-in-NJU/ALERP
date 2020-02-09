@@ -7,15 +7,16 @@
     </button>
 
     <div style="display: inline-block">
-<!--      <e-ngx-print #print1-->
-<!--                   [showBtn]="false"-->
-<!--                   [printStyle]="printStyle"-->
-<!--                   [printCSS]="printCSS"-->
-<!--                   (printComplete)="printComplete()">-->
-<!--      </e-ngx-print>-->
+      <e-ngx-print #print1
+                   [showBtn]="false"
+                   [printStyle]="printStyle"
+                   [printCSS]="printCSS"
+                   (printComplete)="printComplete()">
+      </e-ngx-print>
       <button nz-button nzType="primary" [disabled]="isPrintButtonAvailiable"
               (click)="customPrint()">
-      打印</button>
+        打印
+      </button>
     </div>
 
     <nz-modal [(nzVisible)]="isInvoiceModalVisible"
@@ -35,7 +36,6 @@
   </nz-page-header-extra>
 </nz-page-header>
 
-
 <div class="content">
   <div class="table-wrapper">
     <nz-table
@@ -45,7 +45,7 @@
       [(nzPageIndex)]="pageIndex"
       [(nzPageSize)]="pageSize"
       [nzData]="shippingOrderList">
-<!--      (nzCurrentPageDataChange)="currentPageDataChange($event)"-->
+      <!--      (nzCurrentPageDataChange)="currentPageDataChange($event)"-->
 
       <thead>
       <tr>
@@ -87,5 +87,32 @@
       </tr>
       </tbody>
     </nz-table>
+  </div>
+</div>
+
+<div class="print-wrapper">
+  <br/>
+  <div style="height: 400px">
+    <table *ngIf="showPrint">
+      <thead>
+      <tr>
+        <!--<th style="width: 200px">出货单号</th>-->
+        <!--<th style="width: 100px">金额</th>-->
+        <!--<th style="width: 200px">创建时间</th>-->
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of toPrintList">
+        <td style="width: 200px"> {{ data.code }}</td>
+        <td style="width: 150px"> {{ data.receivableCash }}</td>
+        <td style="width: 300px"> {{ data.createdAt }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: relative">
+    <div style="position: absolute; left: 100">
+      <p *ngIf="showPrint">{{ toPrintMoney }}</p>
+    </div>
   </div>
 </div>

@@ -208,45 +208,49 @@
   <p *ngIf="showPrint">{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
-  <table *ngIf="showPrint">
-    <thead>
-    <tr>
-      <!--<th style="width: 100px">(商品)</th>-->
-      <!--<th style="width: 200px">(规格)</th>-->
-      <!--<th style="width: 100px">(数量(KG))</th>-->
-      <!--<th style="width: 100px">(单价)</th>-->
-      <!--<th style="width: 100px">(实际重量)</th>-->
-      <!--<th style="width: 100px">(总金额)</th>-->
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let data of shippingOrderData.products">
-      <td> {{ data.productName }}</td>
-      <td> {{ data.specification }}</td>
-      <td> {{ data.quantity }}</td>
-      <td> {{ data.price }}</td>
-      <td> {{ data.weight }}</td>
-      <td> {{ data.cash }}</td>
-    </tr>
-    <tr>
-      <!--(合计(大写))-->
-      <td></td>
-      <td> {{ stringMoney }}</td>
-      <td></td>
-      <td></td>
-      <!--(合计(小写))-->
-      <td></td>
-      <td> {{ shippingOrderData.cash }}</td>
-    </tr>
-    </tbody>
-  </table>
-  <br/>
-  <br/>
-  <br/>
-  <!--(备注:)-->
-  <p *ngIf="showPrint">{{ remarks }}</p>
-  <!--(收货单位签字:)-->
-  <p *ngIf="showPrint"></p>
+  <div style="height: 400px">
+    <table *ngIf="showPrint">
+      <thead>
+      <tr>
+        <!--<th style="width: 100px">(商品)</th>-->
+        <!--<th style="width: 200px">(规格)</th>-->
+        <!--<th style="width: 100px">(数量(KG))</th>-->
+        <!--<th style="width: 100px">(单价)</th>-->
+        <!--<th style="width: 100px">(实际重量)</th>-->
+        <!--<th style="width: 100px">(总金额)</th>-->
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of shippingOrderData.products">
+        <td style="width: 100px"> {{ data.productName }}</td>
+        <td style="width: 200px"> {{ data.specification }}</td>
+        <td style="width: 100px"> {{ data.quantity }}</td>
+        <td style="width: 100px"> {{ data.price }}</td>
+        <td style="width: 100px"> {{ data.weight }}</td>
+        <td style="width: 100px"> {{ data.cash }}</td>
+      </tr>
+      <tr>
+        <!--(合计(大写))-->
+        <td></td>
+        <td> {{ stringMoney }}</td>
+        <td></td>
+        <td></td>
+        <!--(合计(小写))-->
+        <td></td>
+        <td> {{ shippingOrderData.cash }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: relative">
+    <div style="position: absolute; left: 100">
+      <!--(备注:)-->
+      <p *ngIf="showPrint">{{ remarks }}</p>
+      <!--(收货单位签字:)-->
+      <!--<p *ngIf="showPrint"></p>-->
+    </div>
+  </div>
+
 </div>
 
 <nz-modal style="width: 300px" [(nzVisible)]="isVisibleWeight" nzTitle="打印" (nzOnCancel)="handleCancel()"
