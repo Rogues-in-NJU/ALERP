@@ -9,6 +9,7 @@ import edu.nju.alerp.common.ResponseResult;
 import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.dto.ArrearOrderDueDateDTO;
 import edu.nju.alerp.dto.ArrearOrderInvoiceNumberDTO;
+import edu.nju.alerp.dto.InvoiceNumberTogetherDTO;
 import edu.nju.alerp.entity.ArrearOrder;
 import edu.nju.alerp.entity.ShippingOrder;
 import edu.nju.alerp.service.ArrearOrderService;
@@ -97,6 +98,19 @@ public class ArrearOrderController {
     @RequestMapping(value = "/arrear-order/invoice-number", method = RequestMethod.POST, name = "修改发票流水号")
     public ResponseResult<Integer> updateInvoiceNumber(@RequestBody ArrearOrderInvoiceNumberDTO dto) {
         return ResponseResult.ok(arrearOrderService.updateInvoiceNumber(dto));
+    }
+
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/arrear-order/invoice-number-together", method = RequestMethod.POST, name = "批量输入发票流水号")
+    public ResponseResult<Boolean> updateInvoiceNumberTogether(@RequestBody InvoiceNumberTogetherDTO dto) {
+        for (Integer id : dto.getShippingOrderIds()) {
+            ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
+            ArrearOrder arrearOrder = arrearOrderService.getOne(shippingOrder.getArrearOrderId());
+            arrearOrder.setInvoiceNumber(dto.getInvoiceNumber());
+            arrearOrderService.saveArrearOrder(arrearOrder);
+        }
+        return ResponseResult.ok(true);
     }
 
     /**

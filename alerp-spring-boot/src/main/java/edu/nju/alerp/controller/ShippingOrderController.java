@@ -155,8 +155,8 @@ public class ShippingOrderController {
     @InvokeControl
     @ResponseBody
     @RequestMapping(value = "/print-list", method = RequestMethod.POST, name = "批量修改对账状态")
-    public ResponseResult<Boolean> updateState(ReconciliationDTO reconciliationDTO){
-        for(Integer id:reconciliationDTO.getShippingOrderIds()){
+    public ResponseResult<Boolean> updateState(@RequestBody ReconciliationDTO reconciliationDTO) {
+        for (Integer id : reconciliationDTO.getShippingOrderIds()) {
             ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
             shippingOrder.setHasReconciliationed(reconciliationDTO.getToState());
             shippingOrderService.saveShippingOrder(shippingOrder);
@@ -240,6 +240,9 @@ public class ShippingOrderController {
             });
             processingOrderList.forEach(p -> {
                 ProcessingOrder processingOrder = processOrderService.getOne(p);
+                if (processingOrder.getStatus() != ProcessingOrderStatus.UNFINISHED.getCode()) {
+                    throw new NJUException(ExceptionEnum.ILLEGAL_REQUEST, "加工单状态错误！");
+                }
                 processingOrder.setShippingOrderId(shippingId);
                 processingOrder.setStatus(ProcessingOrderStatus.FINISHED.getCode());
                 processingOrder.setShippintOrderCode(shippingOrder.getCode());
@@ -256,7 +259,6 @@ public class ShippingOrderController {
         }
 
     }
-
 
 
     /**
