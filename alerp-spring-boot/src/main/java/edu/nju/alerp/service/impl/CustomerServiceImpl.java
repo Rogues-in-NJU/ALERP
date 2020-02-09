@@ -42,6 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 存储客户
+     *
      * @param customerDTO
      * @return
      * @throws Exception
@@ -126,6 +127,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 根据id获取客户
+     *
      * @param id
      * @return
      */
@@ -136,6 +138,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 根据客户id获取相应特价
+     *
      * @param id
      * @return
      */
@@ -146,6 +149,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 根据id删除对应客户
+     *
      * @param id
      * @return
      * @throws Exception
@@ -167,6 +171,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 全量获取对应客户列表
+     *
      * @return
      */
     @Override
@@ -177,17 +182,21 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 根据客户姓名分页查询客户列表
+     *
      * @param pageable
      * @param name
      * @return
      */
     @Override
-    public Page<Customer> getCustomerListByName(Pageable pageable, String name) {
+    public Page<Customer> getCustomerListByName(Pageable pageable, String name, Integer type) {
         QueryContainer<Customer> sp = new QueryContainer<>();
         try {
             sp.add(ConditionFactory.isNull("deletedAt"));
             sp.add(ConditionFactory.equal("city", CommonUtils.getCity()));
-            if (!"".equals(name)) {
+            if (type != null) {
+                sp.add(ConditionFactory.equal("type", type));
+            }
+            if (name != null) {
                 List<Condition> fuzzyMatch = new ArrayList<>();
                 fuzzyMatch.add(ConditionFactory.like("name", name));
                 fuzzyMatch.add(ConditionFactory.like("shorthand", name));
@@ -201,6 +210,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 获取现金客户id列表
+     *
      * @return
      */
     @Override
@@ -210,6 +220,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     /**
      * 获取月结客户id列表
+     *
      * @return
      */
     @Override

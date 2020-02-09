@@ -3,6 +3,7 @@ package edu.nju.alerp.controller;
 import edu.nju.alerp.common.ExceptionWrapper;
 import edu.nju.alerp.common.aop.InvokeControl;
 import edu.nju.alerp.entity.ProcessingOrder;
+import edu.nju.alerp.enums.CustomerType;
 import edu.nju.alerp.enums.ExceptionEnum;
 import edu.nju.alerp.service.ProcessOrderService;
 import edu.nju.alerp.util.DateUtils;
@@ -124,8 +125,22 @@ public class CustomerController {
     @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取客户列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
-                                             @RequestParam(value = "name", required = false, defaultValue = "") String name) {
-        Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), name);
+                                             @RequestParam(value = "name", required = false) String name) {
+        Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), name, null);
+        return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
+    }
+
+    /**
+     * 获取月结客户列表
+     *
+     * @return
+     */
+    @InvokeControl
+    @ResponseBody
+    @RequestMapping(value = "/monthList", method = RequestMethod.GET, name = "获取客户列表")
+    public ResponseResult<ListResponse> monthList(@RequestParam(value = "pageIndex") int pageIndex,
+                                                  @RequestParam(value = "pageSize") int pageSize) {
+        Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), null, CustomerType.MONTH.getCode());
         return ResponseResult.ok(ListResponseUtils.generateResponse(page, pageIndex, pageSize));
     }
 
