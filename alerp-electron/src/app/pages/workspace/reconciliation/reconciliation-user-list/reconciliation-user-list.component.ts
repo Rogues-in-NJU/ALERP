@@ -47,10 +47,9 @@ export class ReconciliationUserListComponent implements RefreshableTab, OnInit {
     const queryParams: TableQueryParams = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
-      type: 2, //月结
     };
 
-    this.customer.findAll(queryParams)
+    this.customer.findAllMonth(queryParams)
       .subscribe((res: ResultVO<TableResultVO<CustomerVO>>) => {
         if (!Objects.valid(res)) {
           this.message.error("请求失败！");

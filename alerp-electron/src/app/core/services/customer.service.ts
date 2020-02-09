@@ -30,6 +30,15 @@ export class CustomerService {
     });
   }
 
+  public findAllMonth(
+    queryParams: TableQueryParams
+  ): Observable<ResultVO<TableResultVO<CustomerVO>>> {
+    return this.http.get<ResultVO<TableResultVO<CustomerVO>>>(`${AppConfig.BASE_URL}/api/customer/monthList`, {
+      params: queryParams,
+      withCredentials: true
+    });
+  }
+
   public save(customer: CustomerVO): Observable<ResultVO<any>> {
     return this.http.post<ResultVO<any>>(`${AppConfig.BASE_URL}/api/customer`, customer);
   }
