@@ -92,7 +92,7 @@
 
 <div class="print-wrapper">
   <br/>
-  <div style="height: 500px">
+  <div style="height: 400px">
     <table *ngIf="showPrint">
       <thead>
       <tr>
@@ -111,8 +111,8 @@
     </table>
   </div>
   <div style="position: relative">
-    <div style="position: absolute; right: 0">
-
+    <div style="position: absolute; left: 100">
+      <p *ngIf="showPrint">{{ toPrintMoney }}</p>
     </div>
   </div>
 </div>

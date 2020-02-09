@@ -26,6 +26,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
   shippingOrderList: ShippingOrderInfoVO[];
   toPrintList: ShippingOrderInfoVO[] = [];
+  toPrintMoney: number;
   customerId: number;
 
   isPrintButtonAvailiable: boolean = false;
@@ -198,12 +199,14 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   }
 
   customPrint(): void {
+    this.toPrintMoney = 0;
     let isAllUnReconciliationed: boolean = true;
     let checkedIds: number[] = [];
     for (let shippingOrder of this.shippingOrderList) {
       if (this.mapOfCheckedId[shippingOrder.id]) {
         checkedIds.push(shippingOrder.id);
         this.toPrintList.push(shippingOrder);
+        this.toPrintMoney += shippingOrder.receivableCash;
         if (shippingOrder.hasReconciliationed == 1) {
           isAllUnReconciliationed = false;
         }
