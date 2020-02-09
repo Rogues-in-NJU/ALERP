@@ -447,6 +447,7 @@ export class ProcessingOrderAddComponent implements OnInit {
   }
 
   tabClose(id: number): void {
+    console.log(`/workspace/processing-order/info/${id}`);
     this.tab.closeEvent.emit({
       url: this.router.url,
       goToUrl: `/workspace/processing-order/info/${id}`,
