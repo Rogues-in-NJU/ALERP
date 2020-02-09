@@ -44,6 +44,10 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   isInvoiceModalVisible: boolean = false;
   invoiceNumber: string = "";
 
+  printCSS: string[];
+
+  printStyle: string;
+  
   constructor(private router: Router,
               private route: ActivatedRoute,
               private UserManagement: UserManagementService,
