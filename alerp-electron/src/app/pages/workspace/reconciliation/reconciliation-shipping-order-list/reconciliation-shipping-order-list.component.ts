@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild, ElementRef} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {RefreshableTab} from "../../tab/tab.component";
 import {UserManagementService} from "../../../../core/services/user-management.service";
@@ -10,6 +10,7 @@ import {UserManagementInfoVO} from "../../../../core/model/user-management";
 import {StringUtils, Objects} from "../../../../core/services/util.service";
 import {ReconciliationService} from "../../../../core/services/reconciliation.service";
 import {ShippingOrderInfoVO} from "../../../../core/model/shipping-order";
+import {ENgxPrintComponent} from "e-ngx-print";
 
 @Component({
   selector: 'reconciliation-shipping-order-list',
@@ -24,12 +25,10 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   pageSize: number = 200;
 
   shippingOrderList: ShippingOrderInfoVO[];
+  toPrintList: ShippingOrderInfoVO[] = [];
   customerId: number;
 
-  //todo
-  //打印前先检查一下所选中的出货单是否都是未对账过的
-  //打印后要告诉后端这批单据打印过了。有接口。
-  isPrintButtonAvailiable : boolean = false;
+  isPrintButtonAvailiable: boolean = false;
 
 
   isInvoiceButtonAvailiable: boolean = false;
@@ -38,18 +37,19 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
   isAllDisplayDataChecked: boolean;
   isIndeterminate: boolean;
-  mapOfCheckedId: { [key: number]: boolean } = {};
+  mapOfCheckedId: {[key: number]: boolean} = {};
   numberOfChecked = 0;
 
   isInvoiceModalVisible: boolean = false;
-  invoiceNumber : string = "";
+  invoiceNumber: string = "";
 
   constructor(private router: Router,
               private route: ActivatedRoute,
               private UserManagement: UserManagementService,
               private message: NzMessageService,
               private reconciliation: ReconciliationService,
-              private tab: TabService) {
+              private tab: TabService,
+              private elRef: ElementRef) {
     this.customerId = this.route.snapshot.params['id'];
   }
 
@@ -99,7 +99,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   }
 
 
-  changeReconciliation(shippingOrderId: number): void{
+  changeReconciliation(shippingOrderId: number): void {
     const queryParams: QueryParams = {
       shippingOrderIds: [shippingOrderId],
       toState: 0,
@@ -117,19 +117,19 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
-      }, ()=>{
+      }, () => {
         this.refresh();
       });
   }
 
-  beginAddInvoiceNumber():void{
-    let isAllReconciliationed : boolean = true;
+  beginAddInvoiceNumber(): void {
+    let isAllReconciliationed: boolean = true;
 
     let checkedIds: number[] = [];
-    for(let shippingOrder of this.shippingOrderList){
-      if(this.mapOfCheckedId[shippingOrder.id]){
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
         checkedIds.push(shippingOrder.id);
-        if(shippingOrder.hasReconciliationed == 0){
+        if (shippingOrder.hasReconciliationed == 0) {
           isAllReconciliationed = false;
         }
       }
@@ -140,19 +140,19 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
     //   .filter(item => this.mapOfCheckedId[item.id])
     //   .every(item => item.hasReconciliationed === 1);
 
-    if(!isAllReconciliationed || checkedIds.length == 0){
+    if (!isAllReconciliationed || checkedIds.length == 0) {
       this.message.warning("请选择已对账过的出货单进行操作！");
       return;
     }
 
-    this.isInvoiceModalVisible  = true;
+    this.isInvoiceModalVisible = true;
 
   }
 
-  confirmAddInvoiceNumber(): void{
+  confirmAddInvoiceNumber(): void {
     let checkedIds: number[] = [];
-    for(let shippingOrder of this.shippingOrderList){
-      if(this.mapOfCheckedId[shippingOrder.id]){
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
         checkedIds.push(shippingOrder.id);
       }
     }
@@ -176,40 +176,54 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
-      }, ()=>{
+      }, () => {
         this.isInvoiceModalVisible = false;
         this.invoiceNumber = "";
         this.refresh();
       });
   }
 
-  cancelAddInvoiceNumber(): void{
+  cancelAddInvoiceNumber(): void {
     this.invoiceNumber = "";
     this.isInvoiceModalVisible = false;
   }
 
-  customPrint(): void{
-    let isAllUnReconciliationed : boolean = true;
+  @ViewChild('print1', {static: false})
+  printComponent: ENgxPrintComponent;
+  showPrint: boolean = false;
+
+  printComplete() {
+    // console.log('打印完成！');
+    this.showPrint = false;
+  }
+
+  customPrint(): void {
+    let isAllUnReconciliationed: boolean = true;
     let checkedIds: number[] = [];
-    for(let shippingOrder of this.shippingOrderList){
-      if(this.mapOfCheckedId[shippingOrder.id]){
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
         checkedIds.push(shippingOrder.id);
-        if(shippingOrder.hasReconciliationed == 1){
+        this.toPrintList.push(shippingOrder);
+        if (shippingOrder.hasReconciliationed == 1) {
           isAllUnReconciliationed = false;
         }
       }
     }
 
-    if(!isAllUnReconciliationed || checkedIds.length == 0){
+    if (!isAllUnReconciliationed || checkedIds.length == 0) {
       this.message.warning("请选择未对账过的出货单进行操作！");
       return;
     }
+    console.log(this.toPrintList);
+    this.showPrint = true;
+    const printHTML: any = this.elRef.nativeElement.childNodes[2];
+    this.printComponent.print(printHTML);
 
     this.toReconciliation(checkedIds);
 
   }
 
-  toReconciliation(checkedIds: number[]): void{
+  toReconciliation(checkedIds: number[]): void {
 
     const queryParams: QueryParams = {
       toState: 1,
@@ -231,7 +245,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
-      }, ()=>{
+      }, () => {
         this.refresh();
       });
   }

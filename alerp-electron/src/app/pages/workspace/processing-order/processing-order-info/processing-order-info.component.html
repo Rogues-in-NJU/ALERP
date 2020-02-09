@@ -187,10 +187,10 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of processingOrderData.products">
-          <td> {{ data.productName }}</td>
-          <td> {{ data.specification }}</td>
-          <td> {{ data.quantity }}</td>
-          <td> {{ data.expectedWeight }}</td>
+          <td style="width: 200px"> {{ data.productName }}</td>
+          <td style="width: 300px"> {{ data.specification }}</td>
+          <td style="width: 120px"> {{ data.quantity }}</td>
+          <td style="width: 120px"> {{ data.expectedWeight }}</td>
         </tr>
         </tbody>
       </table>
@@ -198,7 +198,7 @@
     <div style="position: relative">
       <div style="position: absolute; right: 0">
         <!--重量汇总:-->
-        <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight }}</span>
+        <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ processingOrderData.totalWeight }}</span>
       </div>
     </div>
   </div>
