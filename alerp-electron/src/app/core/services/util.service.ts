@@ -125,7 +125,12 @@ export class SpecificationUtils {
     } else {
       volumn = specArr[0] * specArr[1] * specArr[2];
     }
-    return parseFloat((volumn * density * quantity).toFixed(2));
+    let result = parseFloat((volumn * density * quantity).toFixed(2));
+    if (result === 0) {
+      return 0.01;
+    } else {
+      return result;
+    }
   }
 
 }
