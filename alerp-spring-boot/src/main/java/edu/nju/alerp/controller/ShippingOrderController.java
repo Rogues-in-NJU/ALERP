@@ -85,6 +85,7 @@ public class ShippingOrderController {
         processingIdList.forEach(p -> {
             ProcessingOrder processingOrder = processOrderService.getOne(p);
             processingOrder.setShippingOrderId(0);
+            processingOrder.setShippintOrderCode(null);
             processingOrder.setStatus(ProcessingOrderStatus.UNFINISHED.getCode());
             processOrderService.savaProcessingOrder(processingOrder);
         });
