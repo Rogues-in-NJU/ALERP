@@ -137,7 +137,7 @@ public class CustomerController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/monthList", method = RequestMethod.GET, name = "获取月结客户列表")
+    @RequestMapping(value = "/monthList", method = RequestMethod.GET, name = "对账")
     public ResponseResult<ListResponse> monthList(@RequestParam(value = "pageIndex") int pageIndex,
                                                   @RequestParam(value = "pageSize") int pageSize) {
         Page<Customer> page = customerService.getCustomerListByName(PageRequest.of(pageIndex - 1, pageSize), null, CustomerType.MONTH.getCode());
