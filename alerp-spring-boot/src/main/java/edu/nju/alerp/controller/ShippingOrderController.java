@@ -103,7 +103,7 @@ public class ShippingOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "获取出货单列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET, name = "查看出货单列表")
     public ResponseResult<ListResponse> list(@RequestParam(value = "pageIndex") int pageIndex,
                                              @RequestParam(value = "pageSize") int pageSize,
                                              @RequestParam(value = "id", required = false, defaultValue = "") String code,
@@ -123,7 +123,7 @@ public class ShippingOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/reconciliation", method = RequestMethod.GET, name = "获取出货单列表")
+    @RequestMapping(value = "/reconciliation", method = RequestMethod.GET, name = "查看待对账的出货单列表")
     public ResponseResult<ListResponse> reconciliation(@RequestParam(value = "pageIndex") int pageIndex,
                                                        @RequestParam(value = "pageSize") int pageSize,
                                                        @RequestParam(value = "customerId", required = false, defaultValue = "") Integer customerId,
@@ -156,7 +156,7 @@ public class ShippingOrderController {
      */
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/print-list", method = RequestMethod.POST, name = "批量修改对账状态")
+    @RequestMapping(value = "/print-list", method = RequestMethod.POST, name = "修改对账状态")
     public ResponseResult<Boolean> updateState(@RequestBody ReconciliationDTO reconciliationDTO) {
         for (Integer id : reconciliationDTO.getShippingOrderIds()) {
             ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
