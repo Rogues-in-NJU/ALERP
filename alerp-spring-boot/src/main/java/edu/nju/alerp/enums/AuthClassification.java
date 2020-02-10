@@ -75,6 +75,7 @@ public enum  AuthClassification {
                     .put(37, 7)
                     .put(38, 7)
                     .put(39, 7)
+                    .put(57, 7)
                     .put(40, 8)
                     .put(41, 8)
                     .put(42, 8)
