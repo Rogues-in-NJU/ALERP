@@ -102,7 +102,7 @@ public class ArrearOrderController {
 
     @InvokeControl
     @ResponseBody
-    @RequestMapping(value = "/arrear-order/invoice-number-together", method = RequestMethod.POST, name = "批量输入发票流水号")
+    @RequestMapping(value = "/arrear-order/invoice-number-together", method = RequestMethod.POST, name = "录入发票流水号")
     public ResponseResult<Boolean> updateInvoiceNumberTogether(@RequestBody InvoiceNumberTogetherDTO dto) {
         for (Integer id : dto.getShippingOrderIds()) {
             ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
