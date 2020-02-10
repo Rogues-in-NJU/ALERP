@@ -81,6 +81,7 @@ export class UserManagementAddComponent implements ClosableTab, OnInit {
     <userAuthVO>{id: 1, authId: 37, description: "获取出货单列表", action: 1},
     <userAuthVO>{id: 2, authId: 38, description: "新增出货单", action: 1},
     <userAuthVO>{id: 3, authId: 39, description: "查看出货单详情", action: 1},
+    <userAuthVO>{id: 4, authId: 57, description: "获取月结客户列表", action: 0},
   ];
   //汇总信息
   authsTmp8: userAuthVO[] = [
