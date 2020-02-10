@@ -328,7 +328,7 @@
   <h4>汇总信息</h4>
   <nz-table #userAuthTable8
             nzBordered
-            nzShowPagination="true"
+            [nzShowPagination]="false"
             nzSize="small"
             [nzData]="this.userManagementData.authList8">
     <thead>
@@ -371,7 +371,7 @@
   <h4>供货商</h4>
   <nz-table #userAuthTable9
             nzBordered
-            nzShowPagination="true"
+            [nzShowPagination]="false"
             nzSize="small"
             [nzData]="this.userManagementData.authList9">
     <thead>
@@ -414,7 +414,8 @@
   <h4>用户相关</h4>
   <nz-table #userAuthTable10
             nzBordered
-            nzShowPagination="true"
+            [nzShowPagination]="false"
+            [nzPageSize]="20"
             nzSize="small"
             [nzData]="this.userManagementData.authList10">
     <thead>

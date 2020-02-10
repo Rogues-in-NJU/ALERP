@@ -126,13 +126,14 @@ public class ShippingOrderController {
     @RequestMapping(value = "/reconciliation", method = RequestMethod.GET, name = "获取出货单列表")
     public ResponseResult<ListResponse> reconciliation(@RequestParam(value = "pageIndex") int pageIndex,
                                                        @RequestParam(value = "pageSize") int pageSize,
+                                                       @RequestParam(value = "customerId", required = false, defaultValue = "") Integer customerId,
                                                        @RequestParam(value = "id", required = false, defaultValue = "") String code,
                                                        @RequestParam(value = "customerName", required = false, defaultValue = "") String name,
                                                        @RequestParam(value = "status", required = false) Integer status,
                                                        @RequestParam(value = "createAtStartTime", required = false, defaultValue = "") String createAtStartTime,
                                                        @RequestParam(value = "createAtEndTime", required = false, defaultValue = "") String createAtEndTime) {
         Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.ASC, "hasReconciliationed"));
-        Page<ShippingOrder> page = shippingOrderService.getReconciliationList(pageable, code, name, status, createAtStartTime, createAtEndTime);
+        Page<ShippingOrder> page = shippingOrderService.getReconciliationList(pageable, customerId, code, name, status, createAtStartTime, createAtEndTime);
         return ResponseResult.ok(ListResponseUtils.generateResponse(new PageImpl<>(transfer(page), pageable, page.getTotalElements()), pageIndex, pageSize));
     }
 
