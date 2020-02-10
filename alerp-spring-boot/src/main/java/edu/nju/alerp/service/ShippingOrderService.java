@@ -26,11 +26,11 @@ public interface ShippingOrderService {
 
     boolean printShippingOrder(int id);
 
-    List<ShippingOrder> getShippingOrderListByTime(String startTime,String endTime);
+    List<ShippingOrder> getShippingOrderListByTime(String startTime, String endTime);
 
     Page<ShippingOrder> getShippingOrderList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
 
-    Page<ShippingOrder> getReconciliationList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime);
+    Page<ShippingOrder> getReconciliationList(Pageable pageable, Integer customerId, String code, String name, Integer status, String startTime, String endTime);
 
     List<ShippingOrderProduct> getShippingOrderProductList(int shippingOrderId);
 
