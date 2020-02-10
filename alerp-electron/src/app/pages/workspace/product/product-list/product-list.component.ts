@@ -121,7 +121,7 @@ export class ProductListComponent implements RefreshableTab, OnInit{
       name: '',
       shorthand: '',
       type: 0,
-      density: 0.0027,
+      density: 0.0000028,
       specification: ''
     };
     item['_id'] = this.productCountIndex ++;

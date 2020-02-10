@@ -44,6 +44,10 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   isInvoiceModalVisible: boolean = false;
   invoiceNumber: string = "";
 
+  printCSS: string[];
+
+  printStyle: string;
+  
   constructor(private router: Router,
               private route: ActivatedRoute,
               private UserManagement: UserManagementService,
@@ -52,6 +56,15 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
               private tab: TabService,
               private elRef: ElementRef) {
     this.customerId = this.route.snapshot.params['id'];
+
+    this.printCSS = ['http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'];
+
+    this.printStyle =
+      `
+        th, td {
+            color: blue !important;
+        }
+        `;
   }
 
   ngOnInit(): void {
