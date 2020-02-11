@@ -90,7 +90,7 @@
       </td>
       <td>
         <ng-container>
-          {{ data.price  | number: '1.2-3' }}
+          {{ data.price  | number: '1.2-2' }}
         </ng-container>
       </td>
       <td>
@@ -100,7 +100,7 @@
       </td>
       <td>
         <ng-container>
-          {{ data.weight  | number: '1.2-3' }}
+          {{ data.weight  | number: '1.2-2' }}
         </ng-container>
       </td>
       <td>
@@ -110,7 +110,7 @@
       </td>
       <td>
         <ng-container>
-          {{ data.cash  | number: '1.2-3' }}
+          {{ data.cash  | number: '1.2-2' }}
         </ng-container>
       </td>
     </tr>
@@ -121,9 +121,9 @@
     <h3 style="display: inline-block">结算</h3>
   </div>
   <nz-descriptions nzBordered nzSize="small">
-    <nz-descriptions-item nzTitle="累计金额" [nzSpan]="2">{{ shippingOrderData.cash  | number: '1.2-3' }} 元</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="浮动金额" [nzSpan]="2">- {{ shippingOrderData.floatingCash  | number: '1.2-3' }} 元</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="应收金额" [nzSpan]="2">{{ shippingOrderData.receivableCash  | number: '1.2-3' }} 元</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="累计金额" [nzSpan]="2">{{ shippingOrderData.cash  | number: '1.2-2' }} 元</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="浮动金额" [nzSpan]="2">- {{ shippingOrderData.floatingCash  | number: '1.2-2' }} 元</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="应收金额" [nzSpan]="2">{{ shippingOrderData.receivableCash  | number: '1.2-2' }} 元</nz-descriptions-item>
   </nz-descriptions>
   <br/>
   <br/>
