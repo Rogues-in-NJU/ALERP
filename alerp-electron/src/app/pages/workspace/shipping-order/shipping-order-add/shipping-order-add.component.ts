@@ -22,6 +22,9 @@ import {ProcessingOrderService} from "../../../../core/services/processing-order
 })
 export class ShippingOrderAddComponent implements RefreshableTab, OnInit, ClosableTab{
 
+  formatterNumber = (value: number) => Objects.isNaN(value) ? 0 : value.toFixed(2);
+  parserNumber = (value: number) => value;
+
   isLoading: boolean = true;
   shippingOrderCode: string = "";
   shippingOrderData: ShippingOrderInfoVO = {
@@ -289,6 +292,7 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       return;
     }
 
+    this.fixNumber();
 
     console.log(this.shippingOrderData);
     this.shippingOrder.save(this.shippingOrderData)
@@ -311,6 +315,30 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
       });
   }
 
+  //把每个商品的价格、重量、cash。以及三个合计金额改为两位小树
+  fixNumber(): void {
+    for(let product of this.shippingOrderData.products){
+      if(Objects.valid(product.cash)){
+        product.cash = Number(product.cash.toFixed(2));
+      }
+      if(Objects.valid(product.price)){
+        product.price = Number(product.price.toFixed(2));
+      }
+      if(Objects.valid(product.weight)){
+        product.weight = Number(product.weight.toFixed(2));
+      }
+    }
+
+    if(Objects.valid(this.shippingOrderData.cash)){
+      this.shippingOrderData.cash = Number(this.shippingOrderData.cash.toFixed(2));
+    }
+    if(Objects.valid(this.shippingOrderData.floatingCash)){
+      this.shippingOrderData.floatingCash = Number(this.shippingOrderData.floatingCash.toFixed(2));
+    }
+    if(Objects.valid(this.shippingOrderData.receivableCash)){
+      this.shippingOrderData.receivableCash = Number(this.shippingOrderData.receivableCash.toFixed(2));
+    }
+  }
   checkShippingOrderProductValid(): boolean {
     if (!Objects.valid(this.editCache.data)) {
       return false;
