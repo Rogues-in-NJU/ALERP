@@ -78,8 +78,8 @@
             <a routerLink="/workspace/arrear-order/info/{{ data.id }}">{{ data.code }}</a>
           </td>
           <td>{{ data.customerName }}</td>
-          <td>&yen;{{ data.receivableCash | number: '1.2-3' }}</td>
-          <td>&yen;{{ data.receivedCash | number: '1.2-3' }}</td>
+          <td>&yen;{{ data.receivableCash | number: '1.2-2' }}</td>
+          <td>&yen;{{ data.receivedCash | number: '1.2-2' }}</td>
           <td>{{ data.dueDate }}</td>
           <td>
             <nz-tag nzColor="{{ data.status |arrear_order_status_color }}">

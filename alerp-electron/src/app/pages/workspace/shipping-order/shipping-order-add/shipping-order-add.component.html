@@ -168,7 +168,7 @@
         <ng-template #priceEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.price">
             <nz-input-number nzMin="0" nzStep="0.01"
-                             [(ngModel)]="editCache.data.price"
+                             [(ngModel)]="editCache.data.price" [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
                              (ngModelChange)="checkModelNotNullAndCaculateCash('price')"></nz-input-number>
           </nz-form-control>
         </ng-template>
@@ -184,8 +184,8 @@
         </ng-container>
         <ng-template #weightEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
-            <nz-input-number nzMin="0" nzStep="0.0001"
-                             [(ngModel)]="editCache.data.weight"
+            <nz-input-number nzMin="0" nzStep="0.01"
+                             [(ngModel)]="editCache.data.weight" [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
                              (ngModelChange)="checkModelNotNullAndCaculateCash('weight')"></nz-input-number>
           </nz-form-control>
         </ng-template>
@@ -211,7 +211,7 @@
         </ng-container>
         <ng-template #cashEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
-            <nz-input-number nzMin="0" nzStep="0.0001"
+            <nz-input-number nzMin="0" nzStep="0.01" [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
                              [(ngModel)]="editCache.data.cash"
                              (ngModelChange)="checkModelNotNullAndCaculateCash('cash')"></nz-input-number>
           </nz-form-control>
@@ -254,7 +254,9 @@
       <nz-form-label >累计金额</nz-form-label>
       <nz-form-control >
         <nz-input-group nzSuffix="元">
-          <input nz-input type="text" [(ngModel)]="shippingOrderData.cash"/>
+          <nz-input-number nz-input [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
+                           style="width: 180px"
+                 [(ngModel)]="shippingOrderData.cash"></nz-input-number>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>
@@ -262,8 +264,10 @@
       <nz-form-label>浮动金额</nz-form-label>
       <nz-form-control>
         <nz-input-group nzPrefix="-" nzSuffix="元">
-          <input nz-input type="text" [(ngModel)]="shippingOrderData.floatingCash"
-                 (ngModelChange)="modifyReceivableCash()"/>
+          <nz-input-number nz-input [(ngModel)]="shippingOrderData.floatingCash"
+                           style="width: 180px"
+                 [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
+                 (ngModelChange)="modifyReceivableCash()"></nz-input-number>
         </nz-input-group>
 
       </nz-form-control>
@@ -272,8 +276,10 @@
       <nz-form-label>应收金额</nz-form-label>
       <nz-form-control>
         <nz-input-group nzSuffix="元">
-          <input nz-input [required]="true" type="text" [(ngModel)]="shippingOrderData.receivableCash"
-                 (ngModelChange)="modifyFloatingCash()"/>
+          <nz-input-number nz-input [required]="true" [(ngModel)]="shippingOrderData.receivableCash"
+                 [nzFormatter]="formatterNumber" [nzParser]="parserNumber"
+                           style="width: 180px"
+                 (ngModelChange)="modifyFloatingCash()"></nz-input-number>
         </nz-input-group>
       </nz-form-control>
     </nz-form-item>

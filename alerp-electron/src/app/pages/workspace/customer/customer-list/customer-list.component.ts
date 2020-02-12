@@ -172,6 +172,12 @@ export class CustomerListComponent implements RefreshableTab, OnInit {
     }
     this.customerAddOkLoading = true;
     const customerAddData: CustomerVO = this.customerAddForm.getRawValue();
+
+    //现金客户账期为0个月
+    if(customerAddData.type === 1){
+      customerAddData.period = 0;
+    }
+
     this.customer.save(customerAddData)
       .subscribe((res: ResultVO<any>) => {
         if (!Objects.valid(res)) {

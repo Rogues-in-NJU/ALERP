@@ -210,11 +210,14 @@ public class ShippingOrderServiceImpl implements ShippingOrderService {
     }
 
     @Override
-    public Page<ShippingOrder> getReconciliationList(Pageable pageable, String code, String name, Integer status, String startTime, String endTime) {
+    public Page<ShippingOrder> getReconciliationList(Pageable pageable, Integer customerId, String code, String name, Integer status, String startTime, String endTime) {
         QueryContainer<ShippingOrder> sp = new QueryContainer<>();
         try {
             if (status != null) {
                 sp.add(ConditionFactory.equal("status", status));
+            }
+            if (customerId != null) {
+                sp.add(ConditionFactory.equal("customerId", customerId));
             }
             sp.add(ConditionFactory.notEqual("status", ShippingOrderStatus.ABANDONED.getCode()));
             setQueryContainer(sp, code, name, startTime, endTime);

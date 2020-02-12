@@ -21,6 +21,7 @@ public class ShippingOrderBriefVO {
     private boolean check;
     private Integer hasReconciliationed;
     private Integer city;
+    private double cash;
     private double floatingCash;
     private double receivableCash;
     private int createdBy;
