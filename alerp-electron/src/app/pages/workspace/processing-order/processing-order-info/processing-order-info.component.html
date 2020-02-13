@@ -207,8 +207,6 @@
 
 <nz-modal style="width: 300px" [(nzVisible)]="isPreview" nzTitle="预览" (nzOnCancel)="handleCancel()"
           (nzOnOk)="customPrint('print1')" *ngIf="!isLoading">
-  <div class="print-wrapper">
-    <div>
       <br/>
       <br/>
       <br/>
@@ -237,8 +235,6 @@
           <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight }}</span>
         </div>
       </div>
-    </div>
-  </div>
 
 </nz-modal>
 
