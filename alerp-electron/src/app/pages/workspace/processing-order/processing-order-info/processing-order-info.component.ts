@@ -22,6 +22,7 @@ import {ENgxPrintComponent} from "e-ngx-print";
 export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
 
   isLoading: boolean = true;
+  isPreview: boolean = false;
   processingOrderId: number;
   processingOrderData: ProcessingOrderVO;
 
@@ -405,8 +406,16 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
     this.showPrint = false;
   }
 
-  customPrint(print: string) {
+  handleCancel(): void {
+    this.isPreview = false;
+  }
+
+  preview(): void {
+    this.isPreview = true;
     this.showPrint = true;
+  }
+
+  customPrint(print: string) {
     const printHTML: any = this.elRef.nativeElement.childNodes[4];
     this.printComponent.print(printHTML);
   }
@@ -418,8 +427,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
         if (!Objects.valid(res)) {
           return;
         }
-        this.isLoading = false;
         this.processingOrderData = res.data;
+        this.isLoading = false;
         if (Objects.valid(this.processingOrderData.products)) {
           this.processingOrderData.products.forEach(item => {
             item.processingOrderId = this.processingOrderData.id;
