@@ -354,7 +354,7 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     for(let product of this.products){
       totalCash += product.cash;
     }
-    this.purchaseOrderForm.setValue({"cash":totalCash});
+    this.purchaseOrderForm.patchValue({"cash":totalCash});
   }
 
   caculateCashForProduct():void{
