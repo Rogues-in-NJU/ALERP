@@ -26,6 +26,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -276,6 +277,7 @@ public class ShippingOrderController {
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
+        shippingOrderProductList = shippingOrderProductList.stream().sorted(Comparator.comparing(ShippingOrderProduct::getProductId)).collect(Collectors.toList());
         List<ProductVO> productVOList = new ArrayList<>();
         try {
             shippingOrderProductList.forEach(s -> {
