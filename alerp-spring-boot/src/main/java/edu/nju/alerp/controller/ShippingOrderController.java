@@ -323,18 +323,18 @@ public class ShippingOrderController {
         return ResponseResult.ok(shippingOrderVO);
     }
 
-    private String processSpecification(String specification) {
+    private double processSpecification(String specification) {
         if (StringUtils.isEmpty(specification)) {
-            return "";
+            return 0;
         }
         if (specification.charAt(0) == 'Φ') {
             specification = specification.substring(1);
         }
         String[] sp = specification.split("\\*");
-        if (sp.length > 0) {
-            return sp[0];
+        if (sp.length > 0 && sp[0].matches("^[0-9]+(.[0-9]+)?$")) {
+            return Double.valueOf(sp[0]);
         }
-        return "";
+        return 0;
     }
 
     /**
