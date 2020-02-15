@@ -483,8 +483,8 @@
         <td> {{ data.name }}</td>
         <td> {{ data.specification }}</td>
         <td> {{ data.count }}</td>
-        <td> {{ data.price }}</td>
-        <td> {{ data.total }}</td>
+        <td> {{ data.price | number: '1.2-2' }}</td>
+        <td> {{ data.total | number: '1.2-2' }}</td>
       </tr>
       <tr>
         <!--(合计(大写))-->
@@ -495,7 +495,7 @@
         <td></td>
         <!--(合计)-->
         <td></td>
-        <td> {{ shippingOrderData.cash }}</td>
+        <td> {{ shippingOrderData.cash | number: '1.2-2' }}</td>
       </tr>
       </tbody>
     </table>

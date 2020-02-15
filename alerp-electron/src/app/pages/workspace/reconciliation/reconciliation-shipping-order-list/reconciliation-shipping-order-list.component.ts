@@ -217,6 +217,23 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   }
 
   preview(): void {
+    let isAllUnReconciliationed: boolean = true;
+    let checkedIds: number[] = [];
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
+        checkedIds.push(shippingOrder.id);
+        if (shippingOrder.hasReconciliationed == 1) {
+          isAllUnReconciliationed = false;
+        }
+      }
+    }
+
+    if (!isAllUnReconciliationed || checkedIds.length == 0) {
+      this.message.warning("请选择未对账过的出货单进行操作！");
+      return;
+    }
+
+    this.toPrintList = [];
     this.toPrintMoney = 0;
     for (let shippingOrder of this.shippingOrderList) {
       if (this.mapOfCheckedId[shippingOrder.id]) {
@@ -249,6 +266,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
 
     this.toReconciliation(checkedIds);
 
+    this.handleCancel();
   }
 
   toReconciliation(checkedIds: number[]): void {

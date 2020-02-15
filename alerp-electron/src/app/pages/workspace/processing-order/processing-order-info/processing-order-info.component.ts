@@ -418,6 +418,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   customPrint(print: string) {
     const printHTML: any = this.elRef.nativeElement.childNodes[4];
     this.printComponent.print(printHTML);
+
+    this.handleCancel();
   }
 
   refresh(): void {

@@ -200,8 +200,10 @@ export class ShippingOrderAddComponent implements RefreshableTab, OnInit, Closab
         }
       } else if(this.editCache.data.priceType === 2){
         //yuan/jian
-        this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.quantity;
-      }
+        if(Objects.valid(this.editCache.data.quantity)){
+          this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.quantity;
+        }
+        }
     }
   }
 

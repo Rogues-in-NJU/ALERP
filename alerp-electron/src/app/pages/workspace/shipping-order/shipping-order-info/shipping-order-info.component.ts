@@ -137,6 +137,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     const printHTML: any = this.elRef.nativeElement.childNodes[4];
     this.printComponent.print(printHTML);
 
+    this.previewCountCancel();
   }
 
   stringMoney: string;

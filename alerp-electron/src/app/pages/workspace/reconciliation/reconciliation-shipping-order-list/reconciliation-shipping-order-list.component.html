@@ -13,7 +13,7 @@
                    [printCSS]="printCSS"
                    (printComplete)="printComplete()">
       </e-ngx-print>
-      <button nz-button nzType="primary" (click)="preview()">打印预览</button>
+      <button nz-button nzType="primary" (click)="preview()">对账</button>
     </div>
 
     <nz-modal [(nzVisible)]="isInvoiceModalVisible"
@@ -129,7 +129,7 @@
       <tbody>
       <tr *ngFor="let data of toPrintList">
         <td style="width: 200px"> {{ data.code }}</td>
-        <td style="width: 150px"> {{ data.receivableCash }}</td>
+        <td style="width: 150px"> {{ data.receivableCash | number: '1.2-2' }}</td>
         <td style="width: 300px"> {{ data.createdAt }}</td>
       </tr>
       </tbody>
@@ -137,7 +137,7 @@
   </div>
   <div style="position: relative">
     <div style="position: absolute; left: 100">
-      <p>{{ toPrintMoney }}</p>
+      <p>{{ toPrintMoney | number: '1.2-2' }}</p>
     </div>
   </div>
 
