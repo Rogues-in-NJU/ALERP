@@ -18,6 +18,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -277,7 +279,7 @@ public class ShippingOrderController {
             @NotNull(message = "id不能为空") @PathVariable("id") Integer id) {
         ShippingOrder shippingOrder = shippingOrderService.getShippingOrder(id);
         List<ShippingOrderProduct> shippingOrderProductList = shippingOrderService.getShippingOrderProductList(id);
-        shippingOrderProductList = shippingOrderProductList.stream().sorted(Comparator.comparing(ShippingOrderProduct::getProductId)).collect(Collectors.toList());
+        shippingOrderProductList = shippingOrderProductList.stream().sorted(Comparator.comparing(ShippingOrderProduct::getProductId).thenComparing(product -> processSpecification(product.getSpecification()))).collect(Collectors.toList());
         List<ProductVO> productVOList = new ArrayList<>();
         try {
             shippingOrderProductList.forEach(s -> {
@@ -319,6 +321,20 @@ public class ShippingOrderController {
 
         }
         return ResponseResult.ok(shippingOrderVO);
+    }
+
+    private String processSpecification(String specification) {
+        if (StringUtils.isEmpty(specification)) {
+            return "";
+        }
+        if (specification.charAt(0) == 'Φ') {
+            specification = specification.substring(1);
+        }
+        String[] sp = specification.split("\\*");
+        if (sp.length > 0) {
+            return sp[0];
+        }
+        return "";
     }
 
     /**
