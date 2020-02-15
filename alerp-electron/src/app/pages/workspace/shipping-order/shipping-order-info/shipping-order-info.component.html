@@ -168,13 +168,13 @@
     </thead>
     <tbody>
     <tr *ngFor="let data of printCountList">
-      <td> {{ data.orderId }}</td>
-      <td> {{ data.code }}</td>
-      <td> {{ data.name }}</td>
-      <td> {{ data.specification }}</td>
-      <td> {{ data.count }}</td>
-      <td> {{ data.price }}</td>
-      <td> {{ data.total }}</td>
+      <td style="width: 100px"> {{ data.orderId }}</td>
+      <td style="width: 100px"> {{ data.code }}</td>
+      <td style="width: 100px"> {{ data.name }}</td>
+      <td style="width: 100px"> {{ data.specification }}</td>
+      <td style="width: 100px"> {{ data.count }}</td>
+      <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
+      <td style="width: 100px"> {{ data.total  | number: '1.2-2' }}</td>
     </tr>
     <tr>
       <!--(合计(大写))-->
@@ -185,7 +185,7 @@
       <td></td>
       <!--(合计)-->
       <td></td>
-      <td> {{ shippingOrderData.cash }}</td>
+      <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
     </tr>
     </tbody>
   </table>
@@ -228,9 +228,9 @@
         <td style="width: 100px"> {{ data.productName }}</td>
         <td style="width: 200px"> {{ data.specification }}</td>
         <td style="width: 100px"> {{ data.quantity }}</td>
-        <td style="width: 100px"> {{ data.price }}</td>
-        <td style="width: 100px"> {{ data.weight }}</td>
-        <td style="width: 100px"> {{ data.cash }}</td>
+        <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.weight  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.cash  | number: '1.2-2' }}</td>
       </tr>
       <tr>
         <!--(合计(大写))-->
@@ -240,7 +240,7 @@
         <td></td>
         <!--(合计(小写))-->
         <td></td>
-        <td> {{ shippingOrderData.cash }}</td>
+        <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
       </tr>
       </tbody>
     </table>
@@ -317,9 +317,9 @@
         <td style="width: 100px"> {{ data.productName }}</td>
         <td style="width: 200px"> {{ data.specification }}</td>
         <td style="width: 100px"> {{ data.quantity }}</td>
-        <td style="width: 100px"> {{ data.price }}</td>
-        <td style="width: 100px"> {{ data.weight }}</td>
-        <td style="width: 100px"> {{ data.cash }}</td>
+        <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.weight  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.cash  | number: '1.2-2' }}</td>
       </tr>
       <tr>
         <!--(合计(大写))-->
@@ -329,7 +329,7 @@
         <td></td>
         <!--(合计(小写))-->
         <td></td>
-        <td> {{ shippingOrderData.cash }}</td>
+        <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
       </tr>
       </tbody>
     </table>
@@ -397,12 +397,12 @@
       </td>
       <td style="width: 100px">
         <ng-container>
-          {{ data.price }}
+          {{ data.price  | number: '1.2-2' }}
         </ng-container>
       </td>
       <td style="width: 100px">
         <ng-container>
-          {{ data.total }}
+          {{ data.total | number: '1.2-2' }}
         </ng-container>
       </td>
       <td style="width: 150px">
@@ -478,13 +478,13 @@
       </thead>
       <tbody>
       <tr *ngFor="let data of printCountList">
-        <td> {{ data.orderId }}</td>
-        <td> {{ data.code }}</td>
-        <td> {{ data.name }}</td>
-        <td> {{ data.specification }}</td>
-        <td> {{ data.count }}</td>
-        <td> {{ data.price | number: '1.2-2' }}</td>
-        <td> {{ data.total | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.orderId }}</td>
+        <td style="width: 100px"> {{ data.code }}</td>
+        <td style="width: 100px"> {{ data.name }}</td>
+        <td style="width: 100px"> {{ data.specification }}</td>
+        <td style="width: 100px"> {{ data.count }}</td>
+        <td style="width: 100px"> {{ data.price | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.total | number: '1.2-2' }}</td>
       </tr>
       <tr>
         <!--(合计(大写))-->

@@ -163,7 +163,7 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id'] || !data.isEditable; else priceEditTpl">
-          {{ data.price }}
+          {{ data.price | number: '1.2-2' }}
         </ng-container>
         <ng-template #priceEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.price">
@@ -175,12 +175,12 @@
       </td>
       <td>
         <ng-container>
-          {{ data.expectedWeight }}
+          {{ data.expectedWeight | number: '1.2-2' }}
         </ng-container>
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else weightEditTpl">
-          {{ data.weight }}
+          {{ data.weight | number: '1.2-2' }}
         </ng-container>
         <ng-template #weightEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.weight">
@@ -207,7 +207,7 @@
       </td>
       <td>
         <ng-container *ngIf="editCache._id !== data['_id']; else cashEditTpl">
-          {{ data.cash }}
+          {{ data.cash | number: '1.2-2' }}
         </ng-container>
         <ng-template #cashEditTpl>
           <nz-form-control [nzValidateStatus]="editCacheValidateStatus.cash">
