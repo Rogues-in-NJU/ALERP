@@ -153,47 +153,43 @@
   <p *ngIf="showPrint">{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
-  <table *ngIf="showPrint">
-    <thead>
-    <tr>
-      <!--<th style="width: 200px">(订单号)</th>-->
-      <!--<th style="width: 200px">(物料编码)</th>-->
+  <div style="height: 400px">
+    <table *ngIf="showPrint">
+      <thead>
+      <tr>
+        <!--<th style="width: 200px">(订单号)</th>-->
+        <!--<th style="width: 200px">(物料编码)</th>-->
 
-      <!--<th style="width: 100px">(商品)</th>-->
-      <!--<th style="width: 200px">(规格)</th>-->
-      <!--<th style="width: 100px">(数量(件))</th>-->
-      <!--<th style="width: 100px">(单价)</th>-->
-      <!--<th style="width: 100px">(总金额)</th>-->
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let data of printCountList">
-      <td style="width: 100px"> {{ data.orderId }}</td>
-      <td style="width: 100px"> {{ data.code }}</td>
-      <td style="width: 100px"> {{ data.name }}</td>
-      <td style="width: 100px"> {{ data.specification }}</td>
-      <td style="width: 100px"> {{ data.count }}</td>
-      <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
-      <td style="width: 100px"> {{ data.total  | number: '1.2-2' }}</td>
-    </tr>
-    <tr>
-      <!--(合计(大写))-->
-      <td></td>
-      <td> {{ stringMoney }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <!--(合计)-->
-      <td></td>
-      <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
-    </tr>
-    </tbody>
-  </table>
-  <br/>
-  <br/>
-  <br/>
+        <!--<th style="width: 100px">(商品)</th>-->
+        <!--<th style="width: 200px">(规格)</th>-->
+        <!--<th style="width: 100px">(数量(件))</th>-->
+        <!--<th style="width: 100px">(单价)</th>-->
+        <!--<th style="width: 100px">(总金额)</th>-->
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of printCountList">
+        <td style="width: 100px"> {{ data.orderId }}</td>
+        <td style="width: 100px"> {{ data.code }}</td>
+        <td style="width: 100px"> {{ data.name }}</td>
+        <td style="width: 100px"> {{ data.specification }}</td>
+        <td style="width: 100px"> {{ data.count }}</td>
+        <td style="width: 100px"> {{ data.price | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.total | number: '1.2-2' }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: relative">
+    <div style="position: absolute; margin-left:50px">
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ stringMoney }}</span>
+    </div>
+    <div style="position: absolute; margin-left:250px">
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+    </div>
+  </div>
   <!--(备注:)-->
-  <p *ngIf="showPrint">{{ remarks }}</p>
+  <p style="margin-top: 50px;margin-left: 50px" *ngIf="showPrint">{{ remarks }}</p>
 </div>
 
 <!--按重量-->
@@ -228,32 +224,23 @@
         <td style="width: 100px"> {{ data.productName }}</td>
         <td style="width: 200px"> {{ data.specification }}</td>
         <td style="width: 100px"> {{ data.quantity }}</td>
-        <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
-        <td style="width: 100px"> {{ data.weight  | number: '1.2-2' }}</td>
-        <td style="width: 100px"> {{ data.cash  | number: '1.2-2' }}</td>
-      </tr>
-      <tr>
-        <!--(合计(大写))-->
-        <td></td>
-        <td> {{ stringMoney }}</td>
-        <td></td>
-        <td></td>
-        <!--(合计(小写))-->
-        <td></td>
-        <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.price | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.weight | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.cash | number: '1.2-2' }}</td>
       </tr>
       </tbody>
     </table>
   </div>
   <div style="position: relative">
-    <div style="position: absolute; left: 100">
-      <!--(备注:)-->
-      <p *ngIf="showPrint">{{ remarks }}</p>
-      <!--(收货单位签字:)-->
-      <!--<p *ngIf="showPrint"></p>-->
+    <div style="position: absolute; margin-left:50px">
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ stringMoney }}</span>
+    </div>
+    <div style="position: absolute; margin-left:250px">
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
     </div>
   </div>
-
+  <!--(备注:)-->
+  <p style="margin-top: 50px;margin-left: 50px" *ngIf="showPrint">{{ remarks }}</p>
 </div>
 
 <nz-modal style="width: 300px" [(nzVisible)]="isVisibleWeight" nzTitle="打印" (nzOnCancel)="handleCancel()"
@@ -317,28 +304,24 @@
         <td style="width: 100px"> {{ data.productName }}</td>
         <td style="width: 200px"> {{ data.specification }}</td>
         <td style="width: 100px"> {{ data.quantity }}</td>
-        <td style="width: 100px"> {{ data.price  | number: '1.2-2' }}</td>
-        <td style="width: 100px"> {{ data.weight  | number: '1.2-2' }}</td>
-        <td style="width: 100px"> {{ data.cash  | number: '1.2-2' }}</td>
-      </tr>
-      <tr>
-        <!--(合计(大写))-->
-        <td></td>
-        <td> {{ stringMoney }}</td>
-        <td></td>
-        <td></td>
-        <!--(合计(小写))-->
-        <td></td>
-        <td> {{ shippingOrderData.cash  | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.price | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.weight | number: '1.2-2' }}</td>
+        <td style="width: 100px"> {{ data.cash | number: '1.2-2' }}</td>
       </tr>
       </tbody>
     </table>
   </div>
   <div style="position: relative">
-    <div style="position: absolute; left: 100">
-      <p>{{ remarks }}</p>
+    <div style="position: absolute; margin-left:50px">
+      <label></label>&nbsp;&nbsp;<span>{{ stringMoney }}</span>
+    </div>
+    <div style="position: absolute; margin-left:250px">
+      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
     </div>
   </div>
+  <!--(备注:)-->
+  <p style="margin-top: 50px;margin-left: 50px">{{ remarks }}</p>
+
 </nz-modal>
 
 <nz-modal nzWidth="1000px" [(nzVisible)]="isVisibleCount" nzTitle="打印" (nzOnCancel)="handleCancel()"
@@ -397,7 +380,7 @@
       </td>
       <td style="width: 100px">
         <ng-container>
-          {{ data.price  | number: '1.2-2' }}
+          {{ data.price | number: '1.2-2' }}
         </ng-container>
       </td>
       <td style="width: 100px">
@@ -486,24 +469,19 @@
         <td style="width: 100px"> {{ data.price | number: '1.2-2' }}</td>
         <td style="width: 100px"> {{ data.total | number: '1.2-2' }}</td>
       </tr>
-      <tr>
-        <!--(合计(大写))-->
-        <td></td>
-        <td> </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <!--(合计)-->
-        <td></td>
-        <td> {{ shippingOrderData.cash | number: '1.2-2' }}</td>
-      </tr>
       </tbody>
     </table>
   </div>
-  <br/>
-  <br/>
-  <br/>
+  <div style="position: relative">
+    <div style="position: absolute; margin-left:50px">
+      <label></label>&nbsp;&nbsp;<span>{{ stringMoney }}</span>
+    </div>
+    <div style="position: absolute; margin-left:250px">
+      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+    </div>
+  </div>
   <!--(备注:)-->
-  <p>{{ remarks }}</p>
+  <p style="margin-top: 50px;margin-left: 50px">{{ remarks }}</p>
+
 
 </nz-modal>
