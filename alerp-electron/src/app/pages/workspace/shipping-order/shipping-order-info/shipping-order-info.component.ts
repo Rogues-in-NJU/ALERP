@@ -38,6 +38,8 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   printFormCount: FormGroup;
   isVisibleWeight = false;
   isVisibleCount = false;
+  isPreviewCount = false;
+  isPreviewWeight = false;
   hasTax: string;
   remarks: string;
   printCountTmp: PrintCountModel = {};
@@ -78,6 +80,31 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     this.isVisibleCount = false;
   }
 
+  previewWeight(): void {
+    let formData: any = this.printFormWeight.getRawValue();
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+    this.isPreviewWeight = true;
+    this.isVisibleWeight = false;
+  }
+  previewCount(): void {
+    let formData: any = this.printFormCount.getRawValue();
+    this.hasTax = formData.hasTax;
+    this.remarks = formData.remarks;
+    this.isPreviewCount = true;
+    this.isVisibleCount = false;
+  }
+
+  previewWeightCancel(): void {
+    this.isPreviewWeight = false;
+    this.isVisibleWeight = true;
+  }
+
+  previewCountCancel(): void {
+    this.isPreviewCount = false;
+    this.isVisibleCount = true;
+  }
+
   showModal(): void {
     if (this.shippingOrderData.products[0].priceType == 2) {
       this.isVisibleCount = true;
@@ -92,9 +119,6 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
     if (!this.printFormWeight.valid) {
       return;
     }
-    let formData: any = this.printFormWeight.getRawValue();
-    this.hasTax = formData.hasTax;
-    this.remarks = formData.remarks;
 
     this.showPrint = true;
 
@@ -104,21 +128,16 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
   }
 
   customPrintCount(print: string) {
-    //TODO
     this.isVisibleCount = false;
     if (!this.printFormCount.valid) {
       return;
     }
-    let formData: any = this.printFormCount.getRawValue();
-    // let userManagementAdd: UserManagementInfoVO = this.userManagementData;
-    this.hasTax = formData.hasTax;
-    this.remarks = formData.remarks;
-    // this.printCountList = formData.printCountList;
 
     this.showPrint = true;
     const printHTML: any = this.elRef.nativeElement.childNodes[4];
     this.printComponent.print(printHTML);
 
+    this.previewCountCancel();
   }
 
   stringMoney: string;

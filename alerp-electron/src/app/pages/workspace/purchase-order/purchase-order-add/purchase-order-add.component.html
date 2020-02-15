@@ -137,7 +137,9 @@
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.quantity">
-            <nz-input-number [(ngModel)]="editCache.data.quantity" nzMin="1" nzStep="1" class="table-number-input"></nz-input-number>
+            <nz-input-number [(ngModel)]="editCache.data.quantity"
+                             nzMin="1" nzStep="1" class="table-number-input"
+                             (ngModelChange)="caculateCashForProduct()"></nz-input-number>
           </nz-form-control>
         </ng-container>
       </td>
@@ -147,7 +149,9 @@
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.weight">
-            <nz-input-number [(ngModel)]="editCache.data.weight" nzMin="0" nzStep="0.001" class="table-number-input"></nz-input-number>
+            <nz-input-number [(ngModel)]="editCache.data.weight"
+                             (ngModelChange)="caculateCashForProduct()"
+                             nzMin="0" nzStep="0.001" class="table-number-input"></nz-input-number>
           </nz-form-control>
         </ng-container>
       </td>
@@ -157,7 +161,9 @@
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.price">
-            <nz-input-number [(ngModel)]="editCache.data.price" nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
+            <nz-input-number [(ngModel)]="editCache.data.price"
+                             (ngModelChange)="caculateCashForProduct()"
+                             nzMin="0" nzStep="0.01" class="table-number-input" [nzFormatter]="cashFormatter"></nz-input-number>
           </nz-form-control>
         </ng-container>
       </td>
@@ -167,8 +173,10 @@
         </ng-container>
         <ng-container *ngIf="editCache._id === data['_id']">
           <nz-form-control  [nzValidateStatus]="editCacheValidateStatus.priceType">
-            <nz-select [(ngModel)]="editCache.data.priceType" style="width: 90px">
-              <nz-option nzLabel="元/kg" [nzValue]="1"></nz-option>
+            <nz-select [(ngModel)]="editCache.data.priceType"
+                       (ngModelChange)="caculateCashForProduct()"
+                       style="width: 90px">
+              <nz-option nzLabel="元/公斤" [nzValue]="1"></nz-option>
               <nz-option nzLabel="元/件" [nzValue]="2"></nz-option>
             </nz-select>
           </nz-form-control>

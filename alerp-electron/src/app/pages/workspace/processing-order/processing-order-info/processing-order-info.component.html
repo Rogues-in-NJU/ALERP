@@ -8,7 +8,7 @@
                    [printCSS]="printCSS"
                    (printComplete)="printComplete()">
       </e-ngx-print>
-      <button nz-button nzType="primary" (click)="customPrint('print1')">打印</button>
+      <button nz-button nzType="primary" (click)="preview()">打印预览</button>
     </div>
   </nz-page-header-extra>
 </nz-page-header>
@@ -139,7 +139,8 @@
       <td>
         <ng-container *ngIf="editCache._id === null">
           <a (click)="startEditProduct(data._id)" [class.disabled]="processingOrderData.status !== 0">编辑</a>
-          <a (click)="copyProductRow(data._id)" style="margin-left: 5px" [class.disabled]="processingOrderData.status !== 0">复制</a>
+          <a (click)="copyProductRow(data._id)" style="margin-left: 5px"
+             [class.disabled]="processingOrderData.status !== 0">复制</a>
           <a nz-popconfirm
              style="margin-left: 5px"
              class="delete"
@@ -203,3 +204,37 @@
     </div>
   </div>
 </div>
+
+<nz-modal style="width: 300px" [(nzVisible)]="isPreview" nzTitle="预览" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="customPrint('print1')" *ngIf="!isLoading">
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <!--(购货单位:)-->
+      <p>{{ processingOrderData.customerName }}</p>
+      <div style="height: 400px">
+        <table>
+          <thead>
+          <tr>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of processingOrderData.products">
+            <td style="width: 200px"> {{ data.productName }}</td>
+            <td style="width: 300px"> {{ data.specification }}</td>
+            <td style="width: 120px"> {{ data.quantity }}</td>
+            <td style="width: 120px"> {{ data.expectedWeight | number: '1.2-2' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="position: relative">
+        <div style="position: absolute; right: 0">
+          <!--重量汇总:-->
+          <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight | number: '1.2-2' }}</span>
+        </div>
+      </div>
+
+</nz-modal>
+

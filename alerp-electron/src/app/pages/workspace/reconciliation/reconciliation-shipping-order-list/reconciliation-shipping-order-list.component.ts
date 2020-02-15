@@ -19,7 +19,7 @@ import {ENgxPrintComponent} from "e-ngx-print";
 })
 export class ReconciliationShippingOrderListComponent implements RefreshableTab, OnInit {
 
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   totalPages: number = 1;
   pageIndex: number = 1;
   pageSize: number = 200;
@@ -47,7 +47,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   printCSS: string[];
 
   printStyle: string;
-  
+
   constructor(private router: Router,
               private route: ActivatedRoute,
               private UserManagement: UserManagementService,
@@ -101,6 +101,7 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
         this.pageIndex = tableResult.pageIndex;
         this.pageSize = tableResult.pageSize;
         this.shippingOrderList = tableResult.result;
+        this.isLoading = false;
       }, (error: HttpErrorResponse) => {
         this.message.error('网络异常，请检查网络或者尝试重新登录!');
       });
@@ -205,21 +206,22 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
   @ViewChild('print1', {static: false})
   printComponent: ENgxPrintComponent;
   showPrint: boolean = false;
+  isPreview: boolean = false;
 
   printComplete() {
-    // console.log('打印完成！');
     this.showPrint = false;
   }
 
-  customPrint(): void {
-    this.toPrintMoney = 0;
+  handleCancel(): void {
+    this.isPreview = false;
+  }
+
+  preview(): void {
     let isAllUnReconciliationed: boolean = true;
     let checkedIds: number[] = [];
     for (let shippingOrder of this.shippingOrderList) {
       if (this.mapOfCheckedId[shippingOrder.id]) {
         checkedIds.push(shippingOrder.id);
-        this.toPrintList.push(shippingOrder);
-        this.toPrintMoney += shippingOrder.receivableCash;
         if (shippingOrder.hasReconciliationed == 1) {
           isAllUnReconciliationed = false;
         }
@@ -230,13 +232,41 @@ export class ReconciliationShippingOrderListComponent implements RefreshableTab,
       this.message.warning("请选择未对账过的出货单进行操作！");
       return;
     }
-    console.log(this.toPrintList);
+
+    this.toPrintList = [];
+    this.toPrintMoney = 0;
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
+        this.toPrintList.push(shippingOrder);
+        this.toPrintMoney += shippingOrder.receivableCash;
+      }
+    }
+    this.isPreview = true;
+  }
+
+  customPrint(): void {
+    let isAllUnReconciliationed: boolean = true;
+    let checkedIds: number[] = [];
+    for (let shippingOrder of this.shippingOrderList) {
+      if (this.mapOfCheckedId[shippingOrder.id]) {
+        checkedIds.push(shippingOrder.id);
+        if (shippingOrder.hasReconciliationed == 1) {
+          isAllUnReconciliationed = false;
+        }
+      }
+    }
+
+    if (!isAllUnReconciliationed || checkedIds.length == 0) {
+      this.message.warning("请选择未对账过的出货单进行操作！");
+      return;
+    }
     this.showPrint = true;
     const printHTML: any = this.elRef.nativeElement.childNodes[2];
     this.printComponent.print(printHTML);
 
     this.toReconciliation(checkedIds);
 
+    this.handleCancel();
   }
 
   toReconciliation(checkedIds: number[]): void {

@@ -13,10 +13,7 @@
                    [printCSS]="printCSS"
                    (printComplete)="printComplete()">
       </e-ngx-print>
-      <button nz-button nzType="primary" [disabled]="isPrintButtonAvailiable"
-              (click)="customPrint()">
-        打印
-      </button>
+      <button nz-button nzType="primary" (click)="preview()">对账</button>
     </div>
 
     <nz-modal [(nzVisible)]="isInvoiceModalVisible"
@@ -66,7 +63,7 @@
         <td>
           <a routerLink="/workspace/shipping-order/info/{{ data.id }}">{{ data.code }}</a>
         </td>
-        <td>{{ data.receivableCash }}</td>
+        <td>{{ data.receivableCash  | number: '1.2-3' }}</td>
         <td>{{ data.createdAt }}</td>
         <td>
           <nz-tag nzColor="{{ data.hasReconciliationed | shipping_order_reconciliation_status_color }}">
@@ -116,3 +113,32 @@
     </div>
   </div>
 </div>
+
+<nz-modal style="width: 300px" [(nzVisible)]="isPreview" nzTitle="预览" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="customPrint('print1')" *ngIf="!isLoading">
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <div style="height: 400px">
+    <table>
+      <thead>
+      <tr>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of toPrintList">
+        <td style="width: 200px"> {{ data.code }}</td>
+        <td style="width: 150px"> {{ data.receivableCash | number: '1.2-2' }}</td>
+        <td style="width: 300px"> {{ data.createdAt }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: relative">
+    <div style="position: absolute; left: 100">
+      <p>{{ toPrintMoney | number: '1.2-2' }}</p>
+    </div>
+  </div>
+
+</nz-modal>

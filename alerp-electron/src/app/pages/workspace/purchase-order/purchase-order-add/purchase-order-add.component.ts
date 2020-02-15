@@ -295,10 +295,13 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
     const index = this.products.findIndex(item => item['_id'] === _id);
     Object.assign(this.products[index], this.editCache.data);
     Object.assign(this.editCache, this.defaultEditCache);
+
+    this.caculateCash();
   }
 
   confirmDelete(_id: number): void {
     this.products = this.products.filter(item => item['_id'] !== _id);
+    this.caculateCash();
   }
 
   checkPurchaseOrderProductValid(): boolean {
@@ -345,6 +348,37 @@ export class PurchaseOrderAddComponent implements ClosableTab, OnInit {
       routeConfig: this.route.snapshot.routeConfig
     });
   }
+
+  caculateCash(): void{
+    let totalCash:number = 0;
+    for(let product of this.products){
+      totalCash += product.cash;
+    }
+    this.purchaseOrderForm.patchValue({"cash":totalCash});
+  }
+
+  caculateCashForProduct():void{
+
+    // if(Objects.valid(this.editCache.data.cash)){
+    //   return;
+    // }
+
+    if(Objects.valid(this.editCache.data.price) &&
+      Objects.valid(this.editCache.data.priceType)){
+      if(this.editCache.data.priceType === 1){
+        //yuan/kg
+        if(Objects.valid(this.editCache.data.weight)){
+          this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.weight;
+        }
+      } else if(this.editCache.data.priceType === 2){
+        //yuan/jian
+        if(Objects.valid(this.editCache.data.quantity)){
+          this.editCache.data.cash =  this.editCache.data.price * this.editCache.data.quantity;
+        }
+        }
+    }
+  }
+
 
 }
 
