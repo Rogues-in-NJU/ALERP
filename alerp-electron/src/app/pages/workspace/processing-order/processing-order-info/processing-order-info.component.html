@@ -176,7 +176,7 @@
     <br/>
     <!--(购货单位:)-->
     <p *ngIf="showPrint">{{ processingOrderData.customerName }}</p>
-    <div style="height: 400px">
+    <div style="height: 280px">
       <table *ngIf="showPrint">
         <thead>
         <tr>
@@ -188,6 +188,7 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of processingOrderData.products">
+          <td style="width: 200px"></td>
           <td style="width: 200px"> {{ data.productName }}</td>
           <td style="width: 300px"> {{ data.specification }}</td>
           <td style="width: 120px"> {{ data.quantity }}</td>
@@ -213,7 +214,7 @@
       <br/>
       <!--(购货单位:)-->
       <p>{{ processingOrderData.customerName }}</p>
-      <div style="height: 400px">
+      <div style="height: 280px">
         <table>
           <thead>
           <tr>
@@ -221,6 +222,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let data of processingOrderData.products">
+            <td style="width: 200px"></td>
             <td style="width: 200px"> {{ data.productName }}</td>
             <td style="width: 300px"> {{ data.specification }}</td>
             <td style="width: 120px"> {{ data.quantity }}</td>

@@ -82,14 +82,22 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
 
   previewWeight(): void {
     let formData: any = this.printFormWeight.getRawValue();
-    this.hasTax = formData.hasTax;
+    if(formData.hasTax=="含税"){
+      this.hasTax = "本单开票";
+    }else {
+      this.hasTax = "本单不开票";
+    }
     this.remarks = formData.remarks;
     this.isPreviewWeight = true;
     this.isVisibleWeight = false;
   }
   previewCount(): void {
     let formData: any = this.printFormCount.getRawValue();
-    this.hasTax = formData.hasTax;
+    if(formData.hasTax=="含税"){
+      this.hasTax = "本单开票";
+    }else {
+      this.hasTax = "本单不开票";
+    }
     this.remarks = formData.remarks;
     this.isPreviewCount = true;
     this.isVisibleCount = false;
