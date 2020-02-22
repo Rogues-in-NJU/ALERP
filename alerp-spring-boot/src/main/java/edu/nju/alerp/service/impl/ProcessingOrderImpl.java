@@ -28,11 +28,10 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static edu.nju.alerp.util.CommonUtils.processSpecification;
 
 /**
  * @Description: 加工单服务实现类
@@ -92,6 +91,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         double totalWeight = productVOS.parallelStream().mapToDouble(ProcessingOrderProductVO::getExpectedWeight).sum();
+        List<ProcessingOrderProductVO> sortedProductVOS = productVOS.stream().sorted(Comparator.comparing(ProcessingOrderProductVO::getProductId).thenComparing(product -> processSpecification(product.getSpecification()))).collect(Collectors.toList());
 
         String shippingOrderCode = processingOrder.getShippintOrderCode();
         if (shippingOrderCode == null || shippingOrderCode.equals(""))
@@ -110,7 +110,7 @@ public class ProcessingOrderImpl implements ProcessOrderService {
                 .createdByName(userService.getUser(processingOrder.getCreateBy()).getName())
                 .updatedAt(processingOrder.getUpdateAt())
                 .totalWeight(totalWeight)
-                .products(productVOS).build();
+                .products(sortedProductVOS).build();
     }
 
     @Override

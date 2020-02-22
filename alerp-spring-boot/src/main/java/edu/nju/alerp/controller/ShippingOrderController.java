@@ -32,6 +32,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static edu.nju.alerp.util.CommonUtils.processSpecification;
+
 /**
  * @Description: 出货单Controller层
  * @Author: qianen.yin
@@ -321,20 +323,6 @@ public class ShippingOrderController {
 
         }
         return ResponseResult.ok(shippingOrderVO);
-    }
-
-    private double processSpecification(String specification) {
-        if (StringUtils.isEmpty(specification)) {
-            return 0;
-        }
-        if (specification.charAt(0) == 'Φ') {
-            specification = specification.substring(1);
-        }
-        String[] sp = specification.split("\\*");
-        if (sp.length > 0 && sp[0].matches("^[0-9]+(.[0-9]+)?$")) {
-            return Double.valueOf(sp[0]);
-        }
-        return 0;
     }
 
     /**

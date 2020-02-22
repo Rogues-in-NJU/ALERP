@@ -1,5 +1,6 @@
 package edu.nju.alerp.util;
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -36,7 +37,17 @@ public class CommonUtils {
         return session.getAttribute("cityId") == null ? 0 : (int) session.getAttribute("cityId");
     }
 
-//    public static boolean validateSpecification(String pecification) {
-//
-//    }
+    public static double processSpecification(String specification) {
+        if (StringUtils.isEmpty(specification)) {
+            return 0;
+        }
+        if (specification.charAt(0) == 'Φ') {
+            specification = specification.substring(1);
+        }
+        String[] sp = specification.split("\\*");
+        if (sp.length > 0 && sp[0].matches("^[0-9]+(.[0-9]+)?$")) {
+            return Double.valueOf(sp[0]);
+        }
+        return 0;
+    }
 }
