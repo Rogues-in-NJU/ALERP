@@ -290,7 +290,7 @@ export class ShippingOrderInfoComponent implements ClosableTab, OnInit {
         this.updateEditCache();
         this.isLoading = false;
         // console.log(this.printCountList);
-        this.stringMoney = this.moneyToString(this.shippingOrderData.cash);
+        this.stringMoney = this.moneyToString(this.shippingOrderData.receivableCash);
         // console.log(this.stringMoney);
         if (Objects.valid(this.shippingOrderData.products)) {
           this.shippingOrderData.products.forEach(item => {

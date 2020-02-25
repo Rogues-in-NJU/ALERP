@@ -153,6 +153,7 @@
   <p *ngIf="showPrint">{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
+  <br/>
   <div style="height: 280px">
     <table *ngIf="showPrint">
       <thead>
@@ -185,7 +186,7 @@
       <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ stringMoney }}</span>
     </div>
     <div style="position: absolute; margin-left:250px">
-      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.receivableCash  | number: '1.2-2' }}</span>
     </div>
   </div>
   <!--(备注:)-->
@@ -207,6 +208,7 @@
   <p *ngIf="showPrint">{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p *ngIf="showPrint">{{ shippingOrderData.code }}</p>
+  <br/>
   <div style="height: 280px">
     <table *ngIf="showPrint">
       <thead>
@@ -237,7 +239,7 @@
       <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ stringMoney }}</span>
     </div>
     <div style="position: absolute; margin-left:250px">
-      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+      <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ shippingOrderData.receivableCash  | number: '1.2-2' }}</span>
     </div>
   </div>
   <!--(备注:)-->
@@ -288,6 +290,7 @@
   <p>{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p>{{ shippingOrderData.code }}</p>
+  <br/>
   <div style="height: 280px">
     <table>
       <thead>
@@ -318,7 +321,7 @@
       <label></label>&nbsp;&nbsp;<span>{{ stringMoney }}</span>
     </div>
     <div style="position: absolute; margin-left:250px">
-      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.receivableCash  | number: '1.2-2' }}</span>
     </div>
   </div>
   <!--(备注:)-->
@@ -447,6 +450,7 @@
   <p>{{ hasTax }}</p>
   <!--(出货单编号:)-->
   <p>{{ shippingOrderData.code }}</p>
+  <br/>
   <div style="height: 280px">
     <table>
       <thead>
@@ -479,7 +483,7 @@
       <label></label>&nbsp;&nbsp;<span>{{ stringMoney }}</span>
     </div>
     <div style="position: absolute; margin-left:250px">
-      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.cash  | number: '1.2-2' }}</span>
+      <label></label>&nbsp;&nbsp;<span>{{ shippingOrderData.receivableCash  | number: '1.2-2' }}</span>
     </div>
   </div>
   <!--(备注:)-->

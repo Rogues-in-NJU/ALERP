@@ -174,8 +174,23 @@
     <br/>
     <br/>
     <br/>
-    <!--(购货单位:)-->
-    <p *ngIf="showPrint">{{ processingOrderData.customerName }}</p>
+    <div class="gutter-example">
+      <div nz-row nzGutter="16">
+        <div nz-col class="gutter-row" nzSpan="6">
+          <div class="gutter-box"><p *ngIf="showPrint">{{ processingOrderData.customerName }}</p></div>
+        </div>
+        <div nz-col class="gutter-row" nzSpan="6">
+          <div class="gutter-box"></div>
+        </div>
+        <div nz-col class="gutter-row" nzSpan="6">
+          <div class="gutter-box"></div>
+        </div>
+        <div nz-col class="gutter-row" nzSpan="6">
+          <div class="gutter-box"><p *ngIf="showPrint">{{ date }}</p></div>
+        </div>
+      </div>
+    </div>
+    <br/>
     <div style="height: 280px">
       <table *ngIf="showPrint">
         <thead>
@@ -200,7 +215,8 @@
     <div style="position: relative">
       <div style="position: absolute; right: 0">
         <!--重量汇总:-->
-        <label></label>&nbsp;&nbsp;<span *ngIf="showPrint">{{ processingOrderData.totalWeight | number: '1.2-2' }}</span>
+        <label></label>&nbsp;&nbsp;<span
+        *ngIf="showPrint">{{ processingOrderData.totalWeight | number: '1.2-2' }}</span>
       </div>
     </div>
   </div>
@@ -208,35 +224,50 @@
 
 <nz-modal style="width: 300px" [(nzVisible)]="isPreview" nzTitle="预览" (nzOnCancel)="handleCancel()"
           (nzOnOk)="customPrint('print1')" *ngIf="!isLoading">
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <!--(购货单位:)-->
-      <p>{{ processingOrderData.customerName }}</p>
-      <div style="height: 280px">
-        <table>
-          <thead>
-          <tr>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let data of processingOrderData.products">
-            <td style="width: 200px"></td>
-            <td style="width: 200px"> {{ data.productName }}</td>
-            <td style="width: 300px"> {{ data.specification }}</td>
-            <td style="width: 120px"> {{ data.quantity }}</td>
-            <td style="width: 120px"> {{ data.expectedWeight | number: '1.2-2' }}</td>
-          </tr>
-          </tbody>
-        </table>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <div class="gutter-example">
+    <div nz-row nzGutter="16">
+      <div nz-col class="gutter-row" nzSpan="6">
+        <div class="gutter-box"><p>{{ processingOrderData.customerName }}</p></div>
       </div>
-      <div style="position: relative">
-        <div style="position: absolute; right: 0">
-          <!--重量汇总:-->
-          <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight | number: '1.2-2' }}</span>
-        </div>
+      <div nz-col class="gutter-row" nzSpan="6">
+        <div class="gutter-box"></div>
       </div>
+      <div nz-col class="gutter-row" nzSpan="6">
+        <div class="gutter-box"></div>
+      </div>
+      <div nz-col class="gutter-row" nzSpan="6">
+        <div class="gutter-box"><p>{{ date }}</p></div>
+      </div>
+    </div>
+  </div>
+  <br/>
+  <div style="height: 280px">
+    <table>
+      <thead>
+      <tr>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of processingOrderData.products">
+        <td style="width: 200px"></td>
+        <td style="width: 200px"> {{ data.productName }}</td>
+        <td style="width: 300px"> {{ data.specification }}</td>
+        <td style="width: 120px"> {{ data.quantity }}</td>
+        <td style="width: 120px"> {{ data.expectedWeight | number: '1.2-2' }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="position: relative">
+    <div style="position: absolute; right: 0">
+      <!--重量汇总:-->
+      <label></label>&nbsp;&nbsp;<span>{{ processingOrderData.totalWeight | number: '1.2-2' }}</span>
+    </div>
+  </div>
 
 </nz-modal>
 

@@ -55,6 +55,8 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
   printCSS: string[];
   printStyle: string;
 
+  date: string;
+
   constructor(private tab: TabService,
               private route: ActivatedRoute,
               private router: Router,
@@ -70,6 +72,12 @@ export class ProcessingOrderInfoComponent implements RefreshableTab, OnInit {
             color: blue !important;
         }
         `;
+
+    let date = new Date();
+    let y = date.getFullYear();
+    let m = date.getUTCMonth() + 1;
+    let d = date.getDate();
+    this.date = y + '-' + m + '-' + d;
   }
 
   ngOnInit(): void {
